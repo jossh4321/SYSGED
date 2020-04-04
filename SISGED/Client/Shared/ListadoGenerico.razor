@@ -1,0 +1,49 @@
+﻿@typeparam Titem
+@if (Listado == null)
+{
+    <!--text>Cargando...</text-->
+    <!--Utilizando el Render fragment para contenido Dinamico-->
+    @if (Cargando == null)
+    {
+        <text>Cargnado...</text>
+    }
+    else
+    {
+        @Cargando
+    }
+
+}
+else if (Listado.Count == 0)
+{
+    @if (NoHayRegistro == null)
+    {
+        <text>No hay registros disponibles</text>
+    }
+    else
+    {
+        @NoHayRegistro
+    }
+}
+else
+{
+    if (HayRegistros != null)
+    {
+        foreach (var elemento in Listado)
+        {
+            @HayRegistros(elemento)
+        }
+    }
+    else
+    {
+        @HayRegistrosCompleto
+    }
+
+}
+@code {
+    [Parameter] public RenderFragment Cargando { get; set; }
+    [Parameter] public RenderFragment NoHayRegistro { get; set; }
+    [Parameter] public RenderFragment<Titem> HayRegistros { get; set; }
+    [Parameter] public RenderFragment HayRegistrosCompleto { get; set; }
+    //Definimos el titem como un tipo generico similar a Object
+    [Parameter] public List<Titem> Listado { get; set; }
+}

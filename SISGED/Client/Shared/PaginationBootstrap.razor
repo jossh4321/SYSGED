@@ -1,0 +1,84 @@
+﻿<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        @foreach (var link in links)
+        {
+            <li @onclick="@(()=> PaginaSeleccionadaInterno(link))"
+                style="cursor: pointer"
+                class="page-item @(link.Habilitada ? null:"disabled")
+                @(link.Activa ? "active":null)">
+                <span class="page-link" href="#">@link.Texto</span>
+            </li>
+        }
+    </ul>
+</nav>
+@code {
+    [Parameter] public int currentPage { get; set; }
+    [Parameter] public int totalPages { get; set; }
+    [Parameter] public int radio { get; set; }
+    [Parameter] public EventCallback<int> selectedPage { get; set; }
+    List<ModelPage> links = new List<ModelPage>();
+
+      protected override void OnParametersSet()
+    {
+        links = new List<ModelPage>();
+
+        var enlaceAnteriorHabilitada = currentPage != 1;
+        var enlaceAnterior = currentPage - 1;
+        links.Add(new ModelPage(enlaceAnterior, enlaceAnteriorHabilitada, "Anterior"));
+
+        for (int i = 1; i <= totalPages; i++)
+        {
+            if (i >= currentPage - radio && i <= currentPage + radio)
+            {
+                links.Add(new ModelPage(i) { Activa = currentPage == i });
+            }
+        }
+
+        var enlaceSiguienteHabilitada = currentPage != totalPages;
+        var enlaceSiguiente = currentPage + 1;
+        links.Add(new ModelPage(enlaceSiguiente, enlaceSiguienteHabilitada, "Siguiente"));
+        Console.WriteLine("ejecutando ONPARAMETERSET");
+        Console.WriteLine(links.Count);
+    }
+
+      private async Task PaginaSeleccionadaInterno(ModelPage modelPage)
+    {
+        if (modelPage.Pagina == currentPage)
+        {
+            return;
+        }
+
+        if (!modelPage.Habilitada)
+        {
+            return;
+        }
+
+        await selectedPage.InvokeAsync(modelPage.Pagina);
+    }
+
+
+
+     class ModelPage
+    {
+
+        public ModelPage(int pagina)
+            : this(pagina, true)
+        { }
+
+        public ModelPage(int pagina, bool habilitada)
+            : this(pagina, habilitada, pagina.ToString())
+        { }
+
+        public ModelPage(int pagina, bool habilitada, string texto)
+        {
+            Pagina = pagina;
+            Habilitada = habilitada;
+            Texto = texto;
+        }
+
+        public string Texto { get; set; }
+        public int Pagina { get; set; }
+        public bool Habilitada { get; set; } = true;
+        public bool Activa { get; set; } = false;
+    }
+}

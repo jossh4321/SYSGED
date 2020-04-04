@@ -1,0 +1,47 @@
+﻿@page "/Login"
+@inject IRepository repositorio
+@inject NavigationManager navigationManager
+@inject ILoginService loginservice
+@using SISGED.Client.Auth
+<h3>Login</h3>
+<EditForm Model="@userInfo" OnValidSubmit="LoginUsuario">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Email:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@userInfo.usuario" />
+            <ValidationMessage For="@(()=> userInfo.usuario)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Password:</label>
+        <div>
+            <InputPassword class="form-control" @bind-Value="@userInfo.clave" />
+            <ValidationMessage For="@(()=> userInfo.clave)" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Registrar</button>
+
+</EditForm>
+
+@code {
+    private UserInfo userInfo = new UserInfo();
+    private async Task LoginUsuario()
+    {
+        var httpResponse = await
+            repositorio.Post<UserInfo, UserToken>("api/accounts/login", userInfo);
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Algo Mal");
+           // await mostrarMensajes.MostrarMensajeError(await httpResponse.GetBody());
+        }
+        else
+        {
+            Console.WriteLine("Algo Bien");
+            //logeando al usuarios cy mmandandolo a la pagina principal
+            await loginservice.Login(httpResponse.Response.Token);
+            navigationManager.NavigateTo("");
+
+        }
+    }
+}

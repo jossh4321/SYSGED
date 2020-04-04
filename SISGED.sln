@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISGED.Server", "SISGED\Server\SISGED.Server.csproj", "{C574CD94-81FF-4D44-AA57-1205802EC4B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISGED.Server", "SISGED\Server\SISGED.Server.csproj", "{C574CD94-81FF-4D44-AA57-1205802EC4B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISGED.Client", "SISGED\Client\SISGED.Client.csproj", "{19C349E2-36D1-47E0-B960-4A48AADB05F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISGED.Client", "SISGED\Client\SISGED.Client.csproj", "{19C349E2-36D1-47E0-B960-4A48AADB05F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SISGED.Shared", "SISGED\Shared\SISGED.Shared.csproj", "{F2A91B71-C8C3-4555-80FC-66A294E9600D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SISGED.Shared", "SISGED\Shared\SISGED.Shared.csproj", "{F2A91B71-C8C3-4555-80FC-66A294E9600D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

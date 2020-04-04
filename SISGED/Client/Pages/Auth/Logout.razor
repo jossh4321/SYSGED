@@ -1,0 +1,13 @@
+﻿@page "/logout"
+@inject IRepository repositorio
+@inject NavigationManager navigationManager
+@inject ILoginService loginservice
+@using SISGED.Client.Auth
+<text>Deslogueando....</text>
+@code {
+    protected async override Task OnInitializedAsync()
+    {
+        await loginservice.Logout();
+        navigationManager.NavigateTo("");
+    }
+}
