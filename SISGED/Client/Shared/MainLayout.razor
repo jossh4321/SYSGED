@@ -96,51 +96,55 @@
                                                             line-height: 20px;
                                                             color: rgba(255,255,255,0.8);
                                                             margin:auto">
-                                Sysged - Sistema de Gestion Documentaria del <span style="color:rgb(0,188,212);">Colegio de Notarios de Lima</span>
+                                Sysged - Sistema de Gestion Documentaria del <span style="color:rgb(0,188,212);cursor:pointer;">Colegio de Notarios de Lima</span>
                             </MatAppBarTitle>
                         </MatAppBarSection>
                         <MatAppBarSection Align="@MatAppBarSectionAlign.End">
-                            <MatIcon Icon="@MatIconNames.Search" Style="cursor:pointer;margin-left:10px"></MatIcon>
-                            <MatIcon Icon="@MatIconNames.Notifications_none" Style="cursor:pointer;margin-left:10px"></MatIcon>
-                            <MatIcon Icon="@MatIconNames.Email" Style="cursor:pointer;margin-left:10px"></MatIcon>
-                            <MatCard Style="display:inline-block;background-color:rgb(32,32,32);box-shadow:none" @onclick="@OnClick" RefBack="@buttonForwardRef">
-                                <div style="margin-left:10px;display:inline-block">
-                                    <span>Christian Frias</span>
+                            <div class="bar-menu-item-container">
+                                <MatIcon Icon="@MatIconNames.Search" Class="bar-menu-item-icon"></MatIcon>
+                            </div>
+                            <div class="bar-menu-item-container">
+                                <MatIcon Icon="@MatIconNames.Notifications_none" Class="bar-menu-item-icon" @onclick="@OnClickNotification" RefBack="@buttonForwardRefNotification"></MatIcon>
+                            </div>
+                            <MatMenu @ref="MenuNotification" TargetForwardRef="@buttonForwardRef" Class="notification-card-menu"
+                                     Style="background-color:rgb(68, 68, 68);margin-top:58px">
+                                <NotificationMenu />
+                            </MatMenu>
+                            <div class="bar-menu-item-container">
+                                <MatIcon Icon="@MatIconNames.Email" Class="bar-menu-item-icon"></MatIcon>
+                            </div>
+
+                            <MatCard Class="bar-menu-user-shrink" @onclick="@OnClick" RefBack="@buttonForwardRef">
+                                <div style="display:inline-block">
+                                    <span style="font-family:sans-serif;font-size:14px;color:rgba(255,255,255,0.5)">Christian Frias</span>
                                 </div>
                                 <div style="height: 32px;width: 32px;margin-left:10px;display:inline-block">
                                     <img class="profile-img" src="images/default_profile_pic.jpg" />
                                 </div>
                             </MatCard>
-                            <MatMenu @ref="Menu"  TargetForwardRef="@buttonForwardRef">
-                                <MatCard Style="width:310px;background-color:rgb(68, 68, 68);padding-top:16px">
-                                    <div style="display:block;margin-left:16px;padding:8px,16px">
-                                        <div style="height: 32px;width: 32px;margin-right:16px;display:inline-block">
-                                            <img class="profile-img" style="display:block" src="images/default_profile_pic.jpg" />
-                                        </div>
-                                        <div style="display:inline-block">
-                                            <span style="display:block;font-size:16px;color:rgb(255,255,255);font-family:sans-serif">Christian Frias</span>
-                                            <span style="display:block;font-size:14px;color:rgba(255, 255, 255, 0.54);font-family:sans-serif">christian.frias@urp.edu.pe</span>
-                                        </div>
-                                    </div>
-                                    <MatDivider></MatDivider>
-                                    <MatListItem>
-                                        <MatIcon Icon="@MatIconNames.Account_circle" Class="icons-style-user-menu"></MatIcon>
-                                        <span Class="text-user-menu">Datos del Perfil</span>
-                                    </MatListItem>
-                                            <!--div style="width:inherit;height:48px;display:block;padding-left:16px">
-            <div style="display:inline-block">
-                <MatIcon Icon="MatIconNames.Account_circle" Style="margin-right:16px;margin-top:8px;color:rgba(255,255,255,0.8);
-                            "></MatIcon>
-            </div>
-            <div style="display:inline-block;vertical-align:middle">
-                <span style="color:rgba(255,255,255,0.8);font-family:sans-serif;font-size:16px;display:block;">Mi Perfil</span>
-            </div>
 
-        </div-->
-</MatCard>
+                            <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef" Class="profile-card-menu"
+                                     Style="background-color:rgb(68, 68, 68);margin-top:58px;">
+                                <UserMenu />
                             </MatMenu>
-
-                            <MatIconButton Icon="@MatIconNames.More_vert" Style="cursor:pointer;margin-left:10px"></MatIconButton>
+                            <div class="bar-menu-item-container">
+                                <MatIcon Icon="@MatIconNames.More_vert" Class="bar-menu-item-icon"
+                                        @onclick="@OnClickMore" RefBack="@buttonForwardRefMore" ></MatIcon>
+                            </div>
+                            
+                            <MatMenu  @ref="MenuMore"  TargetForwardRef="@buttonForwardRefMore" Class="more-items">
+                                <MatCard Style="width:135px;background-color:#666;">
+                                    <MatListItem Class="more-item">
+                                        <span style="font-size:14px;font-family:sans-serif;color:#ffffff">Configuraciones</span>
+                                    </MatListItem>
+                                    <MatListItem Class="more-item">
+                                        <span style="font-size:14px;font-family:sans-serif;color:#ffffff">Soporte</span>
+                                    </MatListItem>
+                                    <MatListItem Class="more-item">
+                                        <span style="font-size:14px;font-family:sans-serif;color:#ffffff">Acerca de</span>
+                                    </MatListItem>
+                                </MatCard>
+                            </MatMenu>
                         </MatAppBarSection>
                     </MatAppBarRow>
                 </MatAppBar>
@@ -173,6 +177,25 @@
     public void OnClick(MouseEventArgs e)
     {
         this.Menu.OpenAsync();
+    }
+
+    ForwardRef buttonForwardRefNotification = new ForwardRef();
+    BaseMatMenu MenuNotification;
+ 
+    public void OnClickNotification(MouseEventArgs e)
+    {
+        this.MenuNotification.OpenAsync();
+    }
+
+
+
+
+    ForwardRef buttonForwardRefMore = new ForwardRef();
+    BaseMatMenu MenuMore;
+ 
+    public void OnClickMore(MouseEventArgs e)
+    {
+        this.MenuMore.OpenAsync();
     }
 }
 

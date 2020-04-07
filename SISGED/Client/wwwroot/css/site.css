@@ -1,17 +1,22 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
-body::-webkit-scrollbar {
-    width: 1em;
+::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
 }
 
-body::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+/* Track */
+::-webkit-scrollbar-track {
+    background: #666;
 }
 
-body::-webkit-scrollbar-thumb {
-    background-color: red;
-    outline: 1px solid slategrey;
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #999;
+    cursor: pointer;
 }
+
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
@@ -266,10 +271,110 @@ app {
         font-family: sans-serif;
     }
     .icons-style-user-menu {
-        margin: -3px 25px 0 23px;
+        margin: -3px 16px 0 20px;
         color: rgba(255, 255, 255, 0.56);
         font-size: 22px;
         width: 22px;
     }
+    .profile-card-menu {
+        background-color: rgb(68, 68, 68);
+        margin-top: 46px;
+        box-shadow: rgba(0, 0, 0, 0.14)
+    }
+
+    .notification-avatar {
+        display: inline-block;
+        height: 40px;
+        width: 40px;
+        margin-right: 16px;
+        border-radius: 60px;
+        background-color: rgba(0, 188, 212, 0.9);
+        text-align: center
+    }
+    .notification-sender {
+        display: block;
+        font-size: 14px;
+        color: rgb(255,255,255);
+        font-family: sans-serif
+    }
+    .notificatio-summary {
+        display: block;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.54);
+        font-family: sans-serif
+    }
+    .notification-card-menu {
+        background-color: rgb(68, 68, 68);
+        margin-top: 46px;
+        box-shadow: rgba(0, 0, 0, 0.14)
+    }
+
+    .notification-item-style {
+        padding: 16px,0px;
+    }
+
+    .notification-item-style:hover{
+        background-color: #333;
+    }
+
+    li.profile-item-style {
+        padding: 0px;
+    }
+    .profile-item-style:hover {
+        padding: 0px;
+        background-color:#333;
+    }
+
+    .profile-item-style:hover .icons-style-user-menu {
+        color: #00bcd4;
+    }
+    .profile-item-style:hover .text-user-menu {
+        color: #00bcd4;
+    }
+    .bar-menu-item-container {
+        height:32px;
+        width:32px;
+        border-radius:50%;
+        text-align:center;
+        margin-left:10px;
+    }
+    .bar-menu-item-container:hover {
+        background-color: #000000
+    }
+    .bar-menu-item-icon {
+        cursor: pointer;
+        border-radius:50%;
+        color: rgba(255, 255, 255, 0.54);
+        margin:0 auto;
+        padding-top:3px;
+        }
+    div.bar-menu-user-shrink {
+        display: inline-block;
+        background-color: rgb(32,32,32);
+        box-shadow: none;
+        height:inherit;
+        padding:12px;
+        cursor: pointer;
+        margin-left:10px;
+        border-radius:0px
+    }
+    div.bar-menu-user-shrink:hover {
+        background-color: #000000;
+    }
+
+    div.more-items {
+        background-color: #666;
+        margin-top: 56px
+    }
+    li.more-item{
+        width:inherit;
+    }
+    li.more-item:hover {
+        background-color: #444;
+    }
+    
+    
 }
+
+
 
