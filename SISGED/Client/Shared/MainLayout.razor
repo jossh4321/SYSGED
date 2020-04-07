@@ -1,16 +1,180 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="sidebar">
-    <NavMenu />
-</div>
+<MatDrawerContainer Style="width: 100%; height: 100%;">
+    <MatDrawer @bind-Opened="@Opened" Mode="@MatDrawerMode.Modal" Style="padding-top:0px; width:229px;background-color: #202020; border:none">
 
-<div class="main">
-    <div class="top-row px-4">
-        <LoginLink/>
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-    </div>
+        <div style="background-color: rgba(0, 0, 0, 0.85); width:auto;">
+            <div style="color:#fff;height: 56px;line-height:56px;
+                        text-transform: uppercase;font-size: 18px;
+                        font-weight: 500;
+                        letter-spacing: 1px;
+                        text-align: center;margin:auto">
+                SYSGED SOFTWARE
+            </div>
+        </div>
+        <div style="height:56px">
 
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+        </div>
+        <MatNavMenu Style="margin-top:0px;">
+
+            <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
+                <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
+                <span class="bartext-color">
+                    DashBoard
+                </span>
+            </MatNavItem>
+            <MatNavItem>
+                <MatIcon Icon="@MatIconNames.Important_devices" Class="bar-side-icons-style"></MatIcon>
+                <span class="bartext-color">Secretaria General</span>
+            </MatNavItem>
+            <MatNavItem>
+                <MatIcon Icon="@MatIconNames.Gavel" Class="bar-side-icons-style"></MatIcon>
+                <span Class="bartext-color">Tribunal de Honor</span>
+            </MatNavItem>
+            <MatNavSubMenu @bind-Expanded="@navSubMenuOpenState">
+                <MatNavSubMenuHeader Class="sub-menu-arrow">
+                    <MatNavItem>
+                        <MatIcon Icon="@MatIconNames.How_to_vote" Class="bar-side-icons-style"></MatIcon>
+                        <span class="bartext-color">Mesa de Partes</span>
+                    </MatNavItem>
+                </MatNavSubMenuHeader>
+                <MatNavSubMenuList>
+                    <MatNavItem>
+                        <span class="sub-bartext-color">Folios y Documentos</span>
+                    </MatNavItem>
+                    <MatNavItem>
+                        <span class="sub-bartext-color">Quejas y Reclamos</span>
+                    </MatNavItem>
+                </MatNavSubMenuList>
+            </MatNavSubMenu>
+            <MatNavItem>
+                <MatIcon Icon="@MatIconNames.Library_books" Class="bar-side-icons-style"></MatIcon>
+                <span class="bartext-color">Tramite Documentario</span>
+            </MatNavItem>
+            <MatDivider></MatDivider>
+            <MatNavItem>
+                <MatIcon Icon="@MatIconNames.Contact_mail" Class="bar-side-icons-style"></MatIcon>
+                <span class="bartext-color">Archivos de Exnotarios</span>
+            </MatNavItem>
+            <MatNavSubMenu>
+                <MatNavSubMenuHeader Class="sub-menu-arrow">
+                    <MatNavItem Style="vertical-align: middle
+">
+                        <MatIcon Icon="@MatIconNames.Supervised_user_circle" Class="bar-side-icons-style"></MatIcon>
+                        <span class="bartext-color" Style="vertical-align: middle">Area Legal</span>
+                    </MatNavItem>
+                </MatNavSubMenuHeader>
+                <MatNavSubMenuList>
+                    <MatNavItem>
+                        <span class="sub-bartext-color">Juicios y Arreglos</span>
+                    </MatNavItem>
+                    <MatNavItem>
+                        <span class="sub-bartext-color">Asesoria Legal</span>
+                    </MatNavItem>
+                </MatNavSubMenuList>
+            </MatNavSubMenu>
+            <MatNavItem>
+                <MatIcon Icon="@MatIconNames.Vpn_key" Class="bar-side-icons-style"></MatIcon>
+                <span class="bartext-color">Junta Directiva</span>
+            </MatNavItem>
+        </MatNavMenu>
+    </MatDrawer>
+
+    <MatDrawerContent>
+        <div>
+            <MatAppBarContainer>
+                <MatAppBar Fixed="true">
+                    <MatAppBarRow Style="background-color:rgb(32,32,32);height:56px">
+                        <MatAppBarSection>
+                            <div @onclick="ButtonClicked" role="button" style="cursor: pointer; vertical-align:central;">
+                                <MatIcon Icon="menu" Style="color:#00bcd4"></MatIcon>
+                            </div>
+                            <!--LoginLink /-->
+                            <MatAppBarTitle Style="font-family: 'Helvetica', 'Arial', 'sans-serif';
+                                                            font-size: 14px;
+                                                            font-weight: 400;
+                                                            line-height: 20px;
+                                                            color: rgba(255,255,255,0.8);
+                                                            margin:auto">
+                                Sysged - Sistema de Gestion Documentaria del <span style="color:rgb(0,188,212);">Colegio de Notarios de Lima</span>
+                            </MatAppBarTitle>
+                        </MatAppBarSection>
+                        <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+                            <MatIcon Icon="@MatIconNames.Search" Style="cursor:pointer;margin-left:10px"></MatIcon>
+                            <MatIcon Icon="@MatIconNames.Notifications_none" Style="cursor:pointer;margin-left:10px"></MatIcon>
+                            <MatIcon Icon="@MatIconNames.Email" Style="cursor:pointer;margin-left:10px"></MatIcon>
+                            <MatCard Style="display:inline-block;background-color:rgb(32,32,32);box-shadow:none" @onclick="@OnClick" RefBack="@buttonForwardRef">
+                                <div style="margin-left:10px;display:inline-block">
+                                    <span>Christian Frias</span>
+                                </div>
+                                <div style="height: 32px;width: 32px;margin-left:10px;display:inline-block">
+                                    <img class="profile-img" src="images/default_profile_pic.jpg" />
+                                </div>
+                            </MatCard>
+                            <MatMenu @ref="Menu"  TargetForwardRef="@buttonForwardRef">
+                                <MatCard Style="width:310px;background-color:rgb(68, 68, 68);padding-top:16px">
+                                    <div style="display:block;margin-left:16px;padding:8px,16px">
+                                        <div style="height: 32px;width: 32px;margin-right:16px;display:inline-block">
+                                            <img class="profile-img" style="display:block" src="images/default_profile_pic.jpg" />
+                                        </div>
+                                        <div style="display:inline-block">
+                                            <span style="display:block;font-size:16px;color:rgb(255,255,255);font-family:sans-serif">Christian Frias</span>
+                                            <span style="display:block;font-size:14px;color:rgba(255, 255, 255, 0.54);font-family:sans-serif">christian.frias@urp.edu.pe</span>
+                                        </div>
+                                    </div>
+                                    <MatDivider></MatDivider>
+                                    <MatListItem>
+                                        <MatIcon Icon="@MatIconNames.Account_circle" Class="icons-style-user-menu"></MatIcon>
+                                        <span Class="text-user-menu">Datos del Perfil</span>
+                                    </MatListItem>
+                                            <!--div style="width:inherit;height:48px;display:block;padding-left:16px">
+            <div style="display:inline-block">
+                <MatIcon Icon="MatIconNames.Account_circle" Style="margin-right:16px;margin-top:8px;color:rgba(255,255,255,0.8);
+                            "></MatIcon>
+            </div>
+            <div style="display:inline-block;vertical-align:middle">
+                <span style="color:rgba(255,255,255,0.8);font-family:sans-serif;font-size:16px;display:block;">Mi Perfil</span>
+            </div>
+
+        </div-->
+</MatCard>
+                            </MatMenu>
+
+                            <MatIconButton Icon="@MatIconNames.More_vert" Style="cursor:pointer;margin-left:10px"></MatIconButton>
+                        </MatAppBarSection>
+                    </MatAppBarRow>
+                </MatAppBar>
+
+                <MatAppBarContent>
+                    <div class="content px-4">
+                        @Body
+                    </div>
+                </MatAppBarContent>
+            </MatAppBarContainer>
+
+
+        </div>
+    </MatDrawerContent>
+</MatDrawerContainer>
+
+
+@code
+    {
+    [Inject] IJSRuntime JS { get; set; }
+    bool navSubMenuOpenState;
+    bool Opened = true;
+    void ButtonClicked()
+    {
+        Opened = !Opened;
+    }
+    ForwardRef buttonForwardRef = new ForwardRef();
+    BaseMatMenu Menu;
+ 
+    public void OnClick(MouseEventArgs e)
+    {
+        this.Menu.OpenAsync();
+    }
+}
+
+
+

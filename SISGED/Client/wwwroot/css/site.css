@@ -1,8 +1,24 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+body::-webkit-scrollbar {
+    width: 1em;
+}
+
+body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: red;
+    outline: 1px solid slategrey;
+}
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
 }
+
 
 a, .btn-link {
     color: #0366d6;
@@ -15,9 +31,9 @@ a, .btn-link {
 }
 
 app {
-    position: relative;
-    display: flex;
-    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    display: block;
 }
 
 .top-row {
@@ -31,8 +47,8 @@ app {
 }
 
     .main .top-row {
-        background-color: #f7f7f7;
-        border-bottom: 1px solid #d6d5d5;
+        background-color: rgb(32, 32, 32);
+        border:none;
         justify-content: flex-end;
     }
 
@@ -180,4 +196,80 @@ app {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+
+    .side-bar-matblazor {
+        height: 100%;
+        background-color: rgb(66,66,66);
+    }
+    side-bar-header {
+        text-align: center;
+        letter-spacing: 1px;
+        background-color: rgba(0, 0, 0, 0.85);
+    }
+     .bartext-color {
+        color: rgb(224,224,224);
+        font-size: 11px;
+        font-weight: 500;
+        opacity:0.87;
+        font-family:sans-serif;
+    }
+    .sub-menu-arrow {
+        color: rgb(224,224,224);
+        height:24px;
+        line-height:24px;
+        font-size: 11px;
+        font-weight: 500;
+        opacity: 0.87;
+        font-family: sans-serif;
+    }
+    .mat-expansion-panel__content li.mdc-nav-item:hover {
+        background-color: rgb(24, 24, 24);
+        border:none;
+    }
+    li.mdc-nav-item:hover {
+        background-color: rgb(24, 24, 24);
+        border-left: 6px solid #00bcd4;
+    }
+    li.mdc-nav-item:hover span{
+        color: #00bcd4;
+    }
+    li.mdc-nav-item:hover .bar-side-icons-style{
+        color: #00bcd4;
+    }
+    .sub-bartext-color {
+        color: rgb(224,224,224);
+        font-size: 11px;
+        font-weight: 500;
+        opacity: 0.87;
+        font-family: sans-serif;
+        margin-left:56px;
+    }
+    .nav-bar-color {
+        background-color: rgb(32, 32, 32);
+        
+    }
+    .bar-side-icons-style {
+        margin: -3px 25px 0 23px;
+        color: rgba(255, 255, 255, 0.56);
+        font-size: 22px;
+        width: 22px;
+    }
+    .profile-img {
+        border-radius: 60px;
+        max-width: 100%;
+        height: auto;
+    }
+    .text-user-menu {
+        color: rgba(255,255,255,0.8);
+        font-size: 14px;
+        font-weight: 500;
+        font-family: sans-serif;
+    }
+    .icons-style-user-menu {
+        margin: -3px 25px 0 23px;
+        color: rgba(255, 255, 255, 0.56);
+        font-size: 22px;
+        width: 22px;
+    }
 }
+

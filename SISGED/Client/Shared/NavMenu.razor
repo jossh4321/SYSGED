@@ -1,37 +1,71 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">SISGED</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿@using Microsoft.AspNetCore.Components
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>
-    </ul>
-</div>
 
-@code {
-    private bool collapseNavMenu = true;
+    <MatDrawerContainer Style="width: 200px; height: 100vh;">
+        <MatDrawer @bind-Opened="@Opened" Mode="@MatDrawerMode.Modal" Class="side-bar-color">
+            <div>
+                <MatNavMenu>
+                    <MatNavItem OnClick="ButtonClicked">Cancelar X</MatNavItem>
+                    <MatNavItem OnClick="ClickMe">Item 1 - OnClick</MatNavItem>
+                    <MatNavItem Disabled="true">Item 2</MatNavItem>
+                    <MatNavSubMenu @bind-Expanded="@navSubMenuOpenState">
+                        <MatNavSubMenuHeader>
+                            <MatNavItem AllowSelection="false"><MatIcon Icon="all_inbox"></MatIcon>&nbsp; Item 3 - Expanded: @navSubMenuOpenState</MatNavItem>
+                        </MatNavSubMenuHeader>
+                        <MatNavSubMenuList>
+                            <MatNavItem Href="#">Item 3.A&nbsp; <MatIcon Icon="backup"></MatIcon></MatNavItem>
+                            <MatNavItem>Item 3.B&nbsp; <MatIcon Icon="build"></MatIcon></MatNavItem>
+                            <MatNavItem>Item 3.C&nbsp; <MatIcon Icon="explore"></MatIcon></MatNavItem>
+                        </MatNavSubMenuList>
+                    </MatNavSubMenu>
+                    <MatNavItem><MatIcon Icon="grade"></MatIcon>&nbsp; Item 4 </MatNavItem>
+                    <MatDivider></MatDivider>
+                    <MatNavItem><MatIcon Icon="face"></MatIcon>&nbsp; Item 5</MatNavItem>
+                    <MatNavSubMenu>
+                        <MatNavSubMenuHeader>
+                            <MatNavItem AllowSelection="false"><MatIcon Icon="explore"></MatIcon>&nbsp; Item 6</MatNavItem>
+                        </MatNavSubMenuHeader>
+                        <MatNavSubMenuList>
+                            <MatNavItem Disabled="true" Href="#">Item 6.A</MatNavItem>
+                            <MatNavItem>Item 6.B</MatNavItem>
+                            <MatNavItem>Item 6.C</MatNavItem>
+                        </MatNavSubMenuList>
+                    </MatNavSubMenu>
+                    <MatNavItem Href="https://blazorboilerplate.com/">Blazor Boilerplate - Href</MatNavItem>
+                    <MatNavItem Href="https://www.matblazor.com/">MatBlazor - Href</MatNavItem>
+                </MatNavMenu>
+            </div>
+        </MatDrawer>
+        <!--MatDrawerContent>
+            <div>
+                <MatButton OnClick="@((e) => ButtonClicked())">
+                    @if (Opened)
+                    {
+                        <span>Hide Menu</span>
+                    }
+                    else
+                    {
+                        <span>Open Menu</span>
+                    }
+                </MatButton>
+            </div>
+            <p>Page Content</p>
+        </MatDrawerContent-->
+    </MatDrawerContainer>
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
+    @code
     {
-        collapseNavMenu = !collapseNavMenu;
+        [Inject] IJSRuntime JS { get; set; }
+        bool navSubMenuOpenState;
+        bool Opened = true;
+        void ButtonClicked()
+        {
+            Opened = !Opened;
+        }
+        async Task ClickMe()
+        {
+            Console.WriteLine("test");
+            await JS.InvokeAsync<object>("alert", "Successful OnClick!");
+        }
     }
-}
+
