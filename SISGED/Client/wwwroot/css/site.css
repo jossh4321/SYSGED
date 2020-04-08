@@ -15,7 +15,10 @@
     background: #999;
     cursor: pointer;
 }
-
+body {
+    background-image: url('../images/sysged-background-image.png');
+    background-attachment: fixed;
+}
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -157,7 +160,7 @@ app {
     top: 0.5rem;
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 935.98px) {
     .main .top-row:not(.auth) {
         display: none;
     }
@@ -169,9 +172,214 @@ app {
     .main .top-row a, .main .top-row .btn-link {
         margin-left: 0;
     }
+
+
+    li.mdc-nav-item:hover {
+        background-color: rgb(24, 24, 24);
+        border-left: 6px solid #00bcd4;
+    }
+
+        li.mdc-nav-item:hover span {
+            color: #00bcd4;
+        }
+
+        li.mdc-nav-item:hover .bar-side-icons-style {
+            color: #00bcd4;
+        }
+
+    .sub-bartext-color {
+        color: rgb(224,224,224);
+        font-size: 11px;
+        font-weight: 500;
+        opacity: 0.87;
+        font-family: sans-serif;
+        margin-left: 56px;
+    }
+
+    .nav-bar-color {
+        background-color: rgb(32, 32, 32);
+    }
+
+    .bar-side-icons-style {
+        margin: -3px 25px 0 23px;
+        color: rgba(255, 255, 255, 0.56);
+        font-size: 22px;
+        width: 22px;
+    }
+    .resize-style{
+        display:none;
+    }
+    .bartext-color {
+        color: rgb(224,224,224);
+        font-size: 11px;
+        font-weight: 500;
+        opacity: 0.87;
+        font-family: sans-serif;
+    }
+
+    .sub-menu-arrow {
+        color: rgb(224,224,224);
+        height: 24px;
+        line-height: 24px;
+        font-size: 11px;
+        font-weight: 500;
+        opacity: 0.87;
+        font-family: sans-serif;
+    }
+
+    /*----------------------*/
+    .profile-img {
+        border-radius: 60px;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .text-user-menu {
+        color: rgba(255,255,255,0.8);
+        font-size: 14px;
+        font-weight: 500;
+        font-family: sans-serif;
+    }
+
+    .icons-style-user-menu {
+        margin: -3px 16px 0 20px;
+        color: rgba(255, 255, 255, 0.56);
+        font-size: 22px;
+        width: 22px;
+    }
+
+    .profile-card-menu {
+        background-color: rgb(68, 68, 68);
+        margin-top: 46px;
+        box-shadow: rgba(0, 0, 0, 0.14)
+    }
+
+    .notification-avatar {
+        display: inline-block;
+        height: 40px;
+        width: 40px;
+        margin-right: 16px;
+        border-radius: 60px;
+        background-color: rgba(0, 188, 212, 0.9);
+        text-align: center
+    }
+
+    .notification-sender {
+        display: block;
+        font-size: 14px;
+        color: rgb(255,255,255);
+        font-family: sans-serif
+    }
+
+    .notificatio-summary {
+        display: block;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.54);
+        font-family: sans-serif
+    }
+
+    .notification-card-menu {
+        background-color: rgb(68, 68, 68);
+        margin-top: 46px;
+        box-shadow: rgba(0, 0, 0, 0.14)
+    }
+
+    .notification-item-style {
+        padding: 16px,0px;
+    }
+
+        .notification-item-style:hover {
+            background-color: #333;
+        }
+
+    li.profile-item-style {
+        padding: 0px;
+    }
+
+    .profile-item-style:hover {
+        padding: 0px;
+        background-color: #333;
+    }
+
+        .profile-item-style:hover .icons-style-user-menu {
+            color: #00bcd4;
+        }
+
+        .profile-item-style:hover .text-user-menu {
+            color: #00bcd4;
+        }
+
+    .bar-menu-item-container {
+        height: 32px;
+        width: 32px;
+        min-width:32px;
+        border-radius: 50%;
+        text-align: center;
+        margin-left: 10px;
+    }
+
+        .bar-menu-item-container:hover {
+            background-color: #000000
+        }
+
+    .bar-menu-item-icon {
+        cursor: pointer;
+        border-radius: 50%;
+        color: rgba(255, 255, 255, 0.54);
+        margin: 0 auto;
+        padding-top: 3px;
+    }
+
+    div.bar-menu-user-shrink {
+        display: inline-block;
+        background-color: rgb(32,32,32);
+        box-shadow: none;
+        height: inherit;
+        padding: 12px;
+        padding-top: 6px;
+        cursor: pointer;
+        margin-left: 10px;
+        border-radius: 0px;
+        max-height: 56px;
+        min-width: 160.7px;
+    }
+
+        div.bar-menu-user-shrink:hover {
+            background-color: #000000;
+        }
+
+    div.more-items {
+        background-color: #666;
+        margin-top: 56px
+    }
+
+    li.more-item {
+        width: inherit;
+    }
+
+        li.more-item:hover {
+            background-color: #444;
+        }
+    /*----------------------*/
+
+    .img-profile-container {
+        height: 32px;
+        width: 32px;
+        margin-left: 10px;
+        display: inline-block
+    }
+    .profile-name-text {
+        font-family: sans-serif;
+        font-size: 13px;
+        color: rgba(255,255,255,0.5);
+        line-height:15px;
+    }
+    .admin-banner {
+        display:none;
+    }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 936px) {
     app {
         flex-direction: row;
     }
@@ -259,10 +467,16 @@ app {
         font-size: 22px;
         width: 22px;
     }
+    .img-profile-container {
+        height: 32px;
+        width: 32px;
+        margin-left: 10px;
+        display: inline-block
+    }
     .profile-img {
+        height: 32px;
+        width: 32px;
         border-radius: 60px;
-        max-width: 100%;
-        height: auto;
     }
     .text-user-menu {
         color: rgba(255,255,255,0.8);
@@ -332,11 +546,12 @@ app {
         color: #00bcd4;
     }
     .bar-menu-item-container {
-        height:32px;
-        width:32px;
-        border-radius:50%;
-        text-align:center;
-        margin-left:10px;
+        height: 32px;
+        width: 32px;
+        min-width: 32px;
+        border-radius: 50%;
+        text-align: center;
+        margin-left: 10px;
     }
     .bar-menu-item-container:hover {
         background-color: #000000
@@ -356,7 +571,9 @@ app {
         padding:12px;
         cursor: pointer;
         margin-left:10px;
-        border-radius:0px
+        border-radius:0px;
+        min-width:160.7px
+        
     }
     div.bar-menu-user-shrink:hover {
         background-color: #000000;
@@ -372,9 +589,35 @@ app {
     li.more-item:hover {
         background-color: #444;
     }
-    
+    .profile-name-text {
+        font-family: sans-serif;
+        font-size: 14px;
+        color: rgba(255,255,255,0.5)
+    }
+    span.admin-banner {
+        font-family: 'Helvetica', 'Arial', 'sans-serif';
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        color: rgba(255,255,255,0.8);
+        margin: auto
+    }
     
 }
 
+.side-bar-collapse-button {
+    cursor: pointer;
+    vertical-align: central;
+    margin-left: 10px;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    padding-top:4px;
+    padding-left:4px;
+    border-radius:50%;
+}
+    .side-bar-collapse-button:hover {
+        background-color: #000000;
+    }
 
 

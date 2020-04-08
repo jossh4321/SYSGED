@@ -86,16 +86,11 @@
                 <MatAppBar Fixed="true">
                     <MatAppBarRow Style="background-color:rgb(32,32,32);height:56px">
                         <MatAppBarSection>
-                            <div @onclick="ButtonClicked" role="button" style="cursor: pointer; vertical-align:central;">
+                            <div @onclick="ButtonClicked" role="button" class="side-bar-collapse-button">
                                 <MatIcon Icon="menu" Style="color:#00bcd4"></MatIcon>
                             </div>
                             <!--LoginLink /-->
-                            <MatAppBarTitle Style="font-family: 'Helvetica', 'Arial', 'sans-serif';
-                                                            font-size: 14px;
-                                                            font-weight: 400;
-                                                            line-height: 20px;
-                                                            color: rgba(255,255,255,0.8);
-                                                            margin:auto">
+                            <MatAppBarTitle Class="admin-banner">
                                 Sysged - Sistema de Gestion Documentaria del <span style="color:rgb(0,188,212);cursor:pointer;">Colegio de Notarios de Lima</span>
                             </MatAppBarTitle>
                         </MatAppBarSection>
@@ -103,22 +98,22 @@
                             <div class="bar-menu-item-container">
                                 <MatIcon Icon="@MatIconNames.Search" Class="bar-menu-item-icon"></MatIcon>
                             </div>
-                            <div class="bar-menu-item-container">
+                            <div class="bar-menu-item-container resize-style">
                                 <MatIcon Icon="@MatIconNames.Notifications_none" Class="bar-menu-item-icon" @onclick="@OnClickNotification" RefBack="@buttonForwardRefNotification"></MatIcon>
                             </div>
                             <MatMenu @ref="MenuNotification" TargetForwardRef="@buttonForwardRef" Class="notification-card-menu"
                                      Style="background-color:rgb(68, 68, 68);margin-top:58px">
                                 <NotificationMenu />
                             </MatMenu>
-                            <div class="bar-menu-item-container">
+                            <div class="bar-menu-item-container resize-style">
                                 <MatIcon Icon="@MatIconNames.Email" Class="bar-menu-item-icon"></MatIcon>
                             </div>
 
                             <MatCard Class="bar-menu-user-shrink" @onclick="@OnClick" RefBack="@buttonForwardRef">
                                 <div style="display:inline-block">
-                                    <span style="font-family:sans-serif;font-size:14px;color:rgba(255,255,255,0.5)">Christian Frias</span>
+                                    <span class="profile-name-text" >Christian Frias</span>
                                 </div>
-                                <div style="height: 32px;width: 32px;margin-left:10px;display:inline-block">
+                                <div class="img-profile-container" >
                                     <img class="profile-img" src="images/default_profile_pic.jpg" />
                                 </div>
                             </MatCard>
