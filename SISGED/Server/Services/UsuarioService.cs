@@ -32,6 +32,14 @@ namespace SISGED.Server.Services
             usuario = _usuarios.Find(usuario => usuario.usuario == username).FirstOrDefault();
             return usuario;
         }
+        public Usuario GetById(string id)
+        {
+            Usuario usuario = new Usuario();
+            usuario = _usuarios.Find(usuario => usuario.id == id).FirstOrDefault();
+            return usuario;
+        }
+
+
         public Usuario Post(Usuario usuario)
         {
             _usuarios.InsertOne(usuario);
@@ -42,5 +50,32 @@ namespace SISGED.Server.Services
             var result = _usuarios.Find(usuario => usuario.usuario == userinfo.usuario && usuario.clave == userinfo.clave).FirstOrDefault();
             return result;
         }
+        public Usuario Put(Usuario usuario)
+        {
+            var filter = Builders<Usuario>.Filter.Eq("id", usuario.id);
+            var update = Builders<Usuario>.Update
+                .Set("usuario", usuario.usuario)
+                .Set("clave", usuario.clave)
+                .Set("datos", usuario.datos)
+                .Set("roles", usuario.roles);
+            usuario = _usuarios.FindOneAndUpdate<Usuario>(filter, update, new FindOneAndUpdateOptions<Usuario>
+            {
+                ReturnDocument = ReturnDocument.After
+            });
+            return usuario;
+        }
+        public Usuario modifyState(Usuario usuario)
+        {
+            var filter = Builders<Usuario>.Filter.Eq("id", usuario.id);
+            string newState = usuario.estado == "activo" ? "inactivo" : "activo";
+            var update = Builders<Usuario>.Update
+                .Set("estado", newState);
+            usuario = _usuarios.FindOneAndUpdate<Usuario>(filter, update, new FindOneAndUpdateOptions<Usuario>
+            {
+                ReturnDocument = ReturnDocument.After
+            });
+            return usuario;
+        }
+
     }
 }

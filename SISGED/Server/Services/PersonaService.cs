@@ -34,14 +34,14 @@ namespace SISGED.Server.Services
         public Persona Put(Persona persona)
         {
             var filter = Builders<Persona>.Filter.Eq("id", persona.id);
-            //System.Linq.Expressions.Expression<Func<Persona, bool>> filter = persona => persona.Equals(persona.id);
+            //System.Linq.Expressions.Expression<Func<Persona, bool>> filter2 = persona => persona.Equals(persona.id);
 
             var update = Builders<Persona>.Update.Set("nombre", "JosueModificado3").Set("apellido","ColomboModificado3");
             
              persona = _personas.FindOneAndUpdate<Persona>(filter,update, new FindOneAndUpdateOptions<Persona>
              {
                  ReturnDocument = ReturnDocument.After
-        });
+            });
             return persona;
         }
 

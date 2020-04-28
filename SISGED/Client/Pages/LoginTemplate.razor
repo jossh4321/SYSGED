@@ -1,0 +1,212 @@
+﻿@page "/login/template"
+@inject IRepository repositorio
+@inject NavigationManager navigationManager
+@inject ILoginService loginservice
+@inject ISwalFireMessage swalfire
+@using SISGED.Client.Auth
+<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-deep_purple.min.css" />
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+<link href="fonts/fontello/css/fontello.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/bootstrap-offset-right.css">
+<link rel="stylesheet" href="css/LoginStyle.css">
+<style>
+    div.validation-message {
+        font-family: sans-serif !important;
+        font-size: 12px !important;
+        text-align: left !important;
+    }
+
+    .mdl-textfield__label {
+        margin-bottom: 0;
+        color: #d7dbdc;
+        font-weight: normal;
+    }
+
+    .mdl-textfield--floating-label.is-focused .mdl-textfield__label,
+    .mdl-textfield--floating-label.is-dirty .mdl-textfield__label {
+        text-transform: uppercase
+    }
+
+    .has-feedback label ~ .form-control-feedback {
+        top: 15px;
+    }
+
+    .mdl-textfield {
+        width: 100%;
+    }
+
+    .mdl-checkbox__label {
+        cursor: text;
+        font-size: 13px;
+        float: left;
+        color: #b0b3b4;
+        font-weight: normal;
+    }
+
+    .mdl-checkbox__box-outline {
+        border: 1px solid #b0b3b4;
+    }
+
+    .mdl-textfield__input {
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, .12);
+        display: block;
+        font-size: 16px;
+        margin: 0;
+        padding: 4px 0;
+        width: 100%;
+        background: 0 0;
+        text-align: left;
+        color: inherit;
+        font-weight: bold;
+    }
+
+    .mdl-switch__label {
+        float: left;
+        font-weight: normal;
+        color: #b0b3b4;
+        font-size: 14px;
+    }
+</style>
+<div class="container">
+    <div class="center-block">
+        <div class="col-lg-4 col-lg-offset-1 col-md-4 col-md-offset-1 col-sm-12 col-xs-12 no-padding" style="z-index:1">
+            <!-- Slider -->
+
+            <div class="mlt-carousel">
+                <div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active">
+                            <img class="img-responsive center-block" src="images/login/step1.png" alt="step1">
+                            <div class="item-content">
+                                <h3>Lorem ipsum dolor sit amet</h3>
+                                <p>Consectetur adipiscing elit</p>
+                                <p>Phasellus orci dolor</p>
+                                <p>dapibus suscipit quam</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img class="img-responsive center-block" src="images/login/step2.png" alt="step2">
+                            <div class="item-content">
+                                <h3>Pellentesque tincidunt</h3>
+                                <p>Laoreet placerat justo congue vulputate</p>
+                                <p>Diam felis dapibus nulla</p>
+                                <p>Phasellus molestie</p>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img class="img-responsive center-block" src="images/login/step3.png" alt="step3">
+                            <div class="item-content">
+                                <h3> Proin sed leo sodales</h3>
+                                <p>ultricies posuere leo</p>
+                                <p>Phasellus orci dolor</p>
+                                <p>dapibus suscipit quam</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#myCarousel" data-slide-to="1"></li>
+                        <li data-target="#myCarousel" data-slide-to="2"></li>
+                    </ol>
+                </div>
+                <!--mlt-carousel-->
+            </div>
+            <!-- Slider -->
+        </div>
+        <!-- Login -->
+
+        <div class="col-lg-6 col-lg-offset-right-1 col-md-6 col-md-offset-right-1 col-sm-12 col-xs-12 no-padding">
+            <div class="mlt-content">
+                <ul class="nav nav-tabs">
+                    <li class="active" style="margin:auto"><a href="#login" data-toggle="tab">Login</a></li>
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade in active" id="login">
+                        <!--login form-->
+                        <EditForm Model="userInfo" OnValidSubmit="LoginUsuario" OnInvalidSubmit="LoginUsuarioError">
+                            <DataAnnotationsValidator />
+                            <div class="col-lg-10 col-lg-offset-1 col-lg-offset-right-1 col-md-10 col-md-offset-1 col-md-offset-right-1 col-sm-12 col-xs-12 pull-right ">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <MatTextField @bind-Value="@userInfo.usuario" FullWidth="true" Label="NOMBRE DE USUARIO"></MatTextField>
+                                    <ValidationMessage For="(() => userInfo.usuario)" />
+                                    <!--label class="mdl-textfield__label" for="emailAddress">Email Address</!--label-->
+                                </div>
+                            </div>
+
+                            <div class="col-lg-10 col-lg-offset-1 col-lg-offset-right-1 col-md-10 col-md-offset-1 col-md-offset-right-1 col-sm-12 col-xs-12 pull-right ">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <MatTextField @bind-Value="@userInfo.clave" FullWidth="true"  Label="CONTRASEÑA"></MatTextField>
+                                    <ValidationMessage For="(() => userInfo.clave)" />
+                                </div>
+                            </div>
+
+                            <div class="col-lg-10 col-lg-offset-1 col-lg-offset-right-1 col-md-10 col-md-offset-1 col-md-offset-right-1 col-sm-12 col-xs-12 pull-right ">
+                                <div class="row">
+                                    <br>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                        <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="rememberPass">
+                                            <input type="checkbox" id="rememberPass" class="mdl-switch__input">
+                                            <span class="mdl-switch__label">Recordar</span>
+                                        </label>
+
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" style=" text-align:right;">
+                                        <a href="#" type="" role="textbox">Olvide mi contraseña</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--div class="col-lg-10 col-lg-offset-1 col-lg-offset-right-1 col-md-10 col-md-offset-1 col-md-offset-right-1 col-sm-12 col-xs-12 pull-right ">
+                                <button type="submit" class="btn lt-register-btn">Ingresar <i class="icon-right "></i></button>
+                            </!--div-->
+                            <button type="submit" class="btn lt-register-btn">Ingresar <i class="icon-right "></i></button>
+                        </EditForm>
+
+                        <!--login form-->
+                    </div>
+                </div>
+            </div>
+            <!--Login-->
+        </div>
+        <!--center-block-->
+    </div>
+    <!--container-->
+</div>
+
+@code {
+    /*private string username { get; set; }
+    private string password { get; set; }
+    private UserLogin credentials { get; set; } = new UserLogin();
+    public void ingresar()
+    {
+
+    }
+    */
+
+    private UserInfo userInfo = new UserInfo();
+    private async Task LoginUsuario()
+    {
+        var httpResponse = await
+            repositorio.Post<UserInfo, UserToken>("api/accounts/login", userInfo);
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Algo Mal");
+            swalfire.errorMessage("Error al ingresar usuario o contraseña");
+            // await mostrarMensajes.MostrarMensajeError(await httpResponse.GetBody());
+        }
+        else
+        {
+            Console.WriteLine("Algo Bien");
+            //logeando al usuarios cy mmandandolo a la pagina principal
+            await loginservice.Login(httpResponse.Response.Token);
+            navigationManager.NavigateTo("");
+
+        }
+    }
+    public void LoginUsuarioError()
+    {
+        swalfire.errorMessage("Error al ingresar usuario o contraseña");
+    }
+}

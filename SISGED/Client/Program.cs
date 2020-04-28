@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text;
-using Microsoft.AspNetCore.Blazor.Hosting;
+using System.Net.Http;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using SISGED.Client.Repo;
+using SISGED.Client.Helpers;
 using Microsoft.AspNetCore.Components.Authorization;
 using SISGED.Client.Auth;
+using SISGED.Shared.Validators;
+using FluentValidation;
 
 namespace SISGED.Client
 {
@@ -16,6 +20,8 @@ namespace SISGED.Client
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
+            builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
             //setting DI and authorization/authentication configs
             ConfigureServices(builder.Services);
             await builder.Build().RunAsync();
@@ -25,6 +31,9 @@ namespace SISGED.Client
         {
             services.AddOptions();
             services.AddScoped<IRepository, Repository>();
+            services.AddScoped<ISwalFireMessage, SwalFireMessage>();
+            services.AddValidatorsFromAssemblyContaining<DatosValidator>();
+            services.AddValidatorsFromAssemblyContaining<Usuario2Validator>();
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();
             services.AddScoped<AuthenticationStateProvider, 

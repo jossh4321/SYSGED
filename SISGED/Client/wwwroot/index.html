@@ -7,20 +7,65 @@
     <title>SISGED</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/site.css" rel="stylesheet" />
+    
     
     <!--link href="_content/MatBlazor/dist/matBlazor.css" rel="stylesheet" /-->
 
 </head>
 
 <body>
-    <div style="background-image: url('images/sysged-background-image.png');">
-        <app >Loading...</app>
+    <div>
+        <app>Loading...</app>
     </div>
-    
+
     <link href="_content/MatBlazor/dist/matBlazor.css" rel="stylesheet" />
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/MatBlazor/dist/matBlazor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
+    <script src="node_modules/jquery/dist/jquery.min.js "></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js "></script>
+    <script src="libs/mdl/material.min.js "></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js "></script>
+    <script src="js/shared.js"></script>
+    <script>
+        //Google analytics.
+        /* (function (i, s, o, g, r, a, m) {
+             i['GoogleAnalyticsObject'] = r;
+             i[r] = i[r] || function () {
+                 (i[r].q = i[r].q || []).push(arguments)
+             }, i[r].l = 1 * new Date();
+             a = s.createElement(o),
+                 m = s.getElementsByTagName(o)[0];
+             a.async = 1;
+             a.src = g;
+             m.parentNode.insertBefore(a, m)
+         })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+         ga('create', 'UA-79865537-1', 'auto');
+         ga('send', 'pageview');*/</script>
+
+    <script>
+        //Form validation.
+        /* $('form').validate({
+             rules: {
+                 fname: {
+                     minlength: 3,
+                     maxlength: 15,
+                 }
+             },
+             errorPlacement: function (error, element) { },
+             highlight: function (element) {
+                 var id_attr = "#" + $(element).attr("id") + "1";
+                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+                 $(id_attr).removeClass('icon-ok-circled2').addClass('icon-cancel-circled2');
+             },
+             unhighlight: function (element) {
+                 var id_attr = "#" + $(element).attr("id") + "1";
+                 $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+                 $(id_attr).removeClass('icon-cancel-circled2').addClass('icon-ok-circled2');
+             },
+         });*/</script>
 </body>
 
 </html>

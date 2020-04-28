@@ -13,5 +13,6 @@ namespace SISGED.Client.Repo
         Task<HttpResponseWrapper<TResponse>> Post<T, TResponse>(string url, T send);
         Task<HttpResponseWrapper<TResponse>> Put<TResponse, T>(string url, T send);
         Task<HttpResponseWrapper<object>> Put<T>(string url, T requestBody);
+
     }
 }

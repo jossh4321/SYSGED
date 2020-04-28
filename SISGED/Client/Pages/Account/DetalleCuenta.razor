@@ -1,0 +1,306 @@
+﻿@inject IRepository repository 
+<style>
+    .card-content-padding {
+        padding: 15px;
+        width: 400px;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+
+    .button-input-style {
+        display: block !important;
+    }
+    /*Validation*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .sub-but {
+        display: block !important;
+        width: 100%;
+    }
+
+    .loader-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around
+    }
+    div.disabled-field input {
+        text-decoration: none !important;
+        color: black !important;
+        border-bottom-color: black !important;
+        background-color: #eee !important;
+    }
+</style>
+<MatCard>
+    <MatCardContent Class="card-content-padding">
+
+
+        @if (carga == false)
+        {
+
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+
+        }
+        else
+        {
+            <MatHeadline6 Style="text-align:center">
+                Detalle del Usuario
+
+            </MatHeadline6>
+
+            <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                      OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+                <FluentValidator></FluentValidator>
+                <MatTabGroup>
+                    <MatTab Label="Credenciales">
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.usuario)">
+                            <MatTextField @bind-Value="@usuariodto.usuario" Class="text-field-style disabled-field" Disabled="true"
+                                          Label="Nombre Usuario"></MatTextField>
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.usuario)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.clave)">
+
+                            <MatTextField @bind-Value="@usuariodto.clave" Class="text-field-style disabled-field"
+                                          Label="Clave"  Disabled="true"></MatTextField>
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.clave)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+
+                        </div>
+
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.rolid)">
+                            <InputSelect @bind-Value="@usuariodto.rolid" class="text-field-style disabled-field">
+                                <option value="" disabled="disabled">--Seleccione Algo--</option>
+                                @foreach (Rol rol in listaroles)
+                                    {
+                                    <option value="@rol.id" disabled="disabled">@rol.nombre</option>
+                                    }
+                            </InputSelect>
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.rolid)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+
+
+                    </MatTab>
+
+                    <MatTab Label="Datos">
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.nombre)">
+                            <MatTextField @bind-Value="@usuariodto.datos.nombre" Class="text-field-style disabled-field" Label="Nombre"
+                                          Disabled="true"
+                                         ></MatTextField>
+
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.datos.nombre)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.apellido)">
+                            <MatTextField @bind-Value="@usuariodto.datos.apellido" Class="text-field-style disabled-field" Label="Apellido"
+                                           Disabled="true" ></MatTextField>
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.datos.apellido)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.tipodocumento)">
+                            <InputSelect @bind-Value="@usuariodto.datos.tipodocumento" class="text-field-style disabled-field">
+                                <option value="" disabled="disabled">--Seleccione Algo--</option>
+                                <option value="CE" disabled="disabled">Carnet de Extranjeria</option>
+                                <option value="DNI" disabled="disabled">D.N.I.</option>
+                                <option value="pasaporte" disabled="disabled">Pasaporte</option>
+                            </InputSelect>
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.datos.tipodocumento)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.numerodocumento)">
+                            <MatTextField @bind-Value="@usuariodto.datos.numerodocumento" Class="text-field-style disabled-field" Label="Numero de Documento"
+                                          Disabled="true"></MatTextField>
+
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.datos.numerodocumento)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.fechanacimiento)">
+                            <MatTextField @bind-Value="@usuariodto.datos.fechanacimiento" Class="text-field-style disabled-field" Label="Fecha Nacimiento"
+                                         Disabled="true" ></MatTextField>
+
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.datos.fechanacimiento)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.direccion)">
+                            <MatTextField @bind-Value="@usuariodto.datos.direccion" Class="text-field-style disabled-field" Label="Direccion"
+                                         Disabled="true"></MatTextField>
+
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.datos.direccion)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.email)">
+                            <MatTextField @bind-Value="@usuariodto.datos.email" Class="text-field-style disabled-field" Label="Email"
+                                        Disabled="true"></MatTextField>
+
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.datos.email)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
+                        <div class="field-container">
+                            <MatButton Icon="@MatBlazor.MatIconNames.Backspace"
+                                       Class="button-input-style mat-dark-c sub-but" 
+                                       @onclick="@(e => cerraDialogoDet())">Volver a la vista principal</MatButton>
+                        </div>
+                    </MatTab>
+                </MatTabGroup>
+            </EditForm>
+        }
+    </MatCardContent>
+</MatCard>
+@code{
+    //public Usuario2 usuario2 = new Usuario2();
+    private List<Rol> listaroles = new List<Rol>();
+    private EditContext _editContext;
+    private bool carga = true;
+
+    //[Parameter] public Usuario { get; set; }
+    [Parameter] public UsuarioDTO usuariodto { get; set; }
+    [Parameter] public EventCallback<bool> cerrarDialogoDetalle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        /*_editContext = new EditContext(usuariodto);*/
+        _editContext = new EditContext(usuariodto);
+        await getRoles();
+        //Aqui se hara peticion HTTP
+    }
+    public async Task cerraDialogoDet()
+    {
+        await cerrarDialogoDetalle.InvokeAsync(false);
+        StateHasChanged();
+    }
+
+    public async Task getRoles()
+    {
+        var httpResponse = await repository.Get<List<Rol>>("api/usuarios/roles");
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Ha ocurrido un error al traer roles");
+        }
+        else
+        {
+            listaroles = httpResponse.Response;
+        }
+    }
+    public void handleValidSubmit()
+    {
+
+
+    }
+
+    public void handleInvalidSubmit()
+    {
+
+    }
+
+
+}

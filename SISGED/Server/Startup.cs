@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using SISGED.Server.Hubs;
 using SISGED.Server.Services;
 using System;
 using System.Linq;
@@ -51,10 +52,17 @@ namespace SISGED.Server
 
             services.AddSingleton<PersonaService>();
             services.AddSingleton<UsuarioService>();
+            services.AddSingleton<RolesService>();
 
             services.AddMvc().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); ;
-            
+
+            /*--------*/
+            services.AddSignalR();
+            services.AddControllersWithViews();
+            /*--------*/
+
+
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -70,11 +78,11 @@ namespace SISGED.Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBlazorDebugging();
+                app.UseWebAssemblyDebugging();
             }
 
+            app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
-            app.UseClientSideBlazorFiles<Client.Program>();
 
             app.UseRouting();
             app.UseAuthentication();
@@ -84,7 +92,8 @@ namespace SISGED.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-                endpoints.MapFallbackToClientSideBlazor<Client.Program>("index.html");
+                endpoints.MapHub<ChatHubSample>("/chatHub");
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }

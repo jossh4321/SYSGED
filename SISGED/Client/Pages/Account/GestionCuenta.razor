@@ -1,0 +1,287 @@
+﻿@page "/GestionCuentas"
+@layout MainLayout
+@inject HttpClient Http
+@inject IRepository repository
+@inject IJSRuntime js
+@inject ISwalFireMessage swalfire
+<style>
+    /*div.cont *{
+        color: white;
+    }*/
+    .container-c {
+        display: inline-flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        margin: 10px auto;
+    }
+
+    tr.mdc-table-header-row {
+        background-color: #1a1a1a !important;
+    }
+
+    .table-header {
+        color: white;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: inline-block
+    }
+
+    tbody {
+        background-color: #4d4d4d !important;
+    }
+
+    .table-row {
+        color: #ccc;
+        font-family: sans-serif;
+        font-size: 14px;
+        display: inline-block
+    }
+
+    .mat-success-c {
+        color: green !important;
+        border: 1px solid green !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    .mat-dark-c {
+        color: black !important;
+        border: 1px solid black !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    /*#ffd11a*/
+    .mat-warning-c {
+        color: #ffd11a !important;
+        border: 1px solid #ffd11a !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-danger-c {
+        color: #ff3333 !important;
+        border: 1px solid #ff3333 !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-info-c {
+        color: #3333ff !important;
+        border: 1px solid #3333ff !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+        .mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover,.mat-dark-c:hover {
+            background-color: none !important;
+            transform: scale(1.07,1.07) !important;
+        }
+
+    .button-container {
+        display: block;
+        margin: 5px;
+        flex-grow:1;
+    }
+    .button-container-lvl{
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:row;
+    }
+
+    .mdc-table td:last-child {
+        width: unset !important;
+    }
+
+    .head-flex {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        color: white
+    }
+</style>
+
+<div class="container-c" style=" width: auto;">
+    <div class="head-flex">
+        <h1>Vista de Gestion de Cuenta</h1>
+        <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true"  Position="@MatTooltipPosition.Left">
+            <MatFAB Icon="@MatIconNames.Add" @onclick="@abrirDialogoRegistro"></MatFAB>
+        </MatTooltip>
+    </div>
+
+    <MatTable Items="@listausuarios" class="mat-elevation-z5" Style="width:auto">
+        <MatTableHeader>
+            <th>
+                <span class="table-header">Nombre Completo</span>
+            </th>
+            <th>
+                <span class="table-header">Numero de Documento</span>
+            </th>
+            <th>
+                <span class="table-header">Email</span>
+            </th>
+            <th>
+                <span class="table-header">Rol</span>
+            </th>
+            <th>
+                <span class="table-header">Estado</span>
+            </th>
+            <th>
+                <span class="table-header">Funciones</span>
+            </th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td>
+                <span class="table-row">@context.datos.nombre @context.datos.apellido</span>
+            </td>
+            <td>
+                <span class="table-row">@context.datos.numerodocumento</span>
+            </td>
+            <td>
+                <span class="table-row">@context.datos.email</span>
+            </td>
+            <td>
+                <span class="table-row">@context.roles[0].nombre</span>
+            </td>
+            <td>
+                <span class="table-row">@context.estado</span>
+            </td>
+            <td>
+                <div class="button-container-lvl">
+                    <div class="button-container">
+                        <MatButton Icon="@MatBlazor.MatIconNames.Edit"
+                                   Class="mat-warning-c" @onclick="@(e => abrirDialogoEdicion(context.id))" Style="width:100% !important">Modificar</MatButton>
+                    </div>
+
+                    <div class="button-container">
+                        <MatButton Icon="@MatBlazor.MatIconNames.Close"
+                                   Class="mat-danger-c" @onclick="@(e => abrirNotificacionEstado(context))" Style="width:100% !important">Bloquear</MatButton>
+                    </div>
+                    <div class="button-container">
+                        <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
+                                   Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context.id))" Style="width:100% !important">Detalle</MatButton>
+                    </div>
+                </div>
+                
+            </td>
+        </MatTableRow>
+    </MatTable>
+
+    <MatDialog @bind-IsOpen="@dialogoRegistro">
+        <RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" />
+    </MatDialog>
+    <MatDialog @bind-IsOpen="@dialogoEdicion">
+        <ModificarCuenta listausuarios="listausuarios" cerrarDialogoModificacion="cerrarDialogoModificacion" usuariodto="usuariodto" />
+    </MatDialog>
+    <MatDialog @bind-IsOpen="@dialogoDetalle">
+        <DetalleCuenta usuariodto="usuariodto" cerrarDialogoDetalle="cerrarDialogoDetalle"/>
+    </MatDialog>
+</div>
+
+@code {
+    public List<Usuario> listausuarios = new List<Usuario>();
+    public UsuarioDTO usuariodto = new UsuarioDTO();
+    private bool dialogoRegistro = false;
+    private bool dialogoEdicion = false;
+    private bool dialogoDetalle = false;
+    protected override async Task OnInitializedAsync()
+    {
+        var httpResponse = await repository.Get<List<Usuario>>("api/usuarios/todo");
+        if (!httpResponse.Error)
+        {
+            listausuarios = httpResponse.Response;
+            listausuarios.ForEach(x => Console.WriteLine(x.id));
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un error");
+        }
+    }
+    public async Task abrirDialogoEdicion(string id)
+    {
+        Usuario usuario = new Usuario();
+        Console.WriteLine("inicio");
+        var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={id}");
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Algo Mal");
+        }
+        else
+        {
+            usuario = httpResponse.Response;
+        }
+        usuariodto.usuario = usuario.usuario;
+        usuariodto.clave = usuario.clave;
+        usuariodto.datos = usuario.datos;
+        usuariodto.id = usuario.id;
+        usuariodto.estado = usuario.estado;
+        usuariodto.rolid = usuario.roles[0].id;
+        dialogoEdicion = true;
+
+    }
+    public async Task abrirDialogoDetalle(string id)
+    {
+        Usuario usuario = new Usuario();
+        Console.WriteLine("inicio");
+        var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={id}");
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Algo Mal");
+        }
+        else
+        {
+            usuario = httpResponse.Response;
+        }
+        usuariodto.usuario = usuario.usuario;
+        usuariodto.clave = usuario.clave;
+        usuariodto.datos = usuario.datos;
+        usuariodto.id = usuario.id;
+        usuariodto.estado = usuario.estado;
+        usuariodto.rolid = usuario.roles[0].id;
+        dialogoDetalle = true;
+    }
+
+
+
+    public async Task abrirNotificacionEstado(Usuario usuario)
+    {
+
+        bool estado;
+        estado = await js.InvokeAsync<bool>("SwalFireEliminacion", "Cambio de Estado de Cuenta",usuario.estado,usuario.usuario);
+        if (estado == true)
+        {
+            usuario = await cambiarEstadoUsuario(usuario);
+            string accion = usuario.estado == "activo" ? "Bloqueo" : "Desbloqueo";
+            listausuarios[listausuarios.FindIndex(ind => ind.id == usuario.id)] = usuario;
+
+            await swalfire.successMessage($"Se {accion} la cuenta del usuario {usuario.usuario} Satisfactoriamente");
+            StateHasChanged();
+        }
+        else
+        {
+            await swalfire.warningMessage($"Proceso de Modificacion de Estado Cancelado");
+        }
+    }
+
+    public async Task<Usuario> cambiarEstadoUsuario(Usuario usuario)
+    {
+        var httpResponse = await repository.Put<Usuario, Usuario>("api/usuarios/estado", usuario);
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Lo sentimos, Hubo un error de coneccion");
+        }
+        else
+        {
+            Console.WriteLine("Todo Bien en el cambio");
+        }
+        return httpResponse.Response;
+    }
+    public void abrirDialogoRegistro() => dialogoRegistro = true;
+
+    public void cerrarDialogoRegistro(bool cerrar) => dialogoRegistro = cerrar;
+    public void cerrarDialogoModificacion(bool cerrar) => dialogoEdicion = cerrar;
+    public void cerrarDialogoDetalle(bool cerrar) => dialogoDetalle = cerrar;
+}

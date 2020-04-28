@@ -1,0 +1,192 @@
+﻿
+@page "/chat"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "admin")]
+@layout MainLayout
+<style>
+    .tittle-style {
+        margin-top: 7px;
+        margin-left: 10px;
+    }
+
+    .demo-mat-card {
+        width: 550px;
+        background-color: white;
+    }
+
+    .form-style {
+        margin-left: 20px;
+        margin-top: 10px;
+        width: 500px;
+        padding: 10px;
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+        display: flex;
+    }
+
+    div.mdc-text-field.sp {
+        flex-basis: 100%
+    }
+
+    .items {
+        display: block;
+        flex-grow: 1;
+        margin: 2px;
+    }
+
+    .other {
+        justify-content: flex-start;
+    }
+
+    .myself {
+        justify-content: flex-end;
+    }
+    .myself div.mat-card {
+            background-color: #1aff66 !important;
+    }
+</style>
+<MatCard class="demo-mat-card">
+
+    <MatCardContent>
+        <MatHeadline5>Chat Abierto</MatHeadline5>
+        <div class="form-style">
+            <div class="form-group">
+                <MatTextField Class="sp" Label="Nombre de Usuario" @bind-Value="@nombredeusuario" Disabled="@disabled"
+                              Style="display:block" />
+            </div>
+            <div style="display:flex;justify-content:space-around;">
+
+                <MatButton Class="items"
+                           style="background-color:#1aff66;color:white;border:1px solid #00b33c;" disabled="@disabled" @onclick="connect">Conectar</MatButton>
+
+
+                <MatButton Class="items"
+                           style="background-color: #ff4d4d;color:white;border:1px solid #ff1a1a" disabled="@(!IsConnected)" @onclick="disconnect">Desconectar</MatButton>
+            </div>
+        </div>
+
+        @if (disabled == true)
+        {
+            <MatCard>
+                <MatCardContent>
+
+                    <div class="form-style">
+                        <div class="form-group" style="display:flex">
+                            <MatTextField Class="items" Label="Mensaje" @bind-Value="@_messageInput" />
+                            <MatButton Class="items" @onclick="Send" Disabled="@(!IsConnected)">Enviar</MatButton>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div style="margin:12px;background-color:#bfbfbf">
+                        <h3 style="text-align:center;">Has entrado al de Texto /chatHub</h3>
+                        @foreach (Message message in _messages)
+                        {
+                            <div style="display:flex;margin:10px"
+                                 class="@(message.sender.Equals(nombredeusuario)?"myself":"other")">
+                                <MatCard Style="background-color:white; border:1px solid #ccc;padding:12px;">
+                                    <MatCardContent>
+                                        @message.message
+                                    </MatCardContent>
+                                </MatCard>
+                            </div>
+                        }
+                    </div>
+
+                </MatCardContent>
+            </MatCard>
+
+        }
+    </MatCardContent>
+</MatCard>
+
+@code {
+
+    public string nombredeusuario = "";
+    public bool disabled = false;
+    public class Message
+    {
+        public string message { get; set; }
+        public string connectionId { get; set; }
+        public string sender { get; set; }
+    }
+
+
+    private HubConnection _hubConnection;
+    //private List<string> _messages = new List<string>();
+    private List<Message> _messages = new List<Message>();
+    private string _messageInput;
+
+    public async Task connect()
+    {
+
+        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+            {
+                var encodedMsg = $"{user}: {message}";
+                Message chatMessage = new Message() { message = encodedMsg,
+                    connectionId = _hubConnection.ConnectionId,
+                    sender=user};
+                _messages.Add(chatMessage);
+                StateHasChanged();
+            });
+
+        _hubConnection.On<string>("SomeoneJoinRoom", (user) =>
+            {
+                var someoneJoinMessage = $"el Usuario {user}, ha ingresado al Chat";
+                Message chatMessage = new Message() { 
+                    message = someoneJoinMessage, 
+                    connectionId = _hubConnection.ConnectionId,
+                    sender="system"};
+                _messages.Add(chatMessage);
+                StateHasChanged();
+            });
+        _hubConnection.On<string>("SomeoneLeftRoom", (user) =>
+            {
+                var someoneLeftMessage = $"el Usuario {user}, ha salido del Chat";
+                Message chatMessage = new Message() { 
+                    message = someoneLeftMessage, 
+                    connectionId = _hubConnection.ConnectionId,
+                    sender="system"};
+                _messages.Add(chatMessage);
+                StateHasChanged();
+            });
+        await _hubConnection.StartAsync();
+        await ConnectToRoom();
+        disabled = true;
+    }
+
+    public async Task disconnect()
+    {
+        await DisconnectToRoom();
+        await _hubConnection.DisposeAsync();
+        disabled = false;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chatHub"))
+            .Build();
+
+        /*_hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            _messages.Add(encodedMsg);
+            StateHasChanged();
+        });
+
+        await _hubConnection.StartAsync();*/
+    }
+    Task DisconnectToRoom() =>
+        _hubConnection.SendAsync("DisconnectToRoom", _hubConnection.ConnectionId, nombredeusuario);
+    Task ConnectToRoom() =>
+        _hubConnection.SendAsync("ConnectToRoom", _hubConnection.ConnectionId, nombredeusuario);
+    Task Send() =>
+        _hubConnection.SendAsync("SendMessage", nombredeusuario, _messageInput);
+
+    public bool IsConnected =>
+        _hubConnection.State == HubConnectionState.Connected;
+}

@@ -1,0 +1,124 @@
+﻿@page "/valsample"
+@layout MainLayout
+<style>
+    /*PARA CREAR*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto{
+        display: none;
+    }
+
+    .correcto {
+        color: green;
+        font-family: sans-serif;
+        font-size: 12px;
+        display: inline;
+    }
+
+    .incorrecto {
+        color: red;
+        font-family: sans-serif;
+        font-size: 12px;
+        display: inline;
+    }
+</style>
+<MatCard Style="width:400px">
+    <MatCardContent  Class="mat-card-form-samble">
+        <MatSubtitle1>Ejemplo de formulario con validaciones por cada Input [OnKey]</MatSubtitle1>
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+            <DataAnnotationsValidator />
+            <div class="input-group input-group-2 @CurrentEditContext.FieldCssClass( () => _userlogin.username)">
+
+                <MatTextField @ref="loginUserName" @bind-Value="_userlogin.username" Label="NOMBRE DE USUARIO"
+                              @oninput='@(e => KeyUp(e, "username",_userlogin.username))' Style="display:block"></MatTextField>
+                <div class="incorrecto">
+                    <MatIcon Icon="@MatIconNames.Error"></MatIcon>
+                    <ValidationMessage For="@(() => _userlogin.username)"/>
+                </div>
+                <div class="correcto">
+                    <MatIcon Icon="@MatIconNames.Check"></MatIcon>
+                    <span>Correcto</span>
+                </div>
+
+                <!--ValidationMessage For="(() => _userlogin.username)" /-->
+            </div>
+            <div class="input-group input-group-2 @CurrentEditContext.FieldCssClass( () => _userlogin.password)">
+
+                <MatTextField @bind-Value="_userlogin.password" Label="CONTRASEÑA"
+                              @oninput='@(e => KeyUp(e, "password",_userlogin.password))' Style="display:block"></MatTextField>
+                <div class="incorrecto">
+                    <MatIcon Icon="@MatIconNames.Error"></MatIcon>
+                    <ValidationMessage For="@(() => _userlogin.password)" />
+                </div>
+                <div class="correcto">
+                    <MatIcon Icon="@MatIconNames.Check"></MatIcon>
+                    <span>Correcto</span>
+                </div>
+            </div>
+
+            <!--Disabled="OkayDisabled"-->
+            <MatButton type="submit" Style="display:block;width:inherit;margin:auto">INGRESAR </MatButton>
+            <!--div class="test-style"></!--div-->
+        </EditForm>
+    </MatCardContent>
+</MatCard>
+
+@code {
+    private UserLogin _userlogin = new UserLogin();
+    private EditContext _editContext;
+    private MatTextField<string> loginUserName { get; set; }
+
+
+
+    protected bool OkayDisabled { get; set; } = true;
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_userlogin);
+        //_editContext.OnFieldChanged += EditContext_OnFieldChanged;
+        //base.OnInitialized();
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // base.OnAfterRender(firstRender);
+        /*if (!firstRender)
+        {
+            SetOkDisabledStatus();
+        }*/
+    }
+    /*private void EditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        SetOkDisabledStatus();
+    }*/
+    void KeyUp(ChangeEventArgs e, string memberName, string val)
+    {
+        var property = _userlogin.GetType().GetProperty(memberName);
+        property.SetValue(_userlogin, e.Value.ToString());
+        Console.WriteLine(e.Value.ToString());
+        var id = _editContext.Field(memberName);
+        _editContext.NotifyFieldChanged(id);
+    }
+    /*private void SetOkDisabledStatus()
+    {
+    }*/
+    public void handleValidSubmit()
+    {
+        _editContext.Validate();
+        //loginUserName.Class = "valid-input";
+        Console.WriteLine("Todo Bien");
+    }
+    public void handleInvalidSubmit()
+    {
+        /*_editContext.Validate();
+        System.Linq.Expressions.Expression<Func<string>> filter2 = persona => persona.Equals(persona.id);
+        _editContext.FieldCssClass<string>(filter2);*/
+        Console.WriteLine("Ocurrio un Error");
+    }
+}

@@ -1,4 +1,8 @@
-﻿<MatCard Style="width:310px;background-color:rgb(68, 68, 68);padding-top:16px;">
+﻿@inject IRepository repositorio
+@inject NavigationManager navigationManager
+@inject ILoginService loginservice
+@using SISGED.Client.Auth
+<MatCard Style="width:310px;background-color:rgb(68, 68, 68);padding-top:16px;">
     <div style="display:block;margin-left:16px;padding:8px,16px;">
         <div style="height: 32px;width: 32px;margin-right:16px;display:inline-block">
             <img class="profile-img" style="display:block" src="images/default_profile_pic.jpg" />
@@ -26,12 +30,20 @@
         <MatIcon Icon="@MatIconNames.Settings" Class="icons-style-user-menu"></MatIcon>
         <span Class="text-user-menu">Opciones y Configuraciones</span>
     </MatListItem>
-    <MatListItem Class="profile-item-style exit">
+    <MatListItem Class="profile-item-style exit" @onclick="salir">
         <MatIcon Icon="@MatIconNames.Exit_to_app" Class="icons-style-user-menu"></MatIcon>
         <span Class="text-user-menu">Salir</span>
     </MatListItem>
 </MatCard>
 
 @code {
+    [Parameter] public string valueclass { get; set; }
+    public async Task salir()
+    {
+        valueclass = "non-show";
+        await loginservice.Logout();
+        navigationManager.NavigateTo("");
+    }
+    
 
 }

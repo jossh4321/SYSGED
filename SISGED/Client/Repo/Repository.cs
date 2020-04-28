@@ -31,6 +31,10 @@ namespace SISGED.Client.Repo
                 return new HttpResponseWrapper<T>(default, true, responseHttp);
             }
         }
+      
+
+
+
         public async Task<HttpResponseWrapper<object>> Post<T>(string url, T send)
         {
             //serialize POCO object as a JSON Object

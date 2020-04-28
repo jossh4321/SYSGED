@@ -129,8 +129,11 @@ app {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.valid.modified:not([type=checkbox]) {
+/*.valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
+}*/
+.valid.modified:not([type=checkbox]) {
+    outline: none;
 }
 
 .invalid {
@@ -575,6 +578,7 @@ app {
         min-width:160.7px
         
     }
+    /****************************************/
     div.bar-menu-user-shrink:hover {
         background-color: #000000;
     }
@@ -620,4 +624,74 @@ app {
         background-color: #000000;
     }
 
+div.non-show{
+    display:none !important;
+}
+div.mdc-drawer__content:focus{
+    outline:none !important;
+}
 
+
+/*input styles*/
+
+
+.test-style{
+    width:200px;
+    height:200px;
+    background-color:red;
+}
+
+.input-group > div.mdc-text-field > input.invalid {
+    border: 2px solid #ff1a1a !important;
+    /*background-color: #ff8080 !important;*/
+}
+.input-group > div.mdc-text-field > input.valid.modified {
+    /*background-color: #66ff33 !important;*/
+    border: 2px solid rgb(0, 153, 0) !important;
+    /*background-color: #66ff66 !important;*/
+}
+
+
+.input-group > div.mdc-text-field > input:not(.modified) {
+    /*background-color: #66ff33 !important;*/
+    border: 2px solid white;
+    background-color: white;
+}
+.input-group-2 {
+    outline: none;
+    align-items: normal;
+    display: inline-block;
+    margin-bottom:30px
+}
+.mat-card-form-samble {
+    padding: 20px;
+    background-color: #ccccb3;
+}
+
+
+.validation-message{
+    display:inline;
+}
+
+div.invalid .correcto {
+    display: none;
+}
+
+div.valid .incorrecto {
+    display: none;
+}
+.correcto {
+    color: green;
+    font-family: sans-serif;
+    font-size: 12px;
+    display: inline;
+}
+.incorrecto {
+    color: red;
+    font-family: sans-serif;
+    font-size: 12px;
+    display:inline;
+}
+.render-fragment{
+    display:flex;
+}

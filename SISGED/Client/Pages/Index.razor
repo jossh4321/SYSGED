@@ -1,9 +1,15 @@
 ﻿@page "/"
 @inject HttpClient Http
 @inject IRepository  repository
-@attribute [Authorize(Roles="admin")]
+<!--attribute [Authorize(Roles="admin")]-->
+@attribute [Authorize(Roles = "admin")]
+@layout MainLayout
+<style>
+    * {
+        color: white
+    }
+</style>
 <h1>Hello, world!</h1>
-
 Welcome to your new app.
 <MatAutocompleteList Items="@options" TItem="string" Label="Pick one"></MatAutocompleteList>
 <button @onclick="guardarPersona">prueba de POST</button>
@@ -48,7 +54,6 @@ Welcome to your new app.
         </table>
     </HayRegistrosCompleto>
 </ListadoGenerico>
-<SurveyPrompt Title="How is Blazor working for you?" />
 @code{
     List<Persona> listapersonas = new List<Persona>();
     List<Usuario> listausuarios = new List<Usuario>();
