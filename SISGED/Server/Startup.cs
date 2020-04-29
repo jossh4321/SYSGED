@@ -1,3 +1,4 @@
+using AutoMapper;
 using EmbeddedBlazorContent;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using SISGED.Server.Helpers;
 using SISGED.Server.Hubs;
 using SISGED.Server.Services;
 using System;
@@ -27,9 +29,12 @@ namespace SISGED.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+
             services.Configure<SysgedDatabaseSettings>(
                 configuration.GetSection(nameof(SysgedDatabaseSettings)));
+            services.AddAutoMapper(typeof(Startup));
 
+            services.AddScoped<IFileStorage, AzureFileStorage>();
             services.AddSingleton<ISysgedDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<SysgedDatabaseSettings>>().Value);
 

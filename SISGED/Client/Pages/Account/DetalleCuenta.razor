@@ -91,7 +91,6 @@
         {
             <MatHeadline6 Style="text-align:center">
                 Detalle del Usuario
-
             </MatHeadline6>
 
             <EditForm EditContext="@_editContext" Context="CurrentEditContext"
@@ -245,6 +244,9 @@
                             </div>
                         </div>
                         <div class="field-container">
+                            <InputImg  ImagenTemporal="@(usuariodto.datos.imagen)" />
+                        </div>
+                        <div class="field-container">
                             <MatButton Icon="@MatBlazor.MatIconNames.Backspace"
                                        Class="button-input-style mat-dark-c sub-but" 
                                        @onclick="@(e => cerraDialogoDet())">Volver a la vista principal</MatButton>
@@ -267,11 +269,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-        /*_editContext = new EditContext(usuariodto);*/
         _editContext = new EditContext(usuariodto);
         await getRoles();
-        //Aqui se hara peticion HTTP
     }
     public async Task cerraDialogoDet()
     {

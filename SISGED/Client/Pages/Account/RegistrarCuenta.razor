@@ -239,7 +239,10 @@
                             </div>
                         </div>
                         <div class="field-container">
-                            <MatButton type="submit" 
+                            <InputImg Label="Foto" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@imagenTemporal"></InputImg>
+                        </div>
+                        <div class="field-container">
+                            <MatButton type="submit"
                                        Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                        Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
                         </div>
@@ -263,11 +266,19 @@
     // [Parameter] public bool dialogoRegistro { get; set; }
     [Parameter] public List<Usuario> listausuarios { get; set; }
     [Parameter] public EventCallback<bool> cerrarDialogoRegistro { get; set; }
+    private string imagenTemporal { get; set; } = null;
+
 
     protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(usuariodto);
         await getRoles();
+        imagenTemporal = "";
+        if (!string.IsNullOrWhiteSpace(usuariodto.datos.imagen))
+        {
+            imagenTemporal = usuariodto.datos.imagen;
+            usuariodto.datos.imagen = null;
+        }
         //Aqui se hara peticion HTTP
     }
     public async Task getRoles()
@@ -282,6 +293,10 @@
             listaroles = httpResponse.Response;
 
         }
+    }
+    public void ImagenSeleccionada(string image)
+    {
+        usuariodto.datos.imagen = image;
     }
 
     void doSomething(ChangeEventArgs e)

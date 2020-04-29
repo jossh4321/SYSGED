@@ -239,8 +239,11 @@
                             </div>
                         </div>
                         <div class="field-container">
+                            <InputImg Label="Foto" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@(gestionCuenta.imagenTemporalMod)"/>
+                        </div>
+                        <div class="field-container">
                             <MatButton type="submit"
-                                        Icon="@MatBlazor.MatIconNames.Done_all"
+                                       Icon="@MatBlazor.MatIconNames.Done_all"
                                        Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
                         </div>
                     </MatTab>
@@ -251,6 +254,7 @@
 </MatCard>
 @code{
     //public Usuario2 usuario2 = new Usuario2();
+    [CascadingParameter] GestionCuenta gestionCuenta { get; set; }
     private List<Rol> listaroles = new List<Rol>();
     private EditContext _editContext;
     private bool carga = true;
@@ -266,22 +270,21 @@
         /*_editContext = new EditContext(usuariodto);*/
         _editContext = new EditContext(usuariodto);
         await getRoles();
-        //Aqui se hara peticion HTTP
-    }
-        protected override void OnAfterRender(bool firstRender)
+        /*if (!string.IsNullOrWhiteSpace(usuariodto.datos.imagen))
         {
-            
-        }
-
-        /*protected override void OnAfterRender()
-        {
-            _editContext = new EditContext(usuariodto);
-            _editContext.MarkAsUnmodified();
-            _editContext.NotifyValidationStateChanged();
-            StateHasChanged();
+            imagenTemporalMod = usuariodto.datos.imagen;
+            usuariodto.datos.imagen = null;
         }*/
+    }
 
-        public async Task getRoles()
+    public void ImagenSeleccionada(string image)
+    {
+        usuariodto.datos.imagen = image;
+    }
+
+
+
+    public async Task getRoles()
     {
         var httpResponse = await repository.Get<List<Rol>>("api/usuarios/roles");
         if (httpResponse.Error)
@@ -293,8 +296,6 @@
             listaroles = httpResponse.Response;
         }
     }
-
-
 
     void doSomething(ChangeEventArgs e)
     {
@@ -313,7 +314,7 @@
     }
     public async Task handleValidSubmit()
     {
-        
+
         Usuario usuario = new Usuario();
         usuario.id = usuariodto.id;
         usuario.usuario = usuariodto.usuario;
@@ -364,17 +365,6 @@
         Console.WriteLine("se retorno aqui");
         return info;
     }
-    /*public List<ItemSelect> itemset = new List<ItemSelect>
-    {
-        new ItemSelect(){ label="D.N.I", value="DNI"},
-        new ItemSelect(){ label="PASAPORTE", value="PASAPORTE"},
-        new ItemSelect(){ label="CARNET DE EXTRANJERIA", value="CE"}
-    };
-
-    public class ItemSelect
-    {
-        public string label { get; set; }
-        public string value { get; set; }
-    }*/
+   
 
 }

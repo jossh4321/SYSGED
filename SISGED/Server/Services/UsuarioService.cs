@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using SISGED.Server.Helpers;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
 using System;
@@ -39,12 +40,12 @@ namespace SISGED.Server.Services
             return usuario;
         }
 
-
         public Usuario Post(Usuario usuario)
-        {
+        { 
             _usuarios.InsertOne(usuario);
             return usuario;
         }
+
         public Usuario GetByUserNameAndPass(UserInfo userinfo)
         {
             var result = _usuarios.Find(usuario => usuario.usuario == userinfo.usuario && usuario.clave == userinfo.clave).FirstOrDefault();

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using SISGED.Server.Helpers;
 using SISGED.Server.Services;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
@@ -15,11 +17,18 @@ namespace SISGED.Server.Controllers
     {
         private readonly UsuarioService _usuarioservice;
         private readonly RolesService _roleservice;
+        private readonly IFileStorage _fileStorage;
+        private readonly IMapper _mapper;
+        
 
-        public UsuariosController(UsuarioService usuarioservice, RolesService roleservice)
+        public UsuariosController(UsuarioService usuarioservice, 
+            RolesService roleservice, IFileStorage fileStorage,
+            IMapper mapper)
         {
             _usuarioservice = usuarioservice;
             _roleservice = roleservice;
+            _fileStorage = fileStorage;
+            _mapper = mapper;
         }
         [HttpGet("todo")]
         public ActionResult<List<Usuario>> Get()
@@ -27,9 +36,14 @@ namespace SISGED.Server.Controllers
             return _usuarioservice.Get();
         }
         [HttpPost]
-        public ActionResult<Usuario> Post(Usuario usuario)
+        public async Task<ActionResult<Usuario>> Post(Usuario usuario)
         {
-            return _usuarioservice.Post(usuario);
+            if (!string.IsNullOrWhiteSpace(usuario.datos.imagen))
+            {
+               var profileimg = Convert.FromBase64String(usuario.datos.imagen);
+               usuario.datos.imagen = await _fileStorage.saveFile(profileimg,"jpg","usuarios");
+            }
+            return  _usuarioservice.Post(usuario);
         }
         [HttpGet("roles")]
         public ActionResult<List<Rol>> GetRoles()
@@ -46,12 +60,22 @@ namespace SISGED.Server.Controllers
             return usuario;
         }
         [HttpPut]
-        public ActionResult<Usuario> Put(Usuario usuario)
+        public async Task<ActionResult<Usuario>> Put(Usuario usuario)
         {
+            Usuario usuariodb = new Usuario();
+            usuariodb = _usuarioservice.GetById(usuario.id);
+            string img = usuariodb.datos.imagen;
+            usuariodb = _mapper.Map(usuario, usuariodb);
+            usuariodb.datos.imagen = img;
+            if (!string.IsNullOrWhiteSpace(usuario.datos.imagen))
+            {
+                var profileimg = Convert.FromBase64String(usuario.datos.imagen);
+                usuario.datos.imagen = await _fileStorage.editFile(
+                    profileimg, "jpg", "usuarios", usuariodb.datos.imagen);
+            }
             usuario = _usuarioservice.Put(usuario);
             return usuario;
         }
-
         [HttpPut("estado")]
         public ActionResult<Usuario> ModifyState(Usuario usuario)
         {

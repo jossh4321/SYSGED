@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using SISGED.Client.Auth;
 using SISGED.Shared.Validators;
 using FluentValidation;
+using Blazor.FileReader;
 
 namespace SISGED.Client
 {
@@ -32,6 +33,7 @@ namespace SISGED.Client
             services.AddOptions();
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<ISwalFireMessage, SwalFireMessage>();
+            services.AddFileReaderService(options => options.InitializeOnFirstCall = true);
             services.AddValidatorsFromAssemblyContaining<DatosValidator>();
             services.AddValidatorsFromAssemblyContaining<Usuario2Validator>();
             services.AddAuthorizationCore();

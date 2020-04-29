@@ -44,6 +44,7 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+
     .mat-dark-c {
         color: black !important;
         border: 1px solid black !important;
@@ -76,7 +77,7 @@
         transition: all 300ms !important;
     }
 
-        .mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover,.mat-dark-c:hover {
+        .mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover, .mat-dark-c:hover {
             background-color: none !important;
             transform: scale(1.07,1.07) !important;
         }
@@ -84,12 +85,13 @@
     .button-container {
         display: block;
         margin: 5px;
-        flex-grow:1;
+        flex-grow: 1;
     }
-    .button-container-lvl{
-        display:flex;
-        flex-wrap:wrap;
-        flex-direction:row;
+
+    .button-container-lvl {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
     }
 
     .mdc-table td:last-child {
@@ -102,12 +104,20 @@
         justify-content: space-between;
         color: white
     }
+
+    .pruebita {
+        width: 300px;
+        height: 200px;
+        border: 1px solid black;
+    }
 </style>
 
 <div class="container-c" style=" width: auto;">
+
+
     <div class="head-flex">
         <h1>Vista de Gestion de Cuenta</h1>
-        <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true"  Position="@MatTooltipPosition.Left">
+        <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true" Position="@MatTooltipPosition.Left">
             <MatFAB Icon="@MatIconNames.Add" @onclick="@abrirDialogoRegistro"></MatFAB>
         </MatTooltip>
     </div>
@@ -165,7 +175,7 @@
                                    Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context.id))" Style="width:100% !important">Detalle</MatButton>
                     </div>
                 </div>
-                
+
             </td>
         </MatTableRow>
     </MatTable>
@@ -174,10 +184,16 @@
         <RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" />
     </MatDialog>
     <MatDialog @bind-IsOpen="@dialogoEdicion">
-        <ModificarCuenta listausuarios="listausuarios" cerrarDialogoModificacion="cerrarDialogoModificacion" usuariodto="usuariodto" />
+        <CascadingValue Value="this">
+            <ModificarCuenta listausuarios="listausuarios"
+                             cerrarDialogoModificacion="cerrarDialogoModificacion"
+                             usuariodto="usuariodto" />
+        </CascadingValue>
     </MatDialog>
     <MatDialog @bind-IsOpen="@dialogoDetalle">
-        <DetalleCuenta usuariodto="usuariodto" cerrarDialogoDetalle="cerrarDialogoDetalle"/>
+        <CascadingValue Value="this">
+            <DetalleCuenta usuariodto="usuariodto" cerrarDialogoDetalle="cerrarDialogoDetalle" />
+        </CascadingValue>
     </MatDialog>
 </div>
 
@@ -187,6 +203,7 @@
     private bool dialogoRegistro = false;
     private bool dialogoEdicion = false;
     private bool dialogoDetalle = false;
+    public string imagenTemporalMod { get; set; }
     protected override async Task OnInitializedAsync()
     {
         var httpResponse = await repository.Get<List<Usuario>>("api/usuarios/todo");
@@ -199,7 +216,11 @@
         {
             Console.WriteLine("Ocurrio un error");
         }
+
+        /*-------------------------------------*/
+
     }
+
     public async Task abrirDialogoEdicion(string id)
     {
         Usuario usuario = new Usuario();
@@ -212,7 +233,10 @@
         else
         {
             usuario = httpResponse.Response;
+
         }
+        imagenTemporalMod = usuario.datos.imagen + "";
+        usuario.datos.imagen = null;
         usuariodto.usuario = usuario.usuario;
         usuariodto.clave = usuario.clave;
         usuariodto.datos = usuario.datos;
@@ -220,6 +244,7 @@
         usuariodto.estado = usuario.estado;
         usuariodto.rolid = usuario.roles[0].id;
         dialogoEdicion = true;
+        StateHasChanged();
 
     }
     public async Task abrirDialogoDetalle(string id)
@@ -250,7 +275,7 @@
     {
 
         bool estado;
-        estado = await js.InvokeAsync<bool>("SwalFireEliminacion", "Cambio de Estado de Cuenta",usuario.estado,usuario.usuario);
+        estado = await js.InvokeAsync<bool>("SwalFireEliminacion", "Cambio de Estado de Cuenta", usuario.estado, usuario.usuario);
         if (estado == true)
         {
             usuario = await cambiarEstadoUsuario(usuario);
