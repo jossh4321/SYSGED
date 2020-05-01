@@ -204,6 +204,7 @@
     private bool dialogoEdicion = false;
     private bool dialogoDetalle = false;
     public string imagenTemporalMod { get; set; }
+    public bool rendermod { get; set;}=false;
     protected override async Task OnInitializedAsync()
     {
         var httpResponse = await repository.Get<List<Usuario>>("api/usuarios/todo");
@@ -216,9 +217,6 @@
         {
             Console.WriteLine("Ocurrio un error");
         }
-
-        /*-------------------------------------*/
-
     }
 
     public async Task abrirDialogoEdicion(string id)
@@ -243,9 +241,9 @@
         usuariodto.id = usuario.id;
         usuariodto.estado = usuario.estado;
         usuariodto.rolid = usuario.roles[0].id;
-        dialogoEdicion = true;
+        rendermod = true;
         StateHasChanged();
-
+        dialogoEdicion = true;
     }
     public async Task abrirDialogoDetalle(string id)
     {
@@ -267,6 +265,7 @@
         usuariodto.estado = usuario.estado;
         usuariodto.rolid = usuario.roles[0].id;
         dialogoDetalle = true;
+        
     }
 
 

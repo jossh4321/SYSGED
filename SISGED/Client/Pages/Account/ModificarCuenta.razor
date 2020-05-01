@@ -63,24 +63,20 @@
         flex-wrap: wrap;
         justify-content: space-around
     }
+    div.mdc-paginator-container{
+        color:white !important;
+    }
+    div.mdc-paginator-range-buttons button i{
+        color:white !important;
+    }
 </style>
 <MatCard>
     <MatCardContent Class="card-content-padding">
 
 
-        @if (carga == false)
+        @if (carga == true)
         {
-
-            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-
+            <LoaderContent accion="Actualizacion de Usuario"></LoaderContent>
         }
         else
         {
@@ -239,7 +235,7 @@
                             </div>
                         </div>
                         <div class="field-container">
-                            <InputImg Label="Foto" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@(gestionCuenta.imagenTemporalMod)"/>
+                            <InputImgMod  Label="Foto" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@(gestionCuenta.imagenTemporalMod)"/>
                         </div>
                         <div class="field-container">
                             <MatButton type="submit"
@@ -257,7 +253,7 @@
     [CascadingParameter] GestionCuenta gestionCuenta { get; set; }
     private List<Rol> listaroles = new List<Rol>();
     private EditContext _editContext;
-    private bool carga = true;
+    private bool carga = false;
 
     //[Parameter] public Usuario { get; set; }
     [Parameter] public UsuarioDTO usuariodto { get; set; }
@@ -281,8 +277,6 @@
     {
         usuariodto.datos.imagen = image;
     }
-
-
 
     public async Task getRoles()
     {
@@ -312,9 +306,28 @@
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
     }
+
+    /* public override async Task SetParametersAsync(ParameterView parameters)
+     {
+        //parameters.
+
+         //await base.SetParametersAsync(parameters);
+     }*/
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (gestionCuenta.rendermod == true)
+        {
+            Console.WriteLine("me renderize en modificacion con rendermod");
+            _editContext = new EditContext(usuariodto);
+            gestionCuenta.rendermod = false;
+            StateHasChanged();
+        }
+    }
+
+
     public async Task handleValidSubmit()
     {
-
+        carga = true;
         Usuario usuario = new Usuario();
         usuario.id = usuariodto.id;
         usuario.usuario = usuariodto.usuario;
@@ -332,15 +345,17 @@
         {
             listausuarios[listausuarios.FindIndex(ind => ind.id == usuario.id)] = usuario;
             //listausuarios.Add(httpResponse.Response);
-            await cerrarDialogoModificacion.InvokeAsync(false);
+
             /*usuariodto = new UsuarioDTO();
             _editContext = new EditContext(usuariodto);*/
             _editContext.MarkAsUnmodified();
             _editContext.NotifyValidationStateChanged();
             StateHasChanged();
+            carga = false;
+            await cerrarDialogoModificacion.InvokeAsync(false);
             Console.WriteLine("Todo Bien");
         }
-        //swalfire.successMessage("Usuario Registrado Correctamente");
+        await swalfire.successMessage("Usuario Registrado Correctamente");
     }
 
     public void handleInvalidSubmit()
@@ -365,6 +380,6 @@
         Console.WriteLine("se retorno aqui");
         return info;
     }
-   
+
 
 }

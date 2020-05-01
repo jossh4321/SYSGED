@@ -65,13 +65,17 @@ namespace SISGED.Server.Controllers
             Usuario usuariodb = new Usuario();
             usuariodb = _usuarioservice.GetById(usuario.id);
             string img = usuariodb.datos.imagen;
-            usuariodb = _mapper.Map(usuario, usuariodb);
+            //usuariodb = _mapper.Map(usuario, usuariodb);
             usuariodb.datos.imagen = img;
             if (!string.IsNullOrWhiteSpace(usuario.datos.imagen))
             {
                 var profileimg = Convert.FromBase64String(usuario.datos.imagen);
                 usuario.datos.imagen = await _fileStorage.editFile(
                     profileimg, "jpg", "usuarios", usuariodb.datos.imagen);
+            }
+            else
+            {
+                usuario.datos.imagen = img;
             }
             usuario = _usuarioservice.Put(usuario);
             return usuario;

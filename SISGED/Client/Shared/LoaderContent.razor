@@ -1,0 +1,51 @@
+﻿<style>
+    .loader-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around
+    }
+    .loader {
+        height: 300px !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between
+    }
+    .titulo {
+        font-family: sans-serif;
+        margin-top: 10px;
+    }
+    .footer-loader {
+        background: #ccc;
+        height: 30px;
+        padding-top: 3px;
+        text-align: center;
+        border-radius: 5px;
+        border: 1px solid darkblue;
+    }
+</style>
+<div class="loader">
+    <div>
+        <h2 class="titulo">Procesando la solicitud...</h2>
+        <p> Porfavor espere, pronto completaremos la accion</p>
+    </div>
+    <div class="loader-container">
+        <div class="spinner-border" style="width: 4rem; height: 4rem; color:red" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border" style="width: 4rem; height: 4rem;color:yellow" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="spinner-border" style="width: 4rem; height: 4rem;color:green" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <div class="footer-loader">
+        <span style="display:inline-block">Ejecutando la accion: </span>
+        <span style="display:inline-block;color:blue">@accion</span>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string accion { get; set; }
+}

@@ -57,30 +57,13 @@
         width: 100%;
     }
 
-    .loader-container {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-around
-    }
 </style>
 <MatCard>
     <MatCardContent Class="card-content-padding">
 
-
-        @if (carga == false)
+        @if (carga == true)
         {
-
-            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-
+        <LoaderContent accion="Registro de Usuarios"></LoaderContent>
         }
         else
         {
@@ -261,7 +244,7 @@
     private UsuarioDTO usuariodto = new UsuarioDTO();
     private List<Rol> listaroles = new List<Rol>();
     private EditContext _editContext;
-    private bool carga = true;
+    private bool carga = false;
 
     // [Parameter] public bool dialogoRegistro { get; set; }
     [Parameter] public List<Usuario> listausuarios { get; set; }
@@ -316,6 +299,7 @@
     }
     public async Task handleValidSubmit()
     {
+        carga = true;
         Console.WriteLine("Todo Bien");
         Usuario usuario = new Usuario();
         usuario.usuario = usuariodto.usuario;
@@ -333,15 +317,17 @@
         {
             listausuarios.Add(httpResponse.Response);
 
-            await cerrarDialogoRegistro.InvokeAsync(false);
+
             usuariodto = new UsuarioDTO();
             _editContext = new EditContext(usuariodto);
             _editContext.MarkAsUnmodified();
             _editContext.NotifyValidationStateChanged();
+
             StateHasChanged();
-            Console.WriteLine("Todo Bien");
+            carga = false;
+            await cerrarDialogoRegistro.InvokeAsync(false);
         }
-        //swalfire.successMessage("Usuario Registrado Correctamente");
+        await swalfire.successMessage("Usuario Registrado Correctamente");
     }
 
     public void handleInvalidSubmit()
