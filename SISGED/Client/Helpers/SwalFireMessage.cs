@@ -17,7 +17,8 @@ namespace SISGED.Client.Helpers
 
         public async Task errorMessage(string mensaje)
         {
-            await showMessage("Error", mensaje, "error");
+            //
+           await showMessage("Error", mensaje, "error");
         }
 
         public async Task successMessage(string mensaje)
