@@ -28,17 +28,6 @@
     <script src="libs/mdl/material.min.js "></script>
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js "></script>
     <script src="js/shared.js"></script>
-    <script>
-        var focusedelement = document.querySelector("div.mdc-dialog__surface");
-        var modalBackground = document.querySelector("mdc-dialog-scroll-lock");
-        modalBackground.onclick = function (event) {
-            event.preventDefault();
-            event.stopPropagation()
-            if (event.target == focusedelement) {
-                console.log("persistiendo el modal");
-            }
-        }
-     </script>
 </body>
 
 </html>

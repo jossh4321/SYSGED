@@ -110,6 +110,11 @@
         height: 200px;
         border: 1px solid black;
     }
+    .loader-block {
+        width: auto;
+        height: 300px;
+        background-color: #4d4d4d;
+    }
 </style>
 
 <div class="container-c" style=" width: auto;">
@@ -121,7 +126,6 @@
             <MatFAB Icon="@MatIconNames.Add" @onclick="@abrirDialogoRegistro"></MatFAB>
         </MatTooltip>
     </div>
-
     <MatTable Items="@listausuarios" class="mat-elevation-z5" Style="width:auto">
         <MatTableHeader>
             <th>
@@ -205,6 +209,7 @@
     private bool dialogoDetalle = false;
     public string imagenTemporalMod { get; set; }
     public bool rendermod { get; set;}=false;
+    public bool cargatabla { gte; set; } = false;
     protected override async Task OnInitializedAsync()
     {
         var httpResponse = await repository.Get<List<Usuario>>("api/usuarios/todo");
@@ -265,7 +270,7 @@
         usuariodto.estado = usuario.estado;
         usuariodto.rolid = usuario.roles[0].id;
         dialogoDetalle = true;
-        
+
     }
 
 

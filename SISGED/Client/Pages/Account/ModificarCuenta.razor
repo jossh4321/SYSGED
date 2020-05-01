@@ -78,8 +78,7 @@
         {
             <LoaderContent accion="Actualizacion de Usuario"></LoaderContent>
         }
-        else
-        {
+        else{
             <MatHeadline6 Style="text-align:center">
                 Modificacion de Usuario
 
@@ -262,15 +261,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-        /*_editContext = new EditContext(usuariodto);*/
         _editContext = new EditContext(usuariodto);
         await getRoles();
-        /*if (!string.IsNullOrWhiteSpace(usuariodto.datos.imagen))
-        {
-            imagenTemporalMod = usuariodto.datos.imagen;
-            usuariodto.datos.imagen = null;
-        }*/
     }
 
     public void ImagenSeleccionada(string image)
@@ -307,12 +299,6 @@
         _editContext.NotifyFieldChanged(fi);
     }
 
-    /* public override async Task SetParametersAsync(ParameterView parameters)
-     {
-        //parameters.
-
-         //await base.SetParametersAsync(parameters);
-     }*/
     protected override void OnAfterRender(bool firstRender)
     {
         if (gestionCuenta.rendermod == true)
