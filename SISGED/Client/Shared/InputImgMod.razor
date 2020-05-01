@@ -49,10 +49,6 @@
     [CascadingParameter] SISGED.Client.Pages.Account.GestionCuenta gestionCuenta { get; set; }
     private string imagenBase64;
     ElementReference inputElement;
-    protected override async Task OnInitializedAsync()
-    {
-        Console.WriteLine("Valor desde el componente: " + ImagenTemporal);
-    }
 
     async Task ImageFileSelected()
     {

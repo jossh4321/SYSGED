@@ -110,10 +110,16 @@
         height: 200px;
         border: 1px solid black;
     }
+
     .loader-block {
-        width: auto;
+        display: flex;
+        margin-top: 20px !important;
+        min-width: 800px;
         height: 300px;
         background-color: #4d4d4d;
+        justify-content: center;
+        justify-content: center;
+        align-items: center;
     }
 </style>
 
@@ -126,63 +132,74 @@
             <MatFAB Icon="@MatIconNames.Add" @onclick="@abrirDialogoRegistro"></MatFAB>
         </MatTooltip>
     </div>
-    <MatTable Items="@listausuarios" class="mat-elevation-z5" Style="width:auto">
-        <MatTableHeader>
-            <th>
-                <span class="table-header">Nombre Completo</span>
-            </th>
-            <th>
-                <span class="table-header">Numero de Documento</span>
-            </th>
-            <th>
-                <span class="table-header">Email</span>
-            </th>
-            <th>
-                <span class="table-header">Rol</span>
-            </th>
-            <th>
-                <span class="table-header">Estado</span>
-            </th>
-            <th>
-                <span class="table-header">Funciones</span>
-            </th>
-        </MatTableHeader>
-        <MatTableRow>
-            <td>
-                <span class="table-row">@context.datos.nombre @context.datos.apellido</span>
-            </td>
-            <td>
-                <span class="table-row">@context.datos.numerodocumento</span>
-            </td>
-            <td>
-                <span class="table-row">@context.datos.email</span>
-            </td>
-            <td>
-                <span class="table-row">@context.roles[0].nombre</span>
-            </td>
-            <td>
-                <span class="table-row">@context.estado</span>
-            </td>
-            <td>
-                <div class="button-container-lvl">
-                    <div class="button-container">
-                        <MatButton Icon="@MatBlazor.MatIconNames.Edit"
-                                   Class="mat-warning-c" @onclick="@(e => abrirDialogoEdicion(context.id))" Style="width:100% !important">Modificar</MatButton>
+    @if (cargatabla == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border" style="width: 7rem; height: 7rem;color:#ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <MatTable Items="@listausuarios" class="mat-elevation-z5" Style="width:auto">
+            <MatTableHeader>
+                <th>
+                    <span class="table-header">Nombre Completo</span>
+                </th>
+                <th>
+                    <span class="table-header">Numero de Documento</span>
+                </th>
+                <th>
+                    <span class="table-header">Email</span>
+                </th>
+                <th>
+                    <span class="table-header">Rol</span>
+                </th>
+                <th>
+                    <span class="table-header">Estado</span>
+                </th>
+                <th>
+                    <span class="table-header">Funciones</span>
+                </th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>
+                    <span class="table-row">@context.datos.nombre @context.datos.apellido</span>
+                </td>
+                <td>
+                    <span class="table-row">@context.datos.numerodocumento</span>
+                </td>
+                <td>
+                    <span class="table-row">@context.datos.email</span>
+                </td>
+                <td>
+                    <span class="table-row">@context.roles[0].nombre</span>
+                </td>
+                <td>
+                    <span class="table-row">@context.estado</span>
+                </td>
+                <td>
+                    <div class="button-container-lvl">
+                        <div class="button-container">
+                            <MatButton Icon="@MatBlazor.MatIconNames.Edit"
+                                       Class="mat-warning-c" @onclick="@(e => abrirDialogoEdicion(context.id))" Style="width:100% !important">Modificar</MatButton>
+                        </div>
+
+                        <div class="button-container">
+                            <MatButton Icon="@MatBlazor.MatIconNames.Close"
+                                       Class="mat-danger-c" @onclick="@(e => abrirNotificacionEstado(context))" Style="width:100% !important">Bloquear</MatButton>
+                        </div>
+                        <div class="button-container">
+                            <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
+                                       Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context.id))" Style="width:100% !important">Detalle</MatButton>
+                        </div>
                     </div>
 
-                    <div class="button-container">
-                        <MatButton Icon="@MatBlazor.MatIconNames.Close"
-                                   Class="mat-danger-c" @onclick="@(e => abrirNotificacionEstado(context))" Style="width:100% !important">Bloquear</MatButton>
-                    </div>
-                    <div class="button-container">
-                        <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
-                                   Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context.id))" Style="width:100% !important">Detalle</MatButton>
-                    </div>
-                </div>
-
-            </td>
-        </MatTableRow>
-    </MatTable>
+                </td>
+            </MatTableRow>
+        </MatTable>
+    }
 
     <MatDialog @bind-IsOpen="@dialogoRegistro">
         <RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" />
@@ -208,10 +225,11 @@
     private bool dialogoEdicion = false;
     private bool dialogoDetalle = false;
     public string imagenTemporalMod { get; set; }
-    public bool rendermod { get; set;}=false;
-    public bool cargatabla { gte; set; } = false;
+    public bool rendermod { get; set; } = false;
+    public bool cargatabla { get; set; } = false;
     protected override async Task OnInitializedAsync()
     {
+        cargatabla = true;
         var httpResponse = await repository.Get<List<Usuario>>("api/usuarios/todo");
         if (!httpResponse.Error)
         {
@@ -222,6 +240,7 @@
         {
             Console.WriteLine("Ocurrio un error");
         }
+        cargatabla = false;
     }
 
     public async Task abrirDialogoEdicion(string id)
