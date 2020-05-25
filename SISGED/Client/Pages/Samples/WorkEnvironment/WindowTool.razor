@@ -1,0 +1,59 @@
+﻿@using SISGED.Client.Pages.Samples.WorkEnvironment.WindowItemContent
+<style>
+    .window {
+        background-color: #ccc;
+        border: 2px solid black;
+        text-align: center;
+        color: black;
+        width: inherit;
+        height: 400px;
+        padding: 10px;
+    }
+</style>
+<div class="window">
+
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+
+</div>
+
+
+@code {
+    //[CascadingParameter] public WorkEnvironment workSpace { get; set; }
+    [Parameter] public Tool itemArrastrado { get; set; }
+    public RenderFragment ChildContent = null;
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    protected override void OnInitialized()
+    {
+
+    }
+    protected override void OnParametersSet()
+    {
+        Console.WriteLine("WINDOW TOOL: OnParameterSet()");
+        if (itemArrastrado != null)
+        {
+            Console.WriteLine("valor encontrado y actualizando");
+            if(itemArrastrado.nombre == "Busqueda")
+            {
+                ChildContent = @<ContenidoPrueba></ContenidoPrueba>;
+            }
+            else
+            {
+                ChildContent = @<ContenidoPrueba2></ContenidoPrueba2>;
+            }
+        }
+        else
+        {
+            ChildContent = null;
+        }
+        StateHasChanged();
+    }
+
+    public object GetInstanceFromString(string classname)
+    {
+        Type type = Type.GetType(classname);
+        return Activator.CreateInstance(type);
+    }
+}

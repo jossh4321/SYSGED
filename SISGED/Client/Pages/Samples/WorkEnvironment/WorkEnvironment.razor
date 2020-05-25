@@ -1,0 +1,110 @@
+﻿@page "/WorkFlowProto"
+@layout MainLayout
+<style>
+    .input{
+        border:3px dashed red;
+        flex-grow:1;
+        height:inherit;
+        text-align:center;
+    }
+    .output {
+        border: 3px dashed green;
+        flex-grow: 1;
+        text-align: center;
+    }
+    .container-ot {
+        flex-grow:1;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        height:inherit;
+    }
+    .workspace {
+        border: 3px dashed blue;
+        flex-grow: 4;
+        height: inherit;
+        text-align:center;
+    }
+    .tools {
+        border: 3px dashed orange;
+        flex-grow: 1 ;
+        text-align:center;
+        display:block
+    }
+    .wfe-container{
+        display:flex;
+        flex-direction:row;
+        flex-wrap:wrap;
+        justify-content:space-around;
+        height:550px;
+    }
+</style>
+<div style="flex-basis:100%">
+    <h3 style="text-align:center;color:white">ESPACIO DE TRABAJO</h3>
+    <CascadingValue Value="this">
+        <div class="wfe-container">
+            <div class="input">
+                <h3 style="color:white;">ENTRADAS</h3>
+            </div>
+            <div class="workspace">
+                <h3 style="color:white;">ESPACIO DE TRABAJO</h3>            
+                <ToolList  place="workspace">
+                    <WindowTool itemArrastrado="@(listaherramientas.SingleOrDefault(x => x.currentPlace.Equals("workspace")))"></WindowTool>
+                </ToolList>
+               
+            </div>
+            <div class="container-ot">
+                <div class="output">
+                    <h3 style="color:white;">SALIDA</h3>
+                </div>
+                <div class="tools">
+                    <h3 style="color:white;">HERRAMIENTAS</h3>
+                    <ToolList place="tools"></ToolList>
+                </div>
+            </div>
+        </div>
+    </CascadingValue>
+</div>
+@code {
+
+    public List<Tool> listaherramientas;
+    public List<Tool> listavacia = new List<Tool>();
+    public Tool currentToolDragged;
+    public string valor = "<WindowTool></WindowTool>";
+    protected override void OnInitialized()
+    {
+        listaherramientas = new List<Tool>() {
+        new Tool(){
+            nombre="Busqueda",
+            descripcion="Permite realizar una busqueda de Protocolos Juridicos mediante filtros especificos",
+            icono="search",currentPlace="tools",componentName="ContenidoPrueba"
+            },
+         new Tool(){
+            nombre="Firma y Sello",
+            descripcion="Permitefirmar digital mente con la misma validez que una firma manuscrita",
+            icono="search",currentPlace="tools",componentName="ContenidoPrueba"
+            },
+         new Tool(){
+            nombre="Codificar y Registrar",
+            descripcion="Genera un codigo especifico en un doc y permite el registro de un descripcion",
+            icono="search",currentPlace="tools",componentName="ContenidoPrueba"
+            },
+         new Tool(){
+            nombre="Enviar a mesa de Partes",
+            descripcion="Envia el documento a mesa de partes",
+            icono="search",currentPlace="tools",componentName="ContenidoPrueba"
+            }
+        };
+    }
+    public void UpdateDraggableComponents(string newCurrentPlace)
+    {
+        var tool = listaherramientas.SingleOrDefault(x => x.nombre == currentToolDragged.nombre);
+        if(tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
+        {
+            Console.WriteLine("ESTOY EN EL CAMBIO");
+            tool.currentPlace = newCurrentPlace;
+            listaherramientas[listaherramientas.FindIndex(ind => ind.nombre.Equals(currentToolDragged.nombre))] = tool;
+            StateHasChanged();
+        }
+    }
+}
