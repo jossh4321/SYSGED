@@ -17,7 +17,7 @@ namespace SISGED.Server.Services
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
-            _usuarios = database.GetCollection<Usuario>("usuario");
+            _usuarios = database.GetCollection<Usuario>("usuarios");
         }
 
         public List<Usuario> Get()
@@ -48,7 +48,7 @@ namespace SISGED.Server.Services
 
         public Usuario GetByUserNameAndPass(UserInfo userinfo)
         {
-            var result = _usuarios.Find(usuario => usuario.usuario == userinfo.usuario && usuario.clave == userinfo.clave).FirstOrDefault();
+            var result = _usuarios.Find(usuarios => usuarios.usuario == userinfo.usuario && usuarios.clave == userinfo.clave).FirstOrDefault();
             return result;
         }
         public Usuario Put(Usuario usuario)
@@ -58,7 +58,7 @@ namespace SISGED.Server.Services
                 .Set("usuario", usuario.usuario)
                 .Set("clave", usuario.clave)
                 .Set("datos", usuario.datos)
-                .Set("roles", usuario.roles);
+                .Set("roles", usuario.rol);
             usuario = _usuarios.FindOneAndUpdate<Usuario>(filter, update, new FindOneAndUpdateOptions<Usuario>
             {
                 ReturnDocument = ReturnDocument.After

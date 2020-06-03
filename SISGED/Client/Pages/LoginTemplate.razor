@@ -188,8 +188,7 @@
     private UserInfo userInfo = new UserInfo();
     private async Task LoginUsuario()
     {
-        var httpResponse = await
-            repositorio.Post<UserInfo, UserToken>("api/accounts/login", userInfo);
+        var httpResponse = await repositorio.Post<UserInfo, UserToken>("api/accounts/login", userInfo);
         if (httpResponse.Error)
         {
             Console.WriteLine("Algo Mal");
@@ -202,7 +201,6 @@
             //logeando al usuarios cy mmandandolo a la pagina principal
             await loginservice.Login(httpResponse.Response.Token);
             navigationManager.NavigateTo("");
-
         }
     }
     public void LoginUsuarioError()

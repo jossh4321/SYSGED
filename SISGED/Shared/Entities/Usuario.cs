@@ -13,6 +13,9 @@ namespace SISGED.Shared.Entities
         [BsonRepresentation(BsonType.ObjectId)]
         public string id { get; set; }
 
+        [BsonElement("tipo")]
+        public string tipo { get; set; }
+
         [BsonElement("usuario")]
         public string usuario { get; set; }
 
@@ -25,7 +28,8 @@ namespace SISGED.Shared.Entities
         [BsonElement("estado")]
         public string estado { get; set; }
 
-        [BsonElement("roles")]
-        public List<Rol> roles { get; set; } = new List<Rol>();
+        [BsonElement("rol")]
+        public string rol { get; set; }
+        //public List<Rol> roles { get; set; } = new List<Rol>();
     }
 }

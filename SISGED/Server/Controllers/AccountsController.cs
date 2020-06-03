@@ -21,10 +21,12 @@ namespace SISGED.Server.Controllers
     public class AccountsController: ControllerBase
     {
         private readonly UsuarioService _usuarioservice;
+        private readonly RolesService _rolservice;
         private readonly IConfiguration _configuration;
-        public AccountsController(UsuarioService usuarioservice,
+        public AccountsController(UsuarioService usuarioservice, RolesService rolservice,
             IConfiguration configuration)
         {
+            _rolservice = rolservice;
             _usuarioservice = usuarioservice;
             _configuration = configuration;
         }
@@ -40,7 +42,7 @@ namespace SISGED.Server.Controllers
             var result = _usuarioservice.Post(user);
             if (result != null)
             {
-                return BuildToken(model, new List<string>());
+                return BuildToken(model, "");
             }
             else
             {
@@ -56,16 +58,17 @@ namespace SISGED.Server.Controllers
             if (result != null)
             {
                 Usuario usuario = _usuarioservice.GetByUsername(userInfo.usuario);
-                var roles = usuario.roles.Select(x => x.nombre).ToList();
-
-                return BuildToken(userInfo, roles);
+                Rol rolusu = _rolservice.GetById(usuario.rol);
+                //var roles = usuario.roles.Select(x => x.nombre).ToList();
+                //List<String> roles = new List<String>(){ "admin" };
+                return BuildToken(userInfo, rolusu.nombre);
             }
             else
             {
                 return BadRequest("Invalid login attempt");
             }
         }
-        private UserToken BuildToken(UserInfo userInfo, IList<string> roles)
+        private UserToken BuildToken(UserInfo userInfo, String rol)//IList<string> roles
         {
             var claims = new List<Claim>()
             {
@@ -75,11 +78,11 @@ namespace SISGED.Server.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            foreach (var rol in roles)
+            /*foreach (var rol in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, rol));
-            }
-
+            }*/
+            claims.Add(new Claim(ClaimTypes.Role, rol));
 
             var key = new SymmetricSecurityKey
                 (Encoding.UTF8.GetBytes(_configuration["JWT:key"]));

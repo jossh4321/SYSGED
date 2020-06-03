@@ -320,7 +320,7 @@
         usuario.clave = usuariodto.clave;
         usuario.estado = "activo";
         usuario.datos = usuariodto.datos;
-        usuario.roles = listaroles.Where(x => x.id == usuariodto.rolid).ToList();
+        //usuario.roles = listaroles.Where(x => x.id == usuariodto.rolid).ToList();
 
         var httpResponse = await repository.Put<Usuario, Usuario>("api/usuarios", usuario);
         if (httpResponse.Error)

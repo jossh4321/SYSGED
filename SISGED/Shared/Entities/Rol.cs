@@ -13,8 +13,12 @@ namespace SISGED.Shared.Entities
         public string id { get; set; }
         [BsonElement("nombre")]
         public string nombre { get; set; }
-        [BsonElement("listamenu")]
-        public List<Permiso> listamenu { get; set; } = new List<Permiso>();
+        [BsonElement("label")]
+        public string label { get; set; }
+        [BsonElement("listaherramientas")]
+        public List<String> listaherramientas { get; set; } = new List<String>();
+        [BsonElement("listainterfaces")]
+        public List<String> listainterfaces { get; set; } = new List<String>();
         [BsonElement("descripcion")]
         public string descripcion { get; set; }
     }

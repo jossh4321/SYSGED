@@ -22,5 +22,12 @@ namespace SISGED.Server.Services
         {
            return  _roles.Find<Rol>(x => true).ToList();
         }
+
+        public Rol GetById(string id)
+        {
+            Rol rol = new Rol();
+            rol = _roles.Find(rol => rol.id == id).FirstOrDefault();
+            return rol;
+        }
     }
 }
