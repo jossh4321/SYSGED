@@ -1,14 +1,12 @@
 ﻿@page "/WorkFlowProto"
 @layout MainLayout
 <style>
-    .input{
-        border:3px dashed red;
-        flex-grow:1;
-        height:inherit;
-        text-align:center;
+    div.input {
+        flex-grow: 1;
+        height: inherit;
+        text-align: center;
     }
-    .output {
-        border: 3px dashed green;
+    div.output {
         flex-grow: 1;
         text-align: center;
     }
@@ -19,46 +17,77 @@
         flex-wrap: wrap;
         height:inherit;
     }
-    .workspace {
-        border: 3px dashed blue;
-        flex-grow: 4;
+    div.workspace {
+        border-left: 0px ;
+        border-right: 0px;
+        flex-grow: 10;
         height: inherit;
-        text-align:center;
+        text-align: center;
     }
-    .tools {
-        border: 3px dashed orange;
-        flex-grow: 1 ;
-        text-align:center;
-        display:block
+    div.tools {
+        border-top: 0px;
+        flex-grow: 1;
+        text-align: center;
+        display: block;
     }
-    .wfe-container{
-        display:flex;
-        flex-direction:row;
-        flex-wrap:wrap;
-        justify-content:space-around;
-        height:550px;
+    .common-box-style {
+        border: 3px solid #808080;
+        background-color: #1a1a1a;
     }
+
+    .wfe-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        height: 550px;
+    }
+    .box-title-style {
+        background-color: black;
+        margin: 6px 4px 10px 4px;
+        border: 2px solid #4d4d4d;
+        border-radius: 7px 7px 0px 0px;
+
+    }
+    .box-title-style span{
+        color: #808080;
+        font-size: 20px;
+    }
+    .work-box-title-style span {
+        color: #808080;
+        font-size: 23px;
+    }
+    .work-box-title-style {
+        background-color: black;
+        margin: 6px 0px 0px 0px;
+        padding: 3px;
+        border: 2px solid #808080;
+        text-align: center;
+        border-bottom: none;
+        border-radius: 8px 8px 0px 0px;
+    }
+
+
 </style>
 <div style="flex-basis:100%">
-    <h3 style="text-align:center;color:white">ESPACIO DE TRABAJO</h3>
+    <div class="work-box-title-style"><span>Area de Trabajo Especializada</span></div>
     <CascadingValue Value="this">
         <div class="wfe-container">
-            <div class="input">
-                <h3 style="color:white;">ENTRADAS</h3>
+            <div class="input common-box-style">
+                <div class="box-title-style"><span>Bandeja de Entrada</span></div>
             </div>
-            <div class="workspace">
-                <h3 style="color:white;">ESPACIO DE TRABAJO</h3>            
-                <ToolList  place="workspace">
+            <div class="workspace common-box-style">
+                <ToolList place="workspace">
                     <WindowTool itemArrastrado="@(listaherramientas.SingleOrDefault(x => x.currentPlace.Equals("workspace")))"></WindowTool>
                 </ToolList>
-               
+
             </div>
             <div class="container-ot">
-                <div class="output">
-                    <h3 style="color:white;">SALIDA</h3>
+                <div class="output common-box-style">
+                    <div class="box-title-style"><span>Bandeja de Salida</span></div>
                 </div>
-                <div class="tools">
-                    <h3 style="color:white;">HERRAMIENTAS</h3>
+                <div class="tools common-box-style">
+                    <div class="box-title-style"><span>HERRAMIENTAS</span></div>
                     <ToolList place="tools"></ToolList>
                 </div>
             </div>

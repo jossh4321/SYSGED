@@ -1,10 +1,13 @@
 ﻿
 <style>
     .tool-container {
-        display: block;
-        padding: 3px;
-        color:white;
-        text-align:left
+        display: flex;
+        padding: 6px 5px 6px 15px;
+        color: white;
+        text-align: left;
+        justify-content: left;
+        flex-direction: row;
+        align-items: center;
     }
     .tool-name {
         font-size: 16px;
@@ -14,14 +17,35 @@
         list-style:none;
     }
     .li-drag-style {
-        border: 1px solid red !important;
-        background-color: blue !important;
-        color: white !important;
+        border: 2px solid #808080 !important;
+        margin: 6px;
+        border-radius: 15px;
+        background-color: #404040 !important;
+        transition: 300ms all;
     }
+        .li-drag-style:hover {
+            transform: scale(1.05);
+            border: 2px solid #0066ff !important;
+        }
+        .li-drag-style:hover .tool-name, .li-drag-style:hover i.material-icons {
+            transform:scale(1);
+            color: #0066ff !important;
+        }
+    .tool-name {
+        display: block;
+        margin: 0px 0px 0px 7px;
+        color: #b3b3b3;
+    }
+    i.material-icons{
+        color: #b3b3b3 !important;
+    }
+    
+
 </style>
 <li draggable="true" class="li-tool @classname" @ondragstart="@(() => HandleDragStart(herramienta))">
     <div class="tool-container">
-        <p>@herramienta.nombre</p>
+       <MatIcon>@MatIconNames.Assistant</MatIcon>
+        <p class="tool-name">@herramienta.nombre</p>
     </div>
 </li>
 
