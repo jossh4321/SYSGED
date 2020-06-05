@@ -1,0 +1,60 @@
+﻿<style>
+    .div-style {
+        height: inherit;
+    }
+</style>
+<div class="div-style" ondragover="event.preventDefault();"
+     @ondrop="dropSnapshot"
+     @ondragenter="dragEnterSnapshot"
+     @ondragleave="dragLeaveSnapshot"
+     @ondrag="dragSnapshot">
+
+    @foreach (var tool in toollist)
+    {
+        <ToolItem herramienta="tool" />
+    }
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+</div>
+
+@code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [Parameter] public string place { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    public List<Tool> toollist = new List<Tool>();
+    public string classname = "li-drag-style";
+    protected override void OnParametersSet()
+    {
+        toollist.Clear();
+        toollist.AddRange(workspace.listaherramientas.
+            Where(x => x.currentPlace == place));
+    }
+    private void dropSnapshot()
+    {
+        if (place == "workspace" && toollist.Count() > 0)
+        {
+            Console.WriteLine("Solo Uno a la vez");
+        }
+        else
+        {
+            workspace.UpdateDraggableComponents(place);
+            Console.WriteLine("El Elemento Arrastrable a sido soltado en " + place);
+        }
+    }
+    private void dragEnterSnapshot()
+    {
+        //Console.WriteLine("El elemento Entro al Espacio de Trabajo");
+    }
+    private void dragLeaveSnapshot()
+    {
+        // Console.WriteLine("El elemento salio de la caja de Herramientas");
+    }
+    public void dragSnapshot()
+    {
+
+        // Console.WriteLine("me muevo");
+    }
+}
+

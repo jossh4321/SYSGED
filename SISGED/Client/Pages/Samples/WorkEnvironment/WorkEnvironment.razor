@@ -1,35 +1,44 @@
 ﻿@page "/WorkFlowProto"
 @layout MainLayout
+@inject HttpClient Http
+@inject IRepository repository
+@inject IJSRuntime js
+@inject ISwalFireMessage swalfire
 <style>
     div.input {
         flex-grow: 1;
         height: inherit;
         text-align: center;
     }
+
     div.output {
         flex-grow: 1;
         text-align: center;
     }
+
     .container-ot {
-        flex-grow:1;
+        flex-grow: 1;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
-        height:inherit;
+        height: inherit;
     }
+
     div.workspace {
-        border-left: 0px ;
+        border-left: 0px;
         border-right: 0px;
         flex-grow: 10;
         height: inherit;
         text-align: center;
     }
+
     div.tools {
         border-top: 0px;
         flex-grow: 1;
         text-align: center;
         display: block;
     }
+
     .common-box-style {
         border: 3px solid #808080;
         background-color: #1a1a1a;
@@ -42,21 +51,24 @@
         justify-content: space-around;
         height: 550px;
     }
+
     .box-title-style {
         background-color: black;
         margin: 6px 4px 10px 4px;
         border: 2px solid #4d4d4d;
         border-radius: 7px 7px 0px 0px;
+    }
 
-    }
-    .box-title-style span{
-        color: #808080;
-        font-size: 20px;
-    }
+        .box-title-style span {
+            color: #808080;
+            font-size: 20px;
+        }
+
     .work-box-title-style span {
         color: #808080;
         font-size: 23px;
     }
+
     .work-box-title-style {
         background-color: black;
         margin: 6px 0px 0px 0px;
@@ -66,8 +78,6 @@
         border-bottom: none;
         border-radius: 8px 8px 0px 0px;
     }
-
-
 </style>
 <div style="flex-basis:100%">
     <div class="work-box-title-style"><span>Area de Trabajo Especializada</span></div>
@@ -85,6 +95,7 @@
             <div class="container-ot">
                 <div class="output common-box-style">
                     <div class="box-title-style"><span>Bandeja de Salida</span></div>
+
                 </div>
                 <div class="tools common-box-style">
                     <div class="box-title-style"><span>HERRAMIENTAS</span></div>
@@ -96,13 +107,7 @@
 </div>
 @code {
 
-    public List<Tool> listaherramientas;
-    public List<Tool> listavacia = new List<Tool>();
-    public Tool currentToolDragged;
-    public string valor = "<WindowTool></WindowTool>";
-    protected override void OnInitialized()
-    {
-        listaherramientas = new List<Tool>() {
+    public List<Tool> listaherramientas = new List<Tool>() {
         new Tool(){
             nombre="Busqueda",
             descripcion="Permite realizar una busqueda de Protocolos Juridicos mediante filtros especificos",
@@ -124,11 +129,29 @@
             icono="search",currentPlace="tools",componentName="ContenidoPrueba"
             }
         };
+    public List<Documento> bandejasalida = new List<Documento>();
+    public List<Tool> listavacia = new List<Tool>();
+    public Tool currentToolDragged;
+    public string valor = "<WindowTool></WindowTool>";
+    protected override async Task OnInitializedAsync()
+    {
+
+        var httpResponse = await repository.Get<List<Documento>>("api/documentos");
+        if (!httpResponse.Error)
+        {
+            bandejasalida = httpResponse.Response;
+            bandejasalida.ForEach(x => Console.WriteLine(x.id));
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un error");
+        }
+
     }
     public void UpdateDraggableComponents(string newCurrentPlace)
     {
         var tool = listaherramientas.SingleOrDefault(x => x.nombre == currentToolDragged.nombre);
-        if(tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
+        if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
         {
             Console.WriteLine("ESTOY EN EL CAMBIO");
             tool.currentPlace = newCurrentPlace;
