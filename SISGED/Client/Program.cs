@@ -33,6 +33,7 @@ namespace SISGED.Client
         {
             services.AddOptions();
             services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IDocumentRepository, DocumentRepository>();
             services.AddScoped<ISwalFireMessage, SwalFireMessage>();
             services.AddFileReaderService(options => options.InitializeOnFirstCall = true);
             services.AddValidatorsFromAssemblyContaining<DatosValidator>();

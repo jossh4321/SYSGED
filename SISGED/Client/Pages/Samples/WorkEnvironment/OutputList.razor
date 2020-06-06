@@ -1,17 +1,6 @@
 ﻿<style>
-    .div-style{
-        display:flex;
-        flex-direction:column;
-        flex-basis:100%
-    }
-    .div-view {
-        display: flex;
-        flex-basis: 100%;
-        overflow: auto;
-        flex-direction: column;
-    }
-    .div-tool-list {
-        flex-basis: 15%;
+    .div-style {
+        height: inherit;
     }
 </style>
 <div class="div-style" ondragover="event.preventDefault();"
@@ -19,23 +8,16 @@
      @ondragenter="dragEnterSnapshot"
      @ondragleave="dragLeaveSnapshot"
      @ondrag="dragSnapshot">
-    <div >
-        @foreach (var tool in toollist)
-        {
-            <ToolItem herramienta="tool" />
-        }
-    </div>
-        @if (ChildContent != null)
-        {
-            <div class="div-view">
-                @ChildContent
-            </div>
-        }
-    
+
+    @foreach (var tool in toollist)
+    {
+        <ToolItem herramienta="tool" />
+    }
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
 </div>
-
-
-
 
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
@@ -51,7 +33,7 @@
     }
     private void dropSnapshot()
     {
-        if(place == "workspace" && toollist.Count() >0)
+        if (place == "workspace" && toollist.Count() > 0)
         {
             Console.WriteLine("Solo Uno a la vez");
         }
@@ -75,3 +57,4 @@
         // Console.WriteLine("me muevo");
     }
 }
+

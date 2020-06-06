@@ -59,6 +59,7 @@ namespace SISGED.Server
             services.AddSingleton<PersonaService>();
             services.AddSingleton<UsuarioService>();
             services.AddSingleton<RolesService>();
+            services.AddSingleton<DocumentoService>();
             services.AddSingleton<PermisosService>();
 
             services.AddMvc().AddNewtonsoftJson(options =>
