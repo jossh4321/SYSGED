@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SISGED.Shared.Entities
 {
-   ´public class Carpeta
+   public class Carpeta
     {
         public string id { get; set; }
         public DateTime fecha { get; set; }

@@ -12,6 +12,7 @@ using SISGED.Client.Auth;
 using SISGED.Shared.Validators;
 using FluentValidation;
 using Blazor.FileReader;
+using SISGED.Shared.Models;
 
 namespace SISGED.Client
 {
@@ -46,6 +47,7 @@ namespace SISGED.Client
                JWTAuthenticationProvider>(
                provider => provider.GetRequiredService
                <JWTAuthenticationProvider>());
+            services.AddScoped<Sesion>();
         }
     }
 }

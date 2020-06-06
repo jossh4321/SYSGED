@@ -15,20 +15,5 @@
 
 </SISGED.Client.Pages.Samples.WorkEnvironment.WorkEnvironment>
 @code{
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationState { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await authenticationState;
-        var usuario = authState.User;
-        if (usuario.Identity.IsAuthenticated)
-        {
-            Console.WriteLine("Usuario autenticado");
-        }
-        else
-        {
-            Console.WriteLine("Usuario NO autenticado");
-        }
-    }
 }

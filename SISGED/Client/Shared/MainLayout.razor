@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager navigationManager
+@inject Sesion sesion
+@inject IRepository repositorio
 <link href="css/site.css" rel="stylesheet" />
 <MatDrawerContainer Style="width: 100%; height: 100%;" @onclick="showUserMenu2">
     <MatDrawer @bind-Opened="@Opened" Mode="@MatDrawerMode.Modal" Style="padding-top:0px; width:229px;background-color: #202020; border:none">
@@ -18,70 +20,16 @@
         </div>
         <MatNavMenu Style="margin-top:0px;">
 
-            <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
-                <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
-                <span class="bartext-color">
-                    DashBoard
-                </span>
-            </MatNavItem>
-            <MatNavItem>
-                <MatIcon Icon="@MatIconNames.Important_devices" Class="bar-side-icons-style"></MatIcon>
-                <span class="bartext-color">Secretaria General</span>
-            </MatNavItem>
-            <MatNavItem>
-                <MatIcon Icon="@MatIconNames.Gavel" Class="bar-side-icons-style"></MatIcon>
-                <span Class="bartext-color">Tribunal de Honor</span>
-            </MatNavItem>
-            <MatNavSubMenu @bind-Expanded="@navSubMenuOpenState">
-                <MatNavSubMenuHeader Class="sub-menu-arrow">
-                    <MatNavItem>
-                        <MatIcon Icon="@MatIconNames.How_to_vote" Class="bar-side-icons-style"></MatIcon>
-                        <span class="bartext-color">Mesa de Partes</span>
-                    </MatNavItem>
-                </MatNavSubMenuHeader>
-                <MatNavSubMenuList>
-                    <MatNavItem>
-                        <span class="sub-bartext-color">Folios y Documentos</span>
-                    </MatNavItem>
-                    <MatNavItem>
-                        <span class="sub-bartext-color">Quejas y Reclamos</span>
-                    </MatNavItem>
-                </MatNavSubMenuList>
-            </MatNavSubMenu>
-            <MatNavItem>
-                <MatIcon Icon="@MatIconNames.Library_books" Class="bar-side-icons-style"></MatIcon>
-                <span class="bartext-color">Tramite Documentario</span>
-            </MatNavItem>
-            <MatDivider></MatDivider>
-            <MatNavItem>
-                <MatIcon Icon="@MatIconNames.Contact_mail" Class="bar-side-icons-style"></MatIcon>
-                <span class="bartext-color">Archivos de Exnotarios</span>
-            </MatNavItem>
-            <MatNavSubMenu>
-                <MatNavSubMenuHeader Class="sub-menu-arrow">
-                    <MatNavItem Style="vertical-align: middle
-">
-                        <MatIcon Icon="@MatIconNames.Supervised_user_circle" Class="bar-side-icons-style"></MatIcon>
-                        <span class="bartext-color" Style="vertical-align: middle">Area Legal</span>
-                    </MatNavItem>
-                </MatNavSubMenuHeader>
-                <MatNavSubMenuList>
-                    <MatNavItem>
-                        <span class="sub-bartext-color">Juicios y Arreglos</span>
-                    </MatNavItem>
-                    <MatNavItem>
-                        <span class="sub-bartext-color">Asesoria Legal</span>
-                    </MatNavItem>
-                </MatNavSubMenuList>
-            </MatNavSubMenu>
-            <MatNavItem>
-                <MatIcon Icon="@MatIconNames.Vpn_key" Class="bar-side-icons-style"></MatIcon>
-                <span class="bartext-color">Junta Directiva</span>
-            </MatNavItem>
-            <MatNavItem  @onclick="navegar">
-                <MatIcon Icon="@MatIconNames.People" Class="bar-side-icons-style"></MatIcon>
-                <span class="bartext-color">Admin. Cuentas</span>
-            </MatNavItem>
+            @foreach (Permiso interfaz in listaPermisos)//sesion.permisosInterfaz
+            {
+                <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
+                    <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
+                    <span class="bartext-color">
+                        @interfaz.nombre
+                    </span>
+                </MatNavItem>
+            }
+
         </MatNavMenu>
     </MatDrawer>
 
@@ -105,12 +53,11 @@
                             </div>
 
 
-                            <div class="bar-menu-item-container resize-style"  @onclick:stopPropagation="true" @onclick="@showNotificationMenu">
-                                <MatIcon Icon="@MatIconNames.Notifications_none" Class="bar-menu-item-icon" 
-                                         ></MatIcon>
+                            <div class="bar-menu-item-container resize-style" @onclick:stopPropagation="true" @onclick="@showNotificationMenu">
+                                <MatIcon Icon="@MatIconNames.Notifications_none" Class="bar-menu-item-icon"></MatIcon>
                             </div>
                             <div Class="profile-card-menu @valueclassnotification"
-                                         Style="background-color:rgb(68, 68, 68);margin-top:58px;
+                                 Style="background-color:rgb(68, 68, 68);margin-top:58px;
                                             position:absolute; top:5px;" @onclick:stopPropagation="true">
                                 <NotificationMenu />
                             </div>
@@ -184,6 +131,21 @@
     bool Opened = true;
     public string valueclass = "non-show";
     public string valueclassnotification = "non-show";
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationState { get; set; }
+
+    ForwardRef buttonForwardRef = new ForwardRef();
+    BaseMatMenu Menu;
+
+    ForwardRef buttonForwardRefNotification = new ForwardRef();
+    BaseMatMenu MenuNotification;
+
+    ForwardRef buttonForwardRefMore = new ForwardRef();
+    BaseMatMenu MenuMore;
+
+    List<Permiso> listaPermisos = new List<Permiso>();
+
+    #region metodos
     public void showUserMenu2()
     {
         valueclass = "non-show";
@@ -206,10 +168,6 @@
         navigationManager.NavigateTo("/GestionCuentas");
     }
 
-
-    ForwardRef buttonForwardRef = new ForwardRef();
-    BaseMatMenu Menu;
-
     public void OnClick(MouseEventArgs e)
     {
         this.Menu.OpenAsync();
@@ -218,20 +176,54 @@
     {
         Console.WriteLine("Hola");
     }
-    ForwardRef buttonForwardRefNotification = new ForwardRef();
-    BaseMatMenu MenuNotification;
 
     public void OnClickNotification(MouseEventArgs e)
     {
         this.MenuNotification.OpenAsync();
     }
-    ForwardRef buttonForwardRefMore = new ForwardRef();
-    BaseMatMenu MenuMore;
 
     public void OnClickMore(MouseEventArgs e)
     {
         this.MenuMore.OpenAsync();
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationState;
+        var usuario = authState.User;
+        if (usuario.Identity.IsAuthenticated)
+        {
+            Console.WriteLine("Usuario autenticado");
+        }
+        else
+        {
+            Console.WriteLine("Usuario NO autenticado");
+        }
+
+        Permiso x1 = new Permiso()
+        {
+            nombre = "AAA"
+        };
+        Permiso x2 = new Permiso()
+        {
+            nombre = "BBB"
+        };
+
+        listaPermisos.Add(x1);
+        listaPermisos.Add(x2);
+    }
+    /*example : Permiso x1 = new Permiso()
+        {
+            nombre = "AAA"
+        };
+        Permiso x2 = new Permiso()
+        {
+            nombre = "BBB"
+        };
+
+        listaPermisos.Add(x1);
+        listaPermisos.Add(x2);*/
+    #endregion
 }
 
 
