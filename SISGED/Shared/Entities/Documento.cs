@@ -12,7 +12,7 @@ namespace SISGED.Shared.Entities
         typeof(OficioBPN),
         typeof(SolicitudBPN),
         typeof(ResultadoBPN),
-        typeof(SolcitudExpedicionFirma),
+        typeof(SolicitudExpedicionFirma),
         typeof(OficioDesignacionNotario),
         typeof(ConclusionFirma),
         typeof(AperturamientoDisciplinario),
@@ -97,10 +97,10 @@ namespace SISGED.Shared.Entities
 
     }
 
-    public class SolcitudExpedicionFirma : Documento
+    public class SolicitudExpedicionFirma : Documento
     {
-        public ContenidoSolcitudExpedicionFirma contenido { get; set; }
-        public class ContenidoSolcitudExpedicionFirma
+        public ContenidoSolicitudExpedicionFirma contenido { get; set; }
+        public class ContenidoSolicitudExpedicionFirma
         {
             public string codigo { get; set; }
             public string titulo { get; set; }

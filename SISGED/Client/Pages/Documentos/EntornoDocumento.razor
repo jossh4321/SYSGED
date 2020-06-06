@@ -1,0 +1,83 @@
+﻿@inject IDocumentRepository documentRepository
+<style>
+    div.tool-content-style {
+        width: 100%;
+        flex-basis: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    * {
+        color: black;
+    }
+
+    div.mdc-select__anchor {
+        width: 90% !important;
+    }
+
+    .caja-selector {
+        flex-basis: 10%;
+        padding: 2px 5px 5px 5px;
+    }
+
+    .caja-vista-doc {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 90%;
+        align-items: center;
+        justify-content: center;
+    }
+    .no-select-style {
+        color: white;
+        font-size: 26px;
+    }
+</style>
+
+<div class="tool-content-style">
+    <div class="caja-selector">
+        <select class="custom-select" @onchange="@cambio">
+            <option value="nada">Seleccione un Tipo de Documento</option>
+            @foreach (OpcionDocumento opcion in tiposdocumentos)
+            {
+                <option value="@opcion.value">@opcion.label</option>
+            }
+        </select>
+    </div>
+    <div class="caja-vista-doc">
+        @if (@ChildContent == null)
+        {
+             <p class="no-select-style">Nada seleccionado</p>
+        }
+        else
+        {
+                @ChildContent
+        }
+    </div>
+
+</div>
+@code {
+    public RenderFragment ChildContent = null;
+    List<OpcionDocumento> tiposdocumentos = new List<OpcionDocumento>();
+    protected override void OnInitialized()
+    {
+        tiposdocumentos = documentRepository.ObtenerTiposDocs();
+    }
+    void cambio(ChangeEventArgs e)
+    {
+        Console.WriteLine("Cambio en el select" + e.Value.ToString());
+        //if (tipoSeleccionado.value == "SolicitudBPN") ChildContent =@<RegistrarSolicitudBPN></RegistrarSolicitudBPN>;
+        if (e.Value.ToString() == "nada") ChildContent = null;
+        if (e.Value.ToString() == "OficioBPN") ChildContent =@<RegistrarOficioBPN></RegistrarOficioBPN>;
+        if (e.Value.ToString() == "ResultadoBPN") ChildContent = @<RegistrarResultadoBPN></RegistrarResultadoBPN>;
+        if (e.Value.ToString() == "SolicitudExpedicionFirma") ChildContent = @<RegistrarSolicitudExpedicionFirma></RegistrarSolicitudExpedicionFirma>;
+        if (e.Value.ToString() == "OficioDesignacionNotario") ChildContent = @<RegistrarOficioDesignacionNotario></RegistrarOficioDesignacionNotario>;
+        if (e.Value.ToString() == "ConclusionFirma") ChildContent = @<RegistrarConclusionFirma></RegistrarConclusionFirma>;
+        if (e.Value.ToString() == "SolicitudDenuncia") ChildContent = @<RegistrarSolicitudDenuncia></RegistrarSolicitudDenuncia>;
+        if (e.Value.ToString() == "AperturamientoDisciplinario") ChildContent =@<RegistrarAperturamientoDisciplinario></RegistrarAperturamientoDisciplinario>;
+        if (e.Value.ToString() == "SolicitudExpedienteNotario") ChildContent = @<RegistrarSolicitudExpediente></RegistrarSolicitudExpediente>;
+        if (e.Value.ToString() == "Dictamen") ChildContent = @<RegistrarDictamen></RegistrarDictamen>;
+        if (e.Value.ToString() == "Resolucion") ChildContent = @<RegistrarResolucion></RegistrarResolucion>;
+        if (e.Value.ToString() == "Apelacion") ChildContent = @<RegistrarApelacion></RegistrarApelacion>;
+        StateHasChanged();
+    }
+}
