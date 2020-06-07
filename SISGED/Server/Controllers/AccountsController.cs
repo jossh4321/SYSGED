@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using SISGED.Server.Services;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
+using SISGED.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -22,12 +23,15 @@ namespace SISGED.Server.Controllers
     {
         private readonly UsuarioService _usuarioservice;
         private readonly RolesService _rolservice;
+        private readonly PermisosService _permisoservice;
         private readonly IConfiguration _configuration;
         public AccountsController(UsuarioService usuarioservice, RolesService rolservice,
+            PermisosService permisoservice,
             IConfiguration configuration)
         {
             _rolservice = rolservice;
             _usuarioservice = usuarioservice;
+            _permisoservice = permisoservice;
             _configuration = configuration;
         }
         [HttpPost("crear")]
@@ -48,6 +52,52 @@ namespace SISGED.Server.Controllers
             {
                 return BadRequest("Username or password invalid");
             }
+        }
+
+        [HttpGet("GetUserData")]
+        [AllowAnonymous]
+        public ActionResult<Sesion> GetDatosUsuario([FromQuery] string user)
+        {
+            Sesion temp = new Sesion();
+            List<Permiso> permisosInterfaces = new List<Permiso>();
+            List<Permiso> permisosHerramientas = new List<Permiso>();
+
+            Usuario usuario = new Usuario();
+            usuario = _usuarioservice.GetByUsername(user);
+
+            Rol rolusu = new Rol();
+            rolusu = _rolservice.GetById(usuario.rol);
+
+            foreach (string idPerm in rolusu.listainterfaces)
+            {
+                //Obtener el bjeto permiso y añadirlo
+                Permiso perm1 = new Permiso();
+                perm1 = _permisoservice.GetById(idPerm);
+                permisosInterfaces.Add(perm1);
+            }
+
+            foreach (string idPerm in rolusu.listaherramientas)
+            {
+                //Obtener el bjeto permiso y añadirlo
+                Permiso perm2 = new Permiso();
+                perm2 = _permisoservice.GetById(idPerm);
+                permisosHerramientas.Add(perm2);
+            }            
+
+            temp.nombre = usuario.datos.nombre;
+            temp.rol = rolusu.nombre;
+            temp.permisosHerram = permisosHerramientas;
+            temp.permisosInterfaz = permisosInterfaces;
+            return temp;
+        }
+
+        [HttpGet("GetRolByID")]
+        [AllowAnonymous]
+        public ActionResult<Rol> GetRolByID([FromQuery] string id)
+        {
+            Rol rolusu = new Rol();
+            rolusu = _rolservice.GetById(id);
+            return rolusu;
         }
 
         [HttpPost("login")]

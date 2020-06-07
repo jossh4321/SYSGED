@@ -2,7 +2,7 @@
 <style>
     .window {
         display:flex;
-        flex-direction:row;
+        flex-direction:column;
         align-items:center;
         justify-content:center;
         background-color: #1a1a1a;
@@ -10,20 +10,25 @@
         text-align: center;
         color: black;
         width: inherit;
-        height: 99%;
-        line-height:99%;
-        padding: 10px;
+        flex-basis:100%;
     }
+    .default-title-style{
+        display:block;
+        color:#808080;
+    }
+    
+
 </style>
 <div class="window">
 
     @if (ChildContent != null)
     {
         @ChildContent
+    
     }
     else
     {
-        <h4 style="color:#808080">Arrastre una herramienta al espacio de trabajo</h4>
+        <h4 class="default-title-style">Arrastre una herramienta al espacio de trabajo</h4>
     }
 
 </div>
@@ -47,6 +52,10 @@
             if(itemArrastrado.nombre == "Busqueda")
             {
                 ChildContent = @<ContenidoPrueba></ContenidoPrueba>;
+            }
+            else if(itemArrastrado.nombre == "Registrar Documento")
+            {
+                ChildContent = @<EntornoDocumento></EntornoDocumento>;
             }
             else
             {

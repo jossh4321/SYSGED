@@ -1,8 +1,9 @@
-﻿@page "/login/template"
+﻿@page "/Login"
 @inject IRepository repositorio
 @inject NavigationManager navigationManager
 @inject ILoginService loginservice
 @inject ISwalFireMessage swalfire
+
 @using SISGED.Client.Auth
 <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-deep_purple.min.css" />
@@ -138,7 +139,7 @@
 
                             <div class="col-lg-10 col-lg-offset-1 col-lg-offset-right-1 col-md-10 col-md-offset-1 col-md-offset-right-1 col-sm-12 col-xs-12 pull-right ">
                                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                    <MatTextField @bind-Value="@userInfo.clave" FullWidth="true"  Label="CONTRASEÑA"></MatTextField>
+                                    <MatTextField @bind-Value="@userInfo.clave" FullWidth="true" Label="CONTRASEÑA"></MatTextField>
                                     <ValidationMessage For="(() => userInfo.clave)" />
                                 </div>
                             </div>
@@ -176,14 +177,6 @@
 </div>
 
 @code {
-    /*private string username { get; set; }
-    private string password { get; set; }
-    private UserLogin credentials { get; set; } = new UserLogin();
-    public void ingresar()
-    {
-
-    }
-    */
 
     private UserInfo userInfo = new UserInfo();
     private async Task LoginUsuario()
@@ -192,7 +185,7 @@
         if (httpResponse.Error)
         {
             Console.WriteLine("Algo Mal");
-            swalfire.errorMessage("Error al ingresar usuario o contraseña");
+            await swalfire.errorMessage("Error al ingresar usuario o contraseña");
             // await mostrarMensajes.MostrarMensajeError(await httpResponse.GetBody());
         }
         else
@@ -200,11 +193,22 @@
             Console.WriteLine("Algo Bien");
             //logeando al usuarios cy mmandandolo a la pagina principal
             await loginservice.Login(httpResponse.Response.Token);
+
             navigationManager.NavigateTo("");
         }
     }
+
     public void LoginUsuarioError()
     {
         swalfire.errorMessage("Error al ingresar usuario o contraseña");
     }
+    /*
+        foreach (Permiso perm in sesion.permisosInterfaz)
+        {
+            Console.WriteLine("interfaz");
+        }
+        foreach (Permiso perm in sesion.permisosHerram)
+        {
+            Console.WriteLine("herramienta");
+        }*/
 }

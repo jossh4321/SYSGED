@@ -1,6 +1,17 @@
 ﻿<style>
     .div-style{
-        height:inherit;
+        display:flex;
+        flex-direction:column;
+        flex-basis:100%
+    }
+    .div-view {
+        display: flex;
+        flex-basis: 100%;
+        overflow: auto;
+        flex-direction: column;
+    }
+    .div-tool-list {
+        flex-basis: 15%;
     }
 </style>
 <div class="div-style" ondragover="event.preventDefault();"
@@ -8,15 +19,19 @@
      @ondragenter="dragEnterSnapshot"
      @ondragleave="dragLeaveSnapshot"
      @ondrag="dragSnapshot">
-
-    @foreach (var tool in toollist)
-    {
-        <ToolItem herramienta="tool" />
-    }
-    @if (ChildContent != null)
-    {
-        @ChildContent
-    }
+    <div >
+        @foreach (var tool in toollist)
+        {
+            <ToolItem herramienta="tool" />
+        }
+    </div>
+        @if (ChildContent != null)
+        {
+            <div class="div-view">
+                @ChildContent
+            </div>
+        }
+    
 </div>
 
 

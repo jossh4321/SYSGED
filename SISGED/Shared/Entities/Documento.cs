@@ -12,7 +12,7 @@ namespace SISGED.Shared.Entities
         typeof(OficioBPN),
         typeof(SolicitudBPN),
         typeof(ResultadoBPN),
-        typeof(SolcitudExpedicionFirma),
+        typeof(SolicitudExpedicionFirma),
         typeof(OficioDesignacionNotario),
         typeof(ConclusionFirma),
         typeof(AperturamientoDisciplinario),
@@ -97,10 +97,10 @@ namespace SISGED.Shared.Entities
 
     }
 
-    public class SolcitudExpedicionFirma : Documento
+    public class SolicitudExpedicionFirma : Documento
     {
-        public ContenidoSolcitudExpedicionFirma contenido { get; set; }
-        public class ContenidoSolcitudExpedicionFirma
+        public ContenidoSolicitudExpedicionFirma contenido { get; set; }
+        public class ContenidoSolicitudExpedicionFirma
         {
             public string codigo { get; set; }
             public string titulo { get; set; }
@@ -111,21 +111,7 @@ namespace SISGED.Shared.Entities
         }
 
     }
-
-    public class OficioDesignacionNotario : Documento
-    {
-        public ContenidoOficioDesignacionNotario contenido { get; set; }
-        public class ContenidoOficioDesignacionNotario
-        {
-            public string titulo { get; set; }
-            public string descripcion { get; set; }
-            public DateTime fecharealizacion { get; set; }
-            public string lugaroficionotarial { get; set; }
-            public string idusuario { get; set; }
-            public string idnotario { get; set; }
-        }
-
-    }
+    
     public class ConclusionFirma : Documento
     {
         public ContenidoConclusionFirma contenido { get; set; }
@@ -134,6 +120,21 @@ namespace SISGED.Shared.Entities
             public string idescriturapublica { get; set; }
         }
 
+    }
+
+    
+    public class OficioDesignacionNotario : Documento
+    {
+        public ContenidoOficioDesignacionNotario contenido { get; set; } = new ContenidoOficioDesignacionNotario();
+    }
+    public class ContenidoOficioDesignacionNotario
+    {
+        public string titulo { get; set; }
+        public string descripcion { get; set; }
+        public DateTime fecharealizacion { get; set; }
+        public string lugaroficionotarial { get; set; }
+        public string idusuario { get; set; }
+        public string idnotario { get; set; }
     }
 
     public class AperturamientoDisciplinario : Documento
