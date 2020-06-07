@@ -186,7 +186,7 @@
         if (httpResponse.Error)
         {
             Console.WriteLine("Algo Mal");
-            swalfire.errorMessage("Error al ingresar usuario o contraseña");
+            await swalfire.errorMessage("Error al ingresar usuario o contraseña");
             // await mostrarMensajes.MostrarMensajeError(await httpResponse.GetBody());
         }
         else

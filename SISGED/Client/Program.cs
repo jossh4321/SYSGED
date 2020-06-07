@@ -13,6 +13,7 @@ using SISGED.Shared.Validators;
 using FluentValidation;
 using Blazor.FileReader;
 using SISGED.Shared.Models;
+using SISGED.Shared.Validators.DocumentosValidator.DesignacionNotario;
 
 namespace SISGED.Client
 {
@@ -38,6 +39,8 @@ namespace SISGED.Client
             services.AddFileReaderService(options => options.InitializeOnFirstCall = true);
             services.AddValidatorsFromAssemblyContaining<DatosValidator>();
             services.AddValidatorsFromAssemblyContaining<Usuario2Validator>();
+            services.AddValidatorsFromAssemblyContaining<ContenidoODNValidator>();
+            services.AddValidatorsFromAssemblyContaining<OficioDesignacionNotarioValidator>();
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();
             services.AddScoped<AuthenticationStateProvider, 

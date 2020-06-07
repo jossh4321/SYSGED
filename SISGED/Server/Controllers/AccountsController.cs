@@ -25,7 +25,8 @@ namespace SISGED.Server.Controllers
         private readonly RolesService _rolservice;
         private readonly PermisosService _permisoservice;
         private readonly IConfiguration _configuration;
-        public AccountsController(UsuarioService usuarioservice, RolesService rolservice, PermisosService permisoservice,
+        public AccountsController(UsuarioService usuarioservice, RolesService rolservice,
+            PermisosService permisoservice,
             IConfiguration configuration)
         {
             _rolservice = rolservice;
