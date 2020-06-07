@@ -1,0 +1,83 @@
+﻿@page "/escrituraspublicas"
+@inject IRepository repositorio
+@inject ISwalFireMessage swalFireMessage
+<h3>ListaEscriturasPublicas</h3>
+ 
+@if(listaEscriturasPublicas.Count == 0)
+{
+    <text>Cargando...</text>
+}
+else {
+   <MatTable Items="@listaEscriturasPublicas" Class="mat-elevation-z5">
+       <MatTableHeader>
+           <th class="text-center">Nombre del Notario</th>
+           <th class="text-center">Dirección del Oficio</th>
+           <th class="text-center">Fecha</th>
+           <th class="text-center">Estado</th>
+           <th class="text-center">Acciones</th>
+       </MatTableHeader>
+       <MatTableRow>
+           <td class="text-center">@context.notario</td>
+           <td class="text-center">@context.direccionoficio</td>
+           <td class="text-center">@context.fechaescriturapublica</td>
+           <td class="text-center">@context.estado</td>
+           <td class="text-center">
+               <MatButton Raised="true" Icon="favorite" @onclick="@(() => VisualizarEscrituraPublica(context))">Visualizar Escritura Pública</MatButton>
+           </td>       
+       </MatTableRow>
+   </MatTable>
+
+   <MatDialog @bind-IsOpen="dialogabierto">
+       <MatDialogTitle>
+           Datos de la Escritura Pública
+       </MatDialogTitle>
+       <MatDialogContent>
+            <div class="mat-elevation-z10">
+                <p>Nombre del Notario</p>
+                <label>@escrituraPublica.notario</label>
+            </div>
+           <div class="mat-elevation-z10">
+               <p>Fecha de la Escritura Pública</p>
+               @escrituraPublica.fechaescriturapublica
+           </div>
+           <div class="mat-elevation-z10">
+               <p>Estado de la Escritura Pública</p>
+               @escrituraPublica.estado
+           </div>
+           <div class="mat-elevation-z10">
+               <p>Direccion del Oficio Notarial del ex-notario</p>
+               @escrituraPublica.direccionoficio
+           </div>
+       </MatDialogContent>
+       <MatDialogActions>
+
+       </MatDialogActions>
+   </MatDialog>
+} 
+
+
+@code {
+
+    private List<EscrituraPublicaRDTO> listaEscriturasPublicas { get; set; }
+    public bool dialogabierto = false;
+    public EscrituraPublicaRDTO escrituraPublica = new EscrituraPublicaRDTO();
+
+
+    protected async override Task OnInitializedAsync() {
+        listaEscriturasPublicas = new List<EscrituraPublicaRDTO>();
+        await CargarEscriturasPublicas();
+    }
+
+    private async Task CargarEscriturasPublicas()
+    {
+        var responseHttp = await repositorio.Get<List<EscrituraPublicaRDTO>>("api/EscriturasPublicas");
+        listaEscriturasPublicas = responseHttp.Response;
+    }
+
+    private void VisualizarEscrituraPublica(EscrituraPublicaRDTO escrituraPublica)
+    {
+        dialogabierto = true;
+        this.escrituraPublica = escrituraPublica;
+    }
+
+}
