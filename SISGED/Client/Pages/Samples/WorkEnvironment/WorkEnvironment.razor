@@ -107,8 +107,9 @@
     </CascadingValue>
 </div>
 @code {
-
-    public List<Tool> listaherramientas = new List<Tool>() {
+    [CascadingParameter] Sesion sesion { get; set; }
+    //public List<Tool> listaherramientas = new List<Tool>();
+    public List<Tool> listaherramientas =  new List<Tool>{
         new Tool(){
             nombre="Busqueda",
             descripcion="Permite realizar una busqueda de Protocolos Juridicos mediante filtros especificos",
@@ -130,6 +131,9 @@
             icono="search",currentPlace="tools",componentName="ContenidoPrueba"
             }
         };
+
+
+
     public List<Documento> bandejasalida = new List<Documento>();
     public List<Tool> listavacia = new List<Tool>();
     public Tool currentToolDragged;
@@ -147,8 +151,14 @@
         {
             Console.WriteLine("Ocurrio un error");
         }
+        //listaherramientas = obtenerListaheramientas();
 
     }
+    public List<Tool> obtenerListaheramientas()
+    {
+        return sesion.permisosHerram.Select(x => new Tool() { nombre = x.label, valor = x.nombre, icono = x.icono, descripcion = "", currentPlace = "tools", componentName = "component" }).ToList();
+    }
+
     public void UpdateDraggableComponents(string newCurrentPlace)
     {
         var tool = listaherramientas.SingleOrDefault(x => x.nombre == currentToolDragged.nombre);

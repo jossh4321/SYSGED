@@ -249,6 +249,7 @@
 
   <ItemGroup>
     <PackageReference Include="Accelist.FluentValidation.Blazor" Version="2.1.0" />
+    <PackageReference Include="Blazored.Typeahead" Version="4.3.0" />
     <PackageReference Include="FluentValidation" Version="9.0.0-preview4" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.0.0-preview4" />
     <PackageReference Include="MatBlazor" Version="2.3.0" />

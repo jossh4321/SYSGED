@@ -1,5 +1,6 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -61,42 +62,16 @@
         <FluentValidator></FluentValidator>
         <MatTabGroup>
             <MatTab Label="Datos Generales">
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => oficiodesignacion.contenido.titulo)">
-                    <MatTextField @bind-Value="@oficiodesignacion.contenido.titulo" Class="text-field-style"
-                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"titulo",oficiodesignacion.contenido))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => oficiodesignacion.contenido.titulo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => oficiodesignacion.contenido.descripcion)">
-                    <MatTextField @bind-Value="@oficiodesignacion.contenido.descripcion" Class="text-field-style"
-                                  Label="Descripcion del Oficio" @oninput='@(e => KeyUp(e,"descripcion",oficiodesignacion.contenido))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => oficiodesignacion.contenido.descripcion)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => oficiodesignacion.contenido.lugaroficionotarial)">
-                    <MatTextField @bind-Value="@oficiodesignacion.contenido.lugaroficionotarial" Class="text-field-style"
-                                  Label="Dir. Oficio Notarial" @oninput='@(e => KeyUp(e,"lugaroficionotarial",oficiodesignacion.contenido))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => oficiodesignacion.contenido.lugaroficionotarial)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+
+                <BlazoredTypeahead SearchMethod="searchProducts" @bind-Value="SelectProduct">
+                    <SelectedTemplate>
+                        @context.ProductName
+                    </SelectedTemplate>
+                    <ResultTemplate>
+                        @context.ProductName <strong>@context.Price</strong>
+                    </ResultTemplate>
+                </BlazoredTypeahead>
+
                 <div class="field-container">
                     <MatButton type="submit"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
@@ -106,13 +81,45 @@
         </MatTabGroup>
     </EditForm>
 
+    @if(SelectProduct != null)
+    {
+        <p>Selected Product is: @SelectProduct.ProductName</p>
+    }
 </div>
 @code {
+
+    public class product{
+        public string ProductName { get; set; }
+        public double Price { get; set; }
+        public product(string pn,double p)
+        {
+            this.ProductName = pn; this.Price = p;
+        }
+    }
+    private List<product> products;
+    private product SelectProduct;
+    private async Task<IEnumerable<product>> searchProducts(string searchtext)
+    {
+        return await Task.FromResult(products.Where(x=> x.ProductName.ToLower().Contains(searchtext.ToLower())).ToList());
+    }
+
+
+
+
+
+
+
     private OficioDesignacionNotario oficiodesignacion = new OficioDesignacionNotario();
     private EditContext _editContext;
     protected override void OnInitialized()
     {
         _editContext = new EditContext(oficiodesignacion);
+        products = new List<product>()
+        {
+            new product("computer",2000),
+            new product("tv",1000),
+            new product("keyboard",500),
+        };
     }
 
 
