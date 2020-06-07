@@ -55,6 +55,7 @@
         color:red !important;
     }
 </style>
+
 <div class="div-form">
     <EditForm EditContext="@_editContext" Context="CurrentEditContext"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
@@ -107,6 +108,7 @@
     </EditForm>
 
 </div>
+
 @code {
     private OficioDesignacionNotario oficiodesignacion = new OficioDesignacionNotario();
     private EditContext _editContext;
@@ -114,7 +116,6 @@
     {
         _editContext = new EditContext(oficiodesignacion);
     }
-
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
     {
