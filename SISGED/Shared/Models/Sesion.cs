@@ -1,4 +1,5 @@
-﻿using SISGED.Shared.Entities;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
