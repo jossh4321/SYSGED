@@ -3,7 +3,6 @@
 @inject NavigationManager navigationManager
 @inject ILoginService loginservice
 @inject ISwalFireMessage swalfire
-@inject Sesion sesion
 
 @using SISGED.Client.Auth
 <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
@@ -195,27 +194,21 @@
             //logeando al usuarios cy mmandandolo a la pagina principal
             await loginservice.Login(httpResponse.Response.Token);
 
-            Console.WriteLine("Empieza carga");
-            //Obteniendo datos necesarios para la carga inicial
-            var datosSesion = await repositorio.Get<Sesion>($"api/accounts/GetUserData?user={userInfo.usuario}");
-            Sesion temp = datosSesion.Response;
-            Console.WriteLine("nombre: " + temp.nombre);
-            foreach (Permiso perm in temp.permisosInterfaz)
-            {
-                Console.WriteLine("A");
-            }
-            foreach (Permiso perm in temp.permisosHerram)
-            {
-                Console.WriteLine("H");
-            }
-            Console.WriteLine("Termino carga");
-
-            //Redirigiendo a la página principal
             navigationManager.NavigateTo("");
         }
     }
+
     public void LoginUsuarioError()
     {
         swalfire.errorMessage("Error al ingresar usuario o contraseña");
     }
+    /*
+        foreach (Permiso perm in sesion.permisosInterfaz)
+        {
+            Console.WriteLine("interfaz");
+        }
+        foreach (Permiso perm in sesion.permisosHerram)
+        {
+            Console.WriteLine("herramienta");
+        }*/
 }

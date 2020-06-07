@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager navigationManager
-@inject Sesion sesion
 @inject IRepository repositorio
 <link href="css/site.css" rel="stylesheet" />
 <MatDrawerContainer Style="width: 100%; height: 100%;" @onclick="showUserMenu2">
@@ -19,17 +18,22 @@
 
         </div>
         <MatNavMenu Style="margin-top:0px;">
-
-            @foreach (Permiso interfaz in listaPermisos)//sesion.permisosInterfaz
+            @if (sesion == null)
             {
-                <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
-                    <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
-                    <span class="bartext-color">
-                        @interfaz.nombre
-                    </span>
-                </MatNavItem>
+                <p><em>Loading...</em></p>
             }
-
+            else
+            {
+                @foreach (Permiso interfaz in sesion.permisosInterfaz)//sesion.permisosInterfaz
+                {
+                    <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
+                        <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
+                        <span class="bartext-color">
+                            @interfaz.label
+                        </span>
+                    </MatNavItem>
+                }
+            }
         </MatNavMenu>
     </MatDrawer>
 
@@ -143,7 +147,7 @@
     ForwardRef buttonForwardRefMore = new ForwardRef();
     BaseMatMenu MenuMore;
 
-    List<Permiso> listaPermisos = new List<Permiso>();
+    Sesion sesion;
 
     #region metodos
     public void showUserMenu2()
@@ -194,23 +198,17 @@
         if (usuario.Identity.IsAuthenticated)
         {
             Console.WriteLine("Usuario autenticado");
+            //Obteniendo datos necesarios para la carga inicial
+            var datosSesion = await repositorio.Get<Sesion>($"api/accounts/GetUserData?user={usuario.Identity.Name}");
+            if (!datosSesion.Error)
+            {
+                sesion = (Sesion)datosSesion.Response;
+            }
         }
         else
         {
             Console.WriteLine("Usuario NO autenticado");
         }
-
-        Permiso x1 = new Permiso()
-        {
-            nombre = "AAA"
-        };
-        Permiso x2 = new Permiso()
-        {
-            nombre = "BBB"
-        };
-
-        listaPermisos.Add(x1);
-        listaPermisos.Add(x2);
     }
     /*example : Permiso x1 = new Permiso()
         {
