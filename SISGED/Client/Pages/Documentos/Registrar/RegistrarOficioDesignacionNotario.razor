@@ -24,8 +24,6 @@
         display: none;
     }
 
-
-
     div.valid .incorrecto,
     div.valid:not(.modified) .correcto {
         display: none;
@@ -64,15 +62,60 @@
         <MatTabGroup>
             <MatTab Label="Datos Generales">
 
-                <BlazoredTypeahead SearchMethod="searchProducts" @bind-Value="SelectProduct">
-                    <SelectedTemplate>
-                        @context.ProductName
-                    </SelectedTemplate>
-                    <ResultTemplate>
-                        @context.ProductName <strong>@context.Price</strong>
-                    </ResultTemplate>
-                </BlazoredTypeahead>
-
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => oficiodesignacion.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@oficiodesignacion.contenidoDTO.titulo" Class="text-field-style"
+                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"titulo",oficiodesignacion.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => oficiodesignacion.contenidoDTO.titulo)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => oficiodesignacion.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@oficiodesignacion.contenidoDTO.descripcion" Class="text-field-style"
+                                  Label="Descripcion del Oficio" @oninput='@(e => KeyUp(e,"descripcion",oficiodesignacion.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => oficiodesignacion.contenidoDTO.descripcion)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => oficiodesignacion.contenidoDTO.lugaroficionotarial)">
+                    <MatTextField @bind-Value="@oficiodesignacion.contenidoDTO.lugaroficionotarial" Class="text-field-style"
+                                  Label="Dir. Oficio Notarial" @oninput='@(e => KeyUp(e,"lugaroficionotarial",oficiodesignacion.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => oficiodesignacion.contenidoDTO.lugaroficionotarial)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => oficiodesignacion.contenidoDTO.idnotario)">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@oficiodesignacion.contenidoDTO.idnotario">
+                        <SelectedTemplate>
+                            @context.nombre @context.apellido  <strong>@context.dni</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            @context.nombre @context.apellido  <strong>@context.dni</strong>
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => oficiodesignacion.contenidoDTO.idnotario)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
                 <div class="field-container">
                     <MatButton type="submit"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
@@ -82,46 +125,33 @@
         </MatTabGroup>
     </EditForm>
 
-    @if(SelectProduct != null)
-    {
-        <p>Selected Product is: @SelectProduct.ProductName</p>
-    }
 </div>
 
 @code {
 
-    public class product{
-        public string ProductName { get; set; }
-        public double Price { get; set; }
-        public product(string pn,double p)
+
+        public List<Notario> notariosseleccionados = new List<Notario>();
+        public Notario notarioselect;
+        private async Task<IEnumerable<Notario>> match(string searchtext)
         {
-            this.ProductName = pn; this.Price = p;
+            //return await Task.FromResult(products.Where(x => x.ProductName.ToLower().Contains(searchtext.ToLower())).ToList());
+            var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
+            if (httpResponse.Error)
+            {
+                Console.WriteLine("error en el autocomplete");
+                return new List<Notario>();
+            }
+            else
+            {
+                return httpResponse.Response;
+            }
         }
-    }
-    private List<product> products;
-    private product SelectProduct;
-    private async Task<IEnumerable<product>> searchProducts(string searchtext)
-    {
-        return await Task.FromResult(products.Where(x=> x.ProductName.ToLower().Contains(searchtext.ToLower())).ToList());
-    }
 
-
-
-
-
-
-
-    private OficioDesignacionNotario oficiodesignacion = new OficioDesignacionNotario();
+    private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
     private EditContext _editContext;
     protected override void OnInitialized()
     {
         _editContext = new EditContext(oficiodesignacion);
-        products = new List<product>()
-        {
-            new product("computer",2000),
-            new product("tv",1000),
-            new product("keyboard",500),
-        };
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)

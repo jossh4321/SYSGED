@@ -61,7 +61,7 @@ namespace SISGED.Server
             services.AddSingleton<RolesService>();
             services.AddSingleton<DocumentoService>();
             services.AddSingleton<PermisosService>();
-
+            services.AddSingleton<NotarioService>();
             services.AddSingleton<EscriturasPublicasService>();
             services.AddMvc().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); ;

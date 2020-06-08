@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,12 @@ namespace SISGED.Server.Services
             _notarios = database.GetCollection<Notario>("notarios");
         }
 
-        /*public List<Notario> Get()
+        public List<Notario> filter(string term)
         {
-            return _personas.Find(persona => true).ToList();
-        }*/
+            string regex = "\\b"+term.ToLower() + ".*";
+            var filter = Builders<Notario>.Filter.Regex("nombre", new BsonRegularExpression(regex, "i"));
+            return _notarios.Find(filter).ToList();
+        }
 
     }
 }
