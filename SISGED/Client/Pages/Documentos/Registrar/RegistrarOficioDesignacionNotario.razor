@@ -130,22 +130,22 @@
 @code {
 
 
-        public List<Notario> notariosseleccionados = new List<Notario>();
-        public Notario notarioselect;
-        private async Task<IEnumerable<Notario>> match(string searchtext)
+    public List<Notario> notariosseleccionados = new List<Notario>();
+    public Notario notarioselect;
+    private async Task<IEnumerable<Notario>> match(string searchtext)
+    {
+        //return await Task.FromResult(products.Where(x => x.ProductName.ToLower().Contains(searchtext.ToLower())).ToList());
+        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
+        if (httpResponse.Error)
         {
-            //return await Task.FromResult(products.Where(x => x.ProductName.ToLower().Contains(searchtext.ToLower())).ToList());
-            var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
-            if (httpResponse.Error)
-            {
-                Console.WriteLine("error en el autocomplete");
-                return new List<Notario>();
-            }
-            else
-            {
-                return httpResponse.Response;
-            }
+            Console.WriteLine("error en el autocomplete");
+            return new List<Notario>();
         }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
 
     private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
     private EditContext _editContext;
@@ -164,9 +164,17 @@
         _editContext.NotifyFieldChanged(fi);
     }
 
-    public void handleValidSubmit()
+    public async Task handleValidSubmit()
     {
-        swalfire.successMessage("Oficio de Designacion Registrada Correctamente");
+        var httpResponse =  await repository.Post<OficioDesignacionNotarioDTO, OficioDesignacionNotario>("api/documentos/documentoodn", oficiodesignacion);
+        if (httpResponse.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Oficio de Designacion Registrada Correctamente");
+        }
         Console.WriteLine("Todo Bien");
     }
 
