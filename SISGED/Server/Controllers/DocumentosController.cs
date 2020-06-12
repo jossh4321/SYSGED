@@ -45,7 +45,34 @@ namespace SISGED.Server.Controllers
             };
             documentoODN = _documentoservice.registrarOficioDesignacionNotario(documentoODN);
             return documentoODN;
-
+        }
+        [HttpPost("documentosbpn")]
+        public ActionResult<OficioBPN> RegistrarDocumentoSolicitudBPN(OficioBPNDTO documento)
+        {
+            ContenidoOficioBPN contenidoSolicitudBPN = new ContenidoOficioBPN()
+            {
+                titulo = documento.contenidoDTO.titulo,
+                descripcion = documento.contenidoDTO.descripcion,
+                observacion = documento.contenidoDTO.observacion,
+                idcliente = documento.contenidoDTO.idcliente.id,
+                direccionoficio = documento.contenidoDTO.direccionoficio,
+                idnotario = documento.contenidoDTO.idnotario.id,
+                actojuridico = documento.contenidoDTO.actojuridico,
+                tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
+                otorgantes = documento.contenidoDTO.otorgantes,
+                fecharealizacion = DateTime.Now,
+                url="ninguna"
+            };
+            OficioBPN documentoODN = new OficioBPN()
+            {
+                tipo = "OficioBPN",
+                contenido = contenidoSolicitudBPN,
+                estado = "pendiente",
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+            documentoODN = _documentoservice.registrarSolicitudBPN(documentoODN);
+            return documentoODN;
         }
     }
 }

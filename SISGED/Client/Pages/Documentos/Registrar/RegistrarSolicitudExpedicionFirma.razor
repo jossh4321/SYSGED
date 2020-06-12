@@ -64,9 +64,9 @@
         <FluentValidator></FluentValidator>
         <MatTabGroup>
             <MatTab Label="Datos Generales">
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => documento.contenido.codigo)">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenido.codigo)">
                     <MatTextField @bind-Value="@documento.contenido.codigo" Class="text-field-style" Label="Código de documento"
-                                  @oninput='@(e => KeyUp(e,"codigo",documento.contenido))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "codigo", documento.contenido))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -78,9 +78,9 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => documento.contenido.titulo)">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenido.titulo)">
                     <MatTextField @bind-Value="@documento.contenido.titulo" Class="text-field-style" Label="Título del documento"
-                                  @oninput='@(e => KeyUp(e,"titulo",documento.contenido))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenido))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -92,9 +92,9 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => documento.contenido.descripcion)">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenido.descripcion)">
                     <MatTextField @bind-Value="@documento.contenido.descripcion" Class="text-field-style" Label="Descripción del documento"
-                                  @oninput='@(e => KeyUp(e,"descripcion",documento.contenido))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "descripcion", documento.contenido))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -106,9 +106,9 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => documento.contenido.cliente)">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenido.cliente)">
                     <MatTextField @bind-Value="@documento.contenido.cliente" Class="text-field-style" Label="Cliente"
-                                  @oninput='@(e => KeyUp(e,"cliente",documento.contenido))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "cliente", documento.contenido))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -130,7 +130,9 @@
     </EditForm>
 </div>
 @code {
+        
     private SolicitudExpedicionFirma documento = new SolicitudExpedicionFirma();
+
 
     private EditContext _editContext;
     protected override void OnInitialized()

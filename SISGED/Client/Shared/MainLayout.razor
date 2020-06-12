@@ -115,7 +115,7 @@
                 </MatAppBar>
 
                 <MatAppBarContent>
-                    <CascadingValue Value="@sesion">
+                    <CascadingValue Value="@sesion" Name="SesionUsuario">
                         <div class="content px-4 render-fragment">
                             @Body
                         </div>
@@ -149,9 +149,37 @@
     ForwardRef buttonForwardRefMore = new ForwardRef();
     BaseMatMenu MenuMore;
 
-    Sesion sesion;
+    Sesion sesion = new Sesion();
+    bool cargasesion = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cargasesion = false;
+        var authState = await authenticationState;
+        var usuario = authState.User;
+        if (usuario.Identity.IsAuthenticated)
+        {
+            Console.WriteLine("Usuario autenticado");
+            //Obteniendo datos necesarios para la carga inicial
+            var datosSesion =  await repositorio.Get<Sesion>($"api/accounts/GetUserData?user={usuario.Identity.Name}");
+            if (!datosSesion.Error)
+            {
+                sesion = (Sesion)datosSesion.Response;
+                sesion.herramientasutilizables = obtenerListaheramientas(sesion.permisosHerram);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Usuario NO autenticado");
+        }
+
+    }
 
     #region metodos
+    public List<Tool> obtenerListaheramientas(List<Permiso> listapermisos)
+    {
+        return listapermisos.Select(x => new Tool() { nombre = x.label, valor = x.nombre, icono = x.icono, descripcion = "", currentPlace = "tools", componentName = "component" }).ToList();
+    }
     public void showUserMenu2()
     {
         valueclass = "non-show";
@@ -193,25 +221,6 @@
         this.MenuMore.OpenAsync();
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await authenticationState;
-        var usuario = authState.User;
-        if (usuario.Identity.IsAuthenticated)
-        {
-            Console.WriteLine("Usuario autenticado");
-            //Obteniendo datos necesarios para la carga inicial
-            var datosSesion = await repositorio.Get<Sesion>($"api/accounts/GetUserData?user={usuario.Identity.Name}");
-            if (!datosSesion.Error)
-            {
-                sesion = (Sesion)datosSesion.Response;
-            }
-        }
-        else
-        {
-            Console.WriteLine("Usuario NO autenticado");
-        }
-    }
     /*example : Permiso x1 = new Permiso()
         {
             nombre = "AAA"

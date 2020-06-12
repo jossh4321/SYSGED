@@ -266,5 +266,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Shared\SISGED.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\Documentos\Otros\" />
+  </ItemGroup>
 
 </Project>

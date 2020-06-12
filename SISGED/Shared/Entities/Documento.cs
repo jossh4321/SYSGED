@@ -46,13 +46,13 @@ namespace SISGED.Shared.Entities
     public class SolicitudDenuncia : Documento
     {
         public ContenidoSolicitudDenuncia contenido { get; set; }
-        
     }
 
     public class ContenidoOficioBPN
     {
         public string titulo { get; set; }
         public string descripcion { get; set; }
+        public string observacion { get; set; }
         public string idcliente { get; set; }
         public string direccionoficio { get; set; }
         public string idnotario { get; set; }
@@ -64,7 +64,7 @@ namespace SISGED.Shared.Entities
     }
     public class OficioBPN : Documento
     {
-        public  ContenidoOficioBPN contenido { get; set; }
+        public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
      
     }
     public class ContenidoSolicitudBPN
@@ -74,12 +74,12 @@ namespace SISGED.Shared.Entities
         public string idnotario { get; set; }
         public string actojuridico { get; set; }
         public string tipoprotocolo { get; set; }
-        public List<string> otorgantes { get; set; }
+        public List<string> otorgantes { get; set; } = new List<String>();
         public DateTime fecharealizacion { get; set; }
     }
     public class SolicitudBPN : Documento
     {
-        public ContenidoSolicitudBPN contenido { get; set; }
+        public ContenidoSolicitudBPN contenido { get; set; } = new ContenidoSolicitudBPN();
 
     }
     public class ContenidoResultadoBPN

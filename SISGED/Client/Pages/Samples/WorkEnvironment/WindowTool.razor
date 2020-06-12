@@ -1,20 +1,20 @@
 ﻿@using SISGED.Client.Pages.Samples.WorkEnvironment.WindowItemContent
 <style>
     .window {
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         background-color: #1a1a1a;
         border: none;
         text-align: center;
         color: black;
         width: inherit;
-        flex-basis:100%;
+        flex-basis: 100%;
     }
-    .default-title-style{
-        display:block;
-        color:#808080;
+    .default-title-style {
+        display: block;
+        color: #808080;
     }
     
 
@@ -61,12 +61,13 @@
             {
                 ChildContent = @<ContenidoPrueba2></ContenidoPrueba2>;
             }
+            StateHasChanged();
         }
         else
         {
             ChildContent = null;
         }
-        StateHasChanged();
+
     }
 
     public object GetInstanceFromString(string classname)
