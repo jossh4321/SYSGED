@@ -115,9 +115,11 @@
                 </MatAppBar>
 
                 <MatAppBarContent>
-                    <div class="content px-4 render-fragment">
-                        @Body
-                    </div>
+                    <CascadingValue Value="@sesion">
+                        <div class="content px-4 render-fragment">
+                            @Body
+                        </div>
+                    </CascadingValue>
                 </MatAppBarContent>
             </MatAppBarContainer>
 

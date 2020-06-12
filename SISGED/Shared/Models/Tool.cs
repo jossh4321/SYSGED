@@ -7,6 +7,8 @@ namespace SISGED.Shared.Models
     public class Tool
     {
         public string nombre { get; set; }
+
+        public string valor { get; set; }
         public string descripcion { get; set; }
         public string icono { get; set; }
         //public List<string> roles { get; set; } = new List<string>();

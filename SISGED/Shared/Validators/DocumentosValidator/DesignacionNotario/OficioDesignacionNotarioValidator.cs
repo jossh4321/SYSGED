@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
 using SISGED.Shared.Validators.DocumentosValidator.DesignacionNotario;
 using System;
@@ -7,11 +8,11 @@ using System.Text;
 
 namespace SISGED.Shared.Validators
 {
-    public class OficioDesignacionNotarioValidator : AbstractValidator<OficioDesignacionNotario>
+    public class OficioDesignacionNotarioValidator : AbstractValidator<OficioDesignacionNotarioDTO>
     {
         public OficioDesignacionNotarioValidator()
         {
-            RuleFor(x => x.contenido).SetValidator(new ContenidoODNValidator());
+            RuleFor(x => x.contenidoDTO).SetValidator(new ContenidoODNValidator());
         }
     }
 }
