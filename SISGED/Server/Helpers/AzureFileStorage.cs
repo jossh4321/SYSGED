@@ -54,5 +54,23 @@ namespace SISGED.Server.Helpers
             await blob.SetPropertiesAsync();
             return blob.Uri.ToString();
         }
+
+        public async Task<string> saveDoc(byte[] content, string extension, string containerName)
+        {
+            var account = CloudStorageAccount.Parse(connectionString);
+            var clientService = account.CreateCloudBlobClient();
+            var contenedor = clientService.GetContainerReference(containerName);
+            await contenedor.CreateIfNotExistsAsync();
+            await contenedor.SetPermissionsAsync(new BlobContainerPermissions
+            {
+                PublicAccess = BlobContainerPublicAccessType.Blob
+            });
+            var filename = $"{Guid.NewGuid()}.{"extension"}";
+            var blob = contenedor.GetBlockBlobReference(filename);
+            await blob.UploadFromByteArrayAsync(content, 0, content.Length);
+            blob.Properties.ContentType = "pdf";
+            await blob.SetPropertiesAsync();
+            return blob.Uri.ToString();
+        }
     }
 }

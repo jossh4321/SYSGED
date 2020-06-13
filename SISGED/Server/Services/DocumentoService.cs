@@ -25,5 +25,10 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoODN);
             return documentoODN;
         }
+        public SolicitudExpedicionFirma registrarSolicitudExpedicionFirma(SolicitudExpedicionFirma documentoSEF)
+        {
+            _documentos.InsertOne(documentoSEF);
+            return documentoSEF;
+        }
     }
 }
