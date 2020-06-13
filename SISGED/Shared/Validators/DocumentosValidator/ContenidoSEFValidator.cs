@@ -3,6 +3,7 @@ using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static SISGED.Shared.Entities.SolicitudExpedicionFirma;
 
 namespace SISGED.Shared.Validators.DocumentosValidator.DesignacionNotario
 {
