@@ -1,5 +1,7 @@
-﻿@inject IRepository repository
+﻿@using System.IO
+@inject IRepository repository
 @inject ISwalFireMessage swalfire
+
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -64,13 +66,13 @@
         <FluentValidator></FluentValidator>
         <MatTabGroup>
             <MatTab Label="Datos Generales">
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenido.codigo)">
-                    <MatTextField @bind-Value="@documento.contenido.codigo" Class="text-field-style" Label="Código de documento"
-                                  @oninput='@(e => KeyUp(e, "codigo", documento.contenido))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
+                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitudexpedicionfirma"
+                                  @oninput='@(e => KeyUp(e,"codigo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenido.codigo)" />
+                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.codigo)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -78,13 +80,13 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenido.titulo)">
-                    <MatTextField @bind-Value="@documento.contenido.titulo" Class="text-field-style" Label="Título del documento"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenido))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.titulo" Class="text-field-style" Label="Título del solicitudexpedicionfirma"
+                                  @oninput='@(e => KeyUp(e,"titulo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenido.titulo)" />
+                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.titulo)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -92,13 +94,13 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenido.descripcion)">
-                    <MatTextField @bind-Value="@documento.contenido.descripcion" Class="text-field-style" Label="Descripción del documento"
-                                  @oninput='@(e => KeyUp(e, "descripcion", documento.contenido))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción del solicitudexpedicionfirma"
+                                  @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenido.descripcion)" />
+                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.descripcion)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -106,38 +108,115 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenido.cliente)">
-                    <MatTextField @bind-Value="@documento.contenido.cliente" Class="text-field-style" Label="Cliente"
-                                  @oninput='@(e => KeyUp(e, "cliente", documento.contenido))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.cliente)">
+                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.cliente" Class="text-field-style" Label="Cliente"
+                                  @oninput='@(e => KeyUp(e,"cliente",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenido.cliente)" />
+                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.cliente)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+
+                <!--<div class="field-container">
+                    <MatFileUpload Style="padding: 15px; background-color: #6200ee;" OnChange="FilesReadyForContent"></MatFileUpload>
+                    if (list == "")
+                    {
+                        <div>Seleccione un archivo</div>
+                    }
+                    else
+                    {
+                        <div>list</div>
+                    }
+                </div>-->
+                <InputImg Label="Documento" ImagenSeleccionada="ImagenSeleccionada"></InputImg>
 
                 <div class="field-container">
                     <MatButton type="submit"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
                 </div>
+
             </MatTab>
         </MatTabGroup>
     </EditForm>
 </div>
 @code {
-        
-    private SolicitudExpedicionFirma documento = new SolicitudExpedicionFirma();
-
-
+    private SolicitudExpedicionFirmaDTO solicitudexpedicionfirma = new SolicitudExpedicionFirmaDTO();
     private EditContext _editContext;
+
+    private string documentoTemporal { get; set; } = null;
+
+    private string imagenTemporal;
+    /*
+    string list = "";
+    private string fileContent;
+    private byte[] documentoBytes = null;
+
+    async Task FilesReadyForContent(IMatFileUploadEntry[] files)
+    {
+        try
+        {
+            var file = files.FirstOrDefault();
+            if (file == null)
+            {
+                return;
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                await file.WriteToStreamAsync(stream);
+                sw.Stop();
+                if (stream.Length > 1024 * 1024)
+                {
+                    fileContent = "";
+                    fileContent += $"Name:\t{file.Name}\r\n";
+                    fileContent += $"Type:\t{file.Type}\r\n";
+                    fileContent += $"LastModified:\t{file.LastModified}\r\n";
+                    fileContent += $"Size:\t{file.Size}\r\n";
+                    fileContent += $"Time:\t{sw.Elapsed}\r\n";
+                    fileContent += $"Speed:\t{(stream.Length / sw.Elapsed.TotalSeconds):N0}  b/s\r\n";
+                }
+                else
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    using (var reader = new StreamReader(stream))
+                    {
+                        fileContent = await reader.ReadToEndAsync();
+                    }
+                    //documentoBytes = Convert.FromBase64String(fileContent);
+                    //solicitudexpedicionfirma.contenidoDTO.datosurl = documentoBytes;
+
+                    list = $"Nombre: {file.Name} - Tamaño: {file.Size}";
+                }
+            }
+        }
+
+        catch (Exception e)
+        {
+            fileContent = $"Error:\r\n{e.Message}\r\n{e.StackTrace}";
+        }
+    }
+    */
     protected override void OnInitialized()
     {
-        _editContext = new EditContext(documento);
+        _editContext = new EditContext(solicitudexpedicionfirma);
+
+        if (!string.IsNullOrEmpty(solicitudexpedicionfirma.contenidoDTO.data))
+        {
+            imagenTemporal = solicitudexpedicionfirma.contenidoDTO.data;
+            solicitudexpedicionfirma.contenidoDTO.data = null;
+        }
+    }
+
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        solicitudexpedicionfirma.contenidoDTO.data = imagenbase64;
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -149,9 +228,18 @@
         _editContext.NotifyFieldChanged(fi);
     }
 
-    public void handleValidSubmit()
+    public async Task handleValidSubmit()
     {
-        swalfire.successMessage("Solicitud de Expedicion de Firmas Registrada Correctamente");
+        var httpResponse = await repository.Post<SolicitudExpedicionFirmaDTO, SolicitudExpedicionFirma>("api/documentos/documentosef", solicitudexpedicionfirma);
+        //var httpResponse = await repository.Post("api/documentos/documentosef", solicitudexpedicionfirma);
+        if (httpResponse.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
+        }
         Console.WriteLine("Todo Bien");
     }
 

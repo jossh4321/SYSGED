@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using static SISGED.Shared.Entities.SolicitudExpedicionFirma;
 
 namespace SISGED.Shared.Validators.DocumentosValidator.DesignacionNotario
 {
-    public class ContenidoSEFValidator : AbstractValidator<ContenidoSolicitudExpedicionFirma>
+    public class ContenidoSEFValidator : AbstractValidator<ContenidoSolicitudExpedicionFirmaDTO>
     {
         public ContenidoSEFValidator()
         {

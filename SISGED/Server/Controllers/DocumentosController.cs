@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SISGED.Server.Helpers;
 using SISGED.Server.Services;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
@@ -14,9 +15,11 @@ namespace SISGED.Server.Controllers
     public class DocumentosController: ControllerBase
     {
         private readonly DocumentoService _documentoservice;
-        public DocumentosController(DocumentoService documentoservice)
+        private readonly IFileStorage _almacenadorDeDocs;
+        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs)
         {
             _documentoservice = documentoservice;
+            _almacenadorDeDocs = almacenadorDeDocs;
         }
         [HttpGet]
         public ActionResult<List<Documento>> Get()
@@ -73,6 +76,58 @@ namespace SISGED.Server.Controllers
             };
             documentoODN = _documentoservice.registrarSolicitudBPN(documentoODN);
             return documentoODN;
+        }
+        /*[HttpPost("documentosef")]
+        public ActionResult<SolicitudExpedicionFirma> RegistrarDocumentoSEF(SolicitudExpedicionFirmaDTO documento)
+        {
+            ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
+            {
+                titulo = documento.contenidoDTO.titulo,
+                descripcion = documento.contenidoDTO.descripcion,
+                fecharealizacion = DateTime.Now,
+                cliente = documento.contenidoDTO.cliente,
+                codigo = documento.contenidoDTO.codigo,
+                url = "www.google.com"
+            };
+            SolicitudExpedicionFirma documentoSEF = new SolicitudExpedicionFirma()
+            {
+                tipo = "SolicitudExpedicionFirma",
+                contenido = contenidoSEF,
+                estado = "pendiente",
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF);
+            return documentoSEF;
+        }*/
+
+        [HttpPost("documentosef")]
+        public async Task<ActionResult<SolicitudExpedicionFirma>> RegistrarDocumentoSEF(SolicitudExpedicionFirmaDTO documento)
+        {
+            string urlData = "www.google.com";
+            if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(documento.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveFile(solicitudBytes, "jpg", "solicitudExpedicionFirma");
+            }
+            ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
+            {
+                titulo = documento.contenidoDTO.titulo,
+                descripcion = documento.contenidoDTO.descripcion,
+                fecharealizacion = DateTime.Now,
+                cliente = documento.contenidoDTO.cliente,
+                codigo = documento.contenidoDTO.codigo,
+                url = urlData
+            };
+            SolicitudExpedicionFirma documentoSEF = new SolicitudExpedicionFirma()
+            {
+                tipo = "SolicitudExpedicionFirma",
+                contenido = contenidoSEF,
+                estado = "pendiente",
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+            return _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF);
         }
     }
 }
