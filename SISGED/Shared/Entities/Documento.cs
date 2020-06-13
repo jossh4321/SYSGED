@@ -45,7 +45,7 @@ namespace SISGED.Shared.Entities
     }
     public class SolicitudDenuncia : Documento
     {
-        public ContenidoSolicitudDenuncia contenido { get; set; }
+        public ContenidoSolicitudDenuncia contenido { get; set; } = new ContenidoSolicitudDenuncia();
     }
 
     public class ContenidoOficioBPN

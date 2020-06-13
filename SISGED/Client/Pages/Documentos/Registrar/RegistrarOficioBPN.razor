@@ -309,7 +309,7 @@
         var httpResponse = await repository.Post<OficioBPNDTO, OficioBPN>("api/documentos/documentosbpn", documento);
         if (!httpResponse.Error)
         {
-            await swalfire.successMessage("Solicitud de Expedicion de Firmas Registrada Correctamente");
+            await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
             Console.WriteLine("Todo Bien");
         }
         else
