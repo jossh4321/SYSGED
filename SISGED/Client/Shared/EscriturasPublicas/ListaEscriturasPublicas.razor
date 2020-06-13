@@ -1,70 +1,153 @@
 ﻿@page "/escrituraspublicas"
 @inject IRepository repositorio
 @inject ISwalFireMessage swalFireMessage
+<style>
+    p {
+        display: block;
+    }
+</style>
 <h3>ListaEscriturasPublicas</h3>
- 
-@if(listaEscriturasPublicas.Count == 0)
+
+@if (listaEscriturasPublicas.Count == 0)
 {
     <text>Cargando...</text>
 }
-else {
-   <MatTable Items="@listaEscriturasPublicas" Class="mat-elevation-z5">
-       <MatTableHeader>
-           <th class="text-center">Nombre del Notario</th>
-           <th class="text-center">Dirección del Oficio</th>
-           <th class="text-center">Fecha</th>
-           <th class="text-center">Estado</th>
-           <th class="text-center">Acciones</th>
-       </MatTableHeader>
-       <MatTableRow>
-           <td class="text-center">@context.notario</td>
-           <td class="text-center">@context.direccionoficio</td>
-           <td class="text-center">@context.fechaescriturapublica</td>
-           <td class="text-center">@context.estado</td>
-           <td class="text-center">
-               <MatButton Raised="true" Icon="favorite" @onclick="@(() => VisualizarEscrituraPublica(context))">Visualizar Escritura Pública</MatButton>
-           </td>       
-       </MatTableRow>
-   </MatTable>
+else
+{
+    <MatTable Items="@listaEscriturasPublicas" Class="mat-elevation-z5">
+        <MatTableHeader>
+            <th class="text-center">Nombre del Notario</th>
+            <th class="text-center">Dirección del Oficio</th>
+            <th class="text-center">Fecha</th>
+            <th class="text-center">Estado</th>
+            <th class="text-center">Acciones</th>
+        </MatTableHeader>
+        <MatTableRow>
+            <td class="text-center">@context.notario</td>
+            <td class="text-center">@context.direccionoficio</td>
+            <td class="text-center">@context.fechaescriturapublica</td>
+            <td class="text-center">@context.estado</td>
+            <td class="text-center">
+                <MatButton Raised="true" Icon="favorite" @onclick="@(() => VisualizarEscrituraPublica(context))">Visualizar Escritura Pública</MatButton>
+            </td>
+        </MatTableRow>
+    </MatTable>
 
-   <MatDialog @bind-IsOpen="dialogabierto">
-       <MatDialogTitle>
-           Datos de la Escritura Pública
-       </MatDialogTitle>
-       <MatDialogContent>
-            <div class="mat-elevation-z10">
-                <p>Nombre del Notario</p>
-                <label>@escrituraPublica.notario</label>
+    <MatDialog @bind-IsOpen="dialogabierto">
+        <MatDialogTitle>
+            Datos de la Escritura Pública
+        </MatDialogTitle>
+        <MatDialogContent Class="mat-layout-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6 mat-elevation-z10">
+                    <p>Nombre del Notario</p>
+                    <label>@escrituraPublica.notario</label>
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6 mat-elevation-z10">
+                    <p>Fecha de la Escritura Pública</p>
+                    @escrituraPublica.fechaescriturapublica
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6 mat-elevation-z10">
+                    <p>Estado de la Escritura Pública</p>
+                    @escrituraPublica.estado
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6 mat-elevation-z10">
+                    <p>Direccion del Oficio Notarial del ex-notario</p>
+                    @escrituraPublica.direccionoficio
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12 mat-elevation-z10">
+                    <p>Acto Jurídicos de la Escritura Pública</p>
+                    <div class="mat-layout-grid-inner">
+
+                        @if (escrituraPublica.actosjuridicos == null)
+                        {
+                            <label>Cargando...</label>
+                        }
+                        else
+                        {
+                            @foreach (var actojuridico in escrituraPublica.actosjuridicos)
+                            {
+
+                                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+                                    <div class="mat-elevation-z10">
+                                        <p>Título</p>
+                                        <label>@actojuridico.titulo</label>
+                                    </div>
+                                    <div class="mat-elevation-z10">
+                                        <p>Descripción</p>
+                                        <label>@actojuridico.descripcion</label>
+                                    </div>
+                                    @if (actojuridico.contratos == null)
+                                    {
+                                        <div class="mat-elevation-z10">
+                                            <p>Contratos</p>
+                                            <label>No hay Contratos</label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="mat-elevation-z10">
+                                            <p>Contratos</p>
+                                            <MatButton Raised="true" Icon="favorite">Ver Contratos</MatButton>
+                                        </div>
+                                    }
+                                    @if (actojuridico.otorgantes == null)
+                                    {
+                                        <div class="mat-elevation-z10">
+                                            <p>Otorgantes</p>
+                                            <label>No hay otorgantes</label>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="mat-elevation-z10">
+                                            <p>Otorgantes</p>
+                                            <MatButton Raised="true" Icon="favorite">Ver Otorgantes</MatButton>
+                                        </div>
+                                    }
+
+                                </div>
+
+                            }
+                        }
+                    </div>
+                </div>
             </div>
-           <div class="mat-elevation-z10">
-               <p>Fecha de la Escritura Pública</p>
-               @escrituraPublica.fechaescriturapublica
-           </div>
-           <div class="mat-elevation-z10">
-               <p>Estado de la Escritura Pública</p>
-               @escrituraPublica.estado
-           </div>
-           <div class="mat-elevation-z10">
-               <p>Direccion del Oficio Notarial del ex-notario</p>
-               @escrituraPublica.direccionoficio
-           </div>
-       </MatDialogContent>
-       <MatDialogActions>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@((e) => { dialogabierto = false; })">Volver</MatButton>
+        </MatDialogActions>
+    </MatDialog>
 
-       </MatDialogActions>
-   </MatDialog>
-} 
+    <MatDialog @bind-IsOpen="dialogoContrato">
+        <MatDialogTitle>Contratos del Acto Jurídico</MatDialogTitle>
+        <MatDialogContent></MatDialogContent>
+        <MatDialogActions></MatDialogActions>
+    </MatDialog>
+
+    <MatDialog @bind-IsOpen="dialogoOtorgantes">
+        <MatDialogTitle>Otorgants del Acto Jurídico</MatDialogTitle>
+        <MatDialogContent></MatDialogContent>
+        <MatDialogActions></MatDialogActions>
+    </MatDialog>
+}
 
 
 @code {
 
     private List<EscrituraPublicaRDTO> listaEscriturasPublicas { get; set; }
     public bool dialogabierto = false;
-    public EscrituraPublicaRDTO escrituraPublica = new EscrituraPublicaRDTO();
-
-
-    protected async override Task OnInitializedAsync() {
+    public EscrituraPublicaRDTO escrituraPublica { get; set; }
+    public bool dialogoContrato = false;
+    public bool dialogoOtorgantes = false;
+    public List<Contrato> listacontratos { get; set; }
+    public List<Otorgante> listaotorgantes { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
         listaEscriturasPublicas = new List<EscrituraPublicaRDTO>();
+        escrituraPublica = new EscrituraPublicaRDTO();
+        listacontratos = new List<Contrato>();
+        listaotorgantes = new List<Otorgante>();
         await CargarEscriturasPublicas();
     }
 
@@ -79,5 +162,6 @@ else {
         dialogabierto = true;
         this.escrituraPublica = escrituraPublica;
     }
+
 
 }

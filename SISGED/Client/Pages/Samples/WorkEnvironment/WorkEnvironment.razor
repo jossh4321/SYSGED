@@ -25,19 +25,21 @@
     }
 
     div.workspace {
-        border-left: 0px;
-        border-right: 0px;
-        flex-grow: 10;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
+    border-left: 0px;
+    border-right: 0px;
+    flex-grow: 10;
+    text-align: center;
+    display: flex;
+    max-height: 100%;
+    flex-direction: column;
     }
 
     div.tools {
         border-top: 0px;
         flex-grow: 1;
         text-align: center;
-        display: block;
+        display: flex;
+        flex-direction: column;
     }
 
     .common-box-style {
@@ -58,6 +60,7 @@
         margin: 6px 4px 10px 4px;
         border: 2px solid #4d4d4d;
         border-radius: 7px 7px 0px 0px;
+        flex-basis: 9%;
     }
 
         .box-title-style span {
@@ -79,9 +82,20 @@
         border-bottom: none;
         border-radius: 8px 8px 0px 0px;
     }
+    .loader-block {
+        display: flex;
+        flex-basis: 91%;
+        width: inherit;
+        height: inherit;
+        background-color: #4d4d4d;
+        justify-content: center;
+        justify-content: center;
+        align-items: center;
+        background: #1a1a1a;
+    }
 </style>
 <div style="flex-basis:100%">
-    <div class="work-box-title-style"><span>Area de Trabajo Especializada</span></div>
+    <div class="work-box-title-style"><span>Area de Trabajo Especializada - Usuario: @sesion.nombre</span></div>
     <CascadingValue Value="this">
         <div class="wfe-container">
             <div class="input common-box-style">
@@ -89,7 +103,7 @@
             </div>
             <div class="workspace common-box-style">
                 <ToolList place="workspace">
-                    <WindowTool itemArrastrado="@(listaherramientas.SingleOrDefault(x => x.currentPlace.Equals("workspace")))"></WindowTool>
+                    <WindowTool itemArrastrado="@(sesion.herramientasutilizables.SingleOrDefault(x => x.currentPlace.Equals("workspace")))"></WindowTool>
                 </ToolList>
 
             </div>
@@ -100,48 +114,36 @@
                 </div>
                 <div class="tools common-box-style">
                     <div class="box-title-style"><span>HERRAMIENTAS</span></div>
-                    <ToolList place="tools"></ToolList>
+                    @if (sesion.herramientasutilizables.Count == 0)
+                    {
+                        <div class="loader-block">
+                            <div class="spinner-border" style="width: 3rem; height: 3rem;color:#ccc" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <ToolList place="tools"></ToolList>
+                    }
+
                 </div>
             </div>
         </div>
     </CascadingValue>
 </div>
 @code {
-    [CascadingParameter] Sesion sesion { get; set; }
-    //public List<Tool> listaherramientas = new List<Tool>();
-    public List<Tool> listaherramientas =  new List<Tool>{
-        new Tool(){
-            nombre="Busqueda",
-            descripcion="Permite realizar una busqueda de Protocolos Juridicos mediante filtros especificos",
-            icono="search",currentPlace="tools",componentName="ContenidoPrueba"
-            },
-         new Tool(){
-            nombre="Firma y Sello",
-            descripcion="Permitefirmar digital mente con la misma validez que una firma manuscrita",
-            icono="search",currentPlace="tools",componentName="ContenidoPrueba"
-            },
-         new Tool(){
-            nombre="Registrar Documento",
-            descripcion="permite registrar un documento de cualquier tipo",
-            icono="search",currentPlace="tools",componentName="ContenidoPrueba"
-            },
-         new Tool(){
-            nombre="Enviar a mesa de Partes",
-            descripcion="Envia el documento a mesa de partes",
-            icono="search",currentPlace="tools",componentName="ContenidoPrueba"
-            }
-        };
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
-
-
+    public List<Tool> listaherramientas = new List<Tool>();
     public List<Documento> bandejasalida = new List<Documento>();
     public List<Tool> listavacia = new List<Tool>();
     public Tool currentToolDragged;
     public string valor = "<WindowTool></WindowTool>";
     protected override async Task OnInitializedAsync()
     {
-
-        var httpResponse = await repository.Get<List<Documento>>("api/documentos");
+        Console.WriteLine("INICIE: WorkEnvironment");
+        /*var httpResponse = await repository.Get<List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {
             bandejasalida = httpResponse.Response;
@@ -150,23 +152,33 @@
         else
         {
             Console.WriteLine("Ocurrio un error");
+        }*/
+        /*List<ExpedienteDTO> lexdto = new List<ExpedienteDTO>();
+        var httpResponse = await repository.Get<List<ExpedienteDTO>>("api/expediente/getall");
+        if (!httpResponse.Error)
+        {
+            lexdto = httpResponse.Response;
         }
-        //listaherramientas = obtenerListaheramientas();
+        else
+        {
+            Console.WriteLine("Ocurrio un error");
+        }*/
+    }
+    protected override void OnParametersSet()
+    {
 
     }
-    public List<Tool> obtenerListaheramientas()
-    {
-        return sesion.permisosHerram.Select(x => new Tool() { nombre = x.label, valor = x.nombre, icono = x.icono, descripcion = "", currentPlace = "tools", componentName = "component" }).ToList();
-    }
+
+
 
     public void UpdateDraggableComponents(string newCurrentPlace)
     {
-        var tool = listaherramientas.SingleOrDefault(x => x.nombre == currentToolDragged.nombre);
+        var tool = sesion.herramientasutilizables.SingleOrDefault(x => x.nombre == currentToolDragged.nombre);
         if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
         {
             Console.WriteLine("ESTOY EN EL CAMBIO");
             tool.currentPlace = newCurrentPlace;
-            listaherramientas[listaherramientas.FindIndex(ind => ind.nombre.Equals(currentToolDragged.nombre))] = tool;
+            sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(currentToolDragged.nombre))] = tool;
             StateHasChanged();
         }
     }

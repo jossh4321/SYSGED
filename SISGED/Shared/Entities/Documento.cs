@@ -45,14 +45,14 @@ namespace SISGED.Shared.Entities
     }
     public class SolicitudDenuncia : Documento
     {
-        public ContenidoSolicitudDenuncia contenido { get; set; } = new ContenidoSolicitudDenuncia();
-
+        public ContenidoSolicitudDenuncia contenido { get; set; }
     }
 
     public class ContenidoOficioBPN
     {
         public string titulo { get; set; }
         public string descripcion { get; set; }
+        public string observacion { get; set; }
         public string idcliente { get; set; }
         public string direccionoficio { get; set; }
         public string idnotario { get; set; }
@@ -64,8 +64,8 @@ namespace SISGED.Shared.Entities
     }
     public class OficioBPN : Documento
     {
-        public  ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
-
+        public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
+     
     }
     public class ContenidoSolicitudBPN
     {
@@ -74,7 +74,7 @@ namespace SISGED.Shared.Entities
         public string idnotario { get; set; }
         public string actojuridico { get; set; }
         public string tipoprotocolo { get; set; }
-        public List<string> otorgantes { get; set; }
+        public List<string> otorgantes { get; set; } = new List<String>();
         public DateTime fecharealizacion { get; set; }
     }
     public class SolicitudBPN : Documento
@@ -92,7 +92,7 @@ namespace SISGED.Shared.Entities
 
     public class ResultadoBPN : Documento
     {
-        public ContenidoResultadoBPN contenido { get; set; } = new ContenidoResultadoBPN();
+        public ContenidoResultadoBPN contenido { get; set; }
 
     }
 
@@ -108,7 +108,7 @@ namespace SISGED.Shared.Entities
 
     public class SolicitudExpedicionFirma : Documento
     {
-        public ContenidoSolicitudExpedicionFirma contenido { get; set; } = new ContenidoSolicitudExpedicionFirma();
+        public ContenidoSolicitudExpedicionFirma contenido { get; set; }
 
     }
 
@@ -118,7 +118,7 @@ namespace SISGED.Shared.Entities
     }
     public class ConclusionFirma : Documento
     {
-        public ContenidoConclusionFirma contenido { get; set; } = new ContenidoConclusionFirma();
+        public ContenidoConclusionFirma contenido { get; set; }
     }
 
     
@@ -154,7 +154,7 @@ namespace SISGED.Shared.Entities
     }
     public class AperturamientoDisciplinario : Documento
     {
-        public ContenidoAperturamientoDisciplinario contenido { get; set; } = new ContenidoAperturamientoDisciplinario();
+        public ContenidoAperturamientoDisciplinario contenido { get; set; }
     }
 
     public class ContenidoSolicitudExpedienteNotario
@@ -165,7 +165,7 @@ namespace SISGED.Shared.Entities
     }
     public class SolicitudExpedienteNotario : Documento
     {
-        public ContenidoSolicitudExpedienteNotario contenido { get; set; } = new ContenidoSolicitudExpedienteNotario();
+        public ContenidoSolicitudExpedienteNotario contenido { get; set; }
     }
 
     public class ContenidoDictamen
@@ -179,7 +179,7 @@ namespace SISGED.Shared.Entities
 
     public class Dictamen : Documento
     {
-        public ContenidoDictamen contenido { get; set; } = new ContenidoDictamen();
+        public ContenidoDictamen contenido { get; set; }
     }
 
     public class ContenidoResolucion
@@ -193,7 +193,7 @@ namespace SISGED.Shared.Entities
     }
     public class Resolucion : Documento
     {
-        public ContenidoResolucion contenido { get; set; } = new ContenidoResolucion();
+        public ContenidoResolucion contenido { get; set; }
     }
     public class ContenidoApelacion
     {
@@ -202,7 +202,7 @@ namespace SISGED.Shared.Entities
     }
     public class Apelacion : Documento
     {
-        public ContenidoApelacion contenido { get; set; } = new ContenidoApelacion();
+        public ContenidoApelacion contenido { get; set; }
     }
 
     /*public class OficioDesignacionNotario : Documento
