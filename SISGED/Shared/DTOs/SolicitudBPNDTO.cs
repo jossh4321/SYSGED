@@ -17,6 +17,7 @@ namespace SISGED.Shared.DTOs
     }
     public class SolicitudBPNDTO : Documento
     {
+        public string estado { get; set; } //cambiado por mi
         public ContenidoSolicitudBPNDTO contenidoDTO { get; set; } = new ContenidoSolicitudBPNDTO();
 
     }

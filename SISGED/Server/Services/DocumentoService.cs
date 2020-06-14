@@ -41,5 +41,16 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSD);
             return documentoSD;
         }
+        /*public Documento modificarEstado(Documento documento)
+        {
+            var filter = Builders<Documento>.Filter.Eq("id", documento.id);
+            var update = Builders<Documento>.Update
+                .Set("estado", documento.estado);
+            documento = _documentos.FindOneAndUpdate<Documento>(filter, update, new FindOneAndUpdateOptions<Documento>
+            {
+                ReturnDocument = ReturnDocument.After
+            });
+            return documento;
+        }*/
     }
 }
