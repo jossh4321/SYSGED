@@ -35,7 +35,7 @@ namespace SISGED.Server.Services
             documentoExpediente.iddocumento = documentoODN.id;
             documentoExpediente.tipo = "OficioDesignacionNotario";
             documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = documentoExpediente.fechacreacion.AddDays(5);
+            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
             documentoExpediente.fechademora = null;
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
             Expediente expediente = _expedientes.FindOneAndUpdate(exp => exp.cliente.numerodocumento == "12345678" &&
@@ -62,5 +62,16 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSD);
             return documentoSD;
         }
+        /*public Documento modificarEstado(Documento documento)
+        {
+            var filter = Builders<Documento>.Filter.Eq("id", documento.id);
+            var update = Builders<Documento>.Update
+                .Set("estado", documento.estado);
+            documento = _documentos.FindOneAndUpdate<Documento>(filter, update, new FindOneAndUpdateOptions<Documento>
+            {
+                ReturnDocument = ReturnDocument.After
+            });
+            return documento;
+        }*/
     }
 }
