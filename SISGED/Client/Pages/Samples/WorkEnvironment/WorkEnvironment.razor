@@ -95,7 +95,7 @@
     }
 </style>
 <div style="flex-basis:100%">
-    <div class="work-box-title-style"><span>Area de Trabajo Especializada - Usuario: @sesion.nombre</span></div>
+    <div class="work-box-title-style"><span>Area de Trabajo Especializada - Usuario: @sesion.usuario.datos.nombre @sesion.usuario.datos.apellido</span></div>
     <CascadingValue Value="this">
         <div class="wfe-container">
             <div class="input common-box-style">
@@ -140,6 +140,7 @@
     public List<Tool> listavacia = new List<Tool>();
     public Tool currentToolDragged;
     public string valor = "<WindowTool></WindowTool>";
+    public Bandeja bandejaUsuario = new Bandeja();
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("INICIE: WorkEnvironment");
@@ -153,8 +154,9 @@
         {
             Console.WriteLine("Ocurrio un error");
         }*/
-        /*List<ExpedienteDTO> lexdto = new List<ExpedienteDTO>();
+        List<ExpedienteDTO> lexdto = new List<ExpedienteDTO>();
         var httpResponse = await repository.Get<List<ExpedienteDTO>>("api/expediente/getall");
+        var httpResponseBnadeja = await repository.Get<Bandeja>($"api/bandejas/getBandeja/");
         if (!httpResponse.Error)
         {
             lexdto = httpResponse.Response;
@@ -164,12 +166,6 @@
             Console.WriteLine("Ocurrio un error");
         }*/
     }
-    protected override void OnParametersSet()
-    {
-
-    }
-
-
 
     public void UpdateDraggableComponents(string newCurrentPlace)
     {
@@ -182,4 +178,28 @@
             StateHasChanged();
         }
     }
+
+    /*public ExpedienteDTO expedientedto = new ExpedienteDTO()
+    {
+        id="111",
+        tipo="Denuncia",
+        cliente =
+        {
+            nombre="Pedro Paredes",
+            numerodocumento="",
+            tipodocumento="Pedro Paredes",
+        }
+    }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string id { get; set; }
+    public string tipo { get; set; }
+    public Cliente cliente { get; set; }
+    public DateTime fechainicio { get; set; }
+    public DateTime fechafin { get; set; }
+    public List<DocumentoExpediente> documentos { get; set; }
+    public List<Documento> documentosobj { get; set; }
+    public List<Derivacion> derivaciones { get; set; }
+    public string estado { get; set; }*/
+
 }

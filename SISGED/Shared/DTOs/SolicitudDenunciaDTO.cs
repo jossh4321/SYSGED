@@ -16,6 +16,10 @@ namespace SISGED.Shared.DTOs
     }
     public class SolicitudDenunciaDTO : Documento
     {
+        public string nombrecliente { get; set; }
+        public string tipodocumento { get; set; }
+        public string numerodocumento { get; set; }
+
         public ContenidoSolicitudDenunciaDTO contenidoDTO { get; set; } = new ContenidoSolicitudDenunciaDTO();
     }
 }

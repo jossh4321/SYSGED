@@ -18,7 +18,7 @@ namespace SISGED.Shared.Entities
         [BsonElement("fechainicio")]
         public DateTime fechainicio { get; set; }
         [BsonElement("fechafin")]
-        public DateTime fechafin { get; set; }
+        public DateTime? fechafin { get; set; }
         [BsonElement("documentos")]
         public List<DocumentoExpediente> documentos { get; set; }
         [BsonElement("derivaciones")]

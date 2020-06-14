@@ -11,6 +11,6 @@ namespace SISGED.Shared.Entities
         public string tipo { get; set; }
         public DateTime fechacreacion { get; set; }
         public DateTime fechaexceso { get; set; }
-        public DateTime fechademora { get; set; }
+        public DateTime? fechademora { get; set; }
     }
 }
