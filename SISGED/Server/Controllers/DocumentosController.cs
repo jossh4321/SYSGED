@@ -108,7 +108,7 @@ namespace SISGED.Server.Controllers
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.data))
             {
                 var solicitudBytes = Convert.FromBase64String(documento.contenidoDTO.data);
-                urlData = await _almacenadorDeDocs.saveFile(solicitudBytes, "jpg", "solicitudExpedicionFirma");
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicitudexpedicionfirma");
             }
             ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
             {
