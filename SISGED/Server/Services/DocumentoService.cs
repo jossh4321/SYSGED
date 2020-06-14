@@ -22,6 +22,7 @@ namespace SISGED.Server.Services
         }
         public OficioDesignacionNotario registrarOficioDesignacionNotario(OficioDesignacionNotario documentoODN)
         {
+
             _documentos.InsertOne(documentoODN);
             return documentoODN;
         }
