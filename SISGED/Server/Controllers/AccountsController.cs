@@ -84,7 +84,7 @@ namespace SISGED.Server.Controllers
                 permisosHerramientas.Add(perm2);
             }            
 
-            temp.nombre = usuario.datos.nombre;
+            temp.usuario = usuario;
             temp.rol = rolusu.nombre;
             temp.permisosHerram = permisosHerramientas;
             temp.permisosInterfaz = permisosInterfaces;

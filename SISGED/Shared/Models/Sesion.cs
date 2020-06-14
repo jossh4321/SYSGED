@@ -12,6 +12,6 @@ namespace SISGED.Shared.Models
         public List<Permiso> permisosInterfaz { get; set; } = new List<Permiso>();
         public List<Tool> herramientasutilizables { get; set; } = new List<Tool>();
         public string rol { get; set; }
-        public string nombre { get; set; }
+        public Usuario usuario { get; set; } = new Usuario();
     }
 }

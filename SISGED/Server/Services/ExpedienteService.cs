@@ -24,7 +24,7 @@ namespace SISGED.Server.Services
             return expediente;
         }
 
-        public async Task<List<ExpedienteDTO>> getAllExpedienteDTO()
+        public async Task<List<ExpedienteDTO_ur2>> getAllExpedienteDTO()
         {
 
             BsonArray embebedpipeline = new BsonArray();
@@ -69,12 +69,12 @@ namespace SISGED.Server.Services
 
 
 
-            List<ExpedienteDTO> listaexpedientesdto = new List<ExpedienteDTO>();
+            List<ExpedienteDTO_ur2> listaexpedientesdto = new List<ExpedienteDTO_ur2>();
             listaexpedientesdto = await _expedientes.Aggregate()
                 .Unwind<Expediente, ExpedienteDTO_ur1>(e => e.documentos)
                 .AppendStage<ExpedienteDTO_look_up>(lookup)
                 .Unwind<ExpedienteDTO_look_up, ExpedienteDTO_ur2>(p => p.documentoobj)
-                .Group<ExpedienteDTO>(new BsonDocument
+                /*.Group<ExpedienteDTO>(new BsonDocument
                 {
                         {
                            "tipo", new BsonDocument
@@ -82,7 +82,7 @@ namespace SISGED.Server.Services
                                {"$first", "$tipo"}
                            }
                         }
-                }).ToListAsync();
+                })*/.ToListAsync();
             return listaexpedientesdto;
         }
 

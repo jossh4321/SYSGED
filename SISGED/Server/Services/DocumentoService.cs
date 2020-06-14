@@ -36,7 +36,7 @@ namespace SISGED.Server.Services
             documentoExpediente.tipo = "OficioDesignacionNotario";
             documentoExpediente.fechacreacion = DateTime.Now;
             documentoExpediente.fechaexceso = documentoExpediente.fechacreacion.AddDays(5);
-            documentoExpediente.fechaexceso = documentoExpediente.fechademora.AddDays(2);
+            documentoExpediente.fechademora = null;
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
             Expediente expediente = _expedientes.FindOneAndUpdate(exp => exp.cliente.numerodocumento == "12345678" &&
             exp.cliente.tipodocumento == "dni", updateExpediente);

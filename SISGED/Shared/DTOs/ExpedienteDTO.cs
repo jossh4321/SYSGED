@@ -22,10 +22,6 @@ namespace SISGED.Shared.DTOs
         public string estado { get; set; }
         
     }
-
-
-   
-
     public class ExpedienteDTO_ur1
     {
         [BsonId]

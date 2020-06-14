@@ -129,7 +129,7 @@
 
 @code {
 
-
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Notario> notariosseleccionados = new List<Notario>();
     public Notario notarioselect;
     private async Task<IEnumerable<Notario>> match(string searchtext)
@@ -166,6 +166,7 @@
 
     public async Task handleValidSubmit()
     {
+        oficiodesignacion.contenidoDTO.idusuario = sesion.usuario.id;
         var httpResponse =  await repository.Post<OficioDesignacionNotarioDTO, OficioDesignacionNotario>("api/documentos/documentoodn", oficiodesignacion);
         if (httpResponse.Error)
         {
