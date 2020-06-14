@@ -15,11 +15,13 @@ namespace SISGED.Server.Controllers
     public class DocumentosController: ControllerBase
     {
         private readonly DocumentoService _documentoservice;
+        private readonly ExpedienteService _expedienteservice;
         private readonly IFileStorage _almacenadorDeDocs;
-        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs)
+        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, ExpedienteService expedienteservice)
         {
             _documentoservice = documentoservice;
             _almacenadorDeDocs = almacenadorDeDocs;
+            _expedienteservice = expedienteservice;
         }
         [HttpGet]
         public ActionResult<List<Documento>> Get()
@@ -104,6 +106,31 @@ namespace SISGED.Server.Controllers
                 historialproceso = new List<Proceso>()
             };
             solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
+
+            Cliente cliente = new Cliente()
+            {
+                nombre = documento.nombrecliente,
+                tipodocumento = documento.tipodocumento,
+                numerodocumento = documento.numerodocumento
+            };
+            Expediente expediente = new Expediente();
+            expediente.tipo = "Denuncia";
+            expediente.cliente = cliente;
+            expediente.fechainicio = DateTime.Now;
+            expediente.fechafin = null;
+            expediente.documentos = new List<DocumentoExpediente>()
+            {
+                new DocumentoExpediente(){indice=1,
+                    iddocumento = solicitudDenuncia.id,
+                    tipo="SolicitudDenuncia",
+                    fechacreacion = solicitudDenuncia.contenido.fechaentrega,
+                    fechaexceso=solicitudDenuncia.contenido.fechaentrega.AddDays(10),
+                    fechademora = null
+                }
+            };
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+            expediente = _expedienteservice.saveExpediente(expediente);
             return solicitudDenuncia;
 
         }
@@ -114,7 +141,7 @@ namespace SISGED.Server.Controllers
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.data))
             {
                 var solicitudBytes = Convert.FromBase64String(documento.contenidoDTO.data);
-                urlData = await _almacenadorDeDocs.saveFile(solicitudBytes, "jpg", "solicitudexpedicionfirma");
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicitudexpedicionfirma");
             }
             ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
             {

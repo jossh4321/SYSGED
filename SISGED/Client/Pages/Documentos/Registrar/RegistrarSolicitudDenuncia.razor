@@ -66,6 +66,47 @@
         <FluentValidator></FluentValidator>
         <MatTabGroup>
             <MatTab Label="Datos Generales">
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.nombrecliente)">
+                    <MatTextField @bind-Value="@solicitudDenuncia.nombrecliente" Class="text-field-style"
+                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudDenuncia))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => solicitudDenuncia.nombrecliente)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.tipodocumento)">
+                    <InputSelect @bind-Value="@solicitudDenuncia.tipodocumento" class="text-field-style">
+                        <option value="">--Seleccione Algo--</option>
+                        <option value="CE">Carnet de Extranjeria</option>
+                        <option value="DNI">D.N.I.</option>
+                        <option value="pasaporte">Pasaporte</option>
+                    </InputSelect>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => solicitudDenuncia.tipodocumento)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.numerodocumento)">
+                    <MatTextField @bind-Value="@solicitudDenuncia.numerodocumento" Class="text-field-style"
+                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudDenuncia))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => solicitudDenuncia.numerodocumento)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.codigo)">
                     <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.codigo" Class="text-field-style"
                                   Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"codigo",solicitudDenuncia.contenidoDTO))'></MatTextField>
@@ -162,16 +203,22 @@
 
     public async Task handleValidSubmit()
     {
-        var httpResponse = await repository.Post<SolicitudDenunciaDTO, SolicitudDenuncia>("api/documentos/documentosd", solicitudDenuncia);
-        if (httpResponse.Error)
+        if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
         {
-            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+            var httpResponse = await repository.Post<SolicitudDenunciaDTO, SolicitudDenuncia>("api/documentos/documentosd", solicitudDenuncia);
+            if (httpResponse.Error)
+            {
+                await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+            }
+            else
+            {
+                await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
+            }
         }
         else
         {
-        await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
+            await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
         }
-        Console.WriteLine("Todo Bien");
     }
 
     public void handleInvalidSubmit()

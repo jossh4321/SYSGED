@@ -18,6 +18,11 @@ namespace SISGED.Server.Services
             var database = client.GetDatabase(settings.DatabaseName);
             _expedientes = database.GetCollection<Expediente>("expedientes");
         }
+        public  Expediente saveExpediente(Expediente expediente)
+        {
+            _expedientes.InsertOne(expediente);
+            return expediente;
+        }
 
         public async Task<List<ExpedienteDTO>> getAllExpedienteDTO()
         {
