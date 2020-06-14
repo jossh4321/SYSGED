@@ -35,5 +35,10 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSEF);
             return documentoSEF;
         }
+        public SolicitudDenuncia registrarSolicitudDenuncia(SolicitudDenuncia documentoSD)
+        {
+            _documentos.InsertOne(documentoSD);
+            return documentoSD;
+        }
     }
 }

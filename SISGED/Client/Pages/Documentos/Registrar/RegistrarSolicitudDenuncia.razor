@@ -115,6 +115,9 @@
                     </div>
                 </div>
                 <div class="field-container">
+                    <InputFile Label="Documento" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@imagenTemporal"></InputFile>
+                </div>
+                <div class="field-container">
                     <MatButton type="submit"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
@@ -130,9 +133,16 @@
 
     private SolicitudDenunciaDTO solicitudDenuncia = new SolicitudDenunciaDTO();
     private EditContext _editContext;
+    private string documentoTemporal { get; set; } = null;
+    private string imagenTemporal;
     protected override void OnInitialized()
     {
         _editContext = new EditContext(solicitudDenuncia);
+        if (!string.IsNullOrEmpty(solicitudDenuncia.contenidoDTO.urldata))
+        {
+            imagenTemporal = solicitudDenuncia.contenidoDTO.urldata;
+            solicitudDenuncia.contenidoDTO.urldata = null;
+        }
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -145,18 +155,23 @@
         _editContext.NotifyFieldChanged(fi);
     }
 
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        solicitudDenuncia.contenidoDTO.urldata = imagenbase64;
+    }
+
     public async Task handleValidSubmit()
     {
-        /*var httpResponse = await repository.Post<OficioDesignacionNotarioDTO, OficioDesignacionNotario>("api/documentos/documentoodn", oficiodesignacion);
+        var httpResponse = await repository.Post<SolicitudDenunciaDTO, SolicitudDenuncia>("api/documentos/documentosd", solicitudDenuncia);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
         }
         else
-        {*/
-            await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
-        /*}
-        Console.WriteLine("Todo Bien");*/
+        {
+        await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
+        }
+        Console.WriteLine("Todo Bien");
     }
 
     public void handleInvalidSubmit()

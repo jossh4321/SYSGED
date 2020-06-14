@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SISGED.Shared.Validators.DocumentosValidator.SolicitudDenuncia
 {
-    public class ContenidoSolicitudDenunciaDTOValidator : AbstractValidator<ContenidoSolicitudDenuncia>
+    public class ContenidoSolicitudDenunciaDTOValidator : AbstractValidator<ContenidoSolicitudDenunciaDTO>
     {
         public ContenidoSolicitudDenunciaDTOValidator()
         {
