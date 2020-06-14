@@ -15,7 +15,7 @@ namespace SISGED.Shared.DTOs
         public string tipo { get; set; }
         public Cliente cliente { get; set; }
         public DateTime fechainicio { get; set; }
-        public DateTime fechafin { get; set; }
+        public DateTime? fechafin { get; set; }
         public List<DocumentoExpediente> documentos { get; set; }
         public List<Documento> documentosobj { get; set; }
         public List<Derivacion> derivaciones { get; set; }
