@@ -18,9 +18,10 @@ namespace SISGED.Server.Services
             _bandejas = database.GetCollection<Bandeja>("bandejas");
         }
 
-        /*public Bandeja ObtenerBandejaDocumento()
+        public async Task<Bandeja> ObtenerBandejaDocumento(Usuario usuario)
         {
-           
-        }*/
+            Bandeja bandeja = await _bandejas.FindAsync(band => band.usuario == usuario.id).Result.FirstAsync();
+            return bandeja;
+        }
     }
 }
