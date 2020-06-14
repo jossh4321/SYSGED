@@ -27,5 +27,13 @@ namespace SISGED.Server.Controllers
             List<EscrituraPublicaRDTO> listaEscriturasPublicas =await escriturasPublicasService.obtenerEscriturasPublicas();
             return listaEscriturasPublicas;
         }
+
+        [HttpGet("filter")]
+        public ActionResult<List<EscrituraPublica>> autocompletefilter([FromQuery] string term)
+        {
+            List<EscrituraPublica> listaescritura = new List<EscrituraPublica>();
+            listaescritura = escriturasPublicasService.filter(term);
+            return listaescritura;
+        }
     }
 }

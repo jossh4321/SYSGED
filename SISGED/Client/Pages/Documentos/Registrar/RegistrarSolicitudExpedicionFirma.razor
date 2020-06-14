@@ -66,6 +66,49 @@
         <FluentValidator></FluentValidator>
         <MatTabGroup>
             <MatTab Label="Datos Generales">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.nombrecliente)">
+                    <MatTextField @bind-Value="@solicitudexpedicionfirma.nombrecliente" Class="text-field-style"
+                                  Label="Nombre del cliente" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudexpedicionfirma))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => solicitudexpedicionfirma.nombrecliente)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.tipodocumento)">
+                    <InputSelect @bind-Value="@solicitudexpedicionfirma.tipodocumento" class="text-field-style">
+                        <option value="">--Seleccione Algo--</option>
+                        <option value="CE">Carnet de Extranjeria</option>
+                        <option value="DNI">D.N.I.</option>
+                        <option value="pasaporte">Pasaporte</option>
+                    </InputSelect>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => solicitudexpedicionfirma.tipodocumento)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.numerodocumento)">
+                    <MatTextField @bind-Value="@solicitudexpedicionfirma.numerodocumento" Class="text-field-style"
+                                  Label="N° de documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudexpedicionfirma))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => solicitudexpedicionfirma.numerodocumento)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
                     <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitudexpedicionfirma"
                                   @oninput='@(e => KeyUp(e,"codigo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
@@ -123,16 +166,16 @@
                 </div>
 
                 <!--<div class="field-container">
-                <MatFileUpload Style="padding: 15px; background-color: #6200ee;" OnChange="FilesReadyForContent"></MatFileUpload>
-                   if (list == "")
-                    {
-                        <div>Seleccione un archivo</div>
-                    }
-                    else
-                    {
-                        <div>list</div>
-                    }
-                </div>-->
+    <MatFileUpload Style="padding: 15px; background-color: #6200ee;" OnChange="FilesReadyForContent"></MatFileUpload>
+       if (list == "")
+        {
+            <div>Seleccione un archivo</div>
+        }
+        else
+        {
+            <div>list</div>
+        }
+    </div>-->
 
                 <InputFile Label="Documento" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 

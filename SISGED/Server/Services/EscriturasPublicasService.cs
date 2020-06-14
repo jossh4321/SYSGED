@@ -61,5 +61,22 @@ namespace SISGED.Server.Services
 
             return escrituraPublicas;
         }
+
+        public List<EscrituraPublica> filter(string term)
+        {
+            string regex = "\\b" + term.ToLower() + ".*";
+            var filter = Builders<EscrituraPublica>.Filter.Regex("titulo", new BsonRegularExpression(regex, "i"));
+            return _escriturapublicas.Find(filter).ToList();
+        }
+
+        public UpdateResult updateEscrituraPublicaporConclusionFirma(EscrituraPublica ep)
+        {
+            var filter = Builders<EscrituraPublica>.Filter.Eq(escp => escp.id, ep.id);
+
+            var update = Builders<EscrituraPublica>.Update.Set(escp => escp.estado, "concluido");
+
+            var escrituraP = _escriturapublicas.UpdateOne(filter, update);
+            return escrituraP;
+        }
     }
 }

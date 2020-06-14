@@ -41,5 +41,10 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSD);
             return documentoSD;
         }
+        public ConclusionFirma registrarConclusionFirma(ConclusionFirma documentoCF)
+        {
+            _documentos.InsertOne(documentoCF);
+            return documentoCF;
+        }
     }
 }

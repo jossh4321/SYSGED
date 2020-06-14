@@ -16,12 +16,14 @@ namespace SISGED.Server.Controllers
     {
         private readonly DocumentoService _documentoservice;
         private readonly ExpedienteService _expedienteservice;
+        private readonly EscriturasPublicasService _escrituraspublicasservice;
         private readonly IFileStorage _almacenadorDeDocs;
-        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, ExpedienteService expedienteservice)
+        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, ExpedienteService expedienteservice, EscriturasPublicasService escrituraspublicasservice)
         {
             _documentoservice = documentoservice;
             _almacenadorDeDocs = almacenadorDeDocs;
             _expedienteservice = expedienteservice;
+            _escrituraspublicasservice = escrituraspublicasservice;
         }
         [HttpGet]
         public ActionResult<List<Documento>> Get()
@@ -137,6 +139,7 @@ namespace SISGED.Server.Controllers
         [HttpPost("documentosef")]
         public async Task<ActionResult<SolicitudExpedicionFirma>> RegistrarDocumentoSEF(SolicitudExpedicionFirmaDTO documento)
         {
+            //por defecto
             string urlData = "www.google.com";
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.data))
             {
@@ -160,7 +163,57 @@ namespace SISGED.Server.Controllers
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
-            return _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF);
+
+            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF);
+
+            Cliente cliente = new Cliente()
+            {
+                nombre = documento.nombrecliente,
+                tipodocumento = documento.tipodocumento,
+                numerodocumento = documento.numerodocumento
+            };
+
+            Expediente expediente = new Expediente();
+            expediente.tipo = "Expedicion de Firmas";
+            expediente.cliente = cliente;
+            expediente.fechainicio = DateTime.Now;
+            expediente.fechafin = null;
+            expediente.documentos = new List<DocumentoExpediente>()
+            {
+                new DocumentoExpediente(){
+                    indice = 1,
+                    iddocumento = documentoSEF.id,
+                    tipo="ExpedicionFirmas",
+                    fechacreacion = documentoSEF.contenido.fecharealizacion,
+                    fechaexceso = documentoSEF.contenido.fecharealizacion.AddDays(10),
+                    fechademora = null
+                }
+            };
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+            expediente = _expedienteservice.saveExpediente(expediente);
+            return documentoSEF;
+        }
+
+        [HttpPost("documentocf")]
+        public async Task<ActionResult<ConclusionFirma>> RegistrarDocumentoCF(ConclusionFirmaDTO documento)
+        {
+            ContenidoConclusionFirma contenidoCF = new ContenidoConclusionFirma()
+            {
+                idescriturapublica = documento.contenidoDTO.idescriturapublica.id
+            };
+            ConclusionFirma documentoDF = new ConclusionFirma()
+            {
+                tipo = "ConclusionFirma",
+                contenido = contenidoCF,
+                estado = "pendiente",
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+
+            documentoDF = _documentoservice.registrarConclusionFirma(documentoDF);
+            _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(documento.contenidoDTO.idescriturapublica);
+            return documentoDF;
         }
     }
 }

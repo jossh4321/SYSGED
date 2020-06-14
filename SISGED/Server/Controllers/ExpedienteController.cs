@@ -14,10 +14,12 @@ namespace SISGED.Server.Controllers
     public class ExpedienteController:ControllerBase
     {
         private readonly ExpedienteService _expedienteService;
+        private readonly EscriturasPublicasService _escriturapublicaService;
 
-        public ExpedienteController(ExpedienteService expedienteService)
+        public ExpedienteController(ExpedienteService expedienteService, EscriturasPublicasService escriturapublicaService)
         {
             _expedienteService = expedienteService;
+            _escriturapublicaService = escriturapublicaService;
         }
 
         [HttpGet("getall")]
