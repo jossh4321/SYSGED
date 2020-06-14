@@ -5,17 +5,21 @@ using System.Text;
 
 namespace SISGED.Shared.DTOs
 {
-    public class ContenidoSolicitudDenuncia
+    public class ContenidoSolicitudDenunciaDTO
     {
         public string codigo { get; set; }
         public string titulo { get; set; }
         public string descripcion { get; set; }
         public string nombrecliente { get; set; }
         public DateTime fechaentrega { get; set; }
-        public string url { get; set; }
+        public string urldata { get; set; }
     }
     public class SolicitudDenunciaDTO : Documento
     {
-        public ContenidoSolicitudDenuncia contenidoDTO { get; set; } = new ContenidoSolicitudDenuncia();
+        public string nombrecliente { get; set; }
+        public string tipodocumento { get; set; }
+        public string numerodocumento { get; set; }
+
+        public ContenidoSolicitudDenunciaDTO contenidoDTO { get; set; } = new ContenidoSolicitudDenunciaDTO();
     }
 }

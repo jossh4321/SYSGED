@@ -15,11 +15,13 @@ namespace SISGED.Server.Controllers
     public class DocumentosController: ControllerBase
     {
         private readonly DocumentoService _documentoservice;
+        private readonly ExpedienteService _expedienteservice;
         private readonly IFileStorage _almacenadorDeDocs;
-        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs)
+        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, ExpedienteService expedienteservice)
         {
             _documentoservice = documentoservice;
             _almacenadorDeDocs = almacenadorDeDocs;
+            _expedienteservice = expedienteservice;
         }
         [HttpGet]
         public ActionResult<List<Documento>> Get()
@@ -77,30 +79,61 @@ namespace SISGED.Server.Controllers
             documentoODN = _documentoservice.registrarSolicitudBPN(documentoODN);
             return documentoODN;
         }
-        /*[HttpPost("documentosef")]
-        public ActionResult<SolicitudExpedicionFirma> RegistrarDocumentoSEF(SolicitudExpedicionFirmaDTO documento)
+        [HttpPost("documentosd")]
+        public async Task<ActionResult<SolicitudDenuncia>> RegistrarDocumentoSolicitudDenuncia(SolicitudDenunciaDTO documento)
         {
-            ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.urldata))
             {
+                var solicitudBytes = Convert.FromBase64String(documento.contenidoDTO.urldata);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicituddenuncia");
+            }
+            ContenidoSolicitudDenuncia contenidoSolicitudDenuncia = new ContenidoSolicitudDenuncia()
+            {
+                codigo = documento.contenidoDTO.codigo,
                 titulo = documento.contenidoDTO.titulo,
                 descripcion = documento.contenidoDTO.descripcion,
-                fecharealizacion = DateTime.Now,
-                cliente = documento.contenidoDTO.cliente,
-                codigo = documento.contenidoDTO.codigo,
-                url = "www.google.com"
+                nombrecliente = documento.contenidoDTO.nombrecliente,
+                fechaentrega = DateTime.Now,
+                url = urlData
             };
-            SolicitudExpedicionFirma documentoSEF = new SolicitudExpedicionFirma()
+            SolicitudDenuncia solicitudDenuncia = new SolicitudDenuncia()
             {
-                tipo = "SolicitudExpedicionFirma",
-                contenido = contenidoSEF,
+                tipo = "SolicitudDenuncia",
+                contenido = contenidoSolicitudDenuncia,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
-            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF);
-            return documentoSEF;
-        }*/
+            solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
 
+            Cliente cliente = new Cliente()
+            {
+                nombre = documento.nombrecliente,
+                tipodocumento = documento.tipodocumento,
+                numerodocumento = documento.numerodocumento
+            };
+            Expediente expediente = new Expediente();
+            expediente.tipo = "Denuncia";
+            expediente.cliente = cliente;
+            expediente.fechainicio = DateTime.Now;
+            expediente.fechafin = null;
+            expediente.documentos = new List<DocumentoExpediente>()
+            {
+                new DocumentoExpediente(){indice=1,
+                    iddocumento = solicitudDenuncia.id,
+                    tipo="SolicitudDenuncia",
+                    fechacreacion = solicitudDenuncia.contenido.fechaentrega,
+                    fechaexceso=solicitudDenuncia.contenido.fechaentrega.AddDays(10),
+                    fechademora = null
+                }
+            };
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+            expediente = _expedienteservice.saveExpediente(expediente);
+            return solicitudDenuncia;
+
+        }
         [HttpPost("documentosef")]
         public async Task<ActionResult<SolicitudExpedicionFirma>> RegistrarDocumentoSEF(SolicitudExpedicionFirmaDTO documento)
         {
@@ -108,7 +141,7 @@ namespace SISGED.Server.Controllers
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.data))
             {
                 var solicitudBytes = Convert.FromBase64String(documento.contenidoDTO.data);
-                urlData = await _almacenadorDeDocs.saveFile(solicitudBytes, "jpg", "solicitudExpedicionFirma");
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicitudexpedicionfirma");
             }
             ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
             {

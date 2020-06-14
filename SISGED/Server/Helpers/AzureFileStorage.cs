@@ -65,7 +65,7 @@ namespace SISGED.Server.Helpers
             {
                 PublicAccess = BlobContainerPublicAccessType.Blob
             });
-            var filename = $"{Guid.NewGuid()}.{"extension"}";
+            var filename = $"{Guid.NewGuid()}.{extension}";
             var blob = contenedor.GetBlockBlobReference(filename);
             await blob.UploadFromByteArrayAsync(content, 0, content.Length);
             blob.Properties.ContentType = "pdf";
