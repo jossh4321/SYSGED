@@ -123,8 +123,8 @@
                 </div>
 
                 <!--<div class="field-container">
-                    <MatFileUpload Style="padding: 15px; background-color: #6200ee;" OnChange="FilesReadyForContent"></MatFileUpload>
-                    if (list == "")
+                <MatFileUpload Style="padding: 15px; background-color: #6200ee;" OnChange="FilesReadyForContent"></MatFileUpload>
+                   if (list == "")
                     {
                         <div>Seleccione un archivo</div>
                     }
@@ -133,7 +133,8 @@
                         <div>list</div>
                     }
                 </div>-->
-                <InputImg Label="Documento" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal=""></InputImg>
+
+                <InputFile Label="Documento" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
                 <div class="field-container">
                     <MatButton type="submit"
@@ -152,11 +153,11 @@
     private string documentoTemporal { get; set; } = null;
 
     private string imagenTemporal;
+
     /*
     string list = "";
     private string fileContent;
     private byte[] documentoBytes = null;
-
     async Task FilesReadyForContent(IMatFileUploadEntry[] files)
     {
         try
@@ -196,13 +197,12 @@
                 }
             }
         }
-
         catch (Exception e)
         {
             fileContent = $"Error:\r\n{e.Message}\r\n{e.StackTrace}";
         }
-    }
-    */
+    }*/
+
     protected override void OnInitialized()
     {
         _editContext = new EditContext(solicitudexpedicionfirma);
@@ -231,7 +231,6 @@
     public async Task handleValidSubmit()
     {
         var httpResponse = await repository.Post<SolicitudExpedicionFirmaDTO, SolicitudExpedicionFirma>("api/documentos/documentosef", solicitudexpedicionfirma);
-        //var httpResponse = await repository.Post("api/documentos/documentosef", solicitudexpedicionfirma);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
