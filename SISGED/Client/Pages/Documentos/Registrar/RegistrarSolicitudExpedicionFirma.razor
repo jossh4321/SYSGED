@@ -149,9 +149,7 @@
 @code {
     private SolicitudExpedicionFirmaDTO solicitudexpedicionfirma = new SolicitudExpedicionFirmaDTO();
     private EditContext _editContext;
-
     private string documentoTemporal { get; set; } = null;
-
     private string imagenTemporal;
 
     /*
@@ -206,7 +204,6 @@
     protected override void OnInitialized()
     {
         _editContext = new EditContext(solicitudexpedicionfirma);
-
         if (!string.IsNullOrEmpty(solicitudexpedicionfirma.contenidoDTO.data))
         {
             imagenTemporal = solicitudexpedicionfirma.contenidoDTO.data;
