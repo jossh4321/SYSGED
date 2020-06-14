@@ -17,5 +17,7 @@ namespace SISGED.Server.Controllers
         {
             _bandejaService = bandejaService;
         }
+
+
     }
 }
