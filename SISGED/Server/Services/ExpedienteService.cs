@@ -45,15 +45,15 @@ namespace SISGED.Server.Services
                 {"$group", 
                     new BsonDocument
                     {
-                        { "_id", "$_id"},
-                        { "tipo", new BsonDocument{ { "$first", "$tipo" } } },
-                        { "cliente", new BsonDocument{ { "$first", "$cliente" } } },
+                        /*{ "_id", "$_id"},*/
+                        { "tipo", new BsonDocument{ { "$first", "$tipo" } } }
+                        /*{ "cliente", new BsonDocument{ { "$first", "$cliente" } } },
                         { "fechainicio", new BsonDocument{ { "$first", "$fechainicio" } } },
                         { "fechafin", new BsonDocument{ { "$first", "$fechafin" } } },
                         {"documentos", new BsonDocument{ { "$push", "$documentos" } } },
                         {"documentosobj", new BsonDocument{ { "$push", "$documentoobj" } } },
                         { "derivaciones", new BsonDocument{ { "$first", "$derivaciones" } } },
-                        { "estado", new BsonDocument{ { "$first", "$estado" } } }
+                        { "estado", new BsonDocument{ { "$first", "$estado" } } }*/
             } } };
 
 
@@ -74,7 +74,15 @@ namespace SISGED.Server.Services
                 .Unwind<Expediente, ExpedienteDTO_ur1>(e => e.documentos)
                 .AppendStage<ExpedienteDTO_look_up>(lookup)
                 .Unwind<ExpedienteDTO_look_up, ExpedienteDTO_ur2>(p => p.documentoobj)
-                .Group<ExpedienteDTO>(group).ToListAsync();
+                .Group<ExpedienteDTO>(new BsonDocument
+                {
+                        {
+                           "tipo", new BsonDocument
+                           {
+                               {"$first", "$tipo"}
+                           }
+                        }
+                }).ToListAsync();
             return listaexpedientesdto;
         }
 

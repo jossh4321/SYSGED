@@ -34,6 +34,8 @@ namespace SISGED.Shared.Entities
         [BsonElement("historialproceso")]
         public List<Proceso> historialproceso { get; set; }
     }
+
+   
     public class ContenidoSolicitudDenuncia
     {
         public string codigo { get; set; }
@@ -62,10 +64,10 @@ namespace SISGED.Shared.Entities
         public DateTime fecharealizacion { get; set; }
         public string url { get; set; }
     }
+
     public class OficioBPN : Documento
     {
         public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
-     
     }
     public class ContenidoSolicitudBPN
     {
@@ -80,7 +82,6 @@ namespace SISGED.Shared.Entities
     public class SolicitudBPN : Documento
     {
         public ContenidoSolicitudBPN contenido { get; set; } = new ContenidoSolicitudBPN();
-
     }
     public class ContenidoResultadoBPN
     {
@@ -93,7 +94,6 @@ namespace SISGED.Shared.Entities
     public class ResultadoBPN : Documento
     {
         public ContenidoResultadoBPN contenido { get; set; }
-
     }
 
     public class ContenidoSolicitudExpedicionFirma
@@ -109,7 +109,6 @@ namespace SISGED.Shared.Entities
     public class SolicitudExpedicionFirma : Documento
     {
         public ContenidoSolicitudExpedicionFirma contenido { get; set; }
-
     }
 
     public class ContenidoConclusionFirma
