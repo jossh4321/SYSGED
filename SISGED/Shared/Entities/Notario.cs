@@ -27,10 +27,10 @@ namespace SISGED.Shared.Entities
         [BsonElement("colegiatura")]
         public string colegiatura { get; set; }
         [BsonElement("oficionotarial")]
-        public OficioNotarial oficionotarial { get; set; }
+        public OficioNotarial oficionotarial { get; set; } = new OficioNotarial();
         [BsonElement("imagen")]
         public string imagen { get; set; }
         [BsonElement("expedientes")]
-        public List<string> expedientes { get; set; }
+        public List<string> expedientes { get; set; } = new List<string>();
     }
 }

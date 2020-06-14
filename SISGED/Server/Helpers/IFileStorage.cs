@@ -13,5 +13,8 @@ namespace SISGED.Server.Helpers
         Task<string> saveFile(byte[] contenido, string extension,
             string nombreContenedor);
 
+        Task<string> saveDoc(byte[] contenido, string extension,
+            string nombreContenedor);
+
     }
 }
