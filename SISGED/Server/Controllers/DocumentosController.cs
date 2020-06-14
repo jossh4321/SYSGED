@@ -42,13 +42,18 @@ namespace SISGED.Server.Controllers
                 idusuario = documento.contenidoDTO.idusuario,//nota
                 idnotario = documento.contenidoDTO.idnotario.id,
             };
+            Estado estado = new Estado()//cambiado por mi
+            {
+                status = "pendiente",
+                observacion = "Ninguna",
+            };
             OficioDesignacionNotario documentoODN = new OficioDesignacionNotario()
             {
                 tipo = "OficioDesignacionNotario",
                 contenido = contenidoODN,
-                estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
+                historialproceso = new List<Proceso>(),
+                estado = estado,
             };
             documentoODN = _documentoservice.registrarOficioDesignacionNotario(documentoODN);
             return documentoODN;
@@ -215,5 +220,11 @@ namespace SISGED.Server.Controllers
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(documento.contenidoDTO.idescriturapublica);
             return documentoDF;
         }
+        /*[HttpPut("estado")]
+        public ActionResult<Documento> modificarEstado(Documento documento)
+        {
+            documento = _documentoservice.modificarEstado(documento);
+            return documento;
+        }*/
     }
 }

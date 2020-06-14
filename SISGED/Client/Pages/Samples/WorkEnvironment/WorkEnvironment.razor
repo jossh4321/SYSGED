@@ -95,7 +95,7 @@
     }
 </style>
 <div style="flex-basis:100%">
-    <div class="work-box-title-style"><span>Area de Trabajo Especializada - Usuario: @sesion.nombre</span></div>
+    <div class="work-box-title-style"><span>Area de Trabajo Especializada - Usuario: @sesion.usuario.datos.nombre @sesion.usuario.datos.apellido</span></div>
     <CascadingValue Value="this">
         <div class="wfe-container">
             <div class="input common-box-style">
@@ -110,7 +110,6 @@
             <div class="container-ot">
                 <div class="output common-box-style">
                     <div class="box-title-style"><span>Bandeja de Salida</span></div>
-
                 </div>
                 <div class="tools common-box-style">
                     <div class="box-title-style"><span>HERRAMIENTAS</span></div>
@@ -134,15 +133,19 @@
 </div>
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-
     public List<Tool> listaherramientas = new List<Tool>();
     public List<Documento> bandejasalida = new List<Documento>();
     public List<Tool> listavacia = new List<Tool>();
     public Tool currentToolDragged;
     public string valor = "<WindowTool></WindowTool>";
+    public Bandeja bandejaUsuario = new Bandeja();
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("INICIE: WorkEnvironment");
+        /*List<ExpedienteDTO> listaexpediente = new List<ExpedienteDTO>();
+        listaexpediente.Add(expedientedto1);
+        listaexpediente.Add(expedientedto2);
+        listaexpediente.Add(expedientedto3);*/
         /*var httpResponse = await repository.Get<List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {
@@ -153,8 +156,9 @@
         {
             Console.WriteLine("Ocurrio un error");
         }*/
-        /*List<ExpedienteDTO> lexdto = new List<ExpedienteDTO>();
+        List<ExpedienteDTO> lexdto = new List<ExpedienteDTO>();
         var httpResponse = await repository.Get<List<ExpedienteDTO>>("api/expediente/getall");
+        var httpResponseBnadeja = await repository.Get<Bandeja>($"api/bandejas/getBandeja/");
         if (!httpResponse.Error)
         {
             lexdto = httpResponse.Response;
@@ -162,14 +166,8 @@
         else
         {
             Console.WriteLine("Ocurrio un error");
-        }*/
+        }
     }
-    protected override void OnParametersSet()
-    {
-
-    }
-
-
 
     public void UpdateDraggableComponents(string newCurrentPlace)
     {
@@ -182,4 +180,71 @@
             StateHasChanged();
         }
     }
+
+
+    /*
+    public ExpedienteDTO expedientedto1 = new ExpedienteDTO()
+    {
+        id = "111",
+        tipo = "Denuncia",
+        cliente =
+        {
+            nombre="Pedro Paredes",
+            numerodocumento="",
+            tipodocumento="Pedro Paredes",
+        },
+        fechainicio = DateTime.Now,
+        fechafin = null,
+        documentos = new List<DocumentoExpediente>()
+        {
+            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
+        },
+        documentosobj = new List<Documento>(),
+        derivaciones = new List<Derivacion>(),
+        estado = "pendiente"
+    };
+
+    public ExpedienteDTO expedientedto2 = new ExpedienteDTO()
+    {
+        id = "222",
+        tipo = "Denuncia",
+        cliente =
+        {
+            nombre="Pedro Paredes",
+            numerodocumento="",
+            tipodocumento="Pedro Paredes",
+        },
+        fechainicio = DateTime.Now,
+        fechafin = null,
+        documentos = new List<DocumentoExpediente>()
+        {
+            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
+        },
+        documentosobj = new List<Documento>(),
+        derivaciones = new List<Derivacion>(),
+        estado = "pendiente"
+    };
+
+    public ExpedienteDTO expedientedto3 = new ExpedienteDTO()
+    {
+        id = "333",
+        tipo = "Denuncia",
+        cliente =
+        {
+            nombre="Pedro Paredes",
+            numerodocumento="",
+            tipodocumento="Pedro Paredes",
+        },
+        fechainicio = DateTime.Now,
+        fechafin = null,
+        documentos = new List<DocumentoExpediente>()
+        {
+            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
+        },
+        documentosobj = new List<Documento>(),
+        derivaciones = new List<Derivacion>(),
+        estado = "pendiente"
+    };*/
+
+
 }
