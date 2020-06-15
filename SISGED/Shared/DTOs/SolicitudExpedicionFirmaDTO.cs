@@ -7,6 +7,9 @@ namespace SISGED.Shared.DTOs
 {
     public class SolicitudExpedicionFirmaDTO : Documento
     {
+        public string nombrecliente { get; set; }
+        public string tipodocumento { get; set; }
+        public string numerodocumento { get; set; }
         public ContenidoSolicitudExpedicionFirmaDTO contenidoDTO { get; set; } = new ContenidoSolicitudExpedicionFirmaDTO();
     }
 

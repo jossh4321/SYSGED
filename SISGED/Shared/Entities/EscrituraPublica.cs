@@ -14,6 +14,8 @@ namespace SISGED.Shared.Entities
         public string id { get; set; }
         [BsonElement("direccionoficio")]
         public string direccionoficio { get; set; }
+        [BsonElement("titulo")]
+        public string titulo { get; set; }
         [BsonElement("idnotario")]
         public string idnotario { get; set; }
         [BsonElement("actosjuridicos")]

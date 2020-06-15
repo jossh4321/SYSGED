@@ -1,0 +1,51 @@
+﻿@page "/evaluarDocumentoprobando"
+@inject IRepository repositorio
+@inject ISwalFireMessage swalfire
+@if (documentoPrueba == null)
+{
+    <text>Cargando...</text>
+}
+else
+{
+    <style>
+        .div-form {
+            background-color: #a6a6a6;
+            flex-basis: 10%;
+            border-radius: 5px 5px 0px 0px;
+            width: 100%;
+        }
+
+        .field-container {
+            padding: 10px;
+        }
+    </style>
+
+    <div class="div-form">
+        <div class="field-container">
+            <MatButton Raised="true" OnClick="@(e => { OpenAprobado = true; })">Aprobar</MatButton>
+            <MatButton Raised="true" OnClick="@(e => { OpenDesaprobado = true; })">Desprobar</MatButton>
+        </div>
+        
+    </div>
+}
+@code {
+    //[Parameter] public Documento documento { get; set; }
+    private Documento documentoPrueba { get; set; }
+    private bool OpenAprobado = false;
+    private bool OpenDesaprobado = false;
+
+
+    // Para probar, borrar despues
+    private List<Documento> listaDeDocumentos { get; set; }
+    private async Task CargarDocumentos()
+    {
+        var responseHttp = await repositorio.Get<List<Documento>>("api/Documentos");
+        listaDeDocumentos = responseHttp.Response;
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        listaDeDocumentos = new List<Documento>();
+        await CargarDocumentos();
+        documentoPrueba = listaDeDocumentos.ElementAt(1);
+    }
+}
