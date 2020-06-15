@@ -49,7 +49,11 @@ namespace SISGED.Server.Services
             {
                 tipo = "OficioDesignacionNotario",
                 contenido = contenidoODN,
-                estado = "pendiente",
+                estado = new Estado()
+                {
+                    status = "pendiente",
+                    observacion = null
+                },
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
