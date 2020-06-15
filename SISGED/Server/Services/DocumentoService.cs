@@ -45,11 +45,16 @@ namespace SISGED.Server.Services
                 idusuario = oficioDesignacionNotarioDTO.contenidoDTO.idusuario,
                 idnotario = oficioDesignacionNotarioDTO.contenidoDTO.idnotario.id,
             };
+            Estado estado = new Estado()//cambiado por mi
+            {
+                status = "pendiente",
+                observacion = "Ninguna",
+            };
             OficioDesignacionNotario documentoODN = new OficioDesignacionNotario()
             {
                 tipo = "OficioDesignacionNotario",
                 contenido = contenidoODN,
-                estado = "pendiente",
+                estado = estado,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
