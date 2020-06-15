@@ -23,7 +23,7 @@
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [Parameter] public string place { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
-    public List<Tool> toollist = new List<Tool>();
+    public List<Item> toollist = new List<Item>();
     public string classname = "li-drag-style";
     protected override void OnParametersSet()
     {

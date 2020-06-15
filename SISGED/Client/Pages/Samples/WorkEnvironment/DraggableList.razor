@@ -1,0 +1,147 @@
+﻿<style>
+    .div-style{
+
+        display: flex;
+        flex-direction: column;
+        flex-basis: 100%;
+        max-height: 100%;
+        min-height:100%;
+
+    }
+    .div-view {
+        display: flex;
+        flex-basis: 100%;
+        flex-direction: column;
+        overflow: auto;
+    }
+    .div-tool-list {
+        flex-basis: 15%;
+    }
+</style>
+<div class="div-style" ondragover="event.preventDefault();"
+     @ondrop="dropSnapshot"
+     @ondragenter="dragEnterSnapshot"
+     @ondragleave="dragLeaveSnapshot"
+     @ondrag="dragSnapshot">
+    <div>
+        @if (place == "tools")
+        {
+
+            @foreach (var tool in listaherramientas)
+            {
+                <DraggableItem herramienta="tool" />
+            }
+        }
+        else if (place == "inputs")
+        {
+            @foreach (var input in listaentradas)
+            {
+                <DraggableItem herramienta="input" />
+            }
+        }
+        else if (place == "workspace")
+        {
+             @foreach (var input in listaentradas)
+            {
+                <DraggableItem herramienta="input" />
+            }
+            @foreach (var tool in listaherramientas)
+            {
+                <DraggableItem herramienta="tool" />
+            }
+        }
+    </div>
+        @if (ChildContent != null)
+        {
+            <div class="div-view">
+                @ChildContent
+            </div>
+        }
+</div>
+
+@code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    [Parameter] public string place { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    public List<Item> listaherramientas = new List<Item>();
+    public List<Item> listaentradas = new List<Item>();
+    public string classname = "li-drag-style";
+
+    protected override void OnParametersSet()
+    {
+        if(place == "tools")
+        {
+            Console.WriteLine("Parameter ToolList");
+            listaherramientas.Clear();
+            listaherramientas.AddRange(sesion.herramientasutilizables.
+            Where(x => x.currentPlace == place));
+            StateHasChanged();
+        }
+        else if(place == "inputs")
+        {
+            Console.WriteLine("Parameter ToolList");
+            listaentradas.Clear();
+            listaentradas.AddRange(sesion.listaentradas.
+            Where(x => x.currentPlace == place));
+            StateHasChanged();
+        }
+        if ( place == "workspace")
+        {
+            Console.WriteLine("Parameter ToolList");
+            listaherramientas.Clear();
+            listaherramientas.AddRange(sesion.herramientasutilizables.
+            Where(x => x.currentPlace == place));
+            listaentradas.Clear();
+            listaentradas.AddRange(sesion.listaentradas.
+            Where(x => x.currentPlace == place));
+            StateHasChanged();
+        }
+    }
+    private void dropSnapshot()
+    {
+
+        if(place == "workspace")
+        {
+            if (workspace.currentItemDragged.originPlace == "tools" && listaherramientas.Count>0)
+            {
+                Console.WriteLine("Ya existe una Herramienta en el Espacio de Trabajo");
+            }else if (workspace.currentItemDragged.originPlace == "inputs" && listaentradas.Count>0)
+            {
+                Console.WriteLine("Ya existe una Expediente en el Espacio de Trabajo");
+            }
+            else
+            {
+                workspace.UpdateDraggableComponents(place);
+            }
+        } else if(place == "inputs" && workspace.currentItemDragged.originPlace == "inputs")
+        {
+            workspace.UpdateDraggableComponents(place);
+        }
+        else if(place == "tools" && workspace.currentItemDragged.originPlace == "tools")
+        {
+            workspace.UpdateDraggableComponents(place);
+        }
+        /*if(place == "workspace" && listaherramientas.Count() >0)
+        {
+            Console.WriteLine("Solo Uno a la vez");
+        }
+        else
+        {
+            workspace.UpdateDraggableComponents(place);
+            Console.WriteLine("El Elemento Arrastrable a sido soltado en " + place);
+        }*/
+    }
+    private void dragEnterSnapshot()
+    {
+        //Console.WriteLine("El elemento Entro al Espacio de Trabajo");
+    }
+    private void dragLeaveSnapshot()
+    {
+        // Console.WriteLine("El elemento salio de la caja de Herramientas");
+    }
+    public void dragSnapshot()
+    {
+        // Console.WriteLine("me muevo");
+    }
+}

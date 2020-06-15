@@ -1,5 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using Newtonsoft.Json;
+using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
@@ -26,10 +28,33 @@ namespace SISGED.Server.Services
         {
             return _documentos.Find(documento => true).ToList();
         }
-        public OficioDesignacionNotario registrarOficioDesignacionNotario(OficioDesignacionNotario documentoODN)
+        public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper)
         {
-            
+
+            OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            oficioDesignacionNotarioDTO = JsonConvert.DeserializeObject<OficioDesignacionNotarioDTO>(json);
+
+            //oficioDesignacionNotarioDTO = (OficioDesignacionNotarioDTO)expedienteWrapper.documento;
+            ContenidoOficioDesignacionNotario contenidoODN = new ContenidoOficioDesignacionNotario()
+            {
+                titulo = oficioDesignacionNotarioDTO.contenidoDTO.titulo,
+                descripcion = oficioDesignacionNotarioDTO.contenidoDTO.descripcion,
+                fecharealizacion = new DateTime(),
+                lugaroficionotarial = oficioDesignacionNotarioDTO.contenidoDTO.lugaroficionotarial,
+                idusuario = oficioDesignacionNotarioDTO.contenidoDTO.idusuario,
+                idnotario = oficioDesignacionNotarioDTO.contenidoDTO.idnotario.id,
+            };
+            OficioDesignacionNotario documentoODN = new OficioDesignacionNotario()
+            {
+                tipo = "OficioDesignacionNotario",
+                contenido = contenidoODN,
+                estado = "pendiente",
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
             _documentos.InsertOne(documentoODN);
+
             DocumentoExpediente documentoExpediente = new DocumentoExpediente();
             documentoExpediente.indice = 7;
             documentoExpediente.iddocumento = documentoODN.id;
@@ -37,9 +62,19 @@ namespace SISGED.Server.Services
             documentoExpediente.fechacreacion = DateTime.Now;
             documentoExpediente.fechaexceso = documentoExpediente.fechacreacion.AddDays(5);
             documentoExpediente.fechademora = null;
+
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(exp => exp.cliente.numerodocumento == "12345678" &&
-            exp.cliente.tipodocumento == "dni", updateExpediente);
+            //var filter = Builders<Expediente>.Filter.Eq("id", ObjectId.Parse("5ee5f24e7d8f833f68cc88a0"));
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5ee5f24e7d8f833f68cc88a0", updateExpediente);
+
+            /*UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
+            var filter = Builders<Expediente>.Filter.Eq("id", ObjectId.Parse("5ee5f24e7d8f833f68cc88a0"));
+            Expediente expediente = _expedientes.FindOneAndUpdate(filter, updateExpediente);*/
+
+            /*  UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(exp => exp.id == "12345678" &&
+            exp.cliente.tipodocumento == "dni", updateExpediente);*/
+
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;

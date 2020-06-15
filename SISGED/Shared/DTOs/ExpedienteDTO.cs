@@ -15,12 +15,11 @@ namespace SISGED.Shared.DTOs
         public string tipo { get; set; }
         public Cliente cliente { get; set; }
         public DateTime fechainicio { get; set; }
-        public DateTime fechafin { get; set; }
-        public List<DocumentoExpediente> documentos { get; set; }
-        public List<Documento> documentosobj { get; set; }
-        public List<Derivacion> derivaciones { get; set; }
+        public DateTime? fechafin { get; set; }
+        public List<DocumentoExpediente> documentos { get; set; } = new List<DocumentoExpediente>();
+        public List<Documento> documentosobj { get; set; } = new List<Documento>();
+        public List<Derivacion> derivaciones { get; set; } = new List<Derivacion>();
         public string estado { get; set; }
-        
     }
     public class ExpedienteDTO_ur1
     {
@@ -35,7 +34,6 @@ namespace SISGED.Shared.DTOs
         public List<Derivacion> derivaciones { get; set; }
         public string estado { get; set; }
     }
-
     public class ExpedienteDTO_look_up 
     {
         [BsonId]
@@ -50,7 +48,6 @@ namespace SISGED.Shared.DTOs
         public string estado { get; set; }
         public List<Documento> documentoobj { get; set; }
     }
-
     public class ExpedienteDTO_ur2
     {
         [BsonId]
@@ -64,5 +61,10 @@ namespace SISGED.Shared.DTOs
         public List<Derivacion> derivaciones { get; set; }
         public string estado { get; set; }
         public Documento documentoobj { get; set; }
+    }
+    public class ExpedienteWrapper
+    {
+        public ExpedienteDTO expediente { get; set; } = new ExpedienteDTO();
+        public object documento { get; set; }
     }
 }

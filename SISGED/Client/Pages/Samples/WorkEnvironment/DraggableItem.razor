@@ -51,11 +51,11 @@
 
 @code {
     [CascadingParameter] public WorkEnvironment workSpace { get; set; }
-    [Parameter] public Tool herramienta { get; set; }
+    [Parameter] public Item herramienta { get; set; }
     public string classname = "li-drag-style";
 
-    private void HandleDragStart(Tool tool)
+    private void HandleDragStart(Item tool)
     {
-        workSpace.currentToolDragged = tool;
+        workSpace.currentItemDragged = tool;
     }
 }

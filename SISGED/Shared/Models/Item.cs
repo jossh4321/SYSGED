@@ -4,16 +4,15 @@ using System.Text;
 
 namespace SISGED.Shared.Models
 {
-    public class Tool
+    public class Item
     {
         public string nombre { get; set; }
-
-        public string valor { get; set; }
+        public Object valor { get; set; }
         public string descripcion { get; set; }
         public string icono { get; set; }
         //public List<string> roles { get; set; } = new List<string>();
         /*posibles lugares 'tools' o 'workspace'*/
         public string currentPlace { get; set; } = "tools";
-        public string componentName { get; set; } = "ContenidoPrueba";
+        public string originPlace { get; set; }
     }
 }

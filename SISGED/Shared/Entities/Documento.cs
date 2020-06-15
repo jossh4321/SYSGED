@@ -30,9 +30,9 @@ namespace SISGED.Shared.Entities
         [BsonElement("estado")]
         public string estado { get; set; }
         [BsonElement("historialcontenido")]
-        public List<ContenidoVersion> historialcontenido { get; set; }
+        public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
         [BsonElement("historialproceso")]
-        public List<Proceso> historialproceso { get; set; }
+        public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
     }
 
    

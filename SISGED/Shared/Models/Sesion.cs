@@ -10,7 +10,8 @@ namespace SISGED.Shared.Models
     {
         public List<Permiso> permisosHerram { get; set; } = new List<Permiso>();
         public List<Permiso> permisosInterfaz { get; set; } = new List<Permiso>();
-        public List<Tool> herramientasutilizables { get; set; } = new List<Tool>();
+        public List<Item> herramientasutilizables { get; set; } = new List<Item>();
+        public List<Item> listaentradas { get; set; } = new List<Item>();
         public string rol { get; set; }
         public Usuario usuario { get; set; } = new Usuario();
     }

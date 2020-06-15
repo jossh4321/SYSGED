@@ -56,7 +56,6 @@
                                 <MatIcon Icon="@MatIconNames.Search" Class="bar-menu-item-icon"></MatIcon>
                             </div>
 
-
                             <div class="bar-menu-item-container resize-style" @onclick:stopPropagation="true" @onclick="@showNotificationMenu">
                                 <MatIcon Icon="@MatIconNames.Notifications_none" Class="bar-menu-item-icon"></MatIcon>
                             </div>
@@ -65,9 +64,6 @@
                                             position:absolute; top:5px;" @onclick:stopPropagation="true">
                                 <NotificationMenu />
                             </div>
-
-
-
 
                             <div class="bar-menu-item-container resize-style">
                                 <MatIcon Icon="@MatIconNames.Email" Class="bar-menu-item-icon"></MatIcon>
@@ -152,8 +148,12 @@
     Sesion sesion = new Sesion();
     bool cargasesion = true;
 
+    //lista entradas harcodeadas
+    List<ExpedienteDTO> expedientes = new List<ExpedienteDTO>();
+
     protected override async Task OnInitializedAsync()
     {
+        settingInput();
         cargasesion = false;
         var authState = await authenticationState;
         var usuario = authState.User;
@@ -161,11 +161,12 @@
         {
             Console.WriteLine("Usuario autenticado");
             //Obteniendo datos necesarios para la carga inicial
-            var datosSesion =  await repositorio.Get<Sesion>($"api/accounts/GetUserData?user={usuario.Identity.Name}");
+            var datosSesion = await repositorio.Get<Sesion>($"api/accounts/GetUserData?user={usuario.Identity.Name}");
             if (!datosSesion.Error)
             {
                 sesion = (Sesion)datosSesion.Response;
                 sesion.herramientasutilizables = obtenerListaheramientas(sesion.permisosHerram);
+                sesion.listaentradas = obtenerListaEntradas(expedientes);
             }
         }
         else
@@ -176,10 +177,18 @@
     }
 
     #region metodos
-    public List<Tool> obtenerListaheramientas(List<Permiso> listapermisos)
+    public List<Item> obtenerListaheramientas(List<Permiso> listapermisos)
     {
-        return listapermisos.Select(x => new Tool() { nombre = x.label, valor = x.nombre, icono = x.icono, descripcion = "", currentPlace = "tools", componentName = "component" }).ToList();
+        return listapermisos.Select(x => new Item() { nombre = x.label, valor = x.nombre, icono = x.icono, descripcion = "", currentPlace = "tools" , originPlace="tools"}).ToList();
     }
+    public List<Item> obtenerListaEntradas(List<ExpedienteDTO> listaentrada)
+    {
+        return listaentrada.Select(x => new Item() { nombre = x.id, valor = x, icono = "alarm_add", descripcion = "", currentPlace = "inputs", originPlace="inputs" }).ToList();
+    }
+
+
+
+
     public void showUserMenu2()
     {
         valueclass = "non-show";
@@ -220,18 +229,52 @@
     {
         this.MenuMore.OpenAsync();
     }
-
-    /*example : Permiso x1 = new Permiso()
+    public void settingInput()
+    {
+        ExpedienteDTO expedientedto1 = new ExpedienteDTO()
         {
-            nombre = "AAA"
-        };
-        Permiso x2 = new Permiso()
-        {
-            nombre = "BBB"
+            id = "111",
+            tipo = "Denuncia",
+            cliente = new Cliente()
+            {
+                nombre = "Pedro Paredes",
+                numerodocumento = "",
+                tipodocumento = "Pedro Paredes",
+            },
+            fechainicio = DateTime.Now,
+            fechafin = null,
+            documentos = new List<DocumentoExpediente>()
+    {
+                    new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
+            },
+            documentosobj = new List<Documento>(),
+            derivaciones = new List<Derivacion>(),
+            estado = "pendiente"
         };
 
-        listaPermisos.Add(x1);
-        listaPermisos.Add(x2);*/
+        ExpedienteDTO expedientedto2 = new ExpedienteDTO()
+        {
+            id = "222",
+            tipo = "Denuncia",
+            cliente = new Cliente()
+            {
+                nombre = "Pedro Paredes",
+                numerodocumento = "",
+                tipodocumento = "Pedro Paredes",
+            },
+            fechainicio = DateTime.Now,
+            fechafin = null,
+            documentos = new List<DocumentoExpediente>()
+{
+            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
+        },
+            documentosobj = new List<Documento>(),
+            derivaciones = new List<Derivacion>(),
+            estado = "pendiente"
+        };
+        expedientes.Add(expedientedto1);
+        expedientes.Add(expedientedto2);
+    }
     #endregion
 }
 

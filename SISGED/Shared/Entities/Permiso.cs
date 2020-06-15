@@ -12,7 +12,7 @@ namespace SISGED.Shared.Entities
         [BsonRepresentation(BsonType.ObjectId)]
         public string id { get; set; }
         [BsonElement("nombre")]
-        public string nombre { get; set; }
+        public String nombre { get; set; }
         [BsonElement("tipo")]
         public string tipo { get; set; }
         [BsonElement("label")]

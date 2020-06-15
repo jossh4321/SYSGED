@@ -29,26 +29,12 @@ namespace SISGED.Server.Controllers
              return _documentoservice.obtenerDocumentos();
         }
         [HttpPost("documentoodn")]
-        public ActionResult<OficioDesignacionNotario> RegistrarDocumentoODN(OficioDesignacionNotarioDTO documento)
+        public ActionResult<OficioDesignacionNotario> RegistrarDocumentoODN(ExpedienteWrapper expedienteWrapper)
         {
-            ContenidoOficioDesignacionNotario contenidoODN = new ContenidoOficioDesignacionNotario()
-            {
-                titulo = documento.contenidoDTO.titulo,
-                descripcion = documento.contenidoDTO.descripcion,
-                fecharealizacion = new DateTime(),
-                lugaroficionotarial = documento.contenidoDTO.lugaroficionotarial,
-                idusuario = documento.contenidoDTO.idusuario,//nota
-                idnotario = documento.contenidoDTO.idnotario.id,
-            };
-            OficioDesignacionNotario documentoODN = new OficioDesignacionNotario()
-            {
-                tipo = "OficioDesignacionNotario",
-                contenido = contenidoODN,
-                estado = "pendiente",
-                historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
-            };
-            documentoODN = _documentoservice.registrarOficioDesignacionNotario(documentoODN);
+            ExpedienteWrapper ew = new ExpedienteWrapper();
+            ew = expedienteWrapper;
+            OficioDesignacionNotario documentoODN = new OficioDesignacionNotario();
+            documentoODN = _documentoservice.registrarOficioDesignacionNotario(ew);
             return documentoODN;
         }
         [HttpPost("documentosbpn")]
