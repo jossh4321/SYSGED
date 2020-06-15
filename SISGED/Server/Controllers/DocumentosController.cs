@@ -216,7 +216,7 @@ namespace SISGED.Server.Controllers
                 historialproceso = new List<Proceso>()
             };
 
-            documentoDF = _documentoservice.registrarConclusionFirma(documentoDF);
+           // documentoDF = _documentoservice.registrarConclusionFirma(documentoDF);
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(documento.contenidoDTO.idescriturapublica);
             return documentoDF;
         }

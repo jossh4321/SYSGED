@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SISGED.Server.Services;
+using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,10 @@ namespace SISGED.Server.Controllers
             _bandejaService = bandejaService;
         }
 
-        [HttpGet("getBandeja")]
-        public async Task<ActionResult<Bandeja>> Get(string usuario)
+        [HttpGet("getBandeja/{usuario}")]
+        public async Task<ActionResult<List<BandejaDTOR>>> Get(string usuario)
         {
-            return await _bandejaService.ObtenerBandejaDocumento(usuario);
+            return await _bandejaService.ObtenerBandeja(usuario);
         }
     }
 }
