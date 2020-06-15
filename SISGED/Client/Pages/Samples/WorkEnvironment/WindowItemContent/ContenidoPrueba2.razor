@@ -1,8 +1,17 @@
-﻿<style>
-
+﻿@inject ISwalFireMessage swalfire
+<style>
+    * {
+        color: black;
+    }
 </style>
+<div>
+
+</div>
 <h1>CONTENIDO PRUEBA: OTRA HERRAMIENTA</h1>
-
+<button @onclick="metocaron">tócame</button>
 @code {
-
+    void metocaron()
+    {
+        swalfire.successMessage("me tocaste");
+    }
 }

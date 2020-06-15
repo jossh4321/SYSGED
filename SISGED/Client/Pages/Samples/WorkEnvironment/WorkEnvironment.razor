@@ -110,7 +110,6 @@
             <div class="container-ot">
                 <div class="output common-box-style">
                     <div class="box-title-style"><span>Bandeja de Salida</span></div>
-
                 </div>
                 <div class="tools common-box-style">
                     <div class="box-title-style"><span>HERRAMIENTAS</span></div>
@@ -134,7 +133,6 @@
 </div>
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-
     public List<Tool> listaherramientas = new List<Tool>();
     public List<Documento> bandejasalida = new List<Documento>();
     public List<Tool> listavacia = new List<Tool>();
@@ -144,6 +142,10 @@
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("INICIE: WorkEnvironment");
+        /*List<ExpedienteDTO> listaexpediente = new List<ExpedienteDTO>();
+        listaexpediente.Add(expedientedto1);
+        listaexpediente.Add(expedientedto2);
+        listaexpediente.Add(expedientedto3);*/
         /*var httpResponse = await repository.Get<List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {
@@ -179,27 +181,70 @@
         }
     }
 
-    /*public ExpedienteDTO expedientedto = new ExpedienteDTO()
+
+    /*
+    public ExpedienteDTO expedientedto1 = new ExpedienteDTO()
     {
-        id="111",
-        tipo="Denuncia",
+        id = "111",
+        tipo = "Denuncia",
         cliente =
         {
             nombre="Pedro Paredes",
             numerodocumento="",
             tipodocumento="Pedro Paredes",
-        }
-    }
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string id { get; set; }
-    public string tipo { get; set; }
-    public Cliente cliente { get; set; }
-    public DateTime fechainicio { get; set; }
-    public DateTime fechafin { get; set; }
-    public List<DocumentoExpediente> documentos { get; set; }
-    public List<Documento> documentosobj { get; set; }
-    public List<Derivacion> derivaciones { get; set; }
-    public string estado { get; set; }*/
+        },
+        fechainicio = DateTime.Now,
+        fechafin = null,
+        documentos = new List<DocumentoExpediente>()
+        {
+            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
+        },
+        documentosobj = new List<Documento>(),
+        derivaciones = new List<Derivacion>(),
+        estado = "pendiente"
+    };
+
+    public ExpedienteDTO expedientedto2 = new ExpedienteDTO()
+    {
+        id = "222",
+        tipo = "Denuncia",
+        cliente =
+        {
+            nombre="Pedro Paredes",
+            numerodocumento="",
+            tipodocumento="Pedro Paredes",
+        },
+        fechainicio = DateTime.Now,
+        fechafin = null,
+        documentos = new List<DocumentoExpediente>()
+        {
+            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
+        },
+        documentosobj = new List<Documento>(),
+        derivaciones = new List<Derivacion>(),
+        estado = "pendiente"
+    };
+
+    public ExpedienteDTO expedientedto3 = new ExpedienteDTO()
+    {
+        id = "333",
+        tipo = "Denuncia",
+        cliente =
+        {
+            nombre="Pedro Paredes",
+            numerodocumento="",
+            tipodocumento="Pedro Paredes",
+        },
+        fechainicio = DateTime.Now,
+        fechafin = null,
+        documentos = new List<DocumentoExpediente>()
+        {
+            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
+        },
+        documentosobj = new List<Documento>(),
+        derivaciones = new List<Derivacion>(),
+        estado = "pendiente"
+    };*/
+
 
 }
