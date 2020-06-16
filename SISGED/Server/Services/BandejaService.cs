@@ -22,8 +22,6 @@ namespace SISGED.Server.Services
 
         public async Task<Bandeja> ObtenerBandejaDocumento(string usuario)
         {
-
-
             Bandeja bandeja = await _bandejas.FindAsync(band => band.usuario == usuario).Result.FirstAsync();
             return bandeja;
         }
@@ -31,7 +29,6 @@ namespace SISGED.Server.Services
 
         public async Task<List<BandejaDTOR>> ObtenerBandeja(string usuario)
         {
-
             BsonArray subpipeline = new BsonArray();
 
             subpipeline.Add(

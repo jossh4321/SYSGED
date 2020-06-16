@@ -23,7 +23,7 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpGet("getall")]
-        public async Task<ActionResult<List<ExpedienteDTO_ur2>>> getAllExpedianteDTO()
+        public async Task<ActionResult<List<ExpedienteDTO2>>> getAllExpedianteDTO()
         {
             return await _expedienteService.getAllExpedienteDTO();
         }
