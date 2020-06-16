@@ -49,5 +49,6 @@ namespace SISGED.Shared.DTOs
         public BandejaDocumento bandejasalida { get; set; }
         public DocumentoExpediente documento { get; set; }
         public string tipoexpediente { get; set; }
+        public Cliente cliente { get; set; }
     }
 }

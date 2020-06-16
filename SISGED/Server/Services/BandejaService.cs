@@ -60,7 +60,8 @@ namespace SISGED.Server.Services
             var project = new BsonDocument("$project",
                                   new BsonDocument("documento", declararVariable)
                                   .Add("bandejasalida", 1)
-                                  .Add("tipoexpediente", "$bandejadocumento.tipo"));
+                                  .Add("tipoexpediente", "$bandejadocumento.tipo")
+                                  .Add("cliente","$bandejadocumento.cliente"));
             List<BandejaDTOR> listabandejas = new List<BandejaDTOR>();
             var filtroUsuario = Builders<Bandeja>.Filter.Eq("usuario", usuario);
             listabandejas = await _bandejas.Aggregate()

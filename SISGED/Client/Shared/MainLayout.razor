@@ -151,6 +151,9 @@
     //lista entradas harcodeadas
     List<ExpedienteDTO> expedientes = new List<ExpedienteDTO>();
 
+    //lista salidas
+    List<BandejaDTOR> bandejaSalidas = new List<BandejaDTOR>();
+
     protected override async Task OnInitializedAsync()
     {
         settingInput();
@@ -165,8 +168,10 @@
             if (!datosSesion.Error)
             {
                 sesion = (Sesion)datosSesion.Response;
+                await setearBandejaSalida(sesion.usuario.id);
                 sesion.herramientasutilizables = obtenerListaheramientas(sesion.permisosHerram);
                 sesion.listaentradas = obtenerListaEntradas(expedientes);
+                sesion.listasalidas = obtenerListaSalidas(bandejaSalidas);
             }
         }
         else
@@ -179,13 +184,25 @@
     #region metodos
     public List<Item> obtenerListaheramientas(List<Permiso> listapermisos)
     {
-        return listapermisos.Select(x => new Item() { nombre = x.label, valor = x.nombre, icono = x.icono, descripcion = "", currentPlace = "tools" , originPlace="tools"}).ToList();
+        return listapermisos.Select(x => new Item() { nombre = x.label, valor = x.nombre, icono = x.icono, descripcion = "", currentPlace = "tools", originPlace = "tools" }).ToList();
     }
     public List<Item> obtenerListaEntradas(List<ExpedienteDTO> listaentrada)
     {
-        return listaentrada.Select(x => new Item() { nombre = x.id, valor = x, icono = "alarm_add", descripcion = "", currentPlace = "inputs", originPlace="inputs" }).ToList();
+        return listaentrada.Select(x => new Item() { nombre = x.id, valor = x, icono = "alarm_add", descripcion = "", currentPlace = "inputs", originPlace = "inputs" }).ToList();
     }
-
+    public List<Item> obtenerListaSalidas(List<BandejaDTOR> listasalida)
+    {
+        return listasalida.Select(x => new Item()
+        {
+            nombre = x.tipoexpediente,
+            valor = x.bandejasalida.idexpediente,
+            icono = "alarm_add",
+            descripcion = x.documento.tipo,
+            currentPlace = "outputs",
+            originPlace = "outputs",
+            cliente = x.cliente
+        }).ToList();
+    }
 
 
 
@@ -244,7 +261,7 @@
             fechainicio = DateTime.Now,
             fechafin = null,
             documentos = new List<DocumentoExpediente>()
-    {
+{
                     new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
             },
             documentosobj = new List<Documento>(),
@@ -274,6 +291,20 @@
         };
         expedientes.Add(expedientedto1);
         expedientes.Add(expedientedto2);
+    }
+
+    public async Task setearBandejaSalida(String idusuario)
+    {
+        var responseHttp = await repositorio.Get<List<BandejaDTOR>>($"api/Bandejas/getBandeja/{idusuario}");
+        if(responseHttp.Error)
+        {
+            Console.WriteLine("Error en la bandeja de salida");
+        }
+        else
+        {
+            Console.WriteLine("Se obtuvo con exito los datos de la bandeja de salida");
+            bandejaSalidas = responseHttp.Response;
+        }
     }
     #endregion
 }
