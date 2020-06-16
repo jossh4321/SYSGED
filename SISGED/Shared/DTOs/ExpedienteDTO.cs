@@ -21,6 +21,24 @@ namespace SISGED.Shared.DTOs
         public List<Derivacion> derivaciones { get; set; } = new List<Derivacion>();
         public string estado { get; set; }
     }
+
+
+    public class ExpedienteDTO2
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public List<DocumentoExpediente> documentos { get; set; } = new List<DocumentoExpediente>();
+        public List<Documento> documentosobj { get; set; } = new List<Documento>();
+        public List<Derivacion> derivaciones { get; set; } = new List<Derivacion>();
+        public string estado { get; set; }
+    }
+
+
     public class ExpedienteDTO_ur1
     {
         [BsonId]
@@ -29,7 +47,7 @@ namespace SISGED.Shared.DTOs
         public string tipo { get; set; }
         public Cliente cliente { get; set; }
         public DateTime fechainicio { get; set; }
-        public DateTime fechafin { get; set; }
+        public DateTime? fechafin { get; set; }
         public DocumentoExpediente documentos { get; set; }
         public List<Derivacion> derivaciones { get; set; }
         public string estado { get; set; }
@@ -42,7 +60,7 @@ namespace SISGED.Shared.DTOs
         public string tipo { get; set; }
         public Cliente cliente { get; set; }
         public DateTime fechainicio { get; set; }
-        public DateTime fechafin { get; set; }
+        public DateTime? fechafin { get; set; }
         public DocumentoExpediente documentos { get; set; }
         public List<Derivacion> derivaciones { get; set; }
         public string estado { get; set; }
@@ -56,7 +74,7 @@ namespace SISGED.Shared.DTOs
         public string tipo { get; set; }
         public Cliente cliente { get; set; }
         public DateTime fechainicio { get; set; }
-        public DateTime fechafin { get; set; }
+        public DateTime? fechafin { get; set; }
         public DocumentoExpediente documentos { get; set; }
         public List<Derivacion> derivaciones { get; set; }
         public string estado { get; set; }

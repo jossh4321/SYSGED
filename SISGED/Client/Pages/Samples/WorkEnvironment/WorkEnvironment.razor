@@ -167,16 +167,16 @@
         {
             Console.WriteLine("Ocurrio un error");
         }*/
-        /*List<ExpedienteDTO_ur2> lexdto = new List<ExpedienteDTO_ur2>();
-        var httpResponse = await repository.Get<List<ExpedienteDTO_ur2>>("api/expediente/getall");
+        List<ExpedienteDTO2> lexdto = new List<ExpedienteDTO2>();
+        var httpResponse = await repository.Get<List<ExpedienteDTO2>>("api/expediente/getall");
         if (!httpResponse.Error)
         {
-            lexdto = httpResponse.Response;
+            //lexdto = httpResponse.Response;
         }
         else
         {
             Console.WriteLine("Ocurrio un error");
-        }*/
+        }
     }
 
     public void UpdateDraggableComponents(string newCurrentPlace)
