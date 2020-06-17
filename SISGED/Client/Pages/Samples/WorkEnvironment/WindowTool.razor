@@ -45,10 +45,9 @@
     }
     protected override void OnParametersSet()
     {
-        Console.WriteLine("WINDOW TOOL: OnParameterSet()");
+
         if (itemArrastrado != null)
         {
-            Console.WriteLine("valor encontrado y actualizando");
             if(itemArrastrado.nombre == "Busqueda")
             {
                 ChildContent = @<ContenidoPrueba></ContenidoPrueba>;

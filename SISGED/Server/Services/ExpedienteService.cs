@@ -24,7 +24,7 @@ namespace SISGED.Server.Services
             return expediente;
         }
 
-        public async Task<List<ExpedienteDTO_ur2>> getAllExpedienteDTO()
+        public async Task<List<ExpedienteDTO2>> getAllExpedienteDTO()
         {
 
             BsonArray embebedpipeline = new BsonArray();
@@ -39,50 +39,28 @@ namespace SISGED.Server.Services
                 Add("let", new BsonDocument("iddoc", "$documentos.iddocumento")).
                 Add("pipeline",embebedpipeline).
                 Add("as","documentoobj"));
-
-            var group = new BsonDocument
-            {
-                {"$group", 
-                    new BsonDocument
-                    {
-                        /*{ "_id", "$_id"},*/
-                        { "tipo", new BsonDocument{ { "$first", "$tipo" } } }
-                        /*{ "cliente", new BsonDocument{ { "$first", "$cliente" } } },
-                        { "fechainicio", new BsonDocument{ { "$first", "$fechainicio" } } },
-                        { "fechafin", new BsonDocument{ { "$first", "$fechafin" } } },
-                        {"documentos", new BsonDocument{ { "$push", "$documentos" } } },
-                        {"documentosobj", new BsonDocument{ { "$push", "$documentoobj" } } },
-                        { "derivaciones", new BsonDocument{ { "$first", "$derivaciones" } } },
-                        { "estado", new BsonDocument{ { "$first", "$estado" } } }*/
-            } } };
-
-
-                /*new BsonDocument("id", "$id")
-                new BsonDocument("tipo", new BsonDocument("$first", "$tipo")).
-                new BsonDocument("cliente", new BsonDocument("$first", "$cliente")).
-                Add("fechainicio", new BsonDocument("$first", "$fechainicio")).
-                Add("fechafin", new BsonDocument("$first", "$fechafin")).
-                Add("documentos", new BsonDocument("$push", "$documentos")).
-                Add("documentosobj", new BsonDocument("$push", "$documentoobj")).
-                Add("derivaciones", new BsonDocument("$first", "$derivaciones")).
-                Add("estado", new BsonDocument("$first", "$estado"))) ;*/
-
-
-
-            List<ExpedienteDTO_ur2> listaexpedientesdto = new List<ExpedienteDTO_ur2>();
+          List<ExpedienteDTO2> listaexpedientesdto = new List<ExpedienteDTO2>();
             listaexpedientesdto = await _expedientes.Aggregate()
                 .Unwind<Expediente, ExpedienteDTO_ur1>(e => e.documentos)
                 .AppendStage<ExpedienteDTO_look_up>(lookup)
                 .Unwind<ExpedienteDTO_look_up, ExpedienteDTO_ur2>(p => p.documentoobj)
-                /*.Group<ExpedienteDTO>(new BsonDocument
+                .Group<ExpedienteDTO2>(new BsonDocument
                 {
+                    { "_id", "$_id"},
+                    {
+                        "tipo", new BsonDocument
                         {
-                           "tipo", new BsonDocument
-                           {
-                               {"$first", "$tipo"}
-                           }
+                            {"$first", "$tipo"}
                         }
-                })*/.ToListAsync();
+                    },
+                    { "cliente", new BsonDocument{ { "$first", "$cliente" } } },
+                    { "fechainicio", new BsonDocument{ { "$first", "$fechainicio" } } },
+                    { "fechafin", new BsonDocument{ { "$first", "$fechafin" } } },
+                    {"documentos", new BsonDocument{ { "$push", "$documentos" } } },
+                    {"documentosobj", new BsonDocument{ { "$push", "$documentoobj" } } },
+                    { "derivaciones", new BsonDocument{ { "$first", "$derivaciones" } } },
+                    { "estado", new BsonDocument{ { "$first", "$estado" } } }
+                }).ToListAsync();
             return listaexpedientesdto;
         }
 

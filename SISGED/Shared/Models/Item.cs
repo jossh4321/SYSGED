@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SISGED.Shared.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,5 +15,6 @@ namespace SISGED.Shared.Models
         /*posibles lugares 'tools' o 'workspace'*/
         public string currentPlace { get; set; } = "tools";
         public string originPlace { get; set; }
+        public Cliente cliente { get; set; }
     }
 }

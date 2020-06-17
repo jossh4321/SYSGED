@@ -46,6 +46,16 @@
     <div class="tool-container">
        <MatIcon>@MatIconNames.Assistant</MatIcon>
         <p class="tool-name">@herramienta.nombre</p>
+        <p class="tool-description">@herramienta.descripcion</p>
+        @if(herramienta.cliente == null)
+        {
+
+        }
+        else
+        {
+            <p class="tool-client-name">@herramienta.cliente.nombre </p>
+        }
+
     </div>
 </li>
 

@@ -30,7 +30,6 @@ namespace SISGED.Server.Services
         }
         public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper)
         {
-
             OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             oficioDesignacionNotarioDTO = JsonConvert.DeserializeObject<OficioDesignacionNotarioDTO>(json);
