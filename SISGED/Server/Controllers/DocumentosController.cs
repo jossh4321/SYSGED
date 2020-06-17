@@ -102,8 +102,9 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
-            return solicitudDenuncia;
 
+            _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, "5ee2e87bd12fcd05d6b6b13e");
+            return solicitudDenuncia;
         }
 
         //Con el expediente agregado falta wrapper
@@ -163,6 +164,8 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
+
+            _documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, "5ee2e87bd12fcd05d6b6b13e");
             return documentoSEF;
         }
 

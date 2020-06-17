@@ -147,6 +147,16 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSEF);
             return documentoSEF;
         }
+
+        public void updateBandejaSalida(string idexp, string iddoc, string idusuario)
+        {
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = idexp;
+            bandejaDocumento.iddocumento = iddoc;
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
+        }
+
         public SolicitudDenuncia registrarSolicitudDenuncia(SolicitudDenuncia documentoSD)
         {
             _documentos.InsertOne(documentoSD);
