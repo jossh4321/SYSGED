@@ -1,6 +1,7 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
 
 <style>
     .div-form {
@@ -98,6 +99,10 @@
 </div>
 
 @code {
+    //Datos de la sesion local
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+
     private ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
 
     private EditContext _editContext;
@@ -134,7 +139,13 @@
 
     public async Task handleValidSubmit()
     {
-        var httpResponse = await repository.Post<ConclusionFirmaDTO, ConclusionFirma>("api/documentos/documentocf", conclusionFirma);
+        //conclusionFirma.contenidoDTO.idusuario = sesion.usuario.id;
+        Console.WriteLine("Expediente: " + workspace.expedienteseleccionado.id + " Documento: " + conclusionFirma.contenidoDTO.idescriturapublica);
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = conclusionFirma;
+        expedienteWrapper.expediente = workspace.expedienteseleccionado;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper, ConclusionFirma>("api/documentos/documentocf", expedienteWrapper);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
