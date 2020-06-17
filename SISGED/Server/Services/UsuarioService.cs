@@ -77,6 +77,11 @@ namespace SISGED.Server.Services
             });
             return usuario;
         }
-
+        public List<Usuario> GetByStatus(string status)
+        {
+            List<Usuario> usuarios = new List<Usuario>();
+            usuarios = _usuarios.Find(usuario => usuario.estado == status).ToList();
+            return usuarios;
+        }
     }
 }
