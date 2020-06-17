@@ -94,6 +94,91 @@
         align-items: center;
         background: #1a1a1a;
     }
+    /* Estilos del dragableList*/
+    .div-style {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 100%;
+        max-height: 100%;
+        min-height: 100%;
+    }
+
+    .div-view {
+        display: flex;
+        flex-basis: 100%;
+        flex-direction: column;
+        overflow: auto;
+    }
+
+    .div-tool-list {
+        flex-basis: 15%;
+    }
+
+    /*Estilos del dragableItem*/
+
+    .tool-container {
+        display: flex;
+        padding: 6px 5px 6px 15px;
+        color: white;
+        text-align: left;
+        justify-content: left;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .tool-name {
+        font-size: 16px;
+        font-family: sans-serif;
+    }
+
+    .li-tool {
+        list-style: none;
+    }
+
+    .li-drag-style {
+        border: 2px solid #808080 !important;
+        margin: 6px;
+        border-radius: 15px;
+        background-color: #404040 !important;
+        transition: 300ms all;
+    }
+
+        .li-drag-style:hover {
+            transform: scale(1.05);
+            border: 2px solid #0066ff !important;
+        }
+
+            .li-drag-style:hover .tool-name, .li-drag-style:hover i.material-icons {
+                transform: scale(1);
+                color: #0066ff !important;
+            }
+
+    .tool-name {
+        display: block;
+        margin: 0px 0px 0px 7px;
+        color: #b3b3b3;
+    }
+
+    i.material-icons {
+        color: #b3b3b3 !important;
+    }
+
+    .tool-sub-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tool-description {
+        display: block;
+        margin: 0px 0px 0px 7px;
+        color: #b3b3b3;
+    }
+
+    .tool-client-name {
+        display: block;
+        margin: 0px 0px 0px 7px;
+        color: #b3b3b3;
+    }
 </style>
 <div style="flex-basis:100%">
     <div class="work-box-title-style">

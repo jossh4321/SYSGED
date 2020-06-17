@@ -1,24 +1,4 @@
-﻿<style>
-    .div-style {
-        display: flex;
-        flex-direction: column;
-        flex-basis: 100%;
-        max-height: 100%;
-        min-height: 100%;
-    }
-
-    .div-view {
-        display: flex;
-        flex-basis: 100%;
-        flex-direction: column;
-        overflow: auto;
-    }
-
-    .div-tool-list {
-        flex-basis: 15%;
-    }
-</style>
-<div class="div-style" ondragover="event.preventDefault();"
+﻿<div class="div-style" ondragover="event.preventDefault();"
      @ondrop="dropSnapshot"
      @ondragenter="dragEnterSnapshot"
      @ondragleave="dragLeaveSnapshot"
