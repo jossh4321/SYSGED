@@ -281,7 +281,7 @@
             }
         }else if(currentItemDragged.originPlace == "inputs")
         {
-            var tool = sesion.listaentradas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre);
+            var tool = sesion.listaentradas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
             if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
             {
                 if (newCurrentPlace == "workspace") { expedienteseleccionado = (string)tool.valor; }
@@ -289,7 +289,7 @@
                 Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
 
                 tool.currentPlace = newCurrentPlace;
-                sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre))] = tool;
+                sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
                 StateHasChanged();
             }
         }else if(currentItemDragged.originPlace == "outputs")
