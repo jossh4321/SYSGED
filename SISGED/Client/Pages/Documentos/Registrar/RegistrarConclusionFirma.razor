@@ -139,13 +139,12 @@
 
     public async Task handleValidSubmit()
     {
-        //conclusionFirma.contenidoDTO.idusuario = sesion.usuario.id;
-        /*Console.WriteLine("Expediente: " + workspace.expedienteseleccionado.id + " Documento: " + conclusionFirma.contenidoDTO.idescriturapublica);
+        Console.WriteLine("Expediente: " + workspace.expedienteseleccionado + " Documento: " + conclusionFirma.contenidoDTO.idescriturapublica);
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = conclusionFirma;
-        expedienteWrapper.expediente = workspace.expedienteseleccionado;*/
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado;
 
-        var httpResponse = await repository.Post<ConclusionFirmaDTO, ConclusionFirma>($"api/documentos/documentocf/{workspace.expedienteseleccionado}", conclusionFirma);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ConclusionFirma>($"api/documentos/documentocf", expedienteWrapper);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
