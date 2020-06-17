@@ -254,8 +254,8 @@
         {
             Console.WriteLine("Ocurrio un error");
         }*/
-        List<ExpedienteDTO2> lexdto = new List<ExpedienteDTO2>();
-        var httpResponse = await repository.Get<List<ExpedienteDTO2>>("api/expediente/getall");
+        List<BandejaEntradaDTODocumento> lexdto = new List<BandejaEntradaDTODocumento>();
+        var httpResponse = await repository.Get<List<BandejaEntradaDTODocumento>>("api/bandejas/bandejaentrada/5ee2e87bd12fcd05d6b6b13e");
         if (!httpResponse.Error)
         {
             //lexdto = httpResponse.Response;

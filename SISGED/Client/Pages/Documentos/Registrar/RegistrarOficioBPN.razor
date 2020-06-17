@@ -1,5 +1,6 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
+@using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -233,6 +234,8 @@
 
 </div>
 @code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
     public bool abrirDialogo = false;
     public void openDialog() { abrirDialogo = true; }
@@ -243,7 +246,7 @@
         tipo = "SolicitudBPN",
         estado = "Pendiente",
         historialcontenido = new List<ContenidoVersion>()
-        {
+    {
             new ContenidoVersion() { version = 1, url = "www.cnl/solicitud_BPN/1", fechamodificacion = new DateTime() }
         },
         historialproceso = new List<Proceso>(),
@@ -306,7 +309,13 @@
         documento.contenidoDTO.tipoprotocolo = docSolicitudBPNDTO.contenidoDTO.tipoprotocolo;
         documento.contenidoDTO.otorgantes = docSolicitudBPNDTO.contenidoDTO.otorgantes;
         documento.contenidoDTO.fecharealizacion = DateTime.Now;
-        var httpResponse = await repository.Post<OficioBPNDTO, OficioBPN>("api/documentos/documentosbpn", documento);
+
+        //oficiodesignacion.contenidoDTO.idusuario = sesion.usuario.id;
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = documento;
+        expedienteWrapper.expediente = workspace.expedienteseleccionado;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>("api/documentos/documentosbpn", expedienteWrapper);
         if (!httpResponse.Error)
         {
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
