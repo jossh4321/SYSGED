@@ -147,8 +147,8 @@
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Item> listaherramientas = new List<Item>();
-    List<ExpedienteDTO> listaentradas = new List<ExpedienteDTO>();
-    public ExpedienteDTO expedienteseleccionado = null;
+    //List<ExpedienteDTO> listaentradas = new List<ExpedienteDTO>();
+    public String expedienteseleccionado = null;
     public String idexpedienteSalida = null;
     public Item currentItemDragged;
     public Bandeja bandejaUsuario = new Bandeja();
@@ -169,8 +169,8 @@
         {
             Console.WriteLine("Ocurrio un error");
         }*/
-        List<BandejaEntradaDTODocumento> lexdto = new List<BandejaEntradaDTODocumento>();
-        var httpResponse = await repository.Get<List<BandejaEntradaDTODocumento>>("api/bandejas/bandejaentrada/5ee2e87bd12fcd05d6b6b13e");
+        /*List<BandejaEntradaDTOR> lexdto = new List<BandejaEntradaDTOR>();
+        var httpResponse = await repository.Get<List<BandejaEntradaDTOR>>("api/bandejas/bandejaentrada/5ee2e87bd12fcd05d6b6b13e");
         if (!httpResponse.Error)
         {
             //lexdto = httpResponse.Response;
@@ -178,7 +178,7 @@
         else
         {
             Console.WriteLine("Ocurrio un error");
-        }
+        }*/
     }
 
     public void UpdateDraggableComponents(string newCurrentPlace)
@@ -199,7 +199,7 @@
             var tool = sesion.listaentradas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre);
             if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
             {
-                if (newCurrentPlace == "workspace") { expedienteseleccionado = (ExpedienteDTO)tool.valor; }
+                if (newCurrentPlace == "workspace") { expedienteseleccionado = (string)tool.valor; }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
                 Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
 

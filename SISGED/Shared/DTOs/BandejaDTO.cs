@@ -92,13 +92,10 @@ namespace SISGED.Shared.DTOs
     {
         [BsonRepresentation(BsonType.ObjectId)]
         public string id { get; set; }
-        public BandejaDocumento bandejaentrada { get; set; }
-        public DocumentoExpediente documento { get; set; }
+        public BandejaDocumento bandejaentrada { get; set; } = new BandejaDocumento();
+        public DocumentoExpediente documento { get; set; } = new DocumentoExpediente();
         public string tipoexpediente { get; set; }
+        public Cliente cliente { get; set; } = new Cliente();
     }
-
-
     #endregion
-
-
 }

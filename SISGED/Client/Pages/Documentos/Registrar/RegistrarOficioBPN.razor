@@ -311,11 +311,11 @@
         documento.contenidoDTO.fecharealizacion = DateTime.Now;
 
         //oficiodesignacion.contenidoDTO.idusuario = sesion.usuario.id;
-        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        /*ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = documento;
-        expedienteWrapper.expediente = workspace.expedienteseleccionado;
+        expedienteWrapper.expediente = workspace.expedienteseleccionado;*/
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>("api/documentos/documentosbpn", expedienteWrapper);
+        var httpResponse = await repository.Post<OficioBPNDTO, OficioBPN>($"api/documentos/documentosbpn/{workspace.expedienteseleccionado}", documento);
         if (!httpResponse.Error)
         {
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");

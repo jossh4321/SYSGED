@@ -73,7 +73,7 @@ namespace SISGED.Server.Services
 
 
 
-        public async Task<List<BandejaEntradaDTODocumento>> ObtenerBandejaEntrada(string usuario)
+        public async Task<List<BandejaEntradaDTOR>> ObtenerBandejaEntrada(string usuario)
         {
             BsonArray subpipeline = new BsonArray();
 
@@ -103,22 +103,18 @@ namespace SISGED.Server.Services
             var project = new BsonDocument("$project",
                                   new BsonDocument("documento", declararVariable)
                                   .Add("bandejaentrada", 1)
-                                  .Add("tipoexpediente", "$bandejadocumento.tipo"));
-            List<BandejaEntradaDTODocumento> listabandejas = new List<BandejaEntradaDTODocumento>();
+                                  .Add("tipoexpediente", "$bandejadocumento.tipo")
+                                  .Add("cliente", "$bandejadocumento.cliente"));
+            List<BandejaEntradaDTOR> listabandejas = new List<BandejaEntradaDTOR>();
             var filtroUsuario = Builders<Bandeja>.Filter.Eq("usuario", usuario);
             listabandejas = await _bandejas.Aggregate()
                                         .Match(filtroUsuario)
                                         .Unwind<Bandeja, BandejaEntradaDTO>(b => b.bandejaentrada)
                                         .AppendStage<BandejaEntradaDTODocumento>(lookup)
-                                        /*.Unwind<BandejaEntradaDTODocumento, BandejaEntradaDTODocumentoExpediente>(b => b.bandejadocumento)
-                                        .AppendStage<BandejaEntradaDTOR>(project)*/
+                                        .Unwind<BandejaEntradaDTODocumento, BandejaEntradaDTODocumentoExpediente>(b => b.bandejadocumento)
+                                        .AppendStage<BandejaEntradaDTOR>(project)
                                         .ToListAsync();
             return listabandejas;
         }
-
-
-
-
-
     }
 }
