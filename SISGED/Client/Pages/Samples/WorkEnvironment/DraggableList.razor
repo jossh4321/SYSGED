@@ -1,19 +1,19 @@
 ﻿<style>
-    .div-style{
-
+    .div-style {
         display: flex;
         flex-direction: column;
         flex-basis: 100%;
         max-height: 100%;
-        min-height:100%;
-
+        min-height: 100%;
     }
+
     .div-view {
         display: flex;
         flex-basis: 100%;
         flex-direction: column;
         overflow: auto;
     }
+
     .div-tool-list {
         flex-basis: 15%;
     }
@@ -41,7 +41,7 @@
         }
         else if (place == "workspace")
         {
-             @foreach (var input in listaentradas)
+            @foreach (var input in listaentradas)
             {
                 <DraggableItem herramienta="input" />
             }
@@ -49,14 +49,25 @@
             {
                 <DraggableItem herramienta="tool" />
             }
+            @foreach (var output in listasalidas)
+            {
+                <DraggableItem herramienta="output" />
+            }
+        }
+        else if (place == "outputs")
+        {
+            @foreach (var output in listasalidas)
+            {
+                <DraggableItem herramienta="output" />
+            }
         }
     </div>
-        @if (ChildContent != null)
-        {
-            <div class="div-view">
-                @ChildContent
-            </div>
-        }
+    @if (ChildContent != null)
+    {
+        <div class="div-view">
+            @ChildContent
+        </div>
+    }
 </div>
 
 @code {
@@ -66,11 +77,12 @@
     [Parameter] public RenderFragment ChildContent { get; set; }
     public List<Item> listaherramientas = new List<Item>();
     public List<Item> listaentradas = new List<Item>();
+    public List<Item> listasalidas = new List<Item>();
     public string classname = "li-drag-style";
 
     protected override void OnParametersSet()
     {
-        if(place == "tools")
+        if (place == "tools")
         {
             Console.WriteLine("Parameter ToolList");
             listaherramientas.Clear();
@@ -78,7 +90,7 @@
             Where(x => x.currentPlace == place));
             StateHasChanged();
         }
-        else if(place == "inputs")
+        else if (place == "inputs")
         {
             Console.WriteLine("Parameter ToolList");
             listaentradas.Clear();
@@ -86,7 +98,7 @@
             Where(x => x.currentPlace == place));
             StateHasChanged();
         }
-        if ( place == "workspace")
+        if (place == "workspace")
         {
             Console.WriteLine("Parameter ToolList");
             listaherramientas.Clear();
@@ -95,30 +107,49 @@
             listaentradas.Clear();
             listaentradas.AddRange(sesion.listaentradas.
             Where(x => x.currentPlace == place));
+            listasalidas.Clear();
+            listasalidas.AddRange(sesion.listasalidas.Where(x => x.currentPlace == place));
+            StateHasChanged();
+        }
+        if (place == "outputs")
+        {
+            Console.WriteLine("Parameter OutputList");
+            listasalidas.Clear();
+            listasalidas.AddRange(sesion.listasalidas.Where(x => x.currentPlace == place));
             StateHasChanged();
         }
     }
     private void dropSnapshot()
     {
 
-        if(place == "workspace")
+        if (place == "workspace")
         {
-            if (workspace.currentItemDragged.originPlace == "tools" && listaherramientas.Count>0)
+            if (workspace.currentItemDragged.originPlace == "tools" && listaherramientas.Count > 0)
             {
                 Console.WriteLine("Ya existe una Herramienta en el Espacio de Trabajo");
-            }else if (workspace.currentItemDragged.originPlace == "inputs" && listaentradas.Count>0)
+            }
+            else if (workspace.currentItemDragged.originPlace == "inputs" && listaentradas.Count > 0)
             {
                 Console.WriteLine("Ya existe una Expediente en el Espacio de Trabajo");
+            }
+            else if(workspace.currentItemDragged.originPlace == "outputs" && listasalidas.Count > 0)
+            {
+                Console.WriteLine("Ya existe un expediente de la bandeja de salida en el espacio de trabajo");
             }
             else
             {
                 workspace.UpdateDraggableComponents(place);
             }
-        } else if(place == "inputs" && workspace.currentItemDragged.originPlace == "inputs")
+        }
+        else if (place == "inputs" && workspace.currentItemDragged.originPlace == "inputs")
         {
             workspace.UpdateDraggableComponents(place);
         }
-        else if(place == "tools" && workspace.currentItemDragged.originPlace == "tools")
+        else if (place == "tools" && workspace.currentItemDragged.originPlace == "tools")
+        {
+            workspace.UpdateDraggableComponents(place);
+        }
+        else if (place == "outputs" && workspace.currentItemDragged.originPlace == "outputs")
         {
             workspace.UpdateDraggableComponents(place);
         }

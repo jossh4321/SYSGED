@@ -30,6 +30,7 @@ namespace SISGED.Server.Controllers
         {
              return _documentoservice.obtenerDocumentos();
         }
+        //Completo
         [HttpPost("documentoodn")]
         public ActionResult<OficioDesignacionNotario> RegistrarDocumentoODN(ExpedienteWrapper expediente)
         {
@@ -37,34 +38,17 @@ namespace SISGED.Server.Controllers
              documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente);
             return documentoODN;
         }
+
+        //Completo
         [HttpPost("documentosbpn")]
-        public ActionResult<OficioBPN> RegistrarDocumentoSolicitudBPN(OficioBPNDTO documento)
+        public ActionResult<OficioBPN> RegistrarDocumentoOficioBPN(ExpedienteWrapper expediente)
         {
-            ContenidoOficioBPN contenidoSolicitudBPN = new ContenidoOficioBPN()
-            {
-                titulo = documento.contenidoDTO.titulo,
-                descripcion = documento.contenidoDTO.descripcion,
-                observacion = documento.contenidoDTO.observacion,
-                idcliente = documento.contenidoDTO.idcliente.id,
-                direccionoficio = documento.contenidoDTO.direccionoficio,
-                idnotario = documento.contenidoDTO.idnotario.id,
-                actojuridico = documento.contenidoDTO.actojuridico,
-                tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
-                otorgantes = documento.contenidoDTO.otorgantes,
-                fecharealizacion = DateTime.Now,
-                url="ninguna"
-            };
-            OficioBPN documentoODN = new OficioBPN()
-            {
-                tipo = "OficioBPN",
-                contenido = contenidoSolicitudBPN,
-                estado = "pendiente",
-                historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
-            };
-            documentoODN = _documentoservice.registrarSolicitudBPN(documentoODN);
-            return documentoODN;
+            OficioBPN documentoOficioBPN = new OficioBPN();
+            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente);
+            return documentoOficioBPN;
         }
+
+        //Con el expediente agregado falta wrapper
         [HttpPost("documentosd")]
         public async Task<ActionResult<SolicitudDenuncia>> RegistrarDocumentoSolicitudDenuncia(SolicitudDenunciaDTO documento)
         {
@@ -106,7 +90,8 @@ namespace SISGED.Server.Controllers
             expediente.fechafin = null;
             expediente.documentos = new List<DocumentoExpediente>()
             {
-                new DocumentoExpediente(){indice=1,
+                new DocumentoExpediente(){
+                    indice = 1,
                     iddocumento = solicitudDenuncia.id,
                     tipo="SolicitudDenuncia",
                     fechacreacion = solicitudDenuncia.contenido.fechaentrega,
@@ -120,6 +105,8 @@ namespace SISGED.Server.Controllers
             return solicitudDenuncia;
 
         }
+
+        //Con el expediente agregado falta wrapper
         [HttpPost("documentosef")]
         public async Task<ActionResult<SolicitudExpedicionFirma>> RegistrarDocumentoSEF(SolicitudExpedicionFirmaDTO documento)
         {
@@ -179,6 +166,44 @@ namespace SISGED.Server.Controllers
             return documentoSEF;
         }
 
+        //Completo
+        [HttpPost("documentocf")]
+        public ActionResult<ConclusionFirma> RegistrarDocumentoCF(ExpedienteWrapper expediente)
+        {
+            ConclusionFirma documentoCF = new ConclusionFirma();
+            documentoCF = _documentoservice.registrarConclusionFirmaE(expediente);
+            return documentoCF;
+        }
+        /*Esto funciona por si algo sale mal
+         * [HttpPost("documentosbpn")]
+        public ActionResult<OficioBPN> RegistrarDocumentoOficioBPN(OficioBPNDTO documento)
+        {
+            ContenidoOficioBPN contenidoSolicitudBPN = new ContenidoOficioBPN()
+            {
+                titulo = documento.contenidoDTO.titulo,
+                descripcion = documento.contenidoDTO.descripcion,
+                observacion = documento.contenidoDTO.observacion,
+                idcliente = documento.contenidoDTO.idcliente.id,
+                direccionoficio = documento.contenidoDTO.direccionoficio,
+                idnotario = documento.contenidoDTO.idnotario.id,
+                actojuridico = documento.contenidoDTO.actojuridico,
+                tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
+                otorgantes = documento.contenidoDTO.otorgantes,
+                fecharealizacion = DateTime.Now,
+                url="ninguna"
+            };
+            OficioBPN documentoODN = new OficioBPN()
+            {
+                tipo = "OficioBPN",
+                contenido = contenidoSolicitudBPN,
+                estado = "pendiente",
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+            documentoODN = _documentoservice.registrarOficioBPN(documentoODN);
+            return documentoODN;
+        }
+
         [HttpPost("documentocf")]
         public async Task<ActionResult<ConclusionFirma>> RegistrarDocumentoCF(ConclusionFirmaDTO documento)
         {
@@ -195,10 +220,11 @@ namespace SISGED.Server.Controllers
                 historialproceso = new List<Proceso>()
             };
 
-           // documentoDF = _documentoservice.registrarConclusionFirma(documentoDF);
+            documentoDF = _documentoservice.registrarConclusionFirma(documentoDF);
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(documento.contenidoDTO.idescriturapublica);
             return documentoDF;
-        }
+        }*/
+
         /*[HttpPut("estado")]
         public ActionResult<Documento> modificarEstado(Documento documento)
         {

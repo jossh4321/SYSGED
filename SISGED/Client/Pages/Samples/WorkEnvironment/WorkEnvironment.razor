@@ -120,6 +120,7 @@
                     <div class="box-title-style">
                         <span>Bandeja de Salida</span>
                     </div>
+                    <DraggableList place="outputs"></DraggableList>
                 </div>
                 <div class="tools common-box-style">
                     <div class="box-title-style">
@@ -148,6 +149,7 @@
     public List<Item> listaherramientas = new List<Item>();
     List<ExpedienteDTO> listaentradas = new List<ExpedienteDTO>();
     public ExpedienteDTO expedienteseleccionado = null;
+    public String idexpedienteSalida = null;
     public Item currentItemDragged;
     public Bandeja bandejaUsuario = new Bandeja();
     protected override async Task OnInitializedAsync()
@@ -203,6 +205,17 @@
 
                 tool.currentPlace = newCurrentPlace;
                 sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre))] = tool;
+                StateHasChanged();
+            }
+        }else if(currentItemDragged.originPlace == "outputs")
+        {
+            var tool = sesion.listasalidas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
+            if(tool != null)
+            {
+                if(newCurrentPlace == "workspace") { idexpedienteSalida = (string)tool.valor; }
+                if(newCurrentPlace == "inputs") { idexpedienteSalida = null; }
+                tool.currentPlace = newCurrentPlace;
+                sesion.listasalidas[sesion.listasalidas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
                 StateHasChanged();
             }
         }
