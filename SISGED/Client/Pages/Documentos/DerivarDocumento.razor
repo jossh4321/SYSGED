@@ -182,26 +182,25 @@ else
         {
             await swalfire.errorMessage("No te puedes derivar el documento a ti mismo");
             return;
-        }
-
+        }        
         Expediente expediente = new Expediente();
-        expediente.id = workspace.expedienteseleccionado.id; //"5ee5f24e7d8f833f68cc88a0"; //
+        expediente.id = workspace.expedienteseleccionado; //"5ee5f24e7d8f833f68cc88a0"; //
         List<DocumentoExpediente> documentoExpediente = new List<DocumentoExpediente>()
     {
             new DocumentoExpediente()
-            {
-                iddocumento   = workspace.expedienteseleccionado.documentos.Last().iddocumento,
+            {                
+                iddocumento   = "0"//workspace.expedienteseleccionado.documentos.Last().iddocumento,
             }
         };
         List<Derivacion> derivaciones = new List<Derivacion>()
-    {
+        {
             new Derivacion(){
                 areadestino     = rolId,
                 areaprocedencia = sesion.usuario.rol,
                 usuarioemisor   = sesion.usuario.id,
-                tipo            = workspace.expedienteseleccionado.tipo,
+                // tipo            = workspace.expedienteseleccionado.tipo,
                 fechaderivacion = DateTime.Now.ToLocalTime(),
-                estado          = workspace.expedienteseleccionado.estado}
+                estado          = "pendiente"}
         };
         expediente.derivaciones = derivaciones;
         expediente.documentos = documentoExpediente;
@@ -214,7 +213,7 @@ else
         else
         {
             await swalfire.successMessage("Documento derivado correctamente");
-            Console.WriteLine("Derivar documento:  {0} a {1} ", workspace.expedienteseleccionado.id, usuarioId);
+            //Console.WriteLine("Derivar documento:  {0} a {1} ", workspace.expedienteseleccionado.id, usuarioId);
         }
     }
     //quitar luego
