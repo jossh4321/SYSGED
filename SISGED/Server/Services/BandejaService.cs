@@ -72,6 +72,51 @@ namespace SISGED.Server.Services
 
 
 
+        public async Task<List<BandejaEntradaDTODocumento>> ObtenerBandejaEntrada(string usuario)
+        {
+            BsonArray subpipeline = new BsonArray();
+
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$expedienteId") })
+                    )
+                ));
+
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument("from", "expedientes")
+                    .Add("let", new BsonDocument("expedienteId", "$bandejaentrada.idexpediente"))
+                    .Add("pipeline", subpipeline)
+                    .Add("as", "bandejadocumento")
+                );
+
+            var condicionalFiltro = new BsonDocument("$eq", new BsonArray { "$$item.iddocumento", "$bandejaentrada.iddocumento" });
+
+            var filtro = new BsonDocument("$filter", new BsonDocument("input", "$bandejadocumento.documentos")
+                                                     .Add("as", "item")
+                                                     .Add("cond", condicionalFiltro));
+
+            var declararVariable = new BsonDocument("$let", new BsonDocument("vars", new BsonDocument("documento", filtro))
+                                                            .Add("in", new BsonDocument("$arrayElemAt", new BsonArray { "$$documento", 0 })));
+
+            var project = new BsonDocument("$project",
+                                  new BsonDocument("documento", declararVariable)
+                                  .Add("bandejaentrada", 1)
+                                  .Add("tipoexpediente", "$bandejadocumento.tipo"));
+            List<BandejaEntradaDTODocumento> listabandejas = new List<BandejaEntradaDTODocumento>();
+            var filtroUsuario = Builders<Bandeja>.Filter.Eq("usuario", usuario);
+            listabandejas = await _bandejas.Aggregate()
+                                        .Match(filtroUsuario)
+                                        .Unwind<Bandeja, BandejaEntradaDTO>(b => b.bandejaentrada)
+                                        .AppendStage<BandejaEntradaDTODocumento>(lookup)
+                                        /*.Unwind<BandejaEntradaDTODocumento, BandejaEntradaDTODocumentoExpediente>(b => b.bandejadocumento)
+                                        .AppendStage<BandejaEntradaDTOR>(project)*/
+                                        .ToListAsync();
+            return listabandejas;
+        }
+
+
+
 
 
     }

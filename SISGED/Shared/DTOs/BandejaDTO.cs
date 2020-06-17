@@ -50,4 +50,54 @@ namespace SISGED.Shared.DTOs
         public DocumentoExpediente documento { get; set; }
         public string tipoexpediente { get; set; }
     }
+
+    #region BandejaEntradaDTO
+
+    public class BandejaEntradaDTO
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public string usuario { get; set; }
+        public BandejaDocumento bandejaentrada { get; set; }
+        public List<BandejaDocumento> bandejasalida { get; set; }
+    }
+
+    public class BandejaEntradaDTODocumento
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public string usuario { get; set; }
+        public BandejaDocumento bandejaentrada { get; set; }
+        public List<BandejaDocumento> bandejasalida { get; set; }
+        public List<Expediente> bandejadocumento { get; set; }
+
+    }
+
+    public class BandejaEntradaDTODocumentoExpediente
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public string usuario { get; set; }
+        public BandejaDocumento bandejaentrada { get; set; }
+        public List<BandejaDocumento> bandejasalida { get; set; }
+
+        public Expediente bandejadocumento { get; set; }
+    }
+
+    public class BandejaEntradaDTOR
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public BandejaDocumento bandejaentrada { get; set; }
+        public DocumentoExpediente documento { get; set; }
+        public string tipoexpediente { get; set; }
+    }
+
+
+    #endregion
+
+
 }
