@@ -19,6 +19,10 @@
     
 
 </style>
+@if(ChildContentE != null)
+{
+    @ChildContentE
+}
 <div class="window">
 
     @if (ChildContent != null)
@@ -38,6 +42,7 @@
     //[CascadingParameter] public WorkEnvironment workSpace { get; set; }
     [Parameter] public Item itemArrastrado { get; set; }
     public RenderFragment ChildContent = null;
+    public RenderFragment ChildContentE = null;
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     protected override void OnInitialized()
     {
@@ -60,6 +65,10 @@
             {
                 ChildContent = @<DerivarDocumento></DerivarDocumento>;
             }
+            else if(itemArrastrado.nombre == "Evaluar Documento")
+            {
+                ChildContentE = @<EvaluarDocumento></EvaluarDocumento>;
+            }
             else
             {
                 ChildContent = @<ContenidoPrueba2></ContenidoPrueba2>;
@@ -69,6 +78,7 @@
         else
         {
             ChildContent = null;
+            ChildContentE = null;
         }
 
     }

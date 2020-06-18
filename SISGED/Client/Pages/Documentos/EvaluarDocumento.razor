@@ -1,51 +1,135 @@
-﻿@page "/evaluarDocumentoprobando"
-@inject IRepository repositorio
+﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalfire
-@if (documentoPrueba == null)
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+
+<style>
+    * {
+        color: black;
+    }
+
+    .div-form {
+        background-color: #a6a6a6;
+        flex-basis: 10%;
+        border-radius: 5px 5px 0px 0px;
+        width: 100%;
+    }
+
+    .field-container {
+        padding: 10px;
+    }
+
+    .sub-but {
+        width: 49%;
+    }
+
+    .mat-success-c {
+        color: green !important;
+        border: 1px solid green !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-error-c {
+        color: red !important;
+        border: 1px solid red !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+</style>
+
+@if (documentoEvaluado.estado.status != "Pendiente" || DocumentoRevisado)
 {
-    <text>Cargando...</text>
+    <div class="div-form">
+        <div class="field-container">
+            <h4>Este documento no se puede evaluar</h4>
+        </div>
+    </div>
 }
 else
 {
-    <style>
-        .div-form {
-            background-color: #a6a6a6;
-            flex-basis: 10%;
-            border-radius: 5px 5px 0px 0px;
-            width: 100%;
-        }
-
-        .field-container {
-            padding: 10px;
-        }
-    </style>
-
     <div class="div-form">
         <div class="field-container">
-            <MatButton Raised="true" OnClick="@(e => { OpenAprobado = true; })">Aprobar</MatButton>
-            <MatButton Raised="true" OnClick="@(e => { OpenDesaprobado = true; })">Desprobar</MatButton>
+            <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" Class="mat-success-c sub-but" OnClick="@(e => { OpenAprobado = true; })">Aprobar</MatButton>
+            <MatButton Icon="@MatBlazor.MatIconNames.Highlight_off" Class="mat-error-c sub-but" OnClick="@(e => { OpenDesaprobado = true; })">Desprobar</MatButton>
         </div>
-        
+
+        <MatDialog @bind-IsOpen="@OpenAprobado">
+            <MatDialogTitle>¿Desea aprobar este documento?</MatDialogTitle>
+            <MatDialogActions>
+                <MatButton OnClick="@AprobarDocumento">Aceptar</MatButton>
+                <MatButton OnClick="@(e => { OpenAprobado = false; })">Cancelar</MatButton>
+            </MatDialogActions>
+        </MatDialog>
+
+        <MatDialog @bind-IsOpen="@OpenDesaprobado">
+            <MatDialogTitle>¿Desea desaprobar este documento?</MatDialogTitle>
+            <MatDialogContent>
+                <MatTextField Label="Motivo de la desaprobación del documento" @bind-Value="@observacion"></MatTextField>
+            </MatDialogContent>
+            <MatDialogActions>
+                <MatButton OnClick="@DesaprobarDocumento">Aceptar</MatButton>
+                <MatButton OnClick="@(e => { OpenDesaprobado = false; })">Cancelar</MatButton>
+            </MatDialogActions>
+        </MatDialog>
     </div>
 }
 @code {
-    //[Parameter] public Documento documento { get; set; }
-    private Documento documentoPrueba { get; set; }
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    private DocumentoEvaluadoDTO documentoEvaluado { get; set; }
+    private Documento documentPrueba { get; set; }
+    private OficioDesignacionNotario cagada { get; set; }
+    private string observacion;
     private bool OpenAprobado = false;
     private bool OpenDesaprobado = false;
+    private bool DocumentoRevisado = false;
 
 
-    // Para probar, borrar despues
-    private List<Documento> listaDeDocumentos { get; set; }
-    private async Task CargarDocumentos()
+    private async Task AprobarDocumento()
     {
-        var responseHttp = await repositorio.Get<List<Documento>>("api/Documentos");
-        listaDeDocumentos = responseHttp.Response;
+        documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
+        documentoEvaluado.estado.status = "Aprobado";
+        documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        documentoEvaluado.idusuario = sesion.usuario.id;
+        await Actualizar();
     }
-    protected async override Task OnInitializedAsync()
+    private async Task DesaprobarDocumento()
     {
-        listaDeDocumentos = new List<Documento>();
-        await CargarDocumentos();
-        documentoPrueba = listaDeDocumentos.ElementAt(1);
+        if (String.IsNullOrWhiteSpace(observacion))
+        {
+            await swalfire.errorMessage("Debe ingresar una descripción");
+        }
+        else
+        {
+            documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
+            documentoEvaluado.estado.status = "Desaprobado";
+            documentoEvaluado.estado.observacion = observacion.Trim();
+            documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
+            documentoEvaluado.idusuario = sesion.usuario.id;
+            await Actualizar();
+        }
+    }
+
+    private async Task Actualizar()
+    {
+        var responseHttp = await repositorio.Put<Documento, DocumentoEvaluadoDTO>("api/Documentos/cambiarestado", documentoEvaluado);
+        if (responseHttp.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Documento evaluado correctamente");
+            OpenAprobado = false;
+            OpenDesaprobado = false;
+            observacion = null;
+            DocumentoRevisado = true;
+        }
+    }
+    protected override void OnInitialized()
+    {
+      
     }
 }

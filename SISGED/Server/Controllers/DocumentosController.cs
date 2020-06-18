@@ -238,11 +238,10 @@ namespace SISGED.Server.Controllers
             return documentoDF;
         }*/
 
-        /*[HttpPut("estado")]
-        public ActionResult<Documento> modificarEstado(Documento documento)
+        [HttpPut("cambiarestado")]
+        public ActionResult<Documento> ModificarEstado(DocumentoEvaluadoDTO documento)
         {
-            documento = _documentoservice.modificarEstado(documento);
-            return documento;
-        }*/
+            return _documentoservice.modificarEstado(documento);
+        }
     }
 }
