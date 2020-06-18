@@ -175,6 +175,7 @@
         expedienteWrapper.documento = oficiodesignacion;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
         var httpResponse =  await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/documentoodn", expedienteWrapper);
         if (httpResponse.Error)

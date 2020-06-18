@@ -314,6 +314,7 @@
         expedienteWrapper.documento = documento;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
         var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>($"api/documentos/documentosbpn", expedienteWrapper);
         if (!httpResponse.Error)
