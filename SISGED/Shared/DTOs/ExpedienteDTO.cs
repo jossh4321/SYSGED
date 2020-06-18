@@ -98,6 +98,7 @@ namespace SISGED.Shared.DTOs
         public string idexpediente { get; set; }
         public object documento { get; set; }
         public string idusuarioactual { get; set; }
+        public string documentoentrada { get; set; }
     }
 
     public class ExpedienteFinal

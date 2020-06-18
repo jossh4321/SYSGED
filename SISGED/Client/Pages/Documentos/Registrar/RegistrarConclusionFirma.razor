@@ -143,6 +143,8 @@
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = conclusionFirma;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
 
         var httpResponse = await repository.Post<ExpedienteWrapper, ConclusionFirma>($"api/documentos/documentocf", expedienteWrapper);
         if (httpResponse.Error)

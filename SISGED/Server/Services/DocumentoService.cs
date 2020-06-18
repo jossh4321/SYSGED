@@ -59,7 +59,7 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoODN);
 
             DocumentoExpediente documentoExpediente = new DocumentoExpediente();
-            documentoExpediente.indice = 7;
+            documentoExpediente.indice = 2;
             documentoExpediente.iddocumento = documentoODN.id;
             documentoExpediente.tipo = "OficioDesignacionNotario";
             documentoExpediente.fechacreacion = DateTime.Now;
@@ -78,11 +78,21 @@ namespace SISGED.Server.Services
             Expediente expediente = _expedientes.FindOneAndUpdate(exp => exp.id == "12345678" &&
             exp.cliente.tipodocumento == "dni", updateExpediente);*/
 
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
-            bandejaDocumento.idexpediente = expediente.id;
-            bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
-            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
+            //actualizacion bandeja salida
+            BandejaDocumento bandejaSalidaDocumento = new BandejaDocumento();
+            bandejaSalidaDocumento.idexpediente = expediente.id;
+            bandejaSalidaDocumento.iddocumento = documentoExpediente.iddocumento;
+            UpdateDefinition<Bandeja> updateBandejaSalida = Builders<Bandeja>.Update.Push("bandejasalida", bandejaSalidaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaSalida);
+
+            //actualizacion bandeja de entrada
+            UpdateDefinition<Bandeja> updateBandejaEntrada = 
+                Builders<Bandeja>.Update.PullFilter("bandejaentrada", 
+                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
+
+
+
             return documentoODN;
         }
         public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)
@@ -134,6 +144,12 @@ namespace SISGED.Server.Services
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
+
+
+            UpdateDefinition<Bandeja> updateBandejaEntrada =
+               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
+                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
             return documentoBPN;
         }
         /*Esto funciona
@@ -201,6 +217,12 @@ namespace SISGED.Server.Services
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == "5ee2e87bd12fcd05d6b6b13e", updateBandeja);
+
+            UpdateDefinition<Bandeja> updateBandejaEntrada =
+               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
+                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
+
             return documentoDF;
         }
 
