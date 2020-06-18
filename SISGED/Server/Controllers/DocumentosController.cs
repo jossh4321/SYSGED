@@ -53,7 +53,11 @@ namespace SISGED.Server.Controllers
         [HttpPost("documentosd")]
         public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
-            SolicitudDenunciaDTO documento = (SolicitudDenunciaDTO)expedientewrapper.documento;
+            SolicitudDenunciaDTO documento = new SolicitudDenunciaDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            documento = JsonConvert.DeserializeObject<SolicitudDenunciaDTO>(json);
+
+
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.urldata))
             {
