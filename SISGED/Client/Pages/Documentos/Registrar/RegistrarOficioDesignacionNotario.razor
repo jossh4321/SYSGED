@@ -171,7 +171,7 @@
         Console.WriteLine("Expediente: " + workspace.expedienteseleccionado + " Documento: " + oficiodesignacion.contenidoDTO.titulo);
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = oficiodesignacion;
-        expedienteWrapper.idexpediente = workspace.expedienteseleccionado;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
         var httpResponse =  await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/documentoodn", expedienteWrapper);
