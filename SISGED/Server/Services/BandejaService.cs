@@ -190,25 +190,51 @@ namespace SISGED.Server.Services
 
             var filtroUsuario = Builders<Bandeja>.Filter.Eq("usuario", usuario);
 
+            var opcionesunwind1 =new AggregateUnwindOptions<BandejaDTODocumentoExpediente>();
+            opcionesunwind1.PreserveNullAndEmptyArrays = true;
+
+
+            var opcionesunwind2 = new AggregateUnwindOptions<BandejaExpedienteDTO>();
+            opcionesunwind2.PreserveNullAndEmptyArrays = true;
+
+
+            var opcionesunwind3 = new AggregateUnwindOptions<BandejaExpDocUndDTO>();
+            opcionesunwind3.PreserveNullAndEmptyArrays = true;
+
+            var opcionesunwind4 = new AggregateUnwindOptions<BandejaDTOE>();
+            opcionesunwind4.PreserveNullAndEmptyArrays = true;
+
+            var opcionesunwind5 = new AggregateUnwindOptions<BandejaDTOEDocumentoExpediente>();
+            opcionesunwind5.PreserveNullAndEmptyArrays = true;
+
+            var opcionesunwind6 = new AggregateUnwindOptions<BandejaExpedienteDTOE>();
+            opcionesunwind6.PreserveNullAndEmptyArrays = true;
+
+            var opcionesunwind7 = new AggregateUnwindOptions<BandejaExpDocUndDTOE>();
+            opcionesunwind7.PreserveNullAndEmptyArrays = true;
+
+            var opcionesunwind0 = new AggregateUnwindOptions<BandejaDTO>();
+            opcionesunwind0.PreserveNullAndEmptyArrays = true;
+
             BandejaESDTOR listabandejas = new BandejaESDTOR();
             listabandejas = await _bandejas.Aggregate()
                                         .Match(filtroUsuario)
-                                        .Unwind<Bandeja, BandejaDTO>(b => b.bandejasalida)
+                                        .Unwind<Bandeja, BandejaDTO>(b => b.bandejasalida,opcionesunwind0)
                                         .AppendStage<BandejaDTODocumento>(lookup)
-                                        .Unwind<BandejaDTODocumento, BandejaDTODocumentoExpediente>(b => b.bandejadocumento)
-                                        .Unwind<BandejaDTODocumentoExpediente, BandejaExpedienteDTO>(be => be.bandejadocumento.documentos)
+                                        .Unwind<BandejaDTODocumento, BandejaDTODocumentoExpediente>(b => b.bandejadocumento, opcionesunwind1)
+                                        .Unwind<BandejaDTODocumentoExpediente, BandejaExpedienteDTO>(be => be.bandejadocumento.documentos, opcionesunwind2)
                                         .AppendStage<BandejaExpDocDTO>(lookup2)
-                                        .Unwind<BandejaExpDocDTO,BandejaExpDocUndDTO>(bed => bed.documentosobj)
+                                        .Unwind<BandejaExpDocDTO,BandejaExpDocUndDTO>(bed => bed.documentosobj, opcionesunwind3)
                                         .Group<BandejaExpDocGroupDTO>(group)
                                         .AppendStage<BandejaDTOR>(project)
                                         .AppendStage<BandejaRPDTO>(project1)
                                         .Group<BandejaRV1DTO>(group1)
-                                        .Unwind<BandejaRV1DTO,BandejaDTOE>(be=>be.bandejaentrada)
+                                        .Unwind<BandejaRV1DTO,BandejaDTOE>(be=>be.bandejaentrada, opcionesunwind4)
                                         .AppendStage<BandejaDTOEDocumento>(lookupe)
-                                        .Unwind<BandejaDTOEDocumento,BandejaDTOEDocumentoExpediente>(b => b.bandejadocumento)
-                                        .Unwind<BandejaDTOEDocumentoExpediente, BandejaExpedienteDTOE>(bee => bee.bandejadocumento.documentos)
+                                        .Unwind<BandejaDTOEDocumento,BandejaDTOEDocumentoExpediente>(b => b.bandejadocumento, opcionesunwind5)
+                                        .Unwind<BandejaDTOEDocumentoExpediente, BandejaExpedienteDTOE>(bee => bee.bandejadocumento.documentos, opcionesunwind6)
                                         .AppendStage<BandejaExpDocDTOE>(lookup2)
-                                        .Unwind<BandejaExpDocDTOE, BandejaExpDocUndDTOE>(bed => bed.documentosobj)
+                                        .Unwind<BandejaExpDocDTOE, BandejaExpDocUndDTOE>(bed => bed.documentosobj, opcionesunwind7)
                                         .Group<BandejaExpDocGroupDTOE>(groupe)
                                         .AppendStage<BandejaESDTO>(projecte)
                                         .AppendStage<BandejaESDTOP>(project1e)
