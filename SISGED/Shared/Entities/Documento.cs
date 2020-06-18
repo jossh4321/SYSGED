@@ -71,7 +71,7 @@ namespace SISGED.Shared.Entities
     public class OficioBPN : Documento
     {
         [BsonElement("estado")]
-        public string estado { get; set; }
+        public Estado estado { get; set; }
         public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
      
     }

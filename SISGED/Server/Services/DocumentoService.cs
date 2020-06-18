@@ -121,7 +121,12 @@ namespace SISGED.Server.Services
             {
                 tipo = "OficioBPN",
                 contenido = contenidoSolicitudBPN,
-                estado = "pendiente",
+                //estado = "pendiente",
+                estado = new Estado()
+                {
+                    status = "pendiente",
+                    observacion = "Ninguna",
+                },
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
