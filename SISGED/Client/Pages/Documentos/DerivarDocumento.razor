@@ -173,7 +173,6 @@ else
         Console.WriteLine("Usuario:  {0} ", usuarioId);
     }
 
-
     public async Task handleValidSubmit()
     {
         dialogIsOpen = false;
@@ -184,12 +183,12 @@ else
             return;
         }
         Expediente expediente = new Expediente();
-        expediente.id = "5ee5f24e7d8f833f68cc88a0"; // workspace.expedienteseleccionado; 
+        expediente.id = workspace.expedienteseleccionado.idexpediente; /*workspace.expedienteseleccionado;*/ /*"5ee5f24e7d8f833f68cc88a0"*/
         List<DocumentoExpediente> documentoExpediente = new List<DocumentoExpediente>()
     {
             new DocumentoExpediente()
             {
-                iddocumento   = "5ed9a3dbfed03c07c872c862" //Oficio designacion notario//workspace.expedienteseleccionado.documentos.Last().iddocumento,
+                iddocumento   =   workspace.expedienteseleccionado.documento.id /*"5ed9a3dbfed03c07c872c862"*/ //Oficio designacion notario//workspace.expedienteseleccionado.documentos.Last().iddocumento,
             }
         };
         List<Derivacion> derivaciones = new List<Derivacion>()
@@ -198,7 +197,7 @@ else
                 areadestino     = rolId,
                 areaprocedencia = sesion.usuario.rol,
                 usuarioemisor   = sesion.usuario.id,
-                tipo            = "OficioDesignacionNotario",//workspace.expedienteseleccionado.tipo,
+                tipo            =  workspace.expedienteseleccionado.documento.tipo/*"OficioDesignacionNotario"*/,//workspace.expedienteseleccionado.tipo,
                 fechaderivacion = DateTime.Now.ToLocalTime(),
                 estado          = "pendiente"}
         };

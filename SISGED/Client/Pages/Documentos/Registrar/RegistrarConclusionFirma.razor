@@ -142,7 +142,7 @@
         Console.WriteLine("Expediente: " + workspace.expedienteseleccionado + " Documento: " + conclusionFirma.contenidoDTO.idescriturapublica);
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = conclusionFirma;
-        expedienteWrapper.idexpediente = workspace.expedienteseleccionado;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
 
         var httpResponse = await repository.Post<ExpedienteWrapper, ConclusionFirma>($"api/documentos/documentocf", expedienteWrapper);
         if (httpResponse.Error)
