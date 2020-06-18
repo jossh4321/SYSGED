@@ -194,8 +194,8 @@
     {
         return listasalida.Select(x => new Item()
         {
-            nombre = x.tipoexpediente,
-            valor = x.bandejasalida.idexpediente,
+            nombre = x.tipo,
+            valor = x.bandejaentrada[0].idexpediente,
             icono = "alarm_add",
             descripcion = x.documento.tipo,
             currentPlace = "outputs",

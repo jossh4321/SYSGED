@@ -22,6 +22,19 @@ namespace SISGED.Shared.DTOs
         public string estado { get; set; }
     }
 
+    public class ExpedienteDocumentoDTO
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; }
+        public List<Derivacion> derivaciones { get; set; } = new List<Derivacion>();
+        public string estado { get; set; }
+    }
 
     public class ExpedienteDTO2
     {
@@ -84,5 +97,16 @@ namespace SISGED.Shared.DTOs
     {
         public ExpedienteDTO expediente { get; set; } = new ExpedienteDTO();
         public object documento { get; set; }
+    }
+
+    public class ExpedienteFinal
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public Documento documento { get; set; } = new Documento();
+        public List<Documento> documentosobj { get; set; } = new List<Documento>();
     }
 }

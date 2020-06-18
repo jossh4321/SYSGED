@@ -20,8 +20,8 @@ namespace SISGED.Server.Controllers
             _bandejaService = bandejaService;
         }
 
-        [HttpGet("getBandeja/{usuario}")]
-        public async Task<ActionResult<List<BandejaDTOR>>> Get(string usuario)
+        [HttpGet("getbandeja/{usuario}")]
+        public async Task<ActionResult<List<BandejaESDTOR>>> Get(string usuario)
         {
             return await _bandejaService.ObtenerBandeja(usuario);
         }

@@ -27,7 +27,7 @@ namespace SISGED.Server.Services
         }
 
 
-        public async Task<List<BandejaDTOR>> ObtenerBandeja(string usuario)
+        public async Task<List<BandejaESDTOR>> ObtenerBandeja(string usuario)
         {
             BsonArray subpipeline = new BsonArray();
 
@@ -45,28 +45,174 @@ namespace SISGED.Server.Services
                     .Add("as", "bandejadocumento")
                 );
 
-            var condicionalFiltro = new BsonDocument("$eq", new BsonArray { "$$item.iddocumento", "$bandejasalida.iddocumento" });
+            /* LookUp para los documentos */
+            BsonArray subpipeline2 = new BsonArray();
 
-            var filtro = new BsonDocument("$filter", new BsonDocument("input", "$bandejadocumento.documentos")
+            subpipeline2.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                         "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$documentoId") })
+                        )
+                    ));
+
+            var lookup2 = new BsonDocument("$lookup",
+                new BsonDocument("from", "documentos")
+                    .Add("let", new BsonDocument("documentoId", "$bandejadocumento.documentos.iddocumento"))
+                    .Add("pipeline", subpipeline2)
+                    .Add("as", "documentosobj")
+                    );
+
+            /* Group para agrupar los documentos en un array */
+
+            var group = new BsonDocument("_id", "$bandejadocumento._id")
+                .Add("cliente", new BsonDocument("$first", "$bandejadocumento.cliente"))
+                .Add("tipo", new BsonDocument("$first", "$bandejadocumento.tipo"))
+                .Add("documentosobj", new BsonDocument("$push", "$documentosobj"))
+                .Add("bandejasalida", new BsonDocument("$first", "$bandejasalida"))
+                .Add("bandejaentrada", new BsonDocument("$first", "$bandejaentrada"))
+                .Add("idbandeja", new BsonDocument("$first", "$_id"));
+
+
+            /* Proyección para devolver los datos que se necesitan */
+
+            var condicionalFiltro = new BsonDocument("$eq", new BsonArray { "$$item._id", new BsonDocument("$toObjectId", "$bandejasalida.iddocumento") });
+
+            var filtro = new BsonDocument("$filter", new BsonDocument("input", "$documentosobj")
                                                      .Add("as", "item")
                                                      .Add("cond", condicionalFiltro));
 
             var declararVariable = new BsonDocument("$let", new BsonDocument("vars", new BsonDocument("documento", filtro))
                                                             .Add("in", new BsonDocument("$arrayElemAt", new BsonArray { "$$documento", 0 })));
 
+
+
+
             var project = new BsonDocument("$project",
                                   new BsonDocument("documento", declararVariable)
-                                  .Add("bandejasalida", 1)
-                                  .Add("tipoexpediente", "$bandejadocumento.tipo")
-                                  .Add("cliente","$bandejadocumento.cliente"));
-            List<BandejaDTOR> listabandejas = new List<BandejaDTOR>();
+                                  .Add("documentosobj", "$documentosobj")
+                                  .Add("tipo", "$tipo")
+                                  .Add("_id", "$_id")
+                                  .Add("cliente", "$cliente")
+                                  .Add("bandejaentrada", 1)
+                                  .Add("idbandeja", 1));
+
+
+
+            /* Proyección para crear el atributo de expediente salida*/
+            var project1 = new BsonDocument("$project",
+                                    new BsonDocument("_id", 0)
+                                    .Add("idbandeja",1)
+                                    .Add("bandejaentrada",1)
+                                    .Add("expedientesalida", 
+                                            new BsonDocument("idexpediente","$_id")
+                                            .Add("cliente","$cliente")
+                                            .Add("tipo","$tipo")
+                                            .Add("documentosobj","$documentosobj")
+                                            .Add("documento","$documento")));
+
+            /* Group para unificar todos los expedientes de la bandeja de salida*/
+            var group1 = new BsonDocument("_id", "$idbandeja")
+                .Add("bandejaentrada", new BsonDocument("$first", "$bandejaentrada"))
+                .Add("expedientesalida", new BsonDocument("$push", "$expedientesalida"));
+
+
+            /* Lookup para los expedientes de la bandeja de entrada*/
+            BsonArray subpipelineE = new BsonArray();
+
+            subpipelineE.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$expedienteId") })
+                    )
+                ));
+
+            var lookupe = new BsonDocument("$lookup",
+                new BsonDocument("from", "expedientes")
+                    .Add("let", new BsonDocument("expedienteId", "$bandejaentrada.idexpediente"))
+                    .Add("pipeline", subpipelineE)
+                    .Add("as", "bandejadocumento")
+                );
+
+
+            /* Group para la bandeja de entrada y agrupos los elementos en un array*/
+            var groupe = new BsonDocument("_id", "$bandejadocumento._id")
+                .Add("cliente", new BsonDocument("$first", "$bandejadocumento.cliente"))
+                .Add("tipo", new BsonDocument("$first", "$bandejadocumento.tipo"))
+                .Add("documentosobj", new BsonDocument("$push", "$documentosobj"))
+                .Add("expedientesalida", new BsonDocument("$first", "$expedientesalida"))
+                .Add("bandejaentrada", new BsonDocument("$first", "$bandejaentrada"))
+                .Add("idbandeja", new BsonDocument("$first", "$_id"));
+
+
+            /* Proyección para encontrar el documento de entrada */
+
+            var condicionalFiltroE = new BsonDocument("$eq", new BsonArray { "$$item._id", new BsonDocument("$toObjectId", "$bandejaentrada.iddocumento") });
+
+            var filtroE = new BsonDocument("$filter", new BsonDocument("input", "$documentosobj")
+                                                     .Add("as", "item")
+                                                     .Add("cond", condicionalFiltroE));
+
+            var declararVariableE = new BsonDocument("$let", new BsonDocument("vars", new BsonDocument("documento", filtroE))
+                                                            .Add("in", new BsonDocument("$arrayElemAt", new BsonArray { "$$documento", 0 })));
+
+
+
+
+            var projecte = new BsonDocument("$project",
+                                  new BsonDocument("documento", declararVariableE)
+                                  .Add("documentosobj", "$documentosobj")
+                                  .Add("tipo", "$tipo")
+                                  .Add("_id", "$_id")
+                                  .Add("cliente", "$cliente")
+                                  .Add("bandejaentrada", 1)
+                                  .Add("idbandeja", 1)
+                                  .Add("expedientesalida",1));
+
+
+
+            /* Proyección para crear el expedienteentrada*/
+            var project1e = new BsonDocument("$project",
+                                   new BsonDocument("_id", 0)
+                                   .Add("idbandeja", 1)
+                                   .Add("expedientesalida", 1)
+                                   .Add("expedienteentrada",
+                                           new BsonDocument("idexpediente", "$_id")
+                                           .Add("cliente", "$cliente")
+                                           .Add("tipo", "$tipo")
+                                           .Add("documentosobj", "$documentosobj")
+                                           .Add("documento", "$documento")));
+
+
+            /* Group final para la unión de los expedientes */
+            var groupfinal = new BsonDocument("_id", "$idbandeja")
+               .Add("expedienteentrada", new BsonDocument("$push", "$expedienteentrada"))
+               .Add("expedientesalida", new BsonDocument("$first", "$expedientesalida"));
+
             var filtroUsuario = Builders<Bandeja>.Filter.Eq("usuario", usuario);
+
+            List<BandejaESDTOR> listabandejas = new List<BandejaESDTOR>();
             listabandejas = await _bandejas.Aggregate()
                                         .Match(filtroUsuario)
                                         .Unwind<Bandeja, BandejaDTO>(b => b.bandejasalida)
                                         .AppendStage<BandejaDTODocumento>(lookup)
                                         .Unwind<BandejaDTODocumento, BandejaDTODocumentoExpediente>(b => b.bandejadocumento)
+                                        .Unwind<BandejaDTODocumentoExpediente, BandejaExpedienteDTO>(be => be.bandejadocumento.documentos)
+                                        .AppendStage<BandejaExpDocDTO>(lookup2)
+                                        .Unwind<BandejaExpDocDTO,BandejaExpDocUndDTO>(bed => bed.documentosobj)
+                                        .Group<BandejaExpDocGroupDTO>(group)
                                         .AppendStage<BandejaDTOR>(project)
+                                        .AppendStage<BandejaRPDTO>(project1)
+                                        .Group<BandejaRV1DTO>(group1)
+                                        .Unwind<BandejaRV1DTO,BandejaDTOE>(be=>be.bandejaentrada)
+                                        .AppendStage<BandejaDTOEDocumento>(lookupe)
+                                        .Unwind<BandejaDTOEDocumento,BandejaDTOEDocumentoExpediente>(b => b.bandejadocumento)
+                                        .Unwind<BandejaDTOEDocumentoExpediente, BandejaExpedienteDTOE>(bee => bee.bandejadocumento.documentos)
+                                        .AppendStage<BandejaExpDocDTOE>(lookup2)
+                                        .Unwind<BandejaExpDocDTOE, BandejaExpDocUndDTOE>(bed => bed.documentosobj)
+                                        .Group<BandejaExpDocGroupDTOE>(groupe)
+                                        .AppendStage<BandejaESDTO>(projecte)
+                                        .AppendStage<BandejaESDTOP>(project1e)
+                                        .Group<BandejaESDTOR>(groupfinal)
                                         .ToListAsync();
             return listabandejas;
         }
