@@ -21,7 +21,7 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpGet("getbandeja/{usuario}")]
-        public async Task<ActionResult<List<BandejaESDTOR>>> Get(string usuario)
+        public async Task<ActionResult<BandejaESDTOR>> Get(string usuario)
         {
             return await _bandejaService.ObtenerBandeja(usuario);
         }
