@@ -135,8 +135,8 @@ namespace SISGED.Shared.DTOs
         [BsonRepresentation(BsonType.ObjectId)]
         public string idexpediente { get; set; }
         public Cliente cliente { get; set; }
-        public Documento documento { get; set; } = new Documento();
-        public List<Documento> documentosobj { get; set; } = new List<Documento>();
+        public DocumentoDTO documento { get; set; }
+        public List<DocumentoDTO> documentosobj { get; set; }
         public string tipo { get; set; }
     }
 

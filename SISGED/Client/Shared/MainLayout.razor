@@ -195,7 +195,7 @@
             nombre = x.tipo,
             valor = x,
             icono = "alarm_add",
-            descripcion = x.documento.tipo,
+            descripcion = ((DocumentoDTO)x.documento).tipo,
             currentPlace = "inputs",
             originPlace = "inputs",cliente = x.cliente
         }).ToList();
@@ -207,7 +207,7 @@
             nombre = x.tipo,
             valor = x,
             icono = "alarm_add",
-            descripcion = x.documento.tipo,
+            descripcion = ((DocumentoDTO)x.documento).tipo,
             currentPlace = "outputs",
             originPlace = "outputs",
             cliente = x.cliente

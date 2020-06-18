@@ -39,7 +39,7 @@
     }
 </style>
 
-@if (documentoEvaluado.estado.status != "Pendiente" || DocumentoRevisado)
+@if (DocumentoRevisado)
 {
     <div class="div-form">
         <div class="field-container">
@@ -84,13 +84,13 @@ else
     private string observacion;
     private bool OpenAprobado = false;
     private bool OpenDesaprobado = false;
-    private bool DocumentoRevisado = false;
+    private bool DocumentoRevisado;
 
 
     private async Task AprobarDocumento()
     {
         documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
-        documentoEvaluado.estado.status = "Aprobado";
+        documentoEvaluado.estado.status = "aprobado";
         documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
         documentoEvaluado.idusuario = sesion.usuario.id;
         await Actualizar();
@@ -104,7 +104,7 @@ else
         else
         {
             documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
-            documentoEvaluado.estado.status = "Desaprobado";
+            documentoEvaluado.estado.status = "desaprobado";
             documentoEvaluado.estado.observacion = observacion.Trim();
             documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
             documentoEvaluado.idusuario = sesion.usuario.id;
@@ -129,8 +129,11 @@ else
         }
     }
     protected override void OnInitialized()
-    {
+    {   
 
-        //workspace.expedienteseleccionado.documento;
+        if (documentoEvaluado.estado.status == "pendiente")
+        {
+            DocumentoRevisado = false;
+        }
     }
 }
