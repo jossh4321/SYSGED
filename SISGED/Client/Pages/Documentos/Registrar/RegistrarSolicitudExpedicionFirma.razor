@@ -1,7 +1,7 @@
 ﻿@using System.IO
 @inject IRepository repository
 @inject ISwalFireMessage swalfire
-
+@using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -166,16 +166,16 @@
                 </div>
 
                 <!--<div class="field-container">
-    <MatFileUpload Style="padding: 15px; background-color: #6200ee;" OnChange="FilesReadyForContent"></MatFileUpload>
-       if (list == "")
-        {
-            <div>Seleccione un archivo</div>
-        }
-        else
-        {
-            <div>list</div>
-        }
-    </div>-->
+                <MatFileUpload Style="padding: 15px; background-color: #6200ee;" OnChange="FilesReadyForContent"></MatFileUpload>
+                   if (list == "")
+                    {
+                        <div>Seleccione un archivo</div>
+                    }
+                    else
+                    {
+                        <div>list</div>
+                    }
+                </div>-->
 
                 <InputFile Label="Documento" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
@@ -190,6 +190,7 @@
     </EditForm>
 </div>
 @code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
     private SolicitudExpedicionFirmaDTO solicitudexpedicionfirma = new SolicitudExpedicionFirmaDTO();
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private EditContext _editContext;
@@ -275,13 +276,29 @@
         expedienteWrapper.documento = solicitudexpedicionfirma;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudExpedicionFirma>("api/documentos/documentosef", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosef", expedienteWrapper);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
         }
         else
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+
+            expedientebandeja = httpResponse.Response;
+            Item itemSalida = new Item()
+
+            {
+
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = expedientebandeja.cliente
+            };
+            workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
         }
         Console.WriteLine("Todo Bien");

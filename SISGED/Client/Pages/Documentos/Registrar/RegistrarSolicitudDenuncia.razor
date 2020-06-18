@@ -1,6 +1,7 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -80,7 +81,7 @@
                     </div>
                 </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.tipodocumento)">
-                    <InputSelect  @bind-Value="@solicitudDenuncia.tipodocumento" class="text-field-style custom-select" >
+                    <InputSelect @bind-Value="@solicitudDenuncia.tipodocumento" class="text-field-style custom-select">
                         <option value="">--Seleccione Algo--</option>
                         <option value="CE">Carnet de Extranjeria</option>
                         <option value="DNI">D.N.I.</option>
@@ -170,6 +171,7 @@
 </div>
 
 @code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
     private SolicitudDenunciaDTO solicitudDenuncia = new SolicitudDenunciaDTO();
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private EditContext _editContext;
@@ -208,13 +210,29 @@
             expedienteWrapper.documento = solicitudDenuncia;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudDenuncia>("api/documentos/documentosd", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)
             {
                 await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
             }
             else
             {
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+
+                expedientebandeja = httpResponse.Response;
+                Item itemSalida = new Item()
+
+                {
+
+                    nombre = expedientebandeja.tipo,
+                    valor = expedientebandeja,
+                    icono = "alarm_add",
+                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                    currentPlace = "outputs",
+                    originPlace = "outputs",
+                    cliente = expedientebandeja.cliente
+                };
+                workspace.UpdateComponentBandeja(itemSalida);
                 await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
             }
         }
