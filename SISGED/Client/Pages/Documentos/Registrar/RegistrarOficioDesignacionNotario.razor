@@ -133,6 +133,8 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Notario> notariosseleccionados = new List<Notario>();
     public Notario notarioselect;
+    [Parameter]
+    public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set;  }
     private async Task<IEnumerable<Notario>> match(string searchtext)
     {
         //return await Task.FromResult(products.Where(x => x.ProductName.ToLower().Contains(searchtext.ToLower())).ToList());
@@ -189,6 +191,19 @@
 
     public void handleInvalidSubmit()
     {
+        //AumentarBandeja.InvokeAsync(workspace.expedienteseleccionado);
+        Item item = new Item()
+
+        {
+            nombre = workspace.expedienteseleccionado.tipo,
+            valor = workspace.expedienteseleccionado,
+            icono = "alarm_add",
+            descripcion = ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo,
+            currentPlace = "outputs",
+            originPlace = "outputs",
+            cliente = workspace.expedienteseleccionado.cliente
+        };
+        workspace.UpdateComponentBandeja(item);
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
         Console.WriteLine("Algo Mal");
     }

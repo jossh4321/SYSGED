@@ -313,6 +313,12 @@
 
     }
 
+    public void UpdateComponentBandeja(Item itemnuevo)
+    {
+        sesion.listasalidas.Add(itemnuevo);
+        StateHasChanged();
+    }
+
     /*
     public ExpedienteDTO expedientedto1 = new ExpedienteDTO()
     {
