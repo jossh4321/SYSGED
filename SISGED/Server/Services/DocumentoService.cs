@@ -82,7 +82,7 @@ namespace SISGED.Server.Services
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == "5ee2e87bd12fcd05d6b6b13e", updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
             return documentoODN;
         }
         public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)
@@ -133,7 +133,7 @@ namespace SISGED.Server.Services
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == "5ee2e87bd12fcd05d6b6b13e", updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
             return documentoBPN;
         }
         /*Esto funciona
@@ -147,6 +147,16 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSEF);
             return documentoSEF;
         }
+
+        public void updateBandejaSalida(string idexp, string iddoc, string idusuario)
+        {
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = idexp;
+            bandejaDocumento.iddocumento = iddoc;
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
+        }
+
         public SolicitudDenuncia registrarSolicitudDenuncia(SolicitudDenuncia documentoSD)
         {
             _documentos.InsertOne(documentoSD);

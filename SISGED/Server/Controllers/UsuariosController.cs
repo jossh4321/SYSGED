@@ -87,5 +87,13 @@ namespace SISGED.Server.Controllers
             return usuario;
         }
 
+        [HttpGet("estado")]
+        public ActionResult<List<Usuario>> GetByStatus([FromQuery] string status)
+        {
+            List<Usuario> listaUsuarios = new List<Usuario>();
+            listaUsuarios = _usuarioservice.GetByStatus(status);
+            return listaUsuarios;
+        }
+
     }
 }

@@ -95,8 +95,9 @@ namespace SISGED.Shared.DTOs
     }
     public class ExpedienteWrapper
     {
-        public ExpedienteDTO expediente { get; set; } = new ExpedienteDTO();
+        public string idexpediente { get; set; }
         public object documento { get; set; }
+        public string idusuarioactual { get; set; }
     }
 
     public class ExpedienteFinal

@@ -81,7 +81,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.tipodocumento)">
                     <InputSelect @bind-Value="@solicitudexpedicionfirma.tipodocumento" class="text-field-style">
-                        <option value="">--Seleccione Algo--</option>
+                        <option value="nulo">--Seleccione Algo--</option>
                         <option value="CE">Carnet de Extranjeria</option>
                         <option value="DNI">D.N.I.</option>
                         <option value="pasaporte">Pasaporte</option>
@@ -191,6 +191,7 @@
 </div>
 @code {
     private SolicitudExpedicionFirmaDTO solicitudexpedicionfirma = new SolicitudExpedicionFirmaDTO();
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private EditContext _editContext;
     private string documentoTemporal { get; set; } = null;
     private string imagenTemporal;
@@ -270,7 +271,11 @@
 
     public async Task handleValidSubmit()
     {
-        var httpResponse = await repository.Post<SolicitudExpedicionFirmaDTO, SolicitudExpedicionFirma>("api/documentos/documentosef", solicitudexpedicionfirma);
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = solicitudexpedicionfirma;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudExpedicionFirma>("api/documentos/documentosef", expedienteWrapper);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");

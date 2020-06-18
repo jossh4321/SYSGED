@@ -118,8 +118,6 @@
                     </CascadingValue>
                 </MatAppBarContent>
             </MatAppBarContainer>
-
-
         </div>
     </MatDrawerContent>
 </MatDrawerContainer>
@@ -149,10 +147,12 @@
     bool cargasesion = true;
 
     //lista entradas harcodeadas
-    List<ExpedienteDTO> expedientes = new List<ExpedienteDTO>();
+    //List<ExpedienteDTO> expedientes = new List<ExpedienteDTO>();
 
     //lista salidas
     List<BandejaDTOR> bandejaSalidas = new List<BandejaDTOR>();
+    //lista Entradas
+    List<BandejaEntradaDTOR> bandejaEntradas = new List<BandejaEntradaDTOR>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -169,26 +169,34 @@
             {
                 sesion = (Sesion)datosSesion.Response;
                 await setearBandejaSalida(sesion.usuario.id);
+                await setearBandejaEntrada(sesion.usuario.id);
                 sesion.herramientasutilizables = obtenerListaheramientas(sesion.permisosHerram);
-                sesion.listaentradas = obtenerListaEntradas(expedientes);
+                sesion.listaentradas = obtenerListaEntradas(bandejaEntradas);
                 sesion.listasalidas = obtenerListaSalidas(bandejaSalidas);
+                StateHasChanged();
             }
         }
         else
         {
             Console.WriteLine("Usuario NO autenticado");
         }
-
     }
-
     #region metodos
     public List<Item> obtenerListaheramientas(List<Permiso> listapermisos)
     {
         return listapermisos.Select(x => new Item() { nombre = x.label, valor = x.nombre, icono = x.icono, descripcion = "", currentPlace = "tools", originPlace = "tools" }).ToList();
     }
-    public List<Item> obtenerListaEntradas(List<ExpedienteDTO> listaentrada)
+    public List<Item> obtenerListaEntradas(List<BandejaEntradaDTOR> listaentrada)
     {
-        return listaentrada.Select(x => new Item() { nombre = x.id, valor = x, icono = "alarm_add", descripcion = "", currentPlace = "inputs", originPlace = "inputs" }).ToList();
+        return listaentrada.Select(x => new Item()
+        {
+            nombre = x.tipoexpediente,
+            valor = x.bandejaentrada.idexpediente,
+            icono = "alarm_add",
+            descripcion = x.documento.tipo,
+            currentPlace = "inputs",
+            originPlace = "inputs",cliente = x.cliente
+        }).ToList();
     }
     public List<Item> obtenerListaSalidas(List<BandejaDTOR> listasalida)
     {
@@ -203,9 +211,6 @@
             cliente = x.cliente
         }).ToList();
     }
-
-
-
     public void showUserMenu2()
     {
         valueclass = "non-show";
@@ -289,8 +294,8 @@
             derivaciones = new List<Derivacion>(),
             estado = "pendiente"
         };
-        expedientes.Add(expedientedto1);
-        expedientes.Add(expedientedto2);
+        /*expedientes.Add(expedientedto1);
+        expedientes.Add(expedientedto2);*/
     }
 
     public async Task setearBandejaSalida(String idusuario)
@@ -304,6 +309,20 @@
         {
             Console.WriteLine("Se obtuvo con exito los datos de la bandeja de salida");
             bandejaSalidas = responseHttp.Response;
+        }
+    }
+
+    public async Task setearBandejaEntrada(String idusuario)
+    {
+        var responseHttp = await repositorio.Get<List<BandejaEntradaDTOR>>($"api/bandejas/bandejaentrada/{idusuario}");
+        if (responseHttp.Error)
+        {
+            Console.WriteLine("Error en la bandeja de entrada");
+        }
+        else
+        {
+            Console.WriteLine("Se obtuvo con exito los datos de la bandeja de Entrada");
+            bandejaEntradas = responseHttp.Response;
         }
     }
     #endregion

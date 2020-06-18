@@ -27,7 +27,7 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpGet("bandejaentrada/{usuario}")]
-        public async Task<ActionResult<List<BandejaEntradaDTODocumento>>> GetBE(string usuario)
+        public async Task<ActionResult<List<BandejaEntradaDTOR>>> GetBE(string usuario)
         {
             return await _bandejaService.ObtenerBandejaEntrada(usuario);
         }

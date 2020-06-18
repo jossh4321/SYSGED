@@ -1,0 +1,226 @@
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
+    .demo-mat-card {
+        max-width: 500px;
+        padding: 0 10px 0 10px;
+    }
+
+    .demo-mat-card-content {
+        padding: 2rem;
+    }
+
+    .demo-mat-card-clean-margin {
+        margin: 0px;
+    }
+
+    .div-form {
+        background-color: #FAF3F3;
+        flex-basis: 100%;
+        border-radius: 5px 5px 0px 0px;
+        width: 100%;
+    }
+
+    * {
+        color: black;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .centro {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+</style>
+@if (carga == false)
+{
+    <LoaderContent accion="Derivar documento"></LoaderContent>
+}
+else
+{
+    <MatCard Class="demo-mat-card" OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <MatTabGroup>
+            <MatTab Label="Derivar documento">
+                <hr />
+                <MatSubtitle2 Class="text-black-50">
+                    Selecciona el área a la que derivarás el documento:
+                </MatSubtitle2>
+
+                <select class="form-control-lg custom-select my-2" @onchange="rolChanged">
+                    <option Value="0" selected>Seleccione rol...</option>
+                    @foreach (Rol rol in roles)
+                    {
+                        <option class="text-black-50" Value="@rol.id">@rol.label</option>
+
+                    }
+                </select>
+
+                <select class="form-control-lg custom-select my-2" @onchange="userChanged">
+                    <option value="0" selected>Seleccione usuario...</option>
+                    @foreach (Usuario usuario in usuarios)
+                    {
+                        <option class="text-black-50" Value="@usuario.id">@usuario.datos.nombre @usuario.datos.apellido</option>
+                    }
+                </select>
+                @*<p>@usuarioId</p>*@
+                <MatCardActions>
+                    <MatButton Raised="true"
+                               Class="centro"
+                               OnClick="@OpenDialog"
+                               type="submit"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline">Derivar documento</MatButton>
+                </MatCardActions>
+            </MatTab>
+        </MatTabGroup>
+    </MatCard>
+    <MatDialog @bind-IsOpen="@dialogIsOpen">
+        <MatDialogTitle>Confirmación</MatDialogTitle>
+        <MatDialogContent>
+            <p class="text-black-50">¿Seguro(a) que desea derivar el documento?</p>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancelar</MatButton>
+            <MatButton type="submit" OnClick="handleValidSubmit">Derivar</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+}
+
+
+@code {
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+
+    #region variableeeees
+    bool carga = false;
+    bool dialogIsOpen = false;
+    string dialogDerivar = null;
+    string rolId;
+    string usuarioId;
+
+    public List<Usuario> listausuarios = new List<Usuario>();
+    public List<Usuario> usuarios = new List<Usuario>();
+    private List<Rol> roles = new List<Rol>();
+    public Derivacion derivacion;
+    #endregion
+
+    protected async override Task OnInitializedAsync()
+    {
+        await getRoles();
+        await getUsuarioByStatus();
+    }
+
+    #region getsRegion
+    public async Task getRoles()
+    {
+
+        var httpResponse = await repository.Get<List<Rol>>("api/usuarios/roles");
+        if (httpResponse.Error)
+        {
+            carga = false;
+            Console.WriteLine("Ha ocurrido un error al traer roles");
+        }
+        else
+        {
+            carga = true;
+            roles = httpResponse.Response;
+        }
+    }
+    public async Task getUsuarioByStatus()
+    {
+        var httpResponse = await repository.Get<List<Usuario>>($"api/usuarios/estado?status=activo");
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Ha ocurrido un error al traer usuarios");
+        }
+        else
+        {
+            listausuarios = httpResponse.Response;
+        }
+    }
+
+    #endregion
+    #region DialogoRegion
+    void OpenDialog()
+    {
+        if (rolId == "0" || usuarioId == "0")
+        {
+            dialogIsOpen = false;
+            swalfire.errorMessage("Debes seleccionar un rol y un usuario");
+        }
+        else
+        {
+            dialogDerivar = null;
+            dialogIsOpen = true;
+        }
+        return;
+    }
+    #endregion
+
+    public void rolChanged(ChangeEventArgs e)
+    {
+        rolId = e.Value.ToString();
+        usuarios = listausuarios.Where(l => l.rol == rolId).ToList();
+    }
+    public void userChanged(ChangeEventArgs e)
+    {
+        usuarioId = "";
+        usuarioId = e.Value.ToString();
+        Console.WriteLine("Usuario:  {0} ", usuarioId);
+    }
+
+
+    public async Task handleValidSubmit()
+    {
+        dialogIsOpen = false;
+
+        if (usuarioId == sesion.usuario.id)
+        {
+            await swalfire.errorMessage("No te puedes derivar el documento a ti mismo");
+            return;
+        }
+        Expediente expediente = new Expediente();
+        expediente.id = "5ee5f24e7d8f833f68cc88a0"; // workspace.expedienteseleccionado; 
+        List<DocumentoExpediente> documentoExpediente = new List<DocumentoExpediente>()
+    {
+            new DocumentoExpediente()
+            {
+                iddocumento   = "5ed9a3dbfed03c07c872c862" //Oficio designacion notario//workspace.expedienteseleccionado.documentos.Last().iddocumento,
+            }
+        };
+        List<Derivacion> derivaciones = new List<Derivacion>()
+        {
+            new Derivacion(){
+                areadestino     = rolId,
+                areaprocedencia = sesion.usuario.rol,
+                usuarioemisor   = sesion.usuario.id,
+                tipo            = "OficioDesignacionNotario",//workspace.expedienteseleccionado.tipo,
+                fechaderivacion = DateTime.Now.ToLocalTime(),
+                estado          = "pendiente"}
+        };
+        expediente.derivaciones = derivaciones;
+        expediente.documentos = documentoExpediente;
+
+        var httpResponse = await repository.Post<Expediente>($"api/expediente/derivacion?userId={usuarioId}", expediente);
+        if (httpResponse.Error)
+        {
+            await swalfire.errorMessage("Ha ocurrido un error, intente nuevamente");
+        }
+        else
+        {
+            await swalfire.successMessage("Documento derivado correctamente");
+            //Console.WriteLine("Derivar documento:  {0} a {1} ", workspace.expedienteseleccionado.id, usuarioId);
+        }
+    }
+    //quitar luego
+    public void handleInvalidSubmit(String e)
+    {
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados" + e);
+        Console.WriteLine("Algo Mal");
+    }
+
+}

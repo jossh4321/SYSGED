@@ -12,11 +12,16 @@ namespace SISGED.Server.Services
     public class ExpedienteService
     {
         private readonly IMongoCollection<Expediente> _expedientes;
+        private readonly IMongoCollection<Bandeja> _bandejas;
+        private readonly IMongoCollection<Documento> _documentos;
         public ExpedienteService(ISysgedDatabaseSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _expedientes = database.GetCollection<Expediente>("expedientes");
+            _bandejas = database.GetCollection<Bandeja>("bandejas");
+            _documentos = database.GetCollection<Documento>("documentos");
+
         }
         public  Expediente saveExpediente(Expediente expediente)
         {
@@ -69,6 +74,34 @@ namespace SISGED.Server.Services
             List<Expediente> expedientes = new List<Expediente>();
             expedientes = _expedientes.Find(expediente => true).ToList();
             return expedientes;
+        }
+        public Expediente registrarDerivacion(Expediente expediente, string userId)
+        {
+
+            Derivacion derivacion = new Derivacion();
+            derivacion = expediente.derivaciones.FirstOrDefault();
+
+            var filter = Builders<Expediente>.Filter.Eq(exp => exp.id, expediente.id);
+            var update = Builders<Expediente>.Update.Push("derivaciones", derivacion);
+            _expedientes.UpdateOne(filter, update);
+
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = expediente.id;
+            bandejaDocumento.iddocumento = expediente.documentos.Last().iddocumento;
+
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejaentrada", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == userId, updateBandeja);
+
+
+            Proceso proceso = new Proceso();
+            proceso.area = derivacion.areaprocedencia;
+            proceso.fechaemision = DateTime.Now;
+            proceso.idusuario = userId;
+
+            UpdateDefinition<Documento> updateDocumento = Builders<Documento>.Update.Push("historialproceso", proceso);
+            _documentos.UpdateOne(doc => doc.id == bandejaDocumento.iddocumento, updateDocumento);
+
+            return expediente;
         }
     }
 }
