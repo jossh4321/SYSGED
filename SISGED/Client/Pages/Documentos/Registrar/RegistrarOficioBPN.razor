@@ -130,19 +130,19 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.observacion)">
-                    <MatTextField @bind-Value="@documento.contenidoDTO.observacion" Class="text-field-style" Label="Observacion del documento"
-                                  @oninput='@(e => KeyUp(e, "observacion", documento.contenidoDTO))'></MatTextField>
+                <!--div class="field-container input-group-2 CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.observacion)">
+                    <MatTextField bind-Value="documento.contenidoDTO.observacion" Class="text-field-style" Label="Observacion del documento"
+                                  oninput='(e => KeyUp(e, "observacion", documento.contenidoDTO))'></MatTextField>
 
                     <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenidoDTO.observacion)" />
+                        <MatIcon Icon="MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="(() => documento.contenidoDTO.observacion)" />
                     </div>
                     <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <MatIcon Icon="MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
-                </div>
+                </div-->
 
                 <div class="field-container">
                     <MatButton type="submit"
