@@ -188,7 +188,7 @@ else
     {
             new DocumentoExpediente()
             {
-                iddocumento   =   workspace.expedienteseleccionado.documento.id /*"5ed9a3dbfed03c07c872c862"*/ //Oficio designacion notario//workspace.expedienteseleccionado.documentos.Last().iddocumento,
+                iddocumento   =   ((DocumentoDTO)workspace.expedienteseleccionado.documento).id /*"5ed9a3dbfed03c07c872c862"*/ //Oficio designacion notario//workspace.expedienteseleccionado.documentos.Last().iddocumento,
             }
         };
         List<Derivacion> derivaciones = new List<Derivacion>()
@@ -197,7 +197,7 @@ else
                 areadestino     = rolId,
                 areaprocedencia = sesion.usuario.rol,
                 usuarioemisor   = sesion.usuario.id,
-                tipo            =  workspace.expedienteseleccionado.documento.tipo/*"OficioDesignacionNotario"*/,//workspace.expedienteseleccionado.tipo,
+                tipo            =  ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo/*"OficioDesignacionNotario"*/,//workspace.expedienteseleccionado.tipo,
                 fechaderivacion = DateTime.Now.ToLocalTime(),
                 estado          = "pendiente"}
         };
