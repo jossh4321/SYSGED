@@ -91,6 +91,7 @@ else
     {
         documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
         documentoEvaluado.estado.status = "aprobado";
+        documentoEvaluado.estado.observacion = "Ninguna";
         documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
         documentoEvaluado.idusuario = sesion.usuario.id;
         await Actualizar();
@@ -132,25 +133,24 @@ else
     {
         documentoEvaluado = new DocumentoEvaluadoDTO();
         Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
-        if (workspace.expedienteseleccionado.documento.tipo == "OficioDesignacionNotario")
+        string tipo = workspace.expedienteseleccionado.documento.tipo;
+        if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
         {
-
-            if (workspace.expedienteseleccionado.documento.estado == null)
+            Estado estado = JsonConvert.DeserializeObject<Estado>(workspace.expedienteseleccionado.documento.estado.ToString());
+            Console.WriteLine(estado.status);
+            if (estado.status == "pendiente")
             {
-
+                DocumentoRevisado = false;
             }
             else
             {
-                Estado estado = JsonConvert.DeserializeObject<Estado>(workspace.expedienteseleccionado.documento.estado.ToString());
-                Console.WriteLine(estado.status);
-
+                DocumentoRevisado = true;
             }
 
         }
-
-        if (documentoEvaluado.estado.status == "pendiente")
+        else
         {
-            DocumentoRevisado = false;
+            DocumentoRevisado = true;
         }
     }
 }
