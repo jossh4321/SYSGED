@@ -275,7 +275,7 @@
         expedienteWrapper.documento = solicitudexpedicionfirma;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudExpedicionFirma>("api/documentos/documentosef", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosef", expedienteWrapper);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");

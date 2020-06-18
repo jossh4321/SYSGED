@@ -153,6 +153,30 @@
         }
         else
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            ConclusionFirma oficioconclusionfirma = new ConclusionFirma();
+            oficioconclusionfirma = httpResponse.Response;
+            expedientebandeja.documento.id = oficioconclusionfirma.id;
+            expedientebandeja.documento.tipo = oficioconclusionfirma.tipo;
+            expedientebandeja.documento.historialcontenido = oficioconclusionfirma.historialcontenido;
+            expedientebandeja.documento.historialproceso = oficioconclusionfirma.historialproceso;
+            expedientebandeja.documento.contenido = oficioconclusionfirma.contenido;
+            expedientebandeja.documento.estado = oficioconclusionfirma.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+
+            {
+
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = expedientebandeja.cliente
+            };
+            workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Conclusión de Firma registrada Correctamente");
         }
         Console.WriteLine("Todo Bien");

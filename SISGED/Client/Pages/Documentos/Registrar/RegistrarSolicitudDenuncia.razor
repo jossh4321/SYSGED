@@ -208,7 +208,7 @@
             expedienteWrapper.documento = solicitudDenuncia;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudDenuncia>("api/documentos/documentosd", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)
             {
                 await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
