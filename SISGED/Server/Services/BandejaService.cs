@@ -27,7 +27,7 @@ namespace SISGED.Server.Services
         }
 
 
-        public async Task<List<BandejaESDTOR>> ObtenerBandeja(string usuario)
+        public async Task<BandejaESDTOR> ObtenerBandeja(string usuario)
         {
             BsonArray subpipeline = new BsonArray();
 
@@ -190,7 +190,7 @@ namespace SISGED.Server.Services
 
             var filtroUsuario = Builders<Bandeja>.Filter.Eq("usuario", usuario);
 
-            List<BandejaESDTOR> listabandejas = new List<BandejaESDTOR>();
+            BandejaESDTOR listabandejas = new BandejaESDTOR();
             listabandejas = await _bandejas.Aggregate()
                                         .Match(filtroUsuario)
                                         .Unwind<Bandeja, BandejaDTO>(b => b.bandejasalida)
@@ -213,7 +213,7 @@ namespace SISGED.Server.Services
                                         .AppendStage<BandejaESDTO>(projecte)
                                         .AppendStage<BandejaESDTOP>(project1e)
                                         .Group<BandejaESDTOR>(groupfinal)
-                                        .ToListAsync();
+                                        .FirstAsync();
             return listabandejas;
         }
 
