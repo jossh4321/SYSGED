@@ -8,6 +8,7 @@ namespace SISGED.Client.Repo
 {
     interface IDocumentRepository
     {
-        List<OpcionDocumento> ObtenerTiposDocs();
+        List<OpcionDocumento> ObtenerTiposDocsConExp();
+        List<OpcionDocumento> ObtenerTiposDocsSinExp();
     }
 }
