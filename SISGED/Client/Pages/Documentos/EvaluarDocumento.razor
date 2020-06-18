@@ -129,10 +129,24 @@ else
     }
     protected override void OnInitialized()
     {
-        documentoEvaluado = new DocumentoEvaluadoDTO();
+        /*documentoEvaluado = new DocumentoEvaluadoDTO();
         if (documentoEvaluado.estado.status == "pendiente")
         {
             DocumentoRevisado = false;
+        }*/
+        if (workspace.expedienteseleccionado != null)
+        {
+            object obj = workspace.expedienteseleccionado.documento.estado;
+
+            if(obj is Estado)
+            {
+                Console.WriteLine("es posible ");
+            }
+        }
+        else
+        {
+
+            Console.WriteLine("no hay expediente");
         }
     }
 }
