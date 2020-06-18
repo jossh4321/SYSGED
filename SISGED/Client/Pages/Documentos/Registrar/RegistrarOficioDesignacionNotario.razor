@@ -180,6 +180,30 @@
         var httpResponse =  await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/documentoodn", expedienteWrapper);
         if (httpResponse.Error)
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            OficioDesignacionNotario oficiodesignacionnotario = new OficioDesignacionNotario();
+            oficiodesignacionnotario = httpResponse.Response;
+            expedientebandeja.documento.id = oficiodesignacionnotario.id;
+            expedientebandeja.documento.tipo = oficiodesignacionnotario.tipo;
+            expedientebandeja.documento.historialcontenido = oficiodesignacionnotario.historialcontenido;
+            expedientebandeja.documento.historialproceso = oficiodesignacionnotario.historialproceso;
+            expedientebandeja.documento.contenido = oficiodesignacionnotario.contenido;
+            expedientebandeja.documento.estado = oficiodesignacionnotario.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+
+            {
+
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = expedientebandeja.cliente
+            };
+            workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
         }
         else
@@ -192,18 +216,6 @@
     public void handleInvalidSubmit()
     {
         //AumentarBandeja.InvokeAsync(workspace.expedienteseleccionado);
-        Item item = new Item()
-
-        {
-            nombre = workspace.expedienteseleccionado.tipo,
-            valor = workspace.expedienteseleccionado,
-            icono = "alarm_add",
-            descripcion = ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo,
-            currentPlace = "outputs",
-            originPlace = "outputs",
-            cliente = workspace.expedienteseleccionado.cliente
-        };
-        workspace.UpdateComponentBandeja(item);
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
         Console.WriteLine("Algo Mal");
     }
