@@ -170,9 +170,8 @@
 </div>
 
 @code {
-
-
     private SolicitudDenunciaDTO solicitudDenuncia = new SolicitudDenunciaDTO();
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private EditContext _editContext;
     private string documentoTemporal { get; set; } = null;
     private string imagenTemporal;
@@ -205,7 +204,11 @@
     {
         if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
         {
-            var httpResponse = await repository.Post<SolicitudDenunciaDTO, SolicitudDenuncia>("api/documentos/documentosd", solicitudDenuncia);
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            expedienteWrapper.documento = solicitudDenuncia;
+            expedienteWrapper.idusuarioactual = sesion.usuario.id;
+
+            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudDenuncia>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)
             {
                 await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");

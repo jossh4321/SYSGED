@@ -172,17 +172,18 @@
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = oficiodesignacion;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
-    var httpResponse =  await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/documentoodn", expedienteWrapper);
-    if (httpResponse.Error)
-    {
-        await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
-    }
-    else
-    {
-        await swalfire.successMessage("Oficio de Designacion de Notario Registrada Correctamente");
-    }
-    Console.WriteLine("Todo Bien");
+        var httpResponse =  await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/documentoodn", expedienteWrapper);
+        if (httpResponse.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Oficio de Designacion de Notario Registrada Correctamente");
+        }
+        Console.WriteLine("Todo Bien");
     }
 
     public void handleInvalidSubmit()

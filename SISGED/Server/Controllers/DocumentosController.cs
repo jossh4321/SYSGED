@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SISGED.Server.Helpers;
 using SISGED.Server.Services;
 using SISGED.Shared.DTOs;
@@ -50,8 +51,9 @@ namespace SISGED.Server.Controllers
 
         //Con el expediente agregado falta wrapper
         [HttpPost("documentosd")]
-        public async Task<ActionResult<SolicitudDenuncia>> RegistrarDocumentoSolicitudDenuncia(SolicitudDenunciaDTO documento)
+        public async Task<ActionResult<SolicitudDenuncia>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
+            SolicitudDenunciaDTO documento = (SolicitudDenunciaDTO)expedientewrapper.documento;
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.urldata))
             {
@@ -103,28 +105,31 @@ namespace SISGED.Server.Controllers
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
 
-            _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, "5ee2e87bd12fcd05d6b6b13e");
+            _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
             return solicitudDenuncia;
         }
 
         //Con el expediente agregado falta wrapper
         [HttpPost("documentosef")]
-        public async Task<ActionResult<SolicitudExpedicionFirma>> RegistrarDocumentoSEF(SolicitudExpedicionFirmaDTO documento)
+        public async Task<ActionResult<SolicitudExpedicionFirma>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
         {
-            //por defecto
-            string urlData = "www.google.com";
-            if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.data))
+            SolicitudExpedicionFirmaDTO conclusionfirmaDTO = new SolicitudExpedicionFirmaDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            conclusionfirmaDTO = JsonConvert.DeserializeObject<SolicitudExpedicionFirmaDTO>(json);
+
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(conclusionfirmaDTO.contenidoDTO.data))
             {
-                var solicitudBytes = Convert.FromBase64String(documento.contenidoDTO.data);
+                var solicitudBytes = Convert.FromBase64String(conclusionfirmaDTO.contenidoDTO.data);
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicitudexpedicionfirma");
             }
             ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
             {
-                titulo = documento.contenidoDTO.titulo,
-                descripcion = documento.contenidoDTO.descripcion,
+                titulo = conclusionfirmaDTO.contenidoDTO.titulo,
+                descripcion = conclusionfirmaDTO.contenidoDTO.descripcion,
                 fecharealizacion = DateTime.Now,
-                cliente = documento.contenidoDTO.cliente,
-                codigo = documento.contenidoDTO.codigo,
+                cliente = conclusionfirmaDTO.contenidoDTO.cliente,
+                codigo = conclusionfirmaDTO.contenidoDTO.codigo,
                 url = urlData
             };
             SolicitudExpedicionFirma documentoSEF = new SolicitudExpedicionFirma()
@@ -140,9 +145,9 @@ namespace SISGED.Server.Controllers
 
             Cliente cliente = new Cliente()
             {
-                nombre = documento.nombrecliente,
-                tipodocumento = documento.tipodocumento,
-                numerodocumento = documento.numerodocumento
+                nombre = conclusionfirmaDTO.nombrecliente,
+                tipodocumento = conclusionfirmaDTO.tipodocumento,
+                numerodocumento = conclusionfirmaDTO.numerodocumento
             };
 
             Expediente expediente = new Expediente();
@@ -165,7 +170,7 @@ namespace SISGED.Server.Controllers
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
 
-            _documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, "5ee2e87bd12fcd05d6b6b13e");
+            _documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, expedientewrapper.idusuarioactual);
             return documentoSEF;
         }
 
@@ -173,8 +178,13 @@ namespace SISGED.Server.Controllers
         [HttpPost("documentocf")]
         public ActionResult<ConclusionFirma> RegistrarDocumentoCF(ExpedienteWrapper expediente)
         {
+            ConclusionFirmaDTO conclusionfirmaDTO = new ConclusionFirmaDTO();
+            var json = JsonConvert.SerializeObject(expediente.documento);
+            conclusionfirmaDTO = JsonConvert.DeserializeObject<ConclusionFirmaDTO>(json);
+
             ConclusionFirma documentoCF = new ConclusionFirma();
             documentoCF = _documentoservice.registrarConclusionFirmaE(expediente);
+            _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
         /*Esto funciona por si algo sale mal
