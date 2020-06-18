@@ -51,7 +51,7 @@ namespace SISGED.Server.Controllers
 
         //Con el expediente agregado falta wrapper
         [HttpPost("documentosd")]
-        public async Task<ActionResult<SolicitudDenuncia>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
             SolicitudDenunciaDTO documento = (SolicitudDenunciaDTO)expedientewrapper.documento;
             string urlData = "";
@@ -106,12 +106,32 @@ namespace SISGED.Server.Controllers
             expediente = _expedienteservice.saveExpediente(expediente);
 
             _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
-            return solicitudDenuncia;
+
+
+            DocumentoDTO doc = new DocumentoDTO();
+            doc.id = solicitudDenuncia.id;
+            doc.id = solicitudDenuncia.tipo;
+            doc.historialcontenido = new List<ContenidoVersion>();
+            doc.historialproceso = new List<Proceso>();
+            doc.contenido = solicitudDenuncia.contenido;
+            doc.estado = solicitudDenuncia.estado;
+
+            ExpedienteBandejaDTO bandejaexpdto = new ExpedienteBandejaDTO();
+            bandejaexpdto.idexpediente = expediente.id;
+            bandejaexpdto.cliente = expediente.cliente;
+            bandejaexpdto.documento = doc;
+            bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
+            bandejaexpdto.tipo = expediente.tipo;
+
+
+
+
+            return bandejaexpdto;
         }
 
         //Con el expediente agregado falta wrapper
         [HttpPost("documentosef")]
-        public async Task<ActionResult<SolicitudExpedicionFirma>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
         {
             SolicitudExpedicionFirmaDTO conclusionfirmaDTO = new SolicitudExpedicionFirmaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
@@ -171,7 +191,24 @@ namespace SISGED.Server.Controllers
             expediente = _expedienteservice.saveExpediente(expediente);
 
             _documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, expedientewrapper.idusuarioactual);
-            return documentoSEF;
+
+            DocumentoDTO doc = new DocumentoDTO();
+            doc.id = documentoSEF.id;
+            doc.id = documentoSEF.tipo;
+            doc.historialcontenido = new List<ContenidoVersion>();
+            doc.historialproceso = new List<Proceso>();
+            doc.contenido = documentoSEF.contenido;
+            doc.estado = documentoSEF.estado;
+
+            ExpedienteBandejaDTO bandejaexpdto = new ExpedienteBandejaDTO();
+            bandejaexpdto.idexpediente = expediente.id;
+            bandejaexpdto.cliente = expediente.cliente;
+            bandejaexpdto.documento = doc;
+            bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
+            bandejaexpdto.tipo = expediente.tipo;
+
+
+            return bandejaexpdto;
         }
 
         //Completo
