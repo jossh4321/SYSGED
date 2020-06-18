@@ -97,7 +97,7 @@ namespace SISGED.Server.Services
             {
                 titulo = oficioBPNDTO.contenidoDTO.titulo,
                 descripcion = oficioBPNDTO.contenidoDTO.descripcion,
-                observacion = oficioBPNDTO.contenidoDTO.observacion,
+                //observacion = oficioBPNDTO.contenidoDTO.observacion,
                 idcliente = oficioBPNDTO.contenidoDTO.idcliente.id,
                 direccionoficio = oficioBPNDTO.contenidoDTO.direccionoficio,
                 idnotario = oficioBPNDTO.contenidoDTO.idnotario.id,
