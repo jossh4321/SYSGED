@@ -97,7 +97,7 @@ namespace SISGED.Server.Services
             {
                 titulo = oficioBPNDTO.contenidoDTO.titulo,
                 descripcion = oficioBPNDTO.contenidoDTO.descripcion,
-                observacion = oficioBPNDTO.contenidoDTO.observacion,
+                //observacion = oficioBPNDTO.contenidoDTO.observacion,
                 idcliente = oficioBPNDTO.contenidoDTO.idcliente.id,
                 direccionoficio = oficioBPNDTO.contenidoDTO.direccionoficio,
                 idnotario = oficioBPNDTO.contenidoDTO.idnotario.id,
@@ -209,18 +209,25 @@ namespace SISGED.Server.Services
         {
             _documentos.InsertOne(documentoCF);
             return documentoCF;
-        }/*
+        }*/
 
-        /*public Documento modificarEstado(Documento documento)
+        public Documento modificarEstado(DocumentoEvaluadoDTO documento)
         {
             var filter = Builders<Documento>.Filter.Eq("id", documento.id);
             var update = Builders<Documento>.Update
                 .Set("estado", documento.estado);
-            documento = _documentos.FindOneAndUpdate<Documento>(filter, update, new FindOneAndUpdateOptions<Documento>
-            {
-                ReturnDocument = ReturnDocument.After
-            });
-            return documento;
-        }*/
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = documento.idexpediente;
+            bandejaDocumento.iddocumento = documento.id;
+
+            UpdateDefinition<Bandeja> updateBandejaD = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaD);
+
+            UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
+
+            return _documentos.FindOneAndUpdate<Documento>(filter, update);
+        }
+
     }
 }

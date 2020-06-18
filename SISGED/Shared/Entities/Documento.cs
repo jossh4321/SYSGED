@@ -58,7 +58,7 @@ namespace SISGED.Shared.Entities
     {
         public string titulo { get; set; }
         public string descripcion { get; set; }
-        public string observacion { get; set; }
+        //public string observacion { get; set; }
         public string idcliente { get; set; }
         public string direccionoficio { get; set; }
         public string idnotario { get; set; }
