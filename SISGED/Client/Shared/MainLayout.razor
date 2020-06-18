@@ -190,28 +190,45 @@
     }
     public List<Item> obtenerListaEntradas(List<ExpedienteBandejaDTO> listaentrada)
     {
-        return listaentrada.Select(x => new Item()
+
+        if(listaentrada.ElementAt(0).tipo != null)
         {
-            nombre = x.tipo,
-            valor = x,
-            icono = "alarm_add",
-            descripcion = ((DocumentoDTO)x.documento).tipo,
-            currentPlace = "inputs",
-            originPlace = "inputs",cliente = x.cliente
-        }).ToList();
+            return listaentrada.Select(x => new Item()
+            {
+                nombre = x.tipo,
+                valor = x,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)x.documento).tipo,
+                currentPlace = "inputs",
+                originPlace = "inputs",
+                cliente = x.cliente
+            }).ToList();
+        }
+        else
+        {
+            return new List<Item>();    
+        }
+
     }
     public List<Item> obtenerListaSalidas(List<ExpedienteBandejaDTO> listasalida)
     {
-        return listasalida.Select(x => new Item()
+        if(listasalida.ElementAt(0).tipo != null)
         {
-            nombre = x.tipo,
-            valor = x,
-            icono = "alarm_add",
-            descripcion = ((DocumentoDTO)x.documento).tipo,
-            currentPlace = "outputs",
-            originPlace = "outputs",
-            cliente = x.cliente
-        }).ToList();
+            return listasalida.Select(x => new Item()
+            {
+                nombre = x.tipo,
+                valor = x,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)x.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = x.cliente
+            }).ToList();
+        }
+        else
+        {
+            return new List<Item>();
+        }
     }
     public void showUserMenu2()
     {
