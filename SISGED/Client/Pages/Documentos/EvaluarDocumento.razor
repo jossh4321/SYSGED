@@ -1,6 +1,7 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 
 <style>
     * {
@@ -129,24 +130,27 @@ else
     }
     protected override void OnInitialized()
     {
-        /*documentoEvaluado = new DocumentoEvaluadoDTO();
+        documentoEvaluado = new DocumentoEvaluadoDTO();
+        Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
+        if (workspace.expedienteseleccionado.documento.tipo == "OficioDesignacionNotario")
+        {
+
+            if (workspace.expedienteseleccionado.documento.estado == null)
+            {
+
+            }
+            else
+            {
+                Estado estado = JsonConvert.DeserializeObject<Estado>(workspace.expedienteseleccionado.documento.estado.ToString());
+                Console.WriteLine(estado.status);
+
+            }
+
+        }
+
         if (documentoEvaluado.estado.status == "pendiente")
         {
             DocumentoRevisado = false;
-        }*/
-        if (workspace.expedienteseleccionado != null)
-        {
-            object obj = workspace.expedienteseleccionado.documento.estado;
-
-            if(obj is Estado)
-            {
-                Console.WriteLine("es posible ");
-            }
-        }
-        else
-        {
-
-            Console.WriteLine("no hay expediente");
         }
     }
 }
