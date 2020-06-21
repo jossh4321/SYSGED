@@ -92,12 +92,17 @@ namespace SISGED.Server.Services
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejaentrada", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == userId, updateBandeja);
 
+            UpdateDefinition<Bandeja> updateBandejaS = Builders<Bandeja>.Update.Pull("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == derivacion.usuarioemisor, updateBandejaS);
+
+            UpdateDefinition<Bandeja> updateBandejaE = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == derivacion.usuarioemisor, updateBandejaE);
 
             Proceso proceso = new Proceso();
             proceso.area = derivacion.areaprocedencia;
             proceso.fechaemision = DateTime.Now;
             proceso.idusuario = userId;
-
+	
             UpdateDefinition<Documento> updateDocumento = Builders<Documento>.Update.Push("historialproceso", proceso);
             _documentos.UpdateOne(doc => doc.id == bandejaDocumento.iddocumento, updateDocumento);
 
