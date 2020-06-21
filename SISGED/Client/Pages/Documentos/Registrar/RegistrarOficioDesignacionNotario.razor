@@ -180,6 +180,11 @@
         var httpResponse =  await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/documentoodn", expedienteWrapper);
         if (httpResponse.Error)
         {
+
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
             OficioDesignacionNotario oficiodesignacionnotario = new OficioDesignacionNotario();
@@ -204,10 +209,6 @@
                 cliente = expedientebandeja.cliente
             };
             workspace.UpdateComponentBandeja(itemSalida);
-            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
-        }
-        else
-        {
             await swalfire.successMessage("Oficio de Designacion de Notario Registrada Correctamente");
         }
         Console.WriteLine("Todo Bien");
