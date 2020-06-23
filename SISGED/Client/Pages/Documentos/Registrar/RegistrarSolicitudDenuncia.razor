@@ -70,7 +70,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.nombrecliente)">
                     <MatTextField @bind-Value="@solicitudDenuncia.nombrecliente" Class="text-field-style"
-                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudDenuncia))'></MatTextField>
+                                  Label="Nombre del cliente" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudDenuncia))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                         <ValidationMessage For="@(() => solicitudDenuncia.nombrecliente)" />
@@ -98,7 +98,7 @@
                 </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.numerodocumento)">
                     <MatTextField @bind-Value="@solicitudDenuncia.numerodocumento" Class="text-field-style"
-                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudDenuncia))'></MatTextField>
+                                  Label="Numero de Documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudDenuncia))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                         <ValidationMessage For="@(() => solicitudDenuncia.numerodocumento)" />
@@ -110,7 +110,7 @@
                 </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.codigo)">
                     <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.codigo" Class="text-field-style"
-                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"codigo",solicitudDenuncia.contenidoDTO))'></MatTextField>
+                                  Label="Codigo" @oninput='@(e => KeyUp(e,"codigo",solicitudDenuncia.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                         <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.codigo)" />
@@ -122,7 +122,7 @@
                 </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.titulo" Class="text-field-style"
-                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"titulo",solicitudDenuncia.contenidoDTO))'></MatTextField>
+                                  Label="Titulo de la Solicitud" @oninput='@(e => KeyUp(e,"titulo",solicitudDenuncia.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                         <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.titulo)" />
@@ -134,7 +134,7 @@
                 </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.descripcion)">
                     <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.descripcion" Class="text-field-style"
-                                  Label="Descripcion del Oficio" @oninput='@(e => KeyUp(e,"descripcion",solicitudDenuncia.contenidoDTO))'></MatTextField>
+                                  Label="Descripcion de la solucitud" @oninput='@(e => KeyUp(e,"descripcion",solicitudDenuncia.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                         <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.descripcion)" />
@@ -144,18 +144,7 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.nombrecliente)">
-                    <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.nombrecliente" Class="text-field-style"
-                                  Label="Dir. Oficio Notarial" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudDenuncia.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.nombrecliente)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+               
                 <div class="field-container">
                     <InputFile Label="Documento" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
                 </div>
@@ -207,6 +196,7 @@
         if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
         {
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            solicitudDenuncia.contenidoDTO.nombrecliente = solicitudDenuncia.nombrecliente;
             expedienteWrapper.documento = solicitudDenuncia;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
 

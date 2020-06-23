@@ -13,7 +13,7 @@ namespace SISGED.Shared.Validators.DocumentosValidator.SolicitudDenuncia
             RuleFor(x => x.codigo).NotEmpty().WithMessage("Debe Ingresar un Codigo obligatoriamente");
             RuleFor(x => x.titulo).NotEmpty().WithMessage("Debe Ingresar un titulo obligatoriamente");
             RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe Ingresar una descripcion obligatoriamente");
-            RuleFor(x => x.nombrecliente).NotEmpty().WithMessage("Debe Ingresar un cliente obligatoriamente");
+            //RuleFor(x => x.nombrecliente).NotEmpty().WithMessage("Debe Ingresar un cliente obligatoriamente");
         }
     }
 }
