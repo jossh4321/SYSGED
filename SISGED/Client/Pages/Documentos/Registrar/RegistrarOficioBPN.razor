@@ -130,22 +130,9 @@
                     </div>
                 </div>
 
-                <!--div class="field-container input-group-2 CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.observacion)">
-                    <MatTextField bind-Value="documento.contenidoDTO.observacion" Class="text-field-style" Label="Observacion del documento"
-                                  oninput='(e => KeyUp(e, "observacion", documento.contenidoDTO))'></MatTextField>
-
-                    <div class="incorrecto">
-                        <MatIcon Icon="MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="(() => documento.contenidoDTO.observacion)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div-->
-
                 <div class="field-container">
                     <MatButton type="submit"
+                               Disabled="@loadprocess"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
                 </div>
@@ -236,7 +223,7 @@
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-
+    private bool loadprocess = false;
     public bool abrirDialogo = false;
     public void openDialog() { abrirDialogo = true; }
     public void closeDialog() { abrirDialogo = false; }
@@ -295,13 +282,13 @@
     {
         var property = val.GetType().GetProperty(memberName);
         property.SetValue(val, e.Value.ToString());
-        Console.WriteLine("Aqui Todo Bien: " + e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
     }
 
     public async Task handleValidSubmit()
     {
+        loadprocess = true;
         documento.contenidoDTO.idcliente = docSolicitudBPNDTO.contenidoDTO.idcliente;
         documento.contenidoDTO.direccionoficio = docSolicitudBPNDTO.contenidoDTO.direccionoficio;
         documento.contenidoDTO.idnotario = docSolicitudBPNDTO.contenidoDTO.idnotario;
@@ -345,18 +332,17 @@
             workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
 
-            Console.WriteLine("Todo Bien");
         }
         else
         {
             await swalfire.errorMessage("Error en el servidor");
         }
-
+        loadprocess = false;
     }
 
     public void handleInvalidSubmit()
     {
+        loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
-        Console.WriteLine("Algo Mal");
     }
 }

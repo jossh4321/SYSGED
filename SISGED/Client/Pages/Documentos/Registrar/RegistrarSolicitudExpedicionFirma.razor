@@ -81,7 +81,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.tipodocumento)">
                     <InputSelect @bind-Value="@solicitudexpedicionfirma.tipodocumento" class="text-field-style  custom-select">
-                        <option value="nulo">--Seleccione Algo--</option>
+                        <option value="nulo">--Seleccione el Tipo de Documento--</option>
                         <option value="CE">Carnet de Extranjeria</option>
                         <option value="DNI">D.N.I.</option>
                         <option value="pasaporte">Pasaporte</option>
@@ -110,7 +110,7 @@
                 </div>
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitudexpedicionfirma"
+                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitud"
                                   @oninput='@(e => KeyUp(e,"codigo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
 
                     <div class="incorrecto">
@@ -124,7 +124,7 @@
                 </div>
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.titulo" Class="text-field-style" Label="Título del solicitudexpedicionfirma"
+                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.titulo" Class="text-field-style" Label="Título del solicitud"
                                   @oninput='@(e => KeyUp(e,"titulo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
 
                     <div class="incorrecto">
@@ -138,8 +138,8 @@
                 </div>
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.descripcion)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción del solicitudexpedicionfirma"
-                                  @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
+                    <textarea class="form-control text-field-style txt-area" @bind="@solicitudexpedicionfirma.contenidoDTO.descripcion" 
+                               @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedicionfirma.contenidoDTO))' placeholder="Descripcion de la Solicitud"></textarea>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -150,41 +150,14 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.cliente)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.cliente" Class="text-field-style" Label="Cliente"
-                                  @oninput='@(e => KeyUp(e,"cliente",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
-
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.cliente)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <!--<div class="field-container">
-                <MatFileUpload Style="padding: 15px; background-color: #6200ee;" OnChange="FilesReadyForContent"></MatFileUpload>
-                   if (list == "")
-                    {
-                        <div>Seleccione un archivo</div>
-                    }
-                    else
-                    {
-                        <div>list</div>
-                    }
-                </div>-->
-
-                <InputFile Label="Documento" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
                 <div class="field-container">
                     <MatButton type="submit"
+                               Disabled="@loadprocess"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
                 </div>
-
             </MatTab>
         </MatTabGroup>
     </EditForm>
@@ -196,56 +169,7 @@
     private EditContext _editContext;
     private string documentoTemporal { get; set; } = null;
     private string imagenTemporal;
-
-    /*
-    string list = "";
-    private string fileContent;
-    private byte[] documentoBytes = null;
-    async Task FilesReadyForContent(IMatFileUploadEntry[] files)
-    {
-        try
-        {
-            var file = files.FirstOrDefault();
-            if (file == null)
-            {
-                return;
-            }
-
-            using (var stream = new MemoryStream())
-            {
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                await file.WriteToStreamAsync(stream);
-                sw.Stop();
-                if (stream.Length > 1024 * 1024)
-                {
-                    fileContent = "";
-                    fileContent += $"Name:\t{file.Name}\r\n";
-                    fileContent += $"Type:\t{file.Type}\r\n";
-                    fileContent += $"LastModified:\t{file.LastModified}\r\n";
-                    fileContent += $"Size:\t{file.Size}\r\n";
-                    fileContent += $"Time:\t{sw.Elapsed}\r\n";
-                    fileContent += $"Speed:\t{(stream.Length / sw.Elapsed.TotalSeconds):N0}  b/s\r\n";
-                }
-                else
-                {
-                    stream.Seek(0, SeekOrigin.Begin);
-                    using (var reader = new StreamReader(stream))
-                    {
-                        fileContent = await reader.ReadToEndAsync();
-                    }
-                    //documentoBytes = Convert.FromBase64String(fileContent);
-                    //solicitudexpedicionfirma.contenidoDTO.datosurl = documentoBytes;
-
-                    list = $"Nombre: {file.Name} - Tamaño: {file.Size}";
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            fileContent = $"Error:\r\n{e.Message}\r\n{e.StackTrace}";
-        }
-    }*/
-
+    private bool loadprocess = false;
     protected override void OnInitialized()
     {
         _editContext = new EditContext(solicitudexpedicionfirma);
@@ -265,48 +189,54 @@
     {
         var property = val.GetType().GetProperty(memberName);
         property.SetValue(val, e.Value.ToString());
-        Console.WriteLine("Aqui Todo Bien: " + e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
     }
 
     public async Task handleValidSubmit()
     {
-        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-        expedienteWrapper.documento = solicitudexpedicionfirma;
-        expedienteWrapper.idusuarioactual = sesion.usuario.id;
-
-        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosef", expedienteWrapper);
-        if (httpResponse.Error)
+        loadprocess = true;
+        if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
         {
-            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
+            expedienteWrapper.documento = solicitudexpedicionfirma;
+
+            expedienteWrapper.idusuarioactual = sesion.usuario.id;
+
+            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosef", expedienteWrapper);
+            if (httpResponse.Error)
+            {
+                await swalfire.errorMessage("Error en el servidor 505, intentelo de nuevo");
+            }
+            else
+            {
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja = httpResponse.Response;
+                Item itemSalida = new Item()
+                {
+                    nombre = expedientebandeja.tipo,
+                    valor = expedientebandeja,
+                    icono = "alarm_add",
+                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                    currentPlace = "outputs",
+                    originPlace = "outputs",
+                    cliente = expedientebandeja.cliente
+                };
+                workspace.UpdateComponentBandeja(itemSalida);
+                await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
+            }
         }
         else
         {
-            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-
-            expedientebandeja = httpResponse.Response;
-            Item itemSalida = new Item()
-
-            {
-
-                nombre = expedientebandeja.tipo,
-                valor = expedientebandeja,
-                icono = "alarm_add",
-                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
-            };
-            workspace.UpdateComponentBandeja(itemSalida);
-            await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
+            await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
         }
-        Console.WriteLine("Todo Bien");
+        loadprocess = false;
     }
 
     public void handleInvalidSubmit()
     {
+        loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
-        Console.WriteLine("Algo Mal");
     }
 }

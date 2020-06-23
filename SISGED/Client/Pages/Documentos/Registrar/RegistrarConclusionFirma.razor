@@ -70,7 +70,8 @@
             <MatTab Label="Datos para conclusion de firma">
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idescriturapublica)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica" 
+                                       Placeholder ="Ingrese el titulo del Acto Juridico">
                         <SelectedTemplate>
                             <strong>@context.titulo</strong>
                         </SelectedTemplate>
@@ -89,6 +90,7 @@
                 </div>
                 <div class="field-container">
                     <MatButton type="submit"
+                               Disabled="@loadprocess"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
                 </div>
@@ -99,14 +101,11 @@
 </div>
 
 @code {
-    //Datos de la sesion local
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-
     private ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
-
     private EditContext _editContext;
-
+    private bool loadprocess = false;
     public List<EscrituraPublica> escriturapublicasseleccionados = new List<EscrituraPublica>();
     public EscrituraPublica escriturapublicaselect;
     private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
@@ -114,7 +113,6 @@
         var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
         if (httpResponse.Error)
         {
-            Console.WriteLine("error en el autocomplete");
             return new List<EscrituraPublica>();
         }
         else
@@ -132,19 +130,18 @@
     {
         var property = val.GetType().GetProperty(memberName);
         property.SetValue(val, e.Value.ToString());
-        Console.WriteLine("Aqui Todo Bien: " + e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
     }
 
     public async Task handleValidSubmit()
     {
-        Console.WriteLine("Expediente: " + workspace.expedienteseleccionado + " Documento: " + conclusionFirma.contenidoDTO.idescriturapublica);
+        loadprocess = true;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = conclusionFirma;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
         var httpResponse = await repository.Post<ExpedienteWrapper, ConclusionFirma>($"api/documentos/documentocf", expedienteWrapper);
         if (httpResponse.Error)
@@ -165,9 +162,7 @@
             expedientebandeja.documento.estado = oficioconclusionfirma.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
-
             {
-
                 nombre = expedientebandeja.tipo,
                 valor = expedientebandeja,
                 icono = "alarm_add",
@@ -179,12 +174,12 @@
             workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Conclusión de Firma registrada Correctamente");
         }
-        Console.WriteLine("Todo Bien");
+        loadprocess = false;
     }
 
     public void handleInvalidSubmit()
     {
+        loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
-        Console.WriteLine("Algo Mal");
     }
 }

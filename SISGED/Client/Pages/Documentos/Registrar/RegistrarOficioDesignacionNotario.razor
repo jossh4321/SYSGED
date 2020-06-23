@@ -102,11 +102,14 @@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => oficiodesignacion.contenidoDTO.idnotario)">
                     <BlazoredTypeahead SearchMethod="match" @bind-Value="@oficiodesignacion.contenidoDTO.idnotario">
                         <SelectedTemplate>
-                            @context.nombre @context.apellido  <strong>@context.dni</strong>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
                         </SelectedTemplate>
                         <ResultTemplate>
-                            @context.nombre @context.apellido  <strong>@context.dni</strong>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
                         </ResultTemplate>
+                        <NotFoundTemplate>
+                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                        </NotFoundTemplate>
                     </BlazoredTypeahead>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -119,13 +122,13 @@
                 </div>
                 <div class="field-container">
                     <MatButton type="submit"
+                                Disabled="@loadprocess"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
                 </div>
             </MatTab>
         </MatTabGroup>
     </EditForm>
-
 </div>
 
 @code {
@@ -133,15 +136,20 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Notario> notariosseleccionados = new List<Notario>();
     public Notario notarioselect;
-    [Parameter]
-    public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set;  }
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set;  }
+    private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
+    private EditContext _editContext;
+    private bool loadprocess = false;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(oficiodesignacion);
+    }
     private async Task<IEnumerable<Notario>> match(string searchtext)
     {
-        //return await Task.FromResult(products.Where(x => x.ProductName.ToLower().Contains(searchtext.ToLower())).ToList());
         var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
         if (httpResponse.Error)
         {
-            Console.WriteLine("error en el autocomplete");
             return new List<Notario>();
         }
         else
@@ -149,28 +157,18 @@
             return httpResponse.Response;
         }
     }
-
-    private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
-    private EditContext _editContext;
-    protected override void OnInitialized()
-    {
-        _editContext = new EditContext(oficiodesignacion);
-    }
-
     void KeyUp(ChangeEventArgs e, string memberName, object val)
     {
-        //var property = usuario2.GetType().GetProperty(memberName);
-        var property = val.GetType().GetProperty(memberName); //GetProperty(memberName, usuario2);
+        var property = val.GetType().GetProperty(memberName);
         property.SetValue(val, e.Value.ToString());
-        Console.WriteLine("Aqui Todo Bien: " + e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
     }
 
     public async Task handleValidSubmit()
     {
+        loadprocess = true;
         oficiodesignacion.contenidoDTO.idusuario = sesion.usuario.id;
-        Console.WriteLine("Expediente: " + workspace.expedienteseleccionado + " Documento: " + oficiodesignacion.contenidoDTO.titulo);
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = oficiodesignacion;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
@@ -192,7 +190,6 @@
             expedientebandeja.documento.estado = oficiodesignacionnotario.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
-
             {
 
                 nombre = expedientebandeja.tipo,
@@ -210,14 +207,13 @@
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
         }
-        Console.WriteLine("Todo Bien");
+        loadprocess = false;
     }
 
     public void handleInvalidSubmit()
     {
-        //AumentarBandeja.InvokeAsync(workspace.expedienteseleccionado);
+        loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
-        Console.WriteLine("Algo Mal");
     }
 
 }

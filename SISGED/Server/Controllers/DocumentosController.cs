@@ -49,21 +49,22 @@ namespace SISGED.Server.Controllers
             return documentoOficioBPN;
         }
 
-        //Con el expediente agregado falta wrapper
         [HttpPost("documentosd")]
         public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
+            //conversion de Object a Tipo especifico
             SolicitudDenunciaDTO documento = new SolicitudDenunciaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             documento = JsonConvert.DeserializeObject<SolicitudDenunciaDTO>(json);
 
-
+            //subida de archivo a repositorio y retorno de url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.urldata))
             {
                 var solicitudBytes = Convert.FromBase64String(documento.contenidoDTO.urldata);
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicituddenuncia");
             }
+            //Creacionde Obj SolicitudDenuncia y almacenamiento en la coleccion documento
             ContenidoSolicitudDenuncia contenidoSolicitudDenuncia = new ContenidoSolicitudDenuncia()
             {
                 codigo = documento.contenidoDTO.codigo,
@@ -83,6 +84,7 @@ namespace SISGED.Server.Controllers
             };
             solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
 
+            //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
             Cliente cliente = new Cliente()
             {
                 nombre = documento.nombrecliente,
@@ -109,9 +111,10 @@ namespace SISGED.Server.Controllers
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
 
+            //actualizacion de bandeja de salida del usuario
             _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
 
-
+            //creacion de obj ExpedienteBandejaDTO
             DocumentoDTO doc = new DocumentoDTO();
             doc.id = solicitudDenuncia.id;
             doc.id = solicitudDenuncia.tipo;
@@ -127,26 +130,26 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
             bandejaexpdto.tipo = expediente.tipo;
 
-
-
-
             return bandejaexpdto;
         }
 
-        //Con el expediente agregado falta wrapper
         [HttpPost("documentosef")]
         public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
         {
+            //Conversion de Obj a tipo SolicitudExpedicionFirmaDTO
             SolicitudExpedicionFirmaDTO conclusionfirmaDTO = new SolicitudExpedicionFirmaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             conclusionfirmaDTO = JsonConvert.DeserializeObject<SolicitudExpedicionFirmaDTO>(json);
 
+            //Almacenamiento de archivo en repositorio y obtnecion de url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(conclusionfirmaDTO.contenidoDTO.data))
             {
                 var solicitudBytes = Convert.FromBase64String(conclusionfirmaDTO.contenidoDTO.data);
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicitudexpedicionfirma");
             }
+
+            //Registro de objeto ContenidoSolicitudExpedicionFirma y registro en coleccion documentos
             ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
             {
                 titulo = conclusionfirmaDTO.contenidoDTO.titulo,
@@ -164,16 +167,15 @@ namespace SISGED.Server.Controllers
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
-
             documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF);
 
+            //Creacion del objeto Expediente y registro en la coleccion Expedientes
             Cliente cliente = new Cliente()
             {
                 nombre = conclusionfirmaDTO.nombrecliente,
                 tipodocumento = conclusionfirmaDTO.tipodocumento,
                 numerodocumento = conclusionfirmaDTO.numerodocumento
             };
-
             Expediente expediente = new Expediente();
             expediente.tipo = "Expedicion de Firmas";
             expediente.cliente = cliente;
@@ -194,8 +196,10 @@ namespace SISGED.Server.Controllers
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
 
+            //Actualizacion de la bandeja de salida del usuario con el expediente
             _documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, expedientewrapper.idusuarioactual);
 
+            //Creacion del objeto ExpedienteBandejaDTO y retorno
             DocumentoDTO doc = new DocumentoDTO();
             doc.id = documentoSEF.id;
             doc.id = documentoSEF.tipo;
@@ -211,7 +215,6 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
             bandejaexpdto.tipo = expediente.tipo;
 
-
             return bandejaexpdto;
         }
 
@@ -222,63 +225,12 @@ namespace SISGED.Server.Controllers
             ConclusionFirmaDTO conclusionfirmaDTO = new ConclusionFirmaDTO();
             var json = JsonConvert.SerializeObject(expediente.documento);
             conclusionfirmaDTO = JsonConvert.DeserializeObject<ConclusionFirmaDTO>(json);
-
             ConclusionFirma documentoCF = new ConclusionFirma();
             documentoCF = _documentoservice.registrarConclusionFirmaE(expediente);
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
-        /*Esto funciona por si algo sale mal
-         * [HttpPost("documentosbpn")]
-        public ActionResult<OficioBPN> RegistrarDocumentoOficioBPN(OficioBPNDTO documento)
-        {
-            ContenidoOficioBPN contenidoSolicitudBPN = new ContenidoOficioBPN()
-            {
-                titulo = documento.contenidoDTO.titulo,
-                descripcion = documento.contenidoDTO.descripcion,
-                observacion = documento.contenidoDTO.observacion,
-                idcliente = documento.contenidoDTO.idcliente.id,
-                direccionoficio = documento.contenidoDTO.direccionoficio,
-                idnotario = documento.contenidoDTO.idnotario.id,
-                actojuridico = documento.contenidoDTO.actojuridico,
-                tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
-                otorgantes = documento.contenidoDTO.otorgantes,
-                fecharealizacion = DateTime.Now,
-                url="ninguna"
-            };
-            OficioBPN documentoODN = new OficioBPN()
-            {
-                tipo = "OficioBPN",
-                contenido = contenidoSolicitudBPN,
-                estado = "pendiente",
-                historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
-            };
-            documentoODN = _documentoservice.registrarOficioBPN(documentoODN);
-            return documentoODN;
-        }
-
-        [HttpPost("documentocf")]
-        public async Task<ActionResult<ConclusionFirma>> RegistrarDocumentoCF(ConclusionFirmaDTO documento)
-        {
-            ContenidoConclusionFirma contenidoCF = new ContenidoConclusionFirma()
-            {
-                idescriturapublica = documento.contenidoDTO.idescriturapublica.id
-            };
-            ConclusionFirma documentoDF = new ConclusionFirma()
-            {
-                tipo = "ConclusionFirma",
-                contenido = contenidoCF,
-                estado = "pendiente",
-                historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
-            };
-
-            documentoDF = _documentoservice.registrarConclusionFirma(documentoDF);
-            _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(documento.contenidoDTO.idescriturapublica);
-            return documentoDF;
-        }*/
-
+       
         [HttpPut("cambiarestado")]
         public ActionResult<Documento> ModificarEstado(DocumentoEvaluadoDTO documento)
         {

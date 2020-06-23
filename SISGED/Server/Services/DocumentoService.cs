@@ -30,11 +30,12 @@ namespace SISGED.Server.Services
         }
         public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper)
         {
+            //Deserealizacion de Obcject a tipo OficioDesignacionNotarioDTO
             OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             oficioDesignacionNotarioDTO = JsonConvert.DeserializeObject<OficioDesignacionNotarioDTO>(json);
 
-            //oficioDesignacionNotarioDTO = (OficioDesignacionNotarioDTO)expedienteWrapper.documento;
+            //Creacion de Obj OficioDesignacionNotario y registro en coleccion de documentos 
             ContenidoOficioDesignacionNotario contenidoODN = new ContenidoOficioDesignacionNotario()
             {
                 titulo = oficioDesignacionNotarioDTO.contenidoDTO.titulo,
@@ -58,6 +59,7 @@ namespace SISGED.Server.Services
             };
             _documentos.InsertOne(documentoODN);
 
+            //Actualizacion del expediente
             DocumentoExpediente documentoExpediente = new DocumentoExpediente();
             documentoExpediente.indice = 2;
             documentoExpediente.iddocumento = documentoODN.id;
@@ -65,34 +67,22 @@ namespace SISGED.Server.Services
             documentoExpediente.fechacreacion = DateTime.Now;
             documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
             documentoExpediente.fechademora = null;
-
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            //var filter = Builders<Expediente>.Filter.Eq("id", ObjectId.Parse("5ee5f24e7d8f833f68cc88a0"));
             Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5ee5f24e7d8f833f68cc88a0", updateExpediente);
 
-            /*UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            var filter = Builders<Expediente>.Filter.Eq("id", ObjectId.Parse("5ee5f24e7d8f833f68cc88a0"));
-            Expediente expediente = _expedientes.FindOneAndUpdate(filter, updateExpediente);*/
 
-            /*  UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(exp => exp.id == "12345678" &&
-            exp.cliente.tipodocumento == "dni", updateExpediente);*/
-
-            //actualizacion bandeja salida
+            //actualizacion bandeja salida del usuario
             BandejaDocumento bandejaSalidaDocumento = new BandejaDocumento();
             bandejaSalidaDocumento.idexpediente = expediente.id;
             bandejaSalidaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandejaSalida = Builders<Bandeja>.Update.Push("bandejasalida", bandejaSalidaDocumento);
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaSalida);
 
-            //actualizacion bandeja de entrada
+            //actualizacion bandeja de entrada del usuario
             UpdateDefinition<Bandeja> updateBandejaEntrada = 
                 Builders<Bandeja>.Update.PullFilter("bandejaentrada", 
                   Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
-
-
-
             return documentoODN;
         }
         public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)
@@ -107,7 +97,6 @@ namespace SISGED.Server.Services
             {
                 titulo = oficioBPNDTO.contenidoDTO.titulo,
                 descripcion = oficioBPNDTO.contenidoDTO.descripcion,
-                //observacion = oficioBPNDTO.contenidoDTO.observacion,
                 idcliente = oficioBPNDTO.contenidoDTO.idcliente.id,
                 direccionoficio = oficioBPNDTO.contenidoDTO.direccionoficio,
                 idnotario = oficioBPNDTO.contenidoDTO.idnotario.id,
@@ -144,25 +133,20 @@ namespace SISGED.Server.Services
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
             Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5ee5f24e7d8f833f68cc88a0", updateExpediente);
 
+            //Actualizacion de bandeja de salida de usuario
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
 
-
+            //Actualizacion de bandeja de entrada de usuario
             UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
             return documentoBPN;
         }
-        /*Esto funciona
-         * public OficioBPN registrarOficioBPN(OficioBPN documentoOficioBPN)
-        {
-            _documentos.InsertOne(documentoOficioBPN);
-            return documentoOficioBPN;
-        }*/
         public SolicitudExpedicionFirma registrarSolicitudExpedicionFirma(SolicitudExpedicionFirma documentoSEF)
         {
             _documentos.InsertOne(documentoSEF);
@@ -215,14 +199,16 @@ namespace SISGED.Server.Services
             documentoExpediente.fechademora = null;
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5ee5f24e7d8f833f68cc88a0", updateExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id ==  expedienteWrapper.idexpediente, updateExpediente);
 
+            //actualizando Bandeja salida
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == "5ee2e87bd12fcd05d6b6b13e", updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
 
+            //actualizando Bandeja Entrada
             UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
