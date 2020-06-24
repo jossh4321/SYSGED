@@ -1,14 +1,258 @@
-﻿<style>
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
     .div-form {
         background-color: #a6a6a6;
         flex-basis: 100%;
         border-radius: 5px 5px 0px 0px;
         width: 100%;
     }
-</style>
-<div class="div-form">
-    <h3>RegistrarAperturamientoDisciplinario</h3>
-</div>
-    @code {
 
+    .field-container {
+        display: block;
+        padding: 10px;
     }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+</style>
+
+<div class="div-form">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <FluentValidator></FluentValidator>
+        <MatTabGroup>
+            <MatTab Label="Datos del Aperturamiento Disciplinario">
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.titulo" Class="text-field-style"
+                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"titulo",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.titulo)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.descripcion" Class="text-field-style"
+                                  Label="Descripcion del aperturamiento" @oninput='@(e => KeyUp(e,"descripcion",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.descripcion)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.nombredenunciante)">
+                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.nombredenunciante" Class="text-field-style"
+                                  Label="Nombre del denunciante" @oninput='@(e => KeyUp(e,"nombredenunciante",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.nombredenunciante)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.lugaraudiencia)">
+                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.lugaraudiencia" Class="text-field-style"
+                                  Label="Lugar de la audiencia" @oninput='@(e => KeyUp(e,"lugaraudiencia",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.lugaraudiencia)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <!--Aqui agregas tus campos colombo, OBD: FISCAL ID DE DONDE SE VA A SACAR SI ES USUARIO NUEVO FILTRO-->
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.idnotario)">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@aperturamientodisciplinario.contenidoDTO.idnotario">
+                        <SelectedTemplate>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                        </ResultTemplate>
+                        <NotFoundTemplate>
+                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                        </NotFoundTemplate>
+                    </BlazoredTypeahead>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.idnotario)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+
+                <div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>
+            </MatTab>
+        </MatTabGroup>
+    </EditForm>
+</div>
+
+@code {
+    //Variables de sesion
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+
+    //Datos del formulario
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
+    private AperturamientoDisciplinarioDTO aperturamientodisciplinario = new AperturamientoDisciplinarioDTO();
+    private EditContext _editContext;
+    private string imagenTemporal;
+    private bool loadprocess = false;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(aperturamientodisciplinario);
+        if (!string.IsNullOrEmpty(aperturamientodisciplinario.contenidoDTO.data))
+        {
+            imagenTemporal = aperturamientodisciplinario.contenidoDTO.data;
+            aperturamientodisciplinario.contenidoDTO.data = null;
+        }
+    }
+
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        aperturamientodisciplinario.contenidoDTO.data = imagenbase64;
+    }
+
+    //Consulta de notarios
+    private async Task<IEnumerable<Notario>> match(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<Notario>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        loadprocess = true;
+        //aperturamientodisciplinario.contenidoDTO.idusuario = sesion.usuario.id;
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = aperturamientodisciplinario;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper, AperturamientoDisciplinario>($"api/documentos/documentoad", expedienteWrapper);
+        if (!httpResponse.Error)
+        {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            AperturamientoDisciplinario aperturamientodisciplinarioact = new AperturamientoDisciplinario();
+            aperturamientodisciplinarioact = httpResponse.Response;
+            expedientebandeja.documento.id = aperturamientodisciplinarioact.id;
+            expedientebandeja.documento.tipo = aperturamientodisciplinarioact.tipo;
+            expedientebandeja.documento.historialcontenido = aperturamientodisciplinarioact.historialcontenido;
+            expedientebandeja.documento.historialproceso = aperturamientodisciplinarioact.historialproceso;
+            expedientebandeja.documento.contenido = aperturamientodisciplinarioact.contenido;
+            expedientebandeja.documento.estado = aperturamientodisciplinarioact.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = expedientebandeja.cliente
+            };
+            workspace.UpdateComponentBandeja(itemSalida);
+            await swalfire.successMessage("Aperturamiento Disciplinario registrado correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        loadprocess = false;
+    }
+
+    public void handleInvalidSubmit()
+    {
+        loadprocess = false;
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+
+}

@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SISGED.Shared.Validators.DocumentosValidator.ConclusionFirma
+namespace SISGED.Shared.Validators.DocumentosValidator.AperturamientoDisciplinario
 {
-    public class ADValidator : AbstractValidator<ConclusionFirmaDTO>
+    public class ADValidator : AbstractValidator<AperturamientoDisciplinarioDTO>
     {
         public ADValidator()
         {

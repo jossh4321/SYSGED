@@ -7,9 +7,9 @@ using System.Text;
 
 namespace SISGED.Shared.Validators.DocumentosValidator.ConclusionFirma
 {
-    public class ContenidoCFValidator : AbstractValidator<ContenidoConclusionFirmaDTO>
+    public class ContenidoADValidator : AbstractValidator<ContenidoConclusionFirmaDTO>
     {
-        public ContenidoCFValidator()
+        public ContenidoADValidator()
         {
             RuleFor(x => x.idescriturapublica).Must(escritura => escritura != null && escritura != new EscrituraPublica())
                 .WithMessage("Debe seleccionar una escritura pública obligatoriamente");
