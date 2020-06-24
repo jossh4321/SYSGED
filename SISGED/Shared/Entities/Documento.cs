@@ -222,6 +222,8 @@ namespace SISGED.Shared.Entities
     }
     public class ContenidoApelacion
     {
+        public string titulo { get; set; }
+        public string descripcion { get; set; }
         public DateTime fechaapelacion { get; set; }
         public string url { get; set; }
     }

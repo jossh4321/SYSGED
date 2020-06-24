@@ -1,0 +1,94 @@
+﻿@inject IRepository repositorio
+@inject ISwalFireMessage swalFireMessage
+<style>
+    p {
+        display: block;
+    }
+
+    .demo-mat-card {
+        max-width: 200px;
+    }
+
+    .demo-mat-card-content {
+        padding: 1rem;
+    }
+
+    .demo-mat-card-clean-margin {
+        margin: 0px;
+    }
+
+    .demo-mat-card-text {
+        color: black;
+    }
+
+    .mat-color {
+        color: skyblue;
+    }
+</style>
+@if (listaEscriturasPublicas.Count == 0)
+{
+    <text>Cargando...</text>
+}
+else
+{
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            @foreach (var escriturapublica in listaEscriturasPublicas)
+            {
+                <div class="mat-layout-grid-cell-span-4">
+                    <EscrituraPublicaC escriturapublica="escriturapublica"></EscrituraPublicaC>
+                </div>
+            }
+        </div>
+    </div>
+
+    <MatDialog @bind-IsOpen="dialogoabierto">
+        <MatDialogTitle>Datos de la escritura pública</MatDialogTitle>
+        <MatDialogContent></MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@((e) => { dialogoabierto = false; })">Volver</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+    <MatDialog @bind-IsOpen="dialogocontrato">
+        <MatDialogTitle>Contratos del Acto Jurídico</MatDialogTitle>
+        <MatDialogContent></MatDialogContent>
+        <MatDialogActions></MatDialogActions>
+    </MatDialog>
+
+    <MatDialog @bind-IsOpen="dialogootorgantes">
+        <MatDialogTitle>Otorgants del Acto Jurídico</MatDialogTitle>
+        <MatDialogContent></MatDialogContent>
+        <MatDialogActions></MatDialogActions>
+    </MatDialog>
+}
+@code {
+    private List<EscrituraPublicaRDTO> listaEscriturasPublicas { get; set; }
+    public bool dialogoabierto = false;
+    public EscrituraPublicaRDTO escrituraPublica { get; set; }
+    public bool dialogocontrato = false;
+    public bool dialogootorgantes = false;
+    public List<Contrato> listacontratos { get; set; }
+    public List<Otorgante> listaotorgantes { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        listaEscriturasPublicas = new List<EscrituraPublicaRDTO>();
+        escrituraPublica = new EscrituraPublicaRDTO();
+        listacontratos = new List<Contrato>();
+        listaotorgantes = new List<Otorgante>();
+        await CargarEscriturasPublicas();
+    }
+
+    private async Task CargarEscriturasPublicas()
+    {
+        var responseHttp = await repositorio.Get<List<EscrituraPublicaRDTO>>("api/EscriturasPublicas");
+        listaEscriturasPublicas = responseHttp.Response;
+    }
+
+    private void VisualizarEscrituraPublica(EscrituraPublicaRDTO escrituraPublica)
+    {
+        dialogoabierto = true;
+        this.escrituraPublica = escrituraPublica;
+    }
+
+}

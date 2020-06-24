@@ -55,7 +55,8 @@ namespace SISGED.Server.Services
                     fechaescriturapublica = ep.fechaescriturapublica,
                     url = ep.url,
                     estado = ep.estado,
-                    notario = ep.notario.nombre + " " + ep.notario.apellido
+                    notario = ep.notario.nombre + " " + ep.notario.apellido,
+                    titulo = ep.titulo
                 })
                 .ToListAsync();
 
