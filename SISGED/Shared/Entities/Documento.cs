@@ -168,7 +168,6 @@ namespace SISGED.Shared.Entities
         public List<string> hechosimputados { get; set; }
         public string estado { get; set; }
         public string url { get; set; }
-
     }
     public class AperturamientoDisciplinario : Documento
     {

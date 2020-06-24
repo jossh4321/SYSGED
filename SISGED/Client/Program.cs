@@ -16,6 +16,8 @@ using SISGED.Shared.Models;
 using SISGED.Shared.Validators.DocumentosValidator.DesignacionNotario;
 using SISGED.Shared.Validators.DocumentosValidator.OficioBPN;
 using SISGED.Shared.Validators.DocumentosValidator.SolicitudDenuncia;
+using SISGED.Shared.Entities;
+using SISGED.Shared.Validators.DocumentosValidator.AperturamientoDisciplinario;
 
 namespace SISGED.Client
 {
@@ -46,9 +48,11 @@ namespace SISGED.Client
             services.AddValidatorsFromAssemblyContaining<OficioDesignacionNotarioValidator>();
             services.AddValidatorsFromAssemblyContaining<ContenidoOficioBPNValidator>();
             services.AddValidatorsFromAssemblyContaining<OficioBPNValidator>();
-            //
             services.AddValidatorsFromAssemblyContaining<ContenidoSolicitudDenunciaDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<SolicitudDenunciaDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<ContenidoADValidator>();
+            services.AddValidatorsFromAssemblyContaining<AperturamientoDisciplinarioValidator>();
+            services.AddValidatorsFromAssemblyContaining<ParticipanteValidator>();
 
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();

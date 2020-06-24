@@ -1,14 +1,144 @@
-﻿<style>
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
     .div-form {
         background-color: #a6a6a6;
         flex-basis: 100%;
         border-radius: 5px 5px 0px 0px;
         width: 100%;
     }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
 </style>
 <div class="div-form">
-    <h3>RegistrarAperturamientoDisciplinario</h3>
-</div>
-    @code {
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <FluentValidator></FluentValidator>
 
+        <MatTabGroup>
+            <MatTab Label="Datos Generales">
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.titulo" Class="text-field-style"
+                                  Label="Titulo" @oninput='@(e => KeyUp(e, "titulo", aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.titulo)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+
+                @foreach (Participante p in aperturamientodisciplinario.contenidoDTO.participantes)
+                {
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre)">
+                        <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre" Class="text-field-style"
+                                      Label="Nombre del cliente"
+                                      @oninput='@(e => KeyUp(e, "nombre", aperturamientodisciplinario.contenidoDTO.participantes[p.index]))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                }
+            </MatTab>
+            <MatTab>
+                <div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>
+            </MatTab>
+        </MatTabGroup>
+    </EditForm>
+</div>
+@code {
+
+    private AperturamientoDisciplinarioDTO aperturamientodisciplinario = new AperturamientoDisciplinarioDTO();
+    private ContenidoAperturamientoDisciplinarioDTO contenido = new ContenidoAperturamientoDisciplinarioDTO()
+    {
+            participantes = new List<Participante>() { new Participante() }
+    };
+    private EditContext _editContext;
+    private bool loadprocess = false;
+    protected override void OnInitialized()
+    {
+        aperturamientodisciplinario.contenidoDTO = contenido;
+        _editContext = new EditContext(aperturamientodisciplinario);
     }
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        await swalfire.successMessage("Todo Correcto");
+    }
+
+    public async Task handleInvalidSubmit()
+    {
+        await swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+}
