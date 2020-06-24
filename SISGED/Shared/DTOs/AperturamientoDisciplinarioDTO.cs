@@ -21,14 +21,20 @@ namespace SISGED.Shared.DTOs
         public string descripcion { get; set; }//
         public DateTime fechainicioaudiencia { get; set; }//
         public DateTime fechafinaudiencia { get; set; }//
-        public List<Participante> participantes { get; set; } = new List<Participante>() { new Participante() { nombre="pedro"} };
+        public List<Participante> participantes { get; set; } = new List<Participante>() { new Participante()};
         public string lugaraudiencia { get; set; }//
-        public List<string> hechosimputados { get; set; } = new List<string>() { "hola" };
+        public List<Hecho> hechosimputados { get; set; } = new List<Hecho>() {new Hecho() };
         public string url { get; set; }//
     }
     public class Participante
     {
         public string nombre { get; set; }
+        public Int32 index { get; set; } = 0;
+    }
+
+    public class Hecho
+    {
+        public string descripcion { get; set; }
         public Int32 index { get; set; } = 0;
     }
 }

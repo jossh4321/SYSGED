@@ -53,6 +53,7 @@ namespace SISGED.Client
             services.AddValidatorsFromAssemblyContaining<ContenidoADValidator>();
             services.AddValidatorsFromAssemblyContaining<AperturamientoDisciplinarioValidator>();
             services.AddValidatorsFromAssemblyContaining<ParticipanteValidator>();
+            services.AddValidatorsFromAssemblyContaining<HechoValidator>();
 
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();
