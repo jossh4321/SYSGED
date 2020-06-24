@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using SISGED.Server.Helpers;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
@@ -82,6 +83,34 @@ namespace SISGED.Server.Services
             List<Usuario> usuarios = new List<Usuario>();
             usuarios = _usuarios.Find(usuario => usuario.estado == status).ToList();
             return usuarios;
+        }
+
+        public async Task<List<UsuarioRDTO>> obtenerFiscales()
+        {
+            BsonArray subpipeline = new BsonArray();
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idrol") }
+                        )
+                    ))
+                );
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument("from", "roles")
+                .Add("let", new BsonDocument("idrol", "$rol"))
+                .Add("pipeline", subpipeline)
+                .Add("as", "rolobj"));
+
+            var filter = new BsonDocument("$match",
+                new BsonDocument("rolobj.label","Fiscal"));
+
+            List<UsuarioRDTO> fiscales = new List<UsuarioRDTO>();
+            fiscales = await _usuarios.Aggregate()
+                .AppendStage<Usuario_LK>(lookup)
+                .Unwind<Usuario_LK, UsuarioRDTO>(p => p.rolobj)
+                .AppendStage<UsuarioRDTO>(filter)
+                .ToListAsync();
+            return fiscales;
         }
     }
 }

@@ -18,6 +18,7 @@ namespace SISGED.Shared.Validators.DocumentosValidator.AperturamientoDisciplinar
             RuleFor(x => x.idnotario).Must(notario => notario != null && notario != new Notario())
                 .WithMessage("Debe seleccionar un Notario Obligatoriamente");
 
+            RuleFor(x => x.idfiscal).NotEmpty().WithMessage("Debe seleccionar un Fiscal Obligatoriamente");
             RuleForEach(x => x.participantes).SetValidator(new ParticipanteValidator());
             RuleFor(x => x.participantes)
             .Must(x => x.Count >= 1).WithMessage("Debe agregar un participante como minimo");

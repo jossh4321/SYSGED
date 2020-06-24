@@ -215,12 +215,30 @@
                     </div>
                 </div>
 
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.idfiscal)">
+                    <InputSelect @bind-Value="@aperturamientodisciplinario.contenidoDTO.idfiscal" class="text-field-style custom-select">
+                        <option value="">--Seleccione un Fiscal--</option>
+                        @foreach (UsuarioRDTO fiscal in fiscales)
+                        {
+                            <option value="@fiscal.id">@fiscal.datos.nombre  @fiscal.datos.apellido</option>
+                        }
+                    </InputSelect>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.idfiscal)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
 
                 <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
-                </MatTab>
+            </MatTab>
             <MatTab Label="Participantes y Conclusiones">
-
+                <!--**************************************************************************************-->
                 <div class="contenedor-participantes">
                     <div class="titulo-paticipantes">
                         <div><span class="titulo">Participantes</span></div>
@@ -289,7 +307,6 @@
                             </div>
                         </div>
                     }
-
                     <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.hechosimputados)">
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -323,14 +340,28 @@
     private EditContext _editContext;
     private string imagenTemporal;
     private bool loadprocess = false;
+    List<UsuarioRDTO> fiscales { get; set; } = new List<UsuarioRDTO>();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+
+
+
+
         _editContext = new EditContext(aperturamientodisciplinario);
         if (!string.IsNullOrEmpty(aperturamientodisciplinario.contenidoDTO.url))
         {
             imagenTemporal = aperturamientodisciplinario.contenidoDTO.url;
             aperturamientodisciplinario.contenidoDTO.url = null;
+        }
+        var httpResponse = await repository.Get<List<UsuarioRDTO>>("api/usuarios/fiscales");
+        if (!httpResponse.Error)
+        {
+            fiscales = httpResponse.Response;
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un error");
         }
     }
     private void addparticipante()

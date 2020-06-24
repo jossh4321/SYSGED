@@ -247,29 +247,7 @@
     {
         Console.WriteLine("INICIE: WorkEnvironment");
         List<ExpedienteDTO> listaexpediente = new List<ExpedienteDTO>();
-        /*listaexpediente.Add(expedientedto1);
-        listaexpediente.Add(expedientedto2);
-        listaexpediente.Add(expedientedto3);*/
-        /*var httpResponse = await repository.Get<List<Documento>>("api/documentos");
-        if (!httpResponse.Error)
-        {
-            bandejasalida = httpResponse.Response;
-            bandejasalida.ForEach(x => Console.WriteLine(x.id));
-        }
-        else
-        {
-            Console.WriteLine("Ocurrio un error");
-        }*/
-        /*List<BandejaEntradaDTOR> lexdto = new List<BandejaEntradaDTOR>();
-        var httpResponse = await repository.Get<List<BandejaEntradaDTOR>>("api/bandejas/bandejaentrada/5ee2e87bd12fcd05d6b6b13e");
-        if (!httpResponse.Error)
-        {
-            //lexdto = httpResponse.Response;
-        }
-        else
-        {
-            Console.WriteLine("Ocurrio un error");
-        }*/
+       
     }
 
     public void UpdateDraggableComponents(string newCurrentPlace)
@@ -318,7 +296,6 @@
         sesion.listasalidas.Add(itemnuevo);
         StateHasChanged();
     }
-
     /*
     public ExpedienteDTO expedientedto1 = new ExpedienteDTO()
     {
@@ -382,6 +359,4 @@
         derivaciones = new List<Derivacion>(),
         estado = "pendiente"
     };*/
-
-
 }
