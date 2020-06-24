@@ -18,6 +18,7 @@ namespace SISGED.Shared.DTOs
         public string url { get; set; }
         public string estado { get; set; }
         public IEnumerable<Notario> notario { get; set; }
+        public string titulo { get; set; }
     }
 
     public class EscrituraPublicaDTO
@@ -31,6 +32,7 @@ namespace SISGED.Shared.DTOs
         public string url { get; set; }
         public string estado { get; set; }
         public Notario notario { get; set; }
+        public string titulo { get; set; }
     }
 
     public class EscrituraPublicaRDTO
@@ -44,5 +46,6 @@ namespace SISGED.Shared.DTOs
         public string url { get; set; }
         public string estado { get; set; }
         public string notario { get; set; }
+        public string titulo { get; set; }
     }
 }

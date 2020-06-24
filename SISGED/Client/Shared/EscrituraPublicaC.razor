@@ -1,0 +1,28 @@
+﻿
+@if (escriturapublica == null)
+{
+    <text>Cargando...</text>
+}
+else
+{
+    <MatCard class="demo-mat-card">
+        <MatCardContent>
+            <MatCardMedia Wide="true" ImageUrl="https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg"></MatCardMedia>
+            <div class="demo-mat-card-content">
+                <MatHeadline6 class="demo-mat-card-clean-margin demo-mat-card-text">@escriturapublica.titulo</MatHeadline6>
+                <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">@escriturapublica.notario</MatSubtitle2>
+            </div>
+            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@escriturapublica.direccionoficio</MatBody2>
+        </MatCardContent>
+        <MatCardActions>
+            <MatCardActionButtons>
+                <MatButton Raised="true" Icon="@MatIconNames.Search" Class="mat-color">Consultar</MatButton>
+            </MatCardActionButtons>
+        </MatCardActions>
+    </MatCard>
+}
+
+@code {
+    [Parameter]
+    public EscrituraPublicaRDTO escriturapublica { get; set; }
+}
