@@ -242,5 +242,68 @@ namespace SISGED.Server.Services
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
         }
 
+        public AperturamientoDisciplinario registrarAperturamientoDisciplinario(AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO,
+            string urldata, string idusuario,string idexpediente , string iddocentrada)
+        {
+            //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
+            ContenidoAperturamientoDisciplinario contenidoAD = new ContenidoAperturamientoDisciplinario()
+            {
+                idnotario = aperturamientoDisciplinarioDTO.contenidoDTO.idnotario.id,
+                idfiscal = aperturamientoDisciplinarioDTO.contenidoDTO.idfiscal,
+                nombredenunciante = aperturamientoDisciplinarioDTO.contenidoDTO.nombredenunciante,
+                titulo = aperturamientoDisciplinarioDTO.contenidoDTO.titulo,
+                descripcion = aperturamientoDisciplinarioDTO.contenidoDTO.descripcion,
+                fechainicioaudiencia = aperturamientoDisciplinarioDTO.contenidoDTO.fechainicioaudiencia,
+                fechafinaudiencia = aperturamientoDisciplinarioDTO.contenidoDTO.fechafinaudiencia,
+                participantes = aperturamientoDisciplinarioDTO.contenidoDTO.participantes.Select(x => x.nombre).ToList(),
+                lugaraudiencia = aperturamientoDisciplinarioDTO.contenidoDTO.lugaraudiencia,
+                hechosimputados = aperturamientoDisciplinarioDTO.contenidoDTO.hechosimputados.Select(x => x.descripcion).ToList(),
+                url = urldata
+            };
+            AperturamientoDisciplinario aperturamientodisciplinario = new AperturamientoDisciplinario()
+            {
+                tipo = "AperturamientoDisciplinario",
+                contenido = contenidoAD,
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>(),
+                estado = "creado"
+            };
+            _documentos.InsertOne(aperturamientodisciplinario);
+
+            //Actualizacion del expediente
+            Expediente expediente = new Expediente();
+            DocumentoExpediente documentoExpediente = new DocumentoExpediente();
+            documentoExpediente.indice = 8;
+            documentoExpediente.iddocumento = aperturamientodisciplinario.id;
+            documentoExpediente.tipo = "AperturamientoDisciplinario";
+            documentoExpediente.fechacreacion = DateTime.Now;
+            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechademora = null;
+            expediente = actualizarExpediente(documentoExpediente, idexpediente);
+
+            //actualizando Bandeja salida
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = expediente.id;
+            bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
+
+            //actualizando Bandeja Entrada
+            UpdateDefinition<Bandeja> updateBandejaEntrada =
+               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
+                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", iddocentrada));
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);
+
+            return aperturamientodisciplinario;
+        }
+
+        public Expediente actualizarExpediente(DocumentoExpediente documentoExpediente, string idexpediente)
+        {
+            UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == idexpediente, updateExpediente);
+            return expediente;
+        }
+
+
     }
 }

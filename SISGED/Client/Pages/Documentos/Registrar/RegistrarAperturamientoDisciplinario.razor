@@ -167,6 +167,7 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia)">
 
                     <MatDatePicker Label="Fecha de Inicio" @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia"></MatDatePicker>
@@ -179,6 +180,7 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.fechafinaudiencia)">
 
                     <MatDatePicker Label="Fecha de Inicio" @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechafinaudiencia"></MatDatePicker>
@@ -194,7 +196,8 @@
 
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.idnotario)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@aperturamientodisciplinario.contenidoDTO.idnotario">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@aperturamientodisciplinario.contenidoDTO.idnotario" 
+                                       Placeholder="Ingrese el Nombre del Notario">
                         <SelectedTemplate>
                             <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
                         </SelectedTemplate>
@@ -328,7 +331,6 @@
         </MatTabGroup>
     </EditForm>
 </div>
-
 @code {
     //Variables de sesion
     [CascadingParameter] WorkEnvironment workspace { get; set; }
@@ -344,10 +346,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-
-
-
+        aperturamientodisciplinario.contenidoDTO.participantes = new List<Participante>(){ new Participante() { index = 0, nombre = "" } };
+        aperturamientodisciplinario.contenidoDTO.hechosimputados = new List<Hecho>() { new Hecho() { index = 0, descripcion = "" } };
         _editContext = new EditContext(aperturamientodisciplinario);
         if (!string.IsNullOrEmpty(aperturamientodisciplinario.contenidoDTO.url))
         {
@@ -364,11 +364,13 @@
             Console.WriteLine("Ocurrio un error");
         }
     }
+
     private void addparticipante()
     {
         aperturamientodisciplinario.contenidoDTO.participantes.Add(new Participante() { index = (aperturamientodisciplinario.contenidoDTO.participantes.Count)});
         StateHasChanged();
     }
+
     private void removeparticipante(int index)
     {
         aperturamientodisciplinario.contenidoDTO.participantes.RemoveAt(index);
@@ -403,6 +405,7 @@
             return httpResponse.Response;
         }
     }
+
     void KeyUp(ChangeEventArgs e, string memberName, object val)
     {
         var property = val.GetType().GetProperty(memberName);
@@ -413,61 +416,57 @@
 
     public async Task handleValidSubmit()
     {
+        loadprocess = true;
         if (aperturamientodisciplinario.contenidoDTO.url != "" && aperturamientodisciplinario.contenidoDTO.url != null)
         {
-            await swalfire.successMessage("Aperturamiento Disciplinario registrado correctamente");
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            expedienteWrapper.documento = aperturamientodisciplinario;
+            expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+            expedienteWrapper.idusuarioactual = sesion.usuario.id;
+            expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+            var httpResponse = await repository.Post<ExpedienteWrapper, AperturamientoDisciplinario>($"api/documentos/documentoad", expedienteWrapper);
+            if (!httpResponse.Error)
+            {
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja = workspace.expedienteseleccionado;
+                AperturamientoDisciplinario aperturamientodisciplinarioact = new AperturamientoDisciplinario();
+                aperturamientodisciplinarioact = httpResponse.Response;
+                expedientebandeja.documento.id = aperturamientodisciplinarioact.id;
+                expedientebandeja.documento.tipo = aperturamientodisciplinarioact.tipo;
+                expedientebandeja.documento.historialcontenido = aperturamientodisciplinarioact.historialcontenido;
+                expedientebandeja.documento.historialproceso = aperturamientodisciplinarioact.historialproceso;
+                expedientebandeja.documento.contenido = aperturamientodisciplinarioact.contenido;
+                expedientebandeja.documento.estado = aperturamientodisciplinarioact.estado;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                Item itemSalida = new Item()
+                {
+                    nombre = expedientebandeja.tipo,
+                    valor = expedientebandeja,
+                    icono = "alarm_add",
+                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                    currentPlace = "outputs",
+                    originPlace = "outputs",
+                    cliente = expedientebandeja.cliente
+                };
+                workspace.UpdateComponentBandeja(itemSalida);
+                await swalfire.successMessage("Aperturamiento Disciplinario registrado correctamente");
+            }
+            else
+            {
+                await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+            }
         }
         else
         {
             await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
         }
-        /*
-        loadprocess = true;
-        //aperturamientodisciplinario.contenidoDTO.idusuario = sesion.usuario.id;
-        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-        expedienteWrapper.documento = aperturamientodisciplinario;
-        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        expedienteWrapper.idusuarioactual = sesion.usuario.id;
-        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-
-        var httpResponse = await repository.Post<ExpedienteWrapper, AperturamientoDisciplinario>($"api/documentos/documentoad", expedienteWrapper);
-        if (!httpResponse.Error)
-        {
-            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-            expedientebandeja = workspace.expedienteseleccionado;
-            AperturamientoDisciplinario aperturamientodisciplinarioact = new AperturamientoDisciplinario();
-            aperturamientodisciplinarioact = httpResponse.Response;
-            expedientebandeja.documento.id = aperturamientodisciplinarioact.id;
-            expedientebandeja.documento.tipo = aperturamientodisciplinarioact.tipo;
-            expedientebandeja.documento.historialcontenido = aperturamientodisciplinarioact.historialcontenido;
-            expedientebandeja.documento.historialproceso = aperturamientodisciplinarioact.historialproceso;
-            expedientebandeja.documento.contenido = aperturamientodisciplinarioact.contenido;
-            expedientebandeja.documento.estado = aperturamientodisciplinarioact.estado;
-            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-            Item itemSalida = new Item()
-            {
-                nombre = expedientebandeja.tipo,
-                valor = expedientebandeja,
-                icono = "alarm_add",
-                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
-            };
-            workspace.UpdateComponentBandeja(itemSalida);
-            await swalfire.successMessage("Aperturamiento Disciplinario registrado correctamente");
-        }
-        else
-        {
-            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
-        }
         loadprocess = false;
-        */
     }
 
     public void handleInvalidSubmit()
     {
-        //loadprocess = false;
+        loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
 

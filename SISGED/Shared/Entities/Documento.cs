@@ -166,7 +166,7 @@ namespace SISGED.Shared.Entities
         public List<string> participantes { get; set; }
         public string lugaraudiencia { get; set; }
         public List<string> hechosimputados { get; set; }
-        public string estado { get; set; }
+        //public string estado { get; set; }
         public string url { get; set; }
     }
     public class AperturamientoDisciplinario : Documento

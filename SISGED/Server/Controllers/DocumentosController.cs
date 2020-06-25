@@ -236,5 +236,25 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.modificarEstado(documento);
         }
+
+        //Completo
+        [HttpPost("documentoad")]
+        public async Task<ActionResult<AperturamientoDisciplinario>> RegistrarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedientewrapper)
+        {
+            //Deserealizacion de objeto de tipo AperturamientoDisciplinario
+            AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO = new AperturamientoDisciplinarioDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            aperturamientoDisciplinarioDTO = JsonConvert.DeserializeObject<AperturamientoDisciplinarioDTO>(json);
+
+            //Almacenando el pdf en el servidor de archivos y obtencion de la url
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(aperturamientoDisciplinarioDTO.contenidoDTO.url))
+            {
+                var solicitudBytes = Convert.FromBase64String(aperturamientoDisciplinarioDTO.contenidoDTO.url);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "aperturamientodisciplinario");
+            }
+
+            return _documentoservice.registrarAperturamientoDisciplinario(aperturamientoDisciplinarioDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
     }
 }
