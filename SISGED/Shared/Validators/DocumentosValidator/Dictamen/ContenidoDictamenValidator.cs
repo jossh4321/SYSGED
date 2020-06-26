@@ -23,8 +23,13 @@ namespace SISGED.Shared.Validators.DocumentosValidator.Dictamen
             RuleForEach(x => x.recomendaciones).SetValidator(new RecomendacionValidator());
             RuleFor(x => x.recomendaciones)
             .Must(x => x.Count >= 1).WithMessage("Debe agregar una recomendación como minimo");
-        }
 
+            //RuleFor(x => x.fechaemision).Must(BeAValidDate).WithMessage("Fecha de Emision Invalida");
+        }
+        private bool BeAValidDate(DateTime date)
+        {
+            return !date.Equals(default(DateTime));
+        }
     }
     public class ObservacionValidator : AbstractValidator<Observaciones>
     {

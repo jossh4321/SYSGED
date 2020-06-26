@@ -297,6 +297,115 @@ namespace SISGED.Server.Services
             return aperturamientodisciplinario;
         }
 
+        public Dictamen RegistrarDictamen(ExpedienteWrapper expedientewrapper)
+        {
+            //Obtenemos los datos del expedientewrapper
+            DictamenDTO dictamenDTO = new DictamenDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            dictamenDTO = JsonConvert.DeserializeObject<DictamenDTO>(json);
+
+            //creacion del Objeto de tipo Dictamen y el registro en la coleccion Dictamen
+            ContenidoDictamen contenidodictamen = new ContenidoDictamen()
+            {
+                titulo = dictamenDTO.contenidoDTO.titulo,
+                descripcion = dictamenDTO.contenidoDTO.descripcion,
+                nombredenunciante = dictamenDTO.contenidoDTO.nombredenunciante,
+                conclusion = dictamenDTO.contenidoDTO.conclusion,
+                observaciones = dictamenDTO.contenidoDTO.observaciones.Select(x => x.descripcion).ToList(),
+                recomendaciones = dictamenDTO.contenidoDTO.recomendaciones.Select(x => x.descripcion).ToList(),
+                //fecha           
+            };
+            Dictamen dictamen = new Dictamen()
+            {
+                tipo = "Dictamen",
+                contenido = contenidodictamen,
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>(),
+                estado = "creado"
+            };
+            _documentos.InsertOne(dictamen);
+
+            //actualizacion de expediente
+            Expediente expediente = new Expediente();
+            DocumentoExpediente documentoExpediente = new DocumentoExpediente();
+            documentoExpediente.indice = 8;
+            documentoExpediente.iddocumento = dictamen.id;
+            documentoExpediente.tipo = "Dictamen";
+            documentoExpediente.fechacreacion = DateTime.Now;
+            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechademora = null;
+            expediente = actualizarExpediente(documentoExpediente, expedientewrapper.idexpediente);
+
+            //actualizando Bandeja salida
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = expediente.id;
+            bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == expedientewrapper.idusuarioactual, updateBandeja);
+
+            //actualizando Bandeja Entrada
+            UpdateDefinition<Bandeja> updateBandejaEntrada =
+               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
+                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedientewrapper.documentoentrada));
+            _bandejas.UpdateOne(band => band.usuario == expedientewrapper.idusuarioactual, updateBandejaEntrada);
+
+            return dictamen;
+        }
+
+        public Resolucion registrarResolucion(ResolucionDTO resolucionDTO,
+            string urldata, string idusuario, string idexpediente, string iddocentrada)
+        {
+            //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
+            ContenidoResolucion contenidoResolucion = new ContenidoResolucion()
+            {
+                descripcion = resolucionDTO.contenidoDTO.descripcion,
+                fechainicioaudiencia = resolucionDTO.contenidoDTO.fechainicioaudiencia,
+                fechafinaudiencia = resolucionDTO.contenidoDTO.fechafinaudiencia,
+                participantes = resolucionDTO.contenidoDTO.participantes.Select(x => x.nombre).ToList(),
+                sancion = resolucionDTO.contenidoDTO.sancion,
+                url = urldata
+            };
+            Resolucion resolucion = new Resolucion()
+            {
+                tipo = "Resolucion",
+                contenido = contenidoResolucion,
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>(),
+                estado = new Estado()
+                {
+                    status = "pendiente",
+                    observacion = ""
+                }
+            };
+            _documentos.InsertOne(resolucion);
+
+            //Actualizacion del expediente
+            Expediente expediente = new Expediente();
+            DocumentoExpediente documentoExpediente = new DocumentoExpediente();
+            documentoExpediente.indice = 8;
+            documentoExpediente.iddocumento = resolucion.id;
+            documentoExpediente.tipo = "Resolucion";
+            documentoExpediente.fechacreacion = DateTime.Now;
+            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechademora = null;
+            expediente = actualizarExpediente(documentoExpediente, idexpediente);
+
+            //actualizando Bandeja salida
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = expediente.id;
+            bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
+
+            //actualizando Bandeja Entrada
+            UpdateDefinition<Bandeja> updateBandejaEntrada =
+               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
+                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", iddocentrada));
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);
+
+            return resolucion;
+        }
+
         public Expediente actualizarExpediente(DocumentoExpediente documentoExpediente, string idexpediente)
         {
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
