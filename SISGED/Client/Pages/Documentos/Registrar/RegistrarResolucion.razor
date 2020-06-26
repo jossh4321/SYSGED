@@ -257,6 +257,7 @@
 
     protected override void OnInitialized()
     {
+        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0 } };
         _editContext = new EditContext(resolucion);
         if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
         {
@@ -291,12 +292,34 @@
 
     public async Task handleValidSubmit()
     {
-        await swalfire.successMessage("Resolución registrada correctamente");
+        loadprocess = true;
+        if (resolucion.contenidoDTO.data != "" && resolucion.contenidoDTO.data != null)
+        {
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            expedienteWrapper.documento = resolucion;
+            expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+            expedienteWrapper.idusuarioactual = sesion.usuario.id;
+            expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+            var httpResponse = await repository.Post<ExpedienteWrapper, Resolucion>($"api/documentos/documentor", expedienteWrapper);
+            if (!httpResponse.Error)
+            {
+                await swalfire.successMessage("Resolución registrada correctamente");
+            }
+            else
+            {
+                await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+            }
+        }
+        else
+        {
+            await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
+        }
+        loadprocess = false;
     }
 
     public void handleInvalidSubmit()
     {
-        //loadprocess = false;
+        loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
 

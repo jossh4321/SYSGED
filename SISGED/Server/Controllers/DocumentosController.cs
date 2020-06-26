@@ -256,5 +256,28 @@ namespace SISGED.Server.Controllers
 
             return _documentoservice.registrarAperturamientoDisciplinario(aperturamientoDisciplinarioDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
+
+        [HttpPost("documentod")]
+        public async Task<ActionResult<Dictamen>> RegistrarDocumentoDictamen(ExpedienteWrapper expedientewrapper)
+        {
+            return _documentoservice.RegistrarDictamen(expedientewrapper);
+        }
+
+        [HttpPost("documentor")]
+        public async Task<ActionResult<Resolucion>> RegistrarDocumentoResolucion(ExpedienteWrapper expedientewrapper)
+        {
+            ResolucionDTO resolucionDTO = new ResolucionDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            resolucionDTO = JsonConvert.DeserializeObject<ResolucionDTO>(json);
+
+            //Almacenando el pdf en el servidor de archivos y obtencion de la url
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(resolucionDTO.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(resolucionDTO.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "resolucion");
+            }
+            return _documentoservice.registrarResolucion(resolucionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
     }
 }

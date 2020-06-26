@@ -124,6 +124,9 @@
         <MatTabGroup>
             <MatTab Label="General">
 
+               
+
+
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => dictamen.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@dictamen.contenidoDTO.titulo" Class="text-field-style"
                                   Label="Titulo del dictamen" @oninput='@(e => KeyUp(e,"titulo",dictamen.contenidoDTO))'></MatTextField>
@@ -282,8 +285,10 @@
     private string imagenTemporal;
     private bool loadprocess = false;
 
-    protected override void OnInitialized()
+    protected override void  OnInitialized()
     {
+        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0 , descripcion = "" } };
+        dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
         _editContext = new EditContext(dictamen);
     }
     private void addObservaciones()
@@ -298,7 +303,7 @@
     }
     private void addRecomendaciones()
     {
-        dictamen.contenidoDTO.recomendaciones.Add(new Recomendaciones() { index = (dictamen.contenidoDTO.observaciones.Count) });
+        dictamen.contenidoDTO.recomendaciones.Add(new Recomendaciones() { index = (dictamen.contenidoDTO.recomendaciones.Count) });
         StateHasChanged();
     }
     private void removeRecomendaciones(int index)
@@ -317,13 +322,24 @@
 
     public async Task handleValidSubmit()
     {
-        await swalfire.successMessage("Dictamen registrado correctamente");
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = dictamen;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+        var httpResponse = await repository.Post<ExpedienteWrapper, Dictamen>("api/documentos/documentod", expedienteWrapper);
+        if (!httpResponse.Error)
+        {
+            await swalfire.successMessage("Dictamen registrado correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("Error en el Servidor[505]");
+        }
     }
 
     public void handleInvalidSubmit()
     {
-        //loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
-
 }
