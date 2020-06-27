@@ -257,6 +257,39 @@ namespace SISGED.Server.Controllers
             return _documentoservice.registrarAperturamientoDisciplinario(aperturamientoDisciplinarioDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
 
+        //Falta probar
+        [HttpPost("documentoAPE")]
+        public async Task<ActionResult<Apelacion>> registrarDocumentoApelacion(ExpedienteWrapper expedientewrapper)
+        {
+            //Deserealizacion de objeto de tipo Apelacion
+            ApelacionDTO apelacionDTO = new ApelacionDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            apelacionDTO = JsonConvert.DeserializeObject<ApelacionDTO>(json);
+
+            //Almacenando el pdf en el servidor de archivos y obtencion de la url
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(apelacionDTO.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(apelacionDTO.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "apelaciones");
+            }
+
+            return _documentoservice.registrarApelacion(apelacionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
+
+        //Falta probar
+        [HttpPost("documentoSEN")]
+        public async Task<ActionResult<SolicitudExpedienteNotario>> registrarSolicitudExpedienteNotario(ExpedienteWrapper expedientewrapper)
+        {
+            //Deserealizacion de objeto de tipo Apelacion
+            SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO = new SolicitudExpedienteNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            solicitudExpedienteNotarioDTO = JsonConvert.DeserializeObject<SolicitudExpedienteNotarioDTO>(json);
+
+            return _documentoservice.registrarSolicitudExpedienteNotario(solicitudExpedienteNotarioDTO, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
+
+
         [HttpPost("documentod")]
         public async Task<ActionResult<Dictamen>> RegistrarDocumentoDictamen(ExpedienteWrapper expedientewrapper)
         {

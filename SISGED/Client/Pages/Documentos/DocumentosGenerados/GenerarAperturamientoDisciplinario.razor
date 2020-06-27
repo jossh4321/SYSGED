@@ -1,0 +1,62 @@
+﻿@inject IJSRuntime js
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json
+<style>
+    * {
+        color: black;
+    }
+    .contenedor-PDF {
+        height: 400px;
+        width: 600px;
+    }
+</style>
+<MatButton Raised="true" OnClick="@GenerarPDF"> Previsualizar Documento</MatButton>
+<MatDialog @bind-IsOpen="@generado">
+    <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
+    <MatDialogContent Class="contenedor-PDF">
+        <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
+    </MatDialogContent>
+</MatDialog>
+<div id="target" style="display: none">
+    <h1>@oficio.titulo</h1>
+    <h3>Nombre del denunciante: @oficio.nombredenunciante </h3>
+    <h3>Descripción: </h3>
+    <h4>@oficio.descripcion</h4>
+    <h3>Fiscal: @oficio.idfiscal</h3>
+    <h3>Lugar de audiencia: @oficio.lugaraudiencia</h3>
+    <h3>Datos del Notario:</h3>
+    <h4>- Nombre:</h4>
+    <h4>- Apellidos:</h4>
+    <h4>- DNI:</h4>
+    <h4>- Email: </h4>
+    <h3>Fecha de audencia:</h3>
+    <h4>- Inicio: @oficio.fechainicioaudiencia.ToString("dd-MM-yy")</h4>
+    <h4>- Fin: @oficio.fechafinaudiencia.ToString("dd-MM-yy")</h4>
+    <h3>Participantes:</h3>
+    @foreach (string i in oficio.participantes)
+    {
+        <h4>- @i</h4>
+    }
+    <h3>Hechos imputados:</h3>
+    @foreach (string i in oficio.hechosimputados)
+    {
+        <h4>- @i</h4>
+    }
+</div>
+@code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    private ContenidoAperturamientoDisciplinario oficio { get; set; }
+    private bool generado = false;
+    private async Task GenerarPDF()
+    {
+        generado = true;
+        await js.InvokeVoidAsync("gPDF");
+    }
+    protected override void OnInitialized()
+    {
+        oficio = JsonConvert.DeserializeObject<ContenidoAperturamientoDisciplinario>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        Console.WriteLine(oficio.titulo);
+    }
+    //  doc.save('conversion.pdf');
+    // await js.InvokeVoidAsync("gPDF");
+}
