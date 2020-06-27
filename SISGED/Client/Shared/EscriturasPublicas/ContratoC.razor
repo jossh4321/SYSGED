@@ -1,0 +1,23 @@
+﻿
+<div class="col-datos-6 mtop-5">
+    <div class="mat-elevation-z5 demo-mat-card-text mbottom-5 pbottom-5">
+        <div>
+            <p>Título</p>
+            <h5>@contrato.titulo</h5>
+        </div>
+        <div>
+            <p>Descripción</p>
+            <h5>@contrato.descripcion</h5>
+        </div>
+        <div>
+            <p>Contrato</p>
+            <MatButton Raised="true" Class="limegreen" Icon="@MatIconNames.Picture_as_pdf">Previsualizar</MatButton>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public Contrato contrato { get; set; }
+}

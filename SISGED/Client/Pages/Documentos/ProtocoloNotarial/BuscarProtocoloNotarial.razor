@@ -1,30 +1,6 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalFireMessage
-<style>
-    p {
-        display: block;
-    }
-
-    .demo-mat-card {
-        max-width: 200px;
-    }
-
-    .demo-mat-card-content {
-        padding: 1rem;
-    }
-
-    .demo-mat-card-clean-margin {
-        margin: 0px;
-    }
-
-    .demo-mat-card-text {
-        color: black;
-    }
-
-    .mat-color {
-        color: skyblue;
-    }
-</style>
+<link rel="stylesheet" href="css/estilosEP/styleEP.css" />
 @if (listaEscriturasPublicas.Count == 0)
 {
     <text>Cargando...</text>
@@ -36,30 +12,109 @@ else
             @foreach (var escriturapublica in listaEscriturasPublicas)
             {
                 <div class="mat-layout-grid-cell-span-4">
-                    <EscrituraPublicaC escriturapublica="escriturapublica"></EscrituraPublicaC>
+                    <EscrituraPublicaC escriturapublica="escriturapublica" @key="escriturapublica.id"
+                                       mostrarDatosEscrituraPublica="VisualizarEscrituraPublica"></EscrituraPublicaC>
                 </div>
             }
         </div>
     </div>
 
-    <MatDialog @bind-IsOpen="dialogoabierto">
+    <MatDialog @bind-IsOpen="dialogoabierto" Class="dialogo">
         <MatDialogTitle>Datos de la escritura pública</MatDialogTitle>
-        <MatDialogContent></MatDialogContent>
+        <MatDialogContent>
+            <div class="row-datos">
+                <div class="col-datos-6">
+                    <div class="mat-elevation-z5 demo-mat-card-text">
+                        <p>Nombre del notario</p>
+                        <h5>@escrituraPublica.notario</h5>
+                    </div>
+                </div>
+                <div class="col-datos-6">
+                    <div class="mat-elevation-z5 demo-mat-card-text">
+                        <p>Fecha de la escritura pública</p>
+                        <h5>@escrituraPublica.fechaescriturapublica.ToString("dd/M/yyyy", System.Globalization.CultureInfo.InvariantCulture)</h5>
+                    </div>
+                </div>
+                <div class="col-datos-6">
+                    <div class="mat-elevation-z5 demo-mat-card-text">
+                        <p>Estado de la escritura pública</p>
+                        <h5>@escrituraPublica.estado</h5>
+                    </div>
+                </div>
+                <div class="col-datos-6">
+                    <div class="mat-elevation-z5 demo-mat-card-text">
+                        <p>Dirección del oficio notarial del ex-notario</p>
+                        <h5>@escrituraPublica.direccionoficio</h5>
+                    </div>
+                </div>
+                <div class="col-datos-12 demo-mat-card-text">
+                    <p>Actos Jurídicos</p>
+                    <div class="row-datos">
+                        @if (escrituraPublica.actosjuridicos == null)
+                        {
+                            <h5>Cargando...</h5>
+                        }
+                        else
+                        {
+                            int identificador = 0;
+                            @foreach (var actojuridico in escrituraPublica.actosjuridicos)
+                            {
+                                <ActoJuridicoC actojuridico="actojuridico" @key="identificador" mostrarContratos="VisualizarContratos"
+                                               mostrarOtorgantes="VisualizarOtorgantes"></ActoJuridicoC>
+                                identificador++;
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </MatDialogContent>
         <MatDialogActions>
-            <MatButton OnClick="@((e) => { dialogoabierto = false; })">Volver</MatButton>
+            <MatButton OnClick="@((e) => { dialogoabierto = false; })" Icon="@MatIconNames.Arrow_left">Volver</MatButton>
         </MatDialogActions>
     </MatDialog>
 
     <MatDialog @bind-IsOpen="dialogocontrato">
         <MatDialogTitle>Contratos del Acto Jurídico</MatDialogTitle>
-        <MatDialogContent></MatDialogContent>
-        <MatDialogActions></MatDialogActions>
+        <MatDialogContent>
+            <div class="row-datos">
+                @if (listacontratos == null)
+                {
+                    <text>Cargando...</text>
+                }
+                else
+                {
+                    @foreach (var contrato in listacontratos)
+                    {
+                        <ContratoC contrato="contrato"></ContratoC>
+                    }
+                }
+            </div>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@((e) => { dialogocontrato = false; })" Icon="@MatIconNames.Arrow_left">Regresar</MatButton>
+        </MatDialogActions>
     </MatDialog>
 
     <MatDialog @bind-IsOpen="dialogootorgantes">
-        <MatDialogTitle>Otorgants del Acto Jurídico</MatDialogTitle>
-        <MatDialogContent></MatDialogContent>
-        <MatDialogActions></MatDialogActions>
+        <MatDialogTitle>Otorgantes del Acto Jurídico</MatDialogTitle>
+        <MatDialogContent>
+            <div class="row-datos">
+                @if(listaotorgantes == null)
+                {
+                    <text>Cargando...</text>
+                }
+                else
+                {
+                    @foreach (var otorgante in listaotorgantes)
+                    {
+                      <OtorganteC otorgante="otorgante"></OtorganteC>
+                    }
+                }
+            </div>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@((e) => { dialogootorgantes = false; })" Icon="@MatIconNames.Arrow_left">Regresar</MatButton>
+        </MatDialogActions>
     </MatDialog>
 }
 @code {
@@ -89,6 +144,17 @@ else
     {
         dialogoabierto = true;
         this.escrituraPublica = escrituraPublica;
+    }
+
+    private void VisualizarOtorgantes(List<Otorgante> otorgantes)
+    {
+        dialogootorgantes = true;
+        listaotorgantes = otorgantes;
+    }
+    private void VisualizarContratos(List<Contrato> contratos)
+    {
+        dialogocontrato = true;
+        listacontratos = contratos;
     }
 
 }

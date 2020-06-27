@@ -1,0 +1,18 @@
+﻿<div class="col-datos-6 mtop-5">
+    <div class="row-perfil mat-elevation-z3">
+        <div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1200px-User_icon_2.svg.png" alt="otorgante" title="Imagen de otorgante" width="50" height="50" />
+        </div>
+        <div class="demo-mat-card-text">
+            <div>
+                <h5>@otorgante.nombre @otorgante.apellido</h5>
+                <h6>DNI: @otorgante.dni</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Otorgante otorgante { get; set; }
+}
