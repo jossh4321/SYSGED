@@ -42,7 +42,7 @@
     <div class="form-group">
         <input type="file" name="file" id="file" class="inputfile" @ref="inputElement" @onchange="ImageFileSelected"
                accept=".pdf" />
-        <label class="@style" for="file">@estado</label>
+        <label class="@estilo" for="file">@estado</label>
         <!--input type="file" class="form-control-file" ref="inputElement" onchange="ImageFileSelected"
       accept=".pdf" /-->
     </div>
@@ -73,8 +73,8 @@
     [Parameter] public string ImagenTemporal { get; set; }
     [Parameter] public EventCallback<string> ImagenSeleccionada { get; set; }
     private string imagenBase64;
-    private string style = "not-selected";
-    private string estado = "Seleccione un Archivo";
+    public string estado = "Seleccione un Archivo";
+    public string estilo = "not-selected";
     ElementReference inputElement;
 
     async Task ImageFileSelected()
@@ -88,7 +88,7 @@
                 var bytesImagen = new byte[memoryStream.Length];
                 memoryStream.Read(bytesImagen, 0, (int)memoryStream.Length);
                 imagenBase64 = Convert.ToBase64String(bytesImagen);
-                style = imagenBase64 != null ? "selected" : "not-selected";
+                estilo = imagenBase64 != null ? "selected" : "not-selected";
                 estado = imagenBase64 != null ? "Archivo Seleccionado" : "Seleccione un Archivo";
                 await ImagenSeleccionada.InvokeAsync(imagenBase64);
                 ImagenTemporal = null;

@@ -72,8 +72,10 @@
             else if(itemArrastrado.nombre == "Buscar protocolo notarial")
             {
                 ChildContent = @<BuscarProtocoloNotarial></BuscarProtocoloNotarial>;
-            }
-            else
+            }else if(itemArrastrado.nombre == "Modificar Documento")
+            {
+                ChildContent = @<ActualizacionDocumento></ActualizacionDocumento>;
+            }else
             {
                 ChildContent = @<ContenidoPrueba2></ContenidoPrueba2>;
             }
