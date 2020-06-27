@@ -20,3 +20,16 @@ async function SwalFireEliminacion(titlex,estado,nombreusuario) {
     });
     return res;
 }
+function gPDF() {
+    var specialElementHandlers = {
+        "#editor": function (element, redenderer) {
+            return true;
+        }
+    };
+    var doc = new jsPDF();
+    doc.fromHTML($("#target").html(), 15, 15, {
+        "width": 170,
+        "elementHandlers": specialElementHandlers
+    });
+    $('#docpdf').attr('src', doc.output('datauristring'));
+}

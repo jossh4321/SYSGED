@@ -166,9 +166,8 @@ namespace SISGED.Shared.Entities
         public List<string> participantes { get; set; }
         public string lugaraudiencia { get; set; }
         public List<string> hechosimputados { get; set; }
-        public string estado { get; set; }
+        //public string estado { get; set; }
         public string url { get; set; }
-
     }
     public class AperturamientoDisciplinario : Documento
     {
@@ -193,6 +192,7 @@ namespace SISGED.Shared.Entities
     public class ContenidoDictamen
     {
         public string nombredenunciante { get; set; }
+        public string descripcion { get; set; }
         public string titulo { get; set; }
         public List<string> observaciones { get; set; }
         public string conclusion { get; set; }
@@ -223,6 +223,8 @@ namespace SISGED.Shared.Entities
     }
     public class ContenidoApelacion
     {
+        public string titulo { get; set; }
+        public string descripcion { get; set; }
         public DateTime fechaapelacion { get; set; }
         public string url { get; set; }
     }

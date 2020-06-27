@@ -95,5 +95,11 @@ namespace SISGED.Server.Controllers
             return listaUsuarios;
         }
 
+        [HttpGet("fiscales")]
+        public async Task<ActionResult<List<UsuarioRDTO>>> obtenerFiscales()
+        {
+            return await _usuarioservice.obtenerFiscales();
+        }
+
     }
 }

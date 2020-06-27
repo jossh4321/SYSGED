@@ -100,7 +100,8 @@
                     </div>
                 </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => oficiodesignacion.contenidoDTO.idnotario)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@oficiodesignacion.contenidoDTO.idnotario">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@oficiodesignacion.contenidoDTO.idnotario"
+                                       Placeholder="Ingrese el Nombre del Notario">
                         <SelectedTemplate>
                             <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
                         </SelectedTemplate>

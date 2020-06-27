@@ -1,14 +1,345 @@
-﻿<style>
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
     .div-form {
         background-color: #a6a6a6;
         flex-basis: 100%;
         border-radius: 5px 5px 0px 0px;
         width: 100%;
     }
-</style>
-<div class="div-form">
-    <h3>RegistrarDictamen</h3>
-</div>
-    @code {
 
+    .field-container {
+        display: block;
+        padding: 10px;
     }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+
+    div.mat-date-picker {
+        width: 100% !important;
+    }
+
+    .contenedor-participantes {
+        padding-top: 10px;
+        margin: 20px;
+        border: 2px solid #666666;
+        border-radius: 5px;
+    }
+
+    .titulo-paticipantes {
+        border: 1px solid black;
+        margin: 0px 5px 0px 5px;
+        border-radius: 5px 5px 0px 0px;
+        background-color: #404040;
+        color: white;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .titulo {
+        color: #d9d9d9;
+    }
+
+    .icono {
+        margin-left: 20px;
+    }
+
+        .icono i {
+            margin: 5px;
+        }
+
+    .single-textfield-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .base-field {
+        flex-basis: 90%;
+    }
+
+    .base-icon {
+        display: flex;
+        flex-basis: 8%;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 2px;
+        background: #ff1a1a;
+        border-radius: 3px;
+        border: 1px solid #800000
+    }
+</style>
+
+<div class="div-form">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <FluentValidator></FluentValidator>
+        <MatTabGroup>
+            <MatTab Label="General">
+
+               
+
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => dictamen.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@dictamen.contenidoDTO.titulo" Class="text-field-style"
+                                  Label="Titulo del dictamen" @oninput='@(e => KeyUp(e,"titulo",dictamen.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => dictamen.contenidoDTO.titulo)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => dictamen.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@dictamen.contenidoDTO.descripcion" Class="text-field-style"
+                                  Label="Descripcion del dictamen" @oninput='@(e => KeyUp(e,"descripcion",dictamen.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => dictamen.contenidoDTO.descripcion)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => dictamen.contenidoDTO.nombredenunciante)">
+                    <MatTextField @bind-Value="@dictamen.contenidoDTO.nombredenunciante" Class="text-field-style"
+                                  Label="Nombre del denunciante" @oninput='@(e => KeyUp(e,"nombredenunciante",dictamen.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => dictamen.contenidoDTO.nombredenunciante)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => dictamen.contenidoDTO.conclusion)">
+                    <MatTextField @bind-Value="@dictamen.contenidoDTO.conclusion" Class="text-field-style"
+                                  Label="Conclusion" @oninput='@(e => KeyUp(e,"conclusion",dictamen.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => dictamen.contenidoDTO.conclusion)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+            </MatTab>
+            <MatTab Label="Observaciones y Recomendaciones">
+
+                <div class="contenedor-participantes">
+                    <div class="titulo-paticipantes">
+                        <div><span class="titulo">Observaciones</span></div>
+                        <div class="icono" @onclick="@(addObservaciones)">
+                            <MatIcon Icon="add_circle_outline"></MatIcon>
+                        </div>
+                    </div>
+                    @foreach (Observaciones p in dictamen.contenidoDTO.observaciones)
+                    {
+                        <div class="single-textfield-container">
+                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.observaciones[p.index].descripcion)">
+                                <MatTextField @bind-Value="@dictamen.contenidoDTO.observaciones[p.index].descripcion" Class="text-field-style"
+                                              Label="Ingrese una observación"
+                                              @oninput='@(e => KeyUp(e, "descripcion", dictamen.contenidoDTO.observaciones[p.index]))'></MatTextField>
+                                <div class="incorrecto">
+                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                    <ValidationMessage For="@(() => dictamen.contenidoDTO.observaciones[p.index].descripcion)" />
+                                </div>
+                                <div class="correcto">
+                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                    <span class="good-msg">Correcto</span>
+                                </div>
+                            </div>
+                            <div class="base-icon" @onclick="@(() => removeObservaciones(p.index))">
+                                <MatIcon Icon="remove_circle_outline"></MatIcon>
+                            </div>
+                        </div>
+                    }
+                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.observaciones)">
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => dictamen.contenidoDTO.observaciones)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                </div>
+                <!--**************************************************************************************-->
+                <div class="contenedor-participantes">
+                    <div class="titulo-paticipantes">
+                        <div><span class="titulo">Recomendaciones</span></div>
+                        <div class="icono" @onclick="@(addRecomendaciones)">
+                            <MatIcon Icon="add_circle_outline"></MatIcon>
+                        </div>
+                    </div>
+                    @foreach (Recomendaciones h in dictamen.contenidoDTO.recomendaciones)
+                    {
+                        <div class="single-textfield-container">
+                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.recomendaciones[h.index].descripcion)">
+                                <MatTextField @bind-Value="@dictamen.contenidoDTO.recomendaciones[h.index].descripcion" Class="text-field-style"
+                                              Label="Contenido de la recomendación"
+                                              @oninput='@(e => KeyUp(e, "descripcion", dictamen.contenidoDTO.recomendaciones[h.index]))'></MatTextField>
+                                <div class="incorrecto">
+                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                    <ValidationMessage For="@(() => dictamen.contenidoDTO.recomendaciones[h.index].descripcion)" />
+                                </div>
+                                <div class="correcto">
+                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                    <span class="good-msg">Correcto</span>
+                                </div>
+                            </div>
+                            <div class="base-icon" @onclick="@(() => removeRecomendaciones(h.index))">
+                                <MatIcon Icon="remove_circle_outline"></MatIcon>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.recomendaciones)">
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => dictamen.contenidoDTO.recomendaciones)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>
+            </MatTab>
+        </MatTabGroup>
+    </EditForm>
+</div>
+
+@code {
+    //Variables de sesion
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+
+    //Datos del formulario
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
+    private DictamenDTO dictamen = new DictamenDTO();
+    private EditContext _editContext;
+    private string imagenTemporal;
+    private bool loadprocess = false;
+
+    protected override void  OnInitialized()
+    {
+        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0 , descripcion = "" } };
+        dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
+        _editContext = new EditContext(dictamen);
+    }
+    private void addObservaciones()
+    {
+        dictamen.contenidoDTO.observaciones.Add(new Observaciones() { index = (dictamen.contenidoDTO.observaciones.Count) });
+        StateHasChanged();
+    }
+    private void removeObservaciones(int index)
+    {
+        dictamen.contenidoDTO.observaciones.RemoveAt(index);
+        StateHasChanged();
+    }
+    private void addRecomendaciones()
+    {
+        dictamen.contenidoDTO.recomendaciones.Add(new Recomendaciones() { index = (dictamen.contenidoDTO.recomendaciones.Count) });
+        StateHasChanged();
+    }
+    private void removeRecomendaciones(int index)
+    {
+        dictamen.contenidoDTO.recomendaciones.RemoveAt(index);
+        StateHasChanged();
+    }
+
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = dictamen;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+        var httpResponse = await repository.Post<ExpedienteWrapper, Dictamen>("api/documentos/documentod", expedienteWrapper);
+        if (!httpResponse.Error)
+        {
+            await swalfire.successMessage("Dictamen registrado correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("Error en el Servidor[505]");
+        }
+    }
+
+    public void handleInvalidSubmit()
+    {
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+}
