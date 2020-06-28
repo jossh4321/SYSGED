@@ -7,6 +7,7 @@ namespace SISGED.Shared.DTOs
 {
     public class ApelacionDTO : Documento
     {
+        public Estado estado { get; set; } = new Estado();
         public ContenidoApelacionDTO contenidoDTO { get; set; } = new ContenidoApelacionDTO();
     }
 

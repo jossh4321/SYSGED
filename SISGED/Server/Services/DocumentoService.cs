@@ -660,5 +660,41 @@ namespace SISGED.Server.Services
             };
             return resolucionDTO;
         }
+
+        public ApelacionDTO ObtenerDocumentoApelacion(string id)
+        {
+            Apelacion docApelacion = new Apelacion();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docApelacion = _documentos.Aggregate().
+              AppendStage<Apelacion>(match).First();
+
+            ApelacionDTO apelacionDTO = new ApelacionDTO();
+            apelacionDTO.id = docApelacion.id;
+            apelacionDTO.tipo = docApelacion.tipo;
+            apelacionDTO.historialcontenido = docApelacion.historialcontenido;
+            apelacionDTO.historialproceso = docApelacion.historialproceso;
+            apelacionDTO.estado = docApelacion.estado;
+            apelacionDTO.contenidoDTO = new ContenidoApelacionDTO()
+            {
+                titulo = docApelacion.contenido.titulo,
+                descripcion = docApelacion.contenido.descripcion,
+                fechaapelacion = docApelacion.contenido.fechaapelacion,
+                data = docApelacion.contenido.url,
+            };
+            return apelacionDTO;
+
+        }
+        /*public ConclusionFirmaDTO ObtenerDocumentoConclusionFirma(string id)
+        {
+            ConclusionFirma docConclusionFirma = new ConclusionFirma();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docConclusionFirma = _documentos.Aggregate().
+              AppendStage<ConclusionFirma>(match).First();
+
+
+
+        }*/
     }
 }

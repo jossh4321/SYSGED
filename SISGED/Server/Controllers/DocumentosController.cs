@@ -333,5 +333,16 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerResolucionDTO(iddoc);
         }
+        [HttpGet("documentoape")]
+        public async Task<ActionResult<ApelacionDTO>> obtenerApelacionDTO([FromQuery] string iddoc)
+        {
+            return _documentoservice.ObtenerDocumentoApelacion(iddoc);
+        }
+        [HttpGet("documentocf")]
+        public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusio([FromQuery] string iddoc)
+        {
+
+        }
+
     }
 }
