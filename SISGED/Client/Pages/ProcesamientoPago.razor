@@ -1,0 +1,42 @@
+﻿@page "/procesamientopago"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@using SISGED.Shared
+@using Microsoft.AspNetCore.WebUtilities
+
+<h3>ProcesamientoPago</h3>
+<h2>URI: @uri.ToString()</h2>
+
+<img src="https://cdn.dribbble.com/users/447957/screenshots/6899626/payment-animation.gif" style="display:@(Gif ? "block" : "none")" />
+
+@code {
+    bool Gif;
+    System.Uri uri;
+
+    protected override void OnInitialized()
+    {
+        Gif = true;
+        //Paso1: Leer url
+        uri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
+        //Paso2: Try leer estado
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("collection_status", out var estado))
+        {
+            //Paso3: If aprobadi, hacer logica buena
+            if (estado.ToString() == "approved")
+            {
+                QueryHelpers.ParseQuery(uri.Query).TryGetValue("external_reference", out var referencia);
+                QueryHelpers.ParseQuery(uri.Query).TryGetValue("payment_type", out var payment_type);
+                MercadoPagoResponse mercadoPago = new MercadoPagoResponse
+                {
+                    estado = estado.ToString(),
+                    referencia = referencia.ToString(),
+                    tipopago = payment_type.ToString()
+                };
+            }
+        } else
+        {
+            //Rechazado papi
+            Gif = false;
+        }
+    }
+}
