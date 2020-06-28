@@ -1,4 +1,6 @@
-﻿using SISGED.Shared.Entities;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -21,6 +23,31 @@ namespace SISGED.Shared.DTOs
     }
     public class OficioBPNDTO : Documento
     {
+        public Estado estado { get; set; }
         public ContenidoOficioBPNDTO contenidoDTO { get; set; } = new ContenidoOficioBPNDTO();
+    }
+
+    public class OficioBPNDTO_lookup
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
+        public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
+        public Estado estado { get; set; } = new Estado();
+        public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
+        public List<Notario> notario { get; set; } = new List<Notario>();
+    }
+
+    public class OficioBPNDTO_ur
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
+        public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
+        public Estado estado { get; set; } = new Estado();
+        public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
+        public Notario notario { get; set; } = new Notario();
     }
 }

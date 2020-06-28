@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -147,9 +148,22 @@
     private EditContext _editContext;
     private bool loadprocess = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        //ContenidoOficio JsonConvert.DeserializeObject<ContenidoOficioDesignacionNotarioDTO>(workspace.expedienteseleccionado.documento.contenido.ToString());
         _editContext = new EditContext(oficiodesignacion);
+        OficioDesignacionNotarioDTO odn = new OficioDesignacionNotarioDTO();
+        var httpResponse = await repository.Get<OficioDesignacionNotarioDTO>($"api/documentos/documentoodn?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            oficiodesignacion = (OficioDesignacionNotarioDTO)httpResponse.Response;
+            _editContext = new EditContext(oficiodesignacion);
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un Error");
+        }
+        StateHasChanged();
     }
     private async Task<IEnumerable<Notario>> match(string searchtext)
     {

@@ -312,5 +312,16 @@ namespace SISGED.Server.Controllers
             }
             return _documentoservice.registrarResolucion(resolucionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
+
+        [HttpGet("documentoodn")]
+        public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerOficioDesignacionNotario(iddoc);
+        }
+        [HttpGet("documentoobpn")]
+        public async Task<ActionResult<OficioBPNDTO>> obtenerOficioBpn([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerOficioBusquedaProtocoloNotarial(iddoc);
+        }
     }
 }

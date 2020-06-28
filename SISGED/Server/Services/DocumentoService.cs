@@ -512,5 +512,99 @@ namespace SISGED.Server.Services
 
             return solicitudExpedienteNotarioAct;
         }
+
+        public OficioDesignacionNotarioDTO obtenerOficioDesignacionNotario(string id)
+        {
+            var match = new BsonDocument("$match",
+                        new BsonDocument("_id",
+                        new ObjectId(id)));
+
+            BsonArray subpipeline = new BsonArray();
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idnot") }
+                        )
+                    ))
+                );
+
+            var aggregation = new BsonDocument("$lookup",
+                                new BsonDocument("from","notarios")
+                                .Add("let",new BsonDocument("idnot", "$contenido.idnotario"))
+                                .Add("pipeline", subpipeline)
+                                .Add("as", "notario"));
+
+
+            OficioDesignacionNotario_ur documentoODN = new OficioDesignacionNotario_ur();
+            documentoODN = _documentos.Aggregate()
+                .AppendStage<OficioDesignacionNotario>(match)
+                .AppendStage<OficioDesignacionNotario_lookup>(aggregation)
+                .Unwind<OficioDesignacionNotario_lookup, OficioDesignacionNotario_ur>(x =>x.notario)
+                .First();
+
+            OficioDesignacionNotarioDTO oficioDesignacionNotario = new OficioDesignacionNotarioDTO();
+            oficioDesignacionNotario.id = documentoODN.id;
+            oficioDesignacionNotario.tipo = documentoODN.tipo;
+            oficioDesignacionNotario.contenidoDTO = new ContenidoOficioDesignacionNotarioDTO()
+            {
+                titulo = documentoODN.contenido.titulo,
+                descripcion = documentoODN.contenido.descripcion,
+                fecharealizacion = documentoODN.contenido.fecharealizacion,
+                lugaroficionotarial = documentoODN.contenido.lugaroficionotarial,
+                idusuario = documentoODN.contenido.idusuario,
+                idnotario = documentoODN.notario
+            };
+            oficioDesignacionNotario.historialcontenido = documentoODN.historialcontenido;
+            oficioDesignacionNotario.historialproceso = documentoODN.historialproceso;
+            oficioDesignacionNotario.estado = documentoODN.estado;
+
+            return oficioDesignacionNotario;
+
+        }
+        public OficioBPNDTO obtenerOficioBusquedaProtocoloNotarial(string id)
+        {
+            var  match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            OficioBPNDTO_ur oficioBPN = new OficioBPNDTO_ur();
+            BsonArray subpipeline = new BsonArray();
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idnot") }
+                        )
+                    ))
+                );
+            var aggregation = new BsonDocument("$lookup",
+                               new BsonDocument("from", "notarios")
+                               .Add("let", new BsonDocument("idnot", "$contenido.idnotario"))
+                               .Add("pipeline", subpipeline)
+                               .Add("as", "notario"));
+
+            oficioBPN = _documentos.Aggregate().
+                AppendStage<OficioBPN>(match)
+                .AppendStage<OficioBPNDTO_lookup>(aggregation)
+                .Unwind<OficioBPNDTO_lookup, OficioBPNDTO_ur>(x => x.notario).First();
+
+            OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
+            oficioBPNDTO.id = oficioBPN.id;
+            oficioBPNDTO.tipo = oficioBPN.tipo;
+            oficioBPNDTO.historialcontenido = oficioBPN.historialcontenido;
+            oficioBPNDTO.historialproceso = oficioBPN.historialproceso;
+            oficioBPNDTO.contenidoDTO = new ContenidoOficioBPNDTO()
+            {
+                titulo = oficioBPN.contenido.titulo,
+                descripcion = oficioBPN.contenido.descripcion,
+                idcliente = new Usuario() { id = oficioBPN.contenido.idcliente },
+                direccionoficio = oficioBPN.contenido.direccionoficio,
+                idnotario = oficioBPN.notario,
+                actojuridico = oficioBPN.contenido.actojuridico,
+                tipoprotocolo = oficioBPN.contenido.tipoprotocolo,
+                otorgantes = oficioBPN.contenido.otorgantes,
+                fecharealizacion = oficioBPN.contenido.fecharealizacion,
+                url = oficioBPN.contenido.url
+            };
+            oficioBPNDTO.estado = oficioBPN.estado;
+            return oficioBPNDTO;
+        }
     }
 }

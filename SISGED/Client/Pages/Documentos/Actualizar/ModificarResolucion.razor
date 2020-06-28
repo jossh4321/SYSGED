@@ -257,6 +257,8 @@
 
     protected override void OnInitialized()
     {
+
+
         resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0 } };
         _editContext = new EditContext(resolucion);
         if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
