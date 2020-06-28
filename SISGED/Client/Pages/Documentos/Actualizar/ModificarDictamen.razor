@@ -285,11 +285,22 @@
     private string imagenTemporal;
     private bool loadprocess = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0, descripcion = "" } };
-        dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
+        //dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0, descripcion = "" } };
+        //dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
         _editContext = new EditContext(dictamen);
+        var httpResponse = await repository.Get<DictamenDTO>($"api/documentos/documentod?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            dictamen = (DictamenDTO)httpResponse.Response;
+            _editContext = new EditContext(dictamen);
+        }
+        else
+        {
+
+
+        }
     }
     private void addObservaciones()
     {

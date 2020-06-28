@@ -125,7 +125,7 @@
             <MatTab Label="General">
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@resolucion.contenidoDTO.titulo" Class="text-field-style"
+                    <MatTextField @bind-Value="@resolucion.contenidoDTO.titulo" Class="text-field-style"     
                                   Label="Titulo de la resolución" @oninput='@(e => KeyUp(e,"titulo",resolucion.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -255,10 +255,23 @@
     private string imagenTemporal;
     private bool loadprocess = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+
         resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0 } };
         _editContext = new EditContext(resolucion);
+        var httpResponse = await repository.Get<ResolucionDTO>($"api/documentos/documentord?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            resolucion = (ResolucionDTO)httpResponse.Response;
+            _editContext = new EditContext(resolucion);
+            StateHasChanged();
+        }
+        else
+        {
+
+        }
+
         if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
         {
             imagenTemporal = resolucion.contenidoDTO.data;

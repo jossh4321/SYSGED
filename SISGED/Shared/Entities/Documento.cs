@@ -208,6 +208,7 @@ namespace SISGED.Shared.Entities
 
     public class ContenidoResolucion
     {
+        public string titulo { get; set; }
         public string descripcion { get; set; }
         public DateTime fechainicioaudiencia { get; set; }
         public DateTime fechafinaudiencia { get; set; }

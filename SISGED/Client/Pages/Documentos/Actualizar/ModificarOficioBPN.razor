@@ -273,9 +273,21 @@
 
     private OficioBPNDTO documento = new OficioBPNDTO();
     private EditContext _editContext;
-    protected override void OnInitialized()
+    protected override async Task  OnInitializedAsync()
     {
         _editContext = new EditContext(documento);
+        List<OficioBPNDTO> listaexpediente = new List<OficioBPNDTO>();
+        var httpResponse = await repository.Get<OficioBPNDTO>($"api/documentos/documentoobpn?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            documento = (OficioBPNDTO)httpResponse.Response;
+            _editContext = new EditContext(documento);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un Error");
+        }
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
