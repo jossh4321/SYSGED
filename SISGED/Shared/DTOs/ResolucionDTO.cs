@@ -17,7 +17,7 @@ namespace SISGED.Shared.DTOs
         public string titulo { get; set; }
         public DateTime fechainicioaudiencia { get; set; }
         public DateTime fechafinaudiencia { get; set; }
-        public List<Participante> participantes { get; set; }
+        public List<Participante> participantes { get; set; } = new List<Participante>();
         public string sancion { get; set; }
         public string data { get; set; }
     }

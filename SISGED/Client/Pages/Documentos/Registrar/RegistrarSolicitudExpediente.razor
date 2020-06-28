@@ -132,17 +132,37 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        //aperturamientodisciplinario.contenidoDTO.idusuario = sesion.usuario.id;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = solicitudexpedientenotario;
-        //expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        //expedienteWrapper.idusuarioactual = sesion.usuario.id;
-        //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, Apelacion>($"api/documentos/documentoSEN", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudExpedienteNotario>($"api/documentos/documentoSEN", expedienteWrapper);
         if (!httpResponse.Error)
         {
-            //No estoy seguro si se crea un expediente o se une a uno
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            SolicitudExpedienteNotario solicitudExpedienteNotarioAct = new SolicitudExpedienteNotario();
+            solicitudExpedienteNotarioAct = httpResponse.Response;
+            expedientebandeja.documento.id = solicitudExpedienteNotarioAct.id;
+            expedientebandeja.documento.tipo = solicitudExpedienteNotarioAct.tipo;
+            expedientebandeja.documento.historialcontenido = solicitudExpedienteNotarioAct.historialcontenido;
+            expedientebandeja.documento.historialproceso = solicitudExpedienteNotarioAct.historialproceso;
+            expedientebandeja.documento.contenido = solicitudExpedienteNotarioAct.contenido;
+            expedientebandeja.documento.estado = solicitudExpedienteNotarioAct.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = expedientebandeja.cliente
+            };
+            workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Solicitud de expediente de notario registrado correctamente");
         }
         else

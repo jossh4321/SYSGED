@@ -66,14 +66,14 @@
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
         <MatTabGroup>
-            <MatTab Label="Datos de la Apelación">
+            <MatTab Label="Datos de la solicitud de expediente de notario">
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@apelacion.contenidoDTO.titulo" Class="text-field-style"
-                                  Label="Titulo de la Apelación" @oninput='@(e => KeyUp(e,"titulo",apelacion.contenidoDTO))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedientenotario.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@solicitudexpedientenotario.contenidoDTO.titulo" Class="text-field-style"
+                                  Label="Titulo de la solicitud" @oninput='@(e => KeyUp(e,"titulo",solicitudexpedientenotario.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => apelacion.contenidoDTO.titulo)" />
+                        <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.titulo)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -81,20 +81,18 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.descripcion)">
-                    <MatTextField @bind-Value="@apelacion.contenidoDTO.descripcion" Class="text-field-style"
-                                  Label="Descripción de la apelación" @oninput='@(e => KeyUp(e,"descripcion",apelacion.contenidoDTO))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedientenotario.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@solicitudexpedientenotario.contenidoDTO.descripcion" Class="text-field-style"
+                                  Label="Descripción de la solicitud" @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedientenotario.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => apelacion.contenidoDTO.descripcion)" />
+                        <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.descripcion)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
                 <div class="field-container">
                     <MatButton type="submit"
@@ -114,24 +112,13 @@
 
     //Datos del formulario
     [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
-    private ApelacionDTO apelacion = new ApelacionDTO();
+    private SolicitudExpedienteNotarioDTO solicitudexpedientenotario = new SolicitudExpedienteNotarioDTO();
     private EditContext _editContext;
-    private string imagenTemporal;
     private bool loadprocess = false;
 
     protected override void OnInitialized()
     {
-        _editContext = new EditContext(apelacion);
-        if (!string.IsNullOrEmpty(apelacion.contenidoDTO.data))
-        {
-            imagenTemporal = apelacion.contenidoDTO.data;
-            apelacion.contenidoDTO.data = null;
-        }
-    }
-
-    private void ImagenSeleccionada(string imagenbase64)
-    {
-        apelacion.contenidoDTO.data = imagenbase64;
+        _editContext = new EditContext(solicitudexpedientenotario);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -147,37 +134,16 @@
         loadprocess = true;
         //aperturamientodisciplinario.contenidoDTO.idusuario = sesion.usuario.id;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-        expedienteWrapper.documento = apelacion;
-        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        expedienteWrapper.idusuarioactual = sesion.usuario.id;
-        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+        expedienteWrapper.documento = solicitudexpedientenotario;
+        //expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        //expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, Apelacion>($"api/documentos/documentoAPE", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, Apelacion>($"api/documentos/documentoSEN", expedienteWrapper);
         if (!httpResponse.Error)
         {
-            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-            expedientebandeja = workspace.expedienteseleccionado;
-            Apelacion apelacionact = new Apelacion();
-            apelacionact = httpResponse.Response;
-            expedientebandeja.documento.id = apelacionact.id;
-            expedientebandeja.documento.tipo = apelacionact.tipo;
-            expedientebandeja.documento.historialcontenido = apelacionact.historialcontenido;
-            expedientebandeja.documento.historialproceso = apelacionact.historialproceso;
-            expedientebandeja.documento.contenido = apelacionact.contenido;
-            expedientebandeja.documento.estado = apelacionact.estado;
-            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-            Item itemSalida = new Item()
-            {
-                nombre = expedientebandeja.tipo,
-                valor = expedientebandeja,
-                icono = "alarm_add",
-                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
-            };
-            workspace.UpdateComponentBandeja(itemSalida);
-            await swalfire.successMessage("Apelación registrado correctamente");
+            //No estoy seguro si se crea un expediente o se une a uno
+            await swalfire.successMessage("Solicitud de expediente de notario registrado correctamente");
         }
         else
         {
@@ -193,4 +159,3 @@
     }
 
 }
-

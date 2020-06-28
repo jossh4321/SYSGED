@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -66,72 +67,63 @@
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
         <MatTabGroup>
-            <MatTab Label="Datos de la Apelación">
+            <MatTab Label="Datos para conclusion de firma">
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@apelacion.contenidoDTO.titulo" Class="text-field-style"
-                                  Label="Titulo de la Apelación" @oninput='@(e => KeyUp(e,"titulo",apelacion.contenidoDTO))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idescriturapublica)">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica"
+                                       Placeholder="Ingrese el titulo del Acto Juridico">
+                        <SelectedTemplate>
+                            <strong>@context.titulo</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            <strong>@context.titulo</strong>
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => apelacion.contenidoDTO.titulo)" />
+                        <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.idescriturapublica)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.descripcion)">
-                    <MatTextField @bind-Value="@apelacion.contenidoDTO.descripcion" Class="text-field-style"
-                                  Label="Descripción de la apelación" @oninput='@(e => KeyUp(e,"descripcion",apelacion.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => apelacion.contenidoDTO.descripcion)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
-
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
                 </div>
+
             </MatTab>
         </MatTabGroup>
     </EditForm>
 </div>
 
 @code {
-    //Variables de sesion
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-
-    //Datos del formulario
-    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
-    private ApelacionDTO apelacion = new ApelacionDTO();
+    private ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
     private EditContext _editContext;
-    private string imagenTemporal;
     private bool loadprocess = false;
-
-    protected override void OnInitialized()
+    public List<EscrituraPublica> escriturapublicasseleccionados = new List<EscrituraPublica>();
+    public EscrituraPublica escriturapublicaselect;
+    private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
     {
-        _editContext = new EditContext(apelacion);
-        if (!string.IsNullOrEmpty(apelacion.contenidoDTO.data))
+        var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
+        if (httpResponse.Error)
         {
-            imagenTemporal = apelacion.contenidoDTO.data;
-            apelacion.contenidoDTO.data = null;
+            return new List<EscrituraPublica>();
+        }
+        else
+        {
+            return httpResponse.Response;
         }
     }
 
-    private void ImagenSeleccionada(string imagenbase64)
+    protected override void OnInitialized()
     {
-        apelacion.contenidoDTO.data = imagenbase64;
+        _editContext = new EditContext(conclusionFirma);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -145,26 +137,29 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        //aperturamientodisciplinario.contenidoDTO.idusuario = sesion.usuario.id;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-        expedienteWrapper.documento = apelacion;
+        expedienteWrapper.documento = conclusionFirma;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, Apelacion>($"api/documentos/documentoAPE", expedienteWrapper);
-        if (!httpResponse.Error)
+        var httpResponse = await repository.Post<ExpedienteWrapper, ConclusionFirma>($"api/documentos/documentocf", expedienteWrapper);
+        if (httpResponse.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
         {
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
-            Apelacion apelacionact = new Apelacion();
-            apelacionact = httpResponse.Response;
-            expedientebandeja.documento.id = apelacionact.id;
-            expedientebandeja.documento.tipo = apelacionact.tipo;
-            expedientebandeja.documento.historialcontenido = apelacionact.historialcontenido;
-            expedientebandeja.documento.historialproceso = apelacionact.historialproceso;
-            expedientebandeja.documento.contenido = apelacionact.contenido;
-            expedientebandeja.documento.estado = apelacionact.estado;
+            ConclusionFirma oficioconclusionfirma = new ConclusionFirma();
+            oficioconclusionfirma = httpResponse.Response;
+            expedientebandeja.documento.id = oficioconclusionfirma.id;
+            expedientebandeja.documento.tipo = oficioconclusionfirma.tipo;
+            expedientebandeja.documento.historialcontenido = oficioconclusionfirma.historialcontenido;
+            expedientebandeja.documento.historialproceso = oficioconclusionfirma.historialproceso;
+            expedientebandeja.documento.contenido = oficioconclusionfirma.contenido;
+            expedientebandeja.documento.estado = oficioconclusionfirma.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
             {
@@ -177,11 +172,7 @@
                 cliente = expedientebandeja.cliente
             };
             workspace.UpdateComponentBandeja(itemSalida);
-            await swalfire.successMessage("Apelación registrado correctamente");
-        }
-        else
-        {
-            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+            await swalfire.successMessage("Conclusión de Firma registrada Correctamente");
         }
         loadprocess = false;
     }
@@ -191,6 +182,4 @@
         loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
-
 }
-

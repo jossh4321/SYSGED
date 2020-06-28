@@ -1,0 +1,91 @@
+﻿p {
+    display: block;
+}
+
+.demo-mat-card {
+    max-width: 200px;
+}
+
+.demo-mat-card-content {
+    padding: 1rem;
+}
+
+.demo-mat-card-clean-margin {
+    margin: 0px;
+}
+
+.demo-mat-card-text {
+    color: black;
+}
+
+.demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
+        text-align: left;
+        font-weight: bolder;
+        font-size: 15px;
+        padding-left: 5px; 
+        color: black;
+}
+
+.demo-mat-card-text h5 {
+    text-transform: capitalize;
+    font-size: 19px !important;
+    font-weight: normal;
+}
+
+.demo-mat-card-text button {
+    display: flex;
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+.mat-color {
+    color: skyblue;
+}
+
+.dialogo .mdc-dialog__surface {
+    max-width: 800px !important;
+}
+
+.row-datos {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.col-datos-6 {
+    flex-grow: 1;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    flex-basis: calc((100%/2) - 10px);
+}
+
+.col-datos-6 div {
+    border-radius: 5px;
+}
+
+.mbottom-5 {
+    margin-bottom: 5px;
+}
+
+.pbottom-5 {
+    padding-bottom: 5px;
+}
+
+.mtop-5 {
+    margin-top: 5px;
+}
+
+.limegreen {
+    background-color: limegreen !important;
+}
+
+.col-datos-12 {
+    flex-basis: 100%;
+}
+
+.row-perfil {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}

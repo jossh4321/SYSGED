@@ -122,8 +122,6 @@
                                 <span>Correcto</span>
                             </div>
                         </div>
-
-
                     </MatTab>
 
                     <MatTab Label="Datos">
@@ -153,6 +151,7 @@
                                 <span>Correcto</span>
                             </div>
                         </div>
+
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.tipodocumento)">
                             <InputSelect @bind-Value="@usuariodto.datos.tipodocumento" class="text-field-style">
                                 <option value="">--Seleccione Algo--</option>
@@ -169,6 +168,7 @@
                                 <span>Correcto</span>
                             </div>
                         </div>
+
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.numerodocumento)">
                             <MatTextField @bind-Value="@usuariodto.datos.numerodocumento" Class="text-field-style" Label="Numero de Documento"
                                           @oninput='@(e => KeyUp(e,"numerodocumento",usuariodto.datos))'></MatTextField>
@@ -182,6 +182,7 @@
                                 <span>Correcto</span>
                             </div>
                         </div>
+
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.fechanacimiento)">
                             <MatTextField @bind-Value="@usuariodto.datos.fechanacimiento" Class="text-field-style" Label="Fecha Nacimiento"
                                           @oninput='@(e => KeyUp(e,"fechanacimiento",usuariodto.datos))'></MatTextField>
@@ -195,6 +196,7 @@
                                 <span>Correcto</span>
                             </div>
                         </div>
+
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.direccion)">
                             <MatTextField @bind-Value="@usuariodto.datos.direccion" Class="text-field-style" Label="Direccion"
                                           @oninput='@(e => KeyUp(e,"direccion",usuariodto.datos))'></MatTextField>
@@ -208,6 +210,7 @@
                                 <span>Correcto</span>
                             </div>
                         </div>
+
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.email)">
                             <MatTextField @bind-Value="@usuariodto.datos.email" Class="text-field-style" Label="Email"
                                           @oninput='@(e => KeyUp(e,"email",usuariodto.datos))'></MatTextField>
@@ -258,7 +261,6 @@
             imagenTemporal = usuariodto.datos.imagen;
             usuariodto.datos.imagen = null;
         }
-        //Aqui se hara peticion HTTP
     }
     public async Task getRoles()
     {

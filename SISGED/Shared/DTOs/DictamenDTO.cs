@@ -16,10 +16,10 @@ namespace SISGED.Shared.DTOs
         public string descripcion { get; set; }
         public string nombredenunciante { get; set; }
         public string titulo { get; set; }
-        public List<Observaciones> observaciones { get; set; } = new List<Observaciones>() { new Observaciones() };
+        public List<Observaciones> observaciones { get; set; } = new List<Observaciones>();
         public string conclusion { get; set; }
-        public List<Recomendaciones> recomendaciones { get; set; } = new List<Recomendaciones>() { new Recomendaciones() };
-        public DateTime fechaemision { get; set; }
+        public List<Recomendaciones> recomendaciones { get; set; } = new List<Recomendaciones>();
+        //public DateTime fechaemision { get; set; } 
     }
     public class Observaciones
     {

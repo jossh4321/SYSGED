@@ -1,0 +1,52 @@
+﻿
+<div class="col-datos-6 mat-elevation-z5">
+    <div class="demo-mat-card-text mbottom-5">
+        <p>Título</p>
+        <h5>@actojuridico.titulo</h5>
+    </div>
+    <div class="demo-mat-card-text mbottom-5">
+        <p>Descripción</p>
+        <h5>@actojuridico.descripcion</h5>
+    </div>
+    @if (actojuridico.contratos == null)
+    {
+        <div class="demo-mat-card-text mbottom-5">
+            <p>Contratos</p>
+            <h5>No hay contratos</h5>
+        </div>
+    }
+    else
+    {
+        <div class="demo-mat-card-text mbottom-5 pbottom-5">
+            <p>Contratos</p>
+            <MatButton Raised="true" Icon="@MatIconNames.Security" @onclick="(() => mostrarContratos.InvokeAsync(actojuridico.contratos))">Ver Contratos</MatButton>
+        </div>
+    }
+    @if (actojuridico.otorgantes == null)
+    {
+        <div class="demo-mat-card-text mbottom-5">
+            <p>Otorgantes</p>
+            <h5>No hay otorgantes</h5>
+        </div>
+    }
+    else
+    {
+        <div class="demo-mat-card-text mbottom-5 pbottom-5">
+            <p>Otorgantes</p>
+            <MatButton Raised="true" Icon="@MatIconNames.Supervisor_account" @onclick="(() => mostrarOtorgantes.InvokeAsync(actojuridico.otorgantes))">Ver Otorgantes</MatButton>
+        </div>
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public ActoJuridico actojuridico { get; set; }
+
+    [Parameter]
+    public EventCallback<List<Contrato>> mostrarContratos { get; set; }
+
+    [Parameter]
+    public EventCallback<List<Otorgante>> mostrarOtorgantes { get; set; }
+}

@@ -192,6 +192,7 @@ namespace SISGED.Shared.Entities
     public class ContenidoDictamen
     {
         public string nombredenunciante { get; set; }
+        public string descripcion { get; set; }
         public string titulo { get; set; }
         public List<string> observaciones { get; set; }
         public string conclusion { get; set; }

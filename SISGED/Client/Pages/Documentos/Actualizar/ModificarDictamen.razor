@@ -124,7 +124,7 @@
         <MatTabGroup>
             <MatTab Label="General">
 
-               
+
 
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => dictamen.contenidoDTO.titulo)">
@@ -285,9 +285,9 @@
     private string imagenTemporal;
     private bool loadprocess = false;
 
-    protected override void  OnInitialized()
+    protected override void OnInitialized()
     {
-        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0 , descripcion = "" } };
+        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0, descripcion = "" } };
         dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
         _editContext = new EditContext(dictamen);
     }
