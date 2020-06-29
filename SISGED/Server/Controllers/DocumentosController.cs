@@ -340,18 +340,13 @@ namespace SISGED.Server.Controllers
         }
         [HttpGet("documentocf")]
         public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusionFirma([FromQuery] string iddoc)
-        //[HttpGet("documentocf")]
-        //public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusion([FromQuery] string iddoc)
-        //{
-
-        //}
-
-
-        //actualizarDocumentoODN
+        {
+            return _documentoservice.ObtenerDocumentoConclusionFirma(iddoc);
+        }
         [HttpPost("actualizarDocumentoODN")]
         public void modificarDocumentoODN(ExpedienteWrapper expedienteWrapper)
         {
-            return _documentoservice.ObtenerDocumentoConclusionFirma(iddoc);
+            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
         }
 
         [HttpGet("documentoad")]
@@ -363,7 +358,7 @@ namespace SISGED.Server.Controllers
         public async Task<ActionResult<SolicitudExpedienteNotarioDTO>> obtenerSolicitudExpedienteNot([FromQuery] string iddoc)
         {
             return _documentoservice.obtenerSolicitudExpedienteNotario(iddoc);
-            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
+            
         }
     }
 }
