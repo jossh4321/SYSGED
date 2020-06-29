@@ -62,49 +62,64 @@
 </style>
 
 <div class="div-form">
-    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
-              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
-        <FluentValidator></FluentValidator>
-        <MatTabGroup>
-            <MatTab Label="Datos de la Apelación">
+    @if (firstLoad == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@apelacion.contenidoDTO.titulo" Class="text-field-style"
-                                  Label="Titulo de la Apelación" @oninput='@(e => KeyUp(e,"titulo",apelacion.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => apelacion.contenidoDTO.titulo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+            <span style="color:white">CARGANDO...</span>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+            <FluentValidator></FluentValidator>
+            <MatTabGroup>
+                <MatTab Label="Datos de la Apelación">
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.descripcion)">
-                    <MatTextField @bind-Value="@apelacion.contenidoDTO.descripcion" Class="text-field-style"
-                                  Label="Descripción de la apelación" @oninput='@(e => KeyUp(e,"descripcion",apelacion.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => apelacion.contenidoDTO.descripcion)" />
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.titulo)">
+                        <MatTextField @bind-Value="@apelacion.contenidoDTO.titulo" Class="text-field-style"
+                                      Label="Titulo de la Apelación" @oninput='@(e => KeyUp(e,"titulo",apelacion.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => apelacion.contenidoDTO.titulo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.descripcion)">
+                        <MatTextField @bind-Value="@apelacion.contenidoDTO.descripcion" Class="text-field-style"
+                                      Label="Descripción de la apelación" @oninput='@(e => KeyUp(e,"descripcion",apelacion.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => apelacion.contenidoDTO.descripcion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                </div>
 
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+                    <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
-                <div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>
-            </MatTab>
-        </MatTabGroup>
-    </EditForm>
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora Ahora</MatButton>
+                    </div>
+                </MatTab>
+            </MatTabGroup>
+        </EditForm>
+    }
 </div>
 
 @code {
@@ -118,11 +133,13 @@
     private EditContext _editContext;
     private string imagenTemporal;
     private bool loadprocess = false;
+    private bool firstLoad = true;
 
     protected override async Task OnInitializedAsync()
     {
+        firstLoad = true;
         _editContext = new EditContext(apelacion);
-        var httpResponse = await repository.Get<ApelacionDTO>("api/documentos/documentoape?iddoc=5ef51a0737e71c3858d0f3b4");
+        var httpResponse = await repository.Get<ApelacionDTO>($"api/documentos/documentoape?iddoc={workspace.expedienteseleccionado.documento.id}");
         if (!httpResponse.Error)
         {
             apelacion = (ApelacionDTO)httpResponse.Response;
@@ -138,6 +155,7 @@
             imagenTemporal = apelacion.contenidoDTO.data;
             apelacion.contenidoDTO.data = null;
         }
+        firstLoad = false;
     }
 
     private void ImagenSeleccionada(string imagenbase64)

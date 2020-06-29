@@ -118,225 +118,241 @@
 </style>
 
 <div class="div-form">
-    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
-              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
-        <FluentValidator></FluentValidator>
-        <MatTabGroup>
-            <MatTab Label="General">
+    @if (firstLoad == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.titulo" Class="text-field-style"
-                                  Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"titulo",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.titulo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+            <span style="color:white">CARGANDO...</span>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+            <FluentValidator></FluentValidator>
+            <MatTabGroup>
+                <MatTab Label="General">
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.descripcion)">
-                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.descripcion" Class="text-field-style"
-                                  Label="Descripcion del aperturamiento" @oninput='@(e => KeyUp(e,"descripcion",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.descripcion)" />
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.titulo)">
+                        <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.titulo" Class="text-field-style"
+                                      Label="Titulo del Oficio" @oninput='@(e => KeyUp(e,"titulo",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.titulo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.nombredenunciante)">
-                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.nombredenunciante" Class="text-field-style"
-                                  Label="Nombre del denunciante" @oninput='@(e => KeyUp(e,"nombredenunciante",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.nombredenunciante)" />
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.descripcion)">
+                        <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.descripcion" Class="text-field-style"
+                                      Label="Descripcion del aperturamiento" @oninput='@(e => KeyUp(e,"descripcion",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.descripcion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.lugaraudiencia)">
-                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.lugaraudiencia" Class="text-field-style"
-                                  Label="Lugar de la audiencia" @oninput='@(e => KeyUp(e,"lugaraudiencia",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.lugaraudiencia)" />
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.nombredenunciante)">
+                        <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.nombredenunciante" Class="text-field-style"
+                                      Label="Nombre del denunciante" @oninput='@(e => KeyUp(e,"nombredenunciante",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.nombredenunciante)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia)">
-
-                    <MatDatePicker Label="Fecha de Inicio" AllowInput="false" @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia"></MatDatePicker>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia)" />
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.lugaraudiencia)">
+                        <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.lugaraudiencia" Class="text-field-style"
+                                      Label="Lugar de la audiencia" @oninput='@(e => KeyUp(e,"lugaraudiencia",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.lugaraudiencia)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.fechafinaudiencia)">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia)">
 
-                    <MatDatePicker Label="Fecha de Finalizacion" AllowInput="false" @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechafinaudiencia"></MatDatePicker>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.fechafinaudiencia)" />
+                        <MatDatePicker Label="Fecha de Inicio" AllowInput="false" @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia"></MatDatePicker>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.fechafinaudiencia)">
+
+                        <MatDatePicker Label="Fecha de Finalizacion" AllowInput="false" @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechafinaudiencia"></MatDatePicker>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.fechafinaudiencia)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                </div>
 
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.idnotario)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@aperturamientodisciplinario.contenidoDTO.idnotario"
-                                       Placeholder="Ingrese el Nombre del Notario">
-                        <SelectedTemplate>
-                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
-                        </SelectedTemplate>
-                        <ResultTemplate>
-                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
-                        </ResultTemplate>
-                        <NotFoundTemplate>
-                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
-                        </NotFoundTemplate>
-                    </BlazoredTypeahead>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.idnotario)" />
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.idnotario)">
+                        <BlazoredTypeahead SearchMethod="match" @bind-Value="@aperturamientodisciplinario.contenidoDTO.idnotario"
+                                           Placeholder="Ingrese el Nombre del Notario">
+                            <SelectedTemplate>
+                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                            </SelectedTemplate>
+                            <ResultTemplate>
+                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                            </ResultTemplate>
+                            <NotFoundTemplate>
+                                <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                            </NotFoundTemplate>
+                        </BlazoredTypeahead>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.idnotario)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.idfiscal)">
-                    <InputSelect @bind-Value="@aperturamientodisciplinario.contenidoDTO.idfiscal" class="text-field-style custom-select">
-                        <option value="">--Seleccione un Fiscal--</option>
-                        @foreach (UsuarioRDTO fiscal in fiscales)
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.idfiscal)">
+                        <InputSelect @bind-Value="@aperturamientodisciplinario.contenidoDTO.idfiscal" class="text-field-style custom-select">
+                            <option value="">--Seleccione un Fiscal--</option>
+                            @foreach (UsuarioRDTO fiscal in fiscales)
+                                {
+                                <option value="@fiscal.id">@fiscal.datos.nombre  @fiscal.datos.apellido</option>
+                                }
+                            /**/
+                        </InputSelect>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.idfiscal)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+
+                    <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+
+                </MatTab>
+                <MatTab Label="Participantes y Conclusiones">
+                    <!--**************************************************************************************-->
+                    <div class="contenedor-participantes">
+                        <div class="titulo-paticipantes">
+                            <div><span class="titulo">Participantes</span></div>
+                            <div class="icono" @onclick="@(addparticipante)">
+                                <MatIcon Icon="add_circle_outline"></MatIcon>
+                            </div>
+                        </div>
+                        @foreach (Participante p in aperturamientodisciplinario.contenidoDTO.participantes)
                         {
-                            <option value="@fiscal.id">@fiscal.datos.nombre  @fiscal.datos.apellido</option>
+                            <div class="single-textfield-container">
+                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre)">
+                                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre" Class="text-field-style"
+                                                  Label="Nombre del participante"
+                                                  @oninput='@(e => KeyUp(e, "nombre", aperturamientodisciplinario.contenidoDTO.participantes[p.index]))'></MatTextField>
+                                    <div class="incorrecto">
+                                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre)" />
+                                    </div>
+                                    <div class="correcto">
+                                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                        <span class="good-msg">Correcto</span>
+                                    </div>
+                                </div>
+                                <div class="base-icon" @onclick="@(() => removeparticipante(p.index))">
+                                    <MatIcon Icon="remove_circle_outline"></MatIcon>
+                                </div>
+                            </div>
                         }
-                    </InputSelect>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.idfiscal)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
-
-            </MatTab>
-            <MatTab Label="Participantes y Conclusiones">
-                <!--**************************************************************************************-->
-                <div class="contenedor-participantes">
-                    <div class="titulo-paticipantes">
-                        <div><span class="titulo">Participantes</span></div>
-                        <div class="icono" @onclick="@(addparticipante)">
-                            <MatIcon Icon="add_circle_outline"></MatIcon>
-                        </div>
-                    </div>
-                    @foreach (Participante p in aperturamientodisciplinario.contenidoDTO.participantes)
-                    {
-                        <div class="single-textfield-container">
-                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre)">
-                                <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre" Class="text-field-style"
-                                              Label="Nombre del participante"
-                                              @oninput='@(e => KeyUp(e, "nombre", aperturamientodisciplinario.contenidoDTO.participantes[p.index]))'></MatTextField>
-                                <div class="incorrecto">
-                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre)" />
-                                </div>
-                                <div class="correcto">
-                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                                    <span class="good-msg">Correcto</span>
-                                </div>
+                        <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes)">
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes)" />
                             </div>
-                            <div class="base-icon" @onclick="@(() => removeparticipante(p.index))">
-                                <MatIcon Icon="remove_circle_outline"></MatIcon>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                <span class="good-msg">Correcto</span>
                             </div>
                         </div>
-                    }
-                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes)">
-                        <div class="incorrecto">
-                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes)" />
-                        </div>
-                        <div class="correcto">
-                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                            <span class="good-msg">Correcto</span>
-                        </div>
                     </div>
-                </div>
-                <!--**************************************************************************************-->
-                <div class="contenedor-participantes">
-                    <div class="titulo-paticipantes">
-                        <div><span class="titulo">Hechos Imputados</span></div>
-                        <div class="icono" @onclick="@(addhecho)">
-                            <MatIcon Icon="add_circle_outline"></MatIcon>
-                        </div>
-                    </div>
-                    @foreach (Hecho h in aperturamientodisciplinario.contenidoDTO.hechosimputados)
-                    {
-                        <div class="single-textfield-container">
-                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion)">
-                                <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion" Class="text-field-style"
-                                              Label="Nombre del participante"
-                                              @oninput='@(e => KeyUp(e, "descripcion", aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index]))'></MatTextField>
-                                <div class="incorrecto">
-                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion)" />
-                                </div>
-                                <div class="correcto">
-                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                                    <span class="good-msg">Correcto</span>
-                                </div>
-                            </div>
-                            <div class="base-icon" @onclick="@(() => removehecho(h.index))">
-                                <MatIcon Icon="remove_circle_outline"></MatIcon>
+                    <!--**************************************************************************************-->
+                    <div class="contenedor-participantes">
+                        <div class="titulo-paticipantes">
+                            <div><span class="titulo">Hechos Imputados</span></div>
+                            <div class="icono" @onclick="@(addhecho)">
+                                <MatIcon Icon="add_circle_outline"></MatIcon>
                             </div>
                         </div>
-                    }
-                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.hechosimputados)">
-                        <div class="incorrecto">
-                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.hechosimputados)" />
-                        </div>
-                        <div class="correcto">
-                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                            <span class="good-msg">Correcto</span>
+                        @foreach (Hecho h in aperturamientodisciplinario.contenidoDTO.hechosimputados)
+                        {
+                            <div class="single-textfield-container">
+                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion)">
+                                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion" Class="text-field-style"
+                                                  Label="Nombre del participante"
+                                                  @oninput='@(e => KeyUp(e, "descripcion", aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index]))'></MatTextField>
+                                    <div class="incorrecto">
+                                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion)" />
+                                    </div>
+                                    <div class="correcto">
+                                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                        <span class="good-msg">Correcto</span>
+                                    </div>
+                                </div>
+                                <div class="base-icon" @onclick="@(() => removehecho(h.index))">
+                                    <MatIcon Icon="remove_circle_outline"></MatIcon>
+                                </div>
+                            </div>
+                        }
+                        <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.hechosimputados)">
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.hechosimputados)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                <span class="good-msg">Correcto</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>
-            </MatTab>
-        </MatTabGroup>
-    </EditForm>
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>
+                </MatTab>
+            </MatTabGroup>
+        </EditForm>
+    }
 </div>
 @code {
     //Variables de sesion
@@ -348,11 +364,13 @@
     private EditContext _editContext;
     private string imagenTemporal;
     private bool loadprocess = false;
+    private bool firstLoad = true;
 
     List<UsuarioRDTO> fiscales { get; set; } = new List<UsuarioRDTO>();
 
     protected override async Task OnInitializedAsync()
     {
+        firstLoad = true;
         aperturamientodisciplinario.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0, nombre = "" } };
         aperturamientodisciplinario.contenidoDTO.hechosimputados = new List<Hecho>() { new Hecho() { index = 0, descripcion = "" } };
         _editContext = new EditContext(aperturamientodisciplinario);
@@ -382,6 +400,7 @@
         {
             Console.WriteLine("Algo Mal");
         }
+        firstLoad = false;
     }
 
     private void addparticipante()

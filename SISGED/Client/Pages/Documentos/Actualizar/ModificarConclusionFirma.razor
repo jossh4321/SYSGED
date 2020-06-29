@@ -63,41 +63,56 @@
 </style>
 
 <div class="div-form">
-    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
-              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
-        <FluentValidator></FluentValidator>
-        <MatTabGroup>
-            <MatTab Label="Datos para conclusion de firma">
+    @if (firstLoad == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idescriturapublica)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica"
-                                       Placeholder="Ingrese el titulo del Acto Juridico">
-                        <SelectedTemplate>
-                            <strong>@context.titulo</strong>
-                        </SelectedTemplate>
-                        <ResultTemplate>
-                            <strong>@context.titulo</strong>
-                        </ResultTemplate>
-                    </BlazoredTypeahead>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.idescriturapublica)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-                <div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>
+            <span style="color:white">CARGANDO...</span>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+            <FluentValidator></FluentValidator>
+            <MatTabGroup>
+                <MatTab Label="Datos para conclusion de firma">
 
-            </MatTab>
-        </MatTabGroup>
-    </EditForm>
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idescriturapublica)">
+                        <BlazoredTypeahead SearchMethod="match" @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica"
+                                           Placeholder="Ingrese el titulo del Acto Juridico">
+                            <SelectedTemplate>
+                                <strong>@context.titulo</strong>
+                            </SelectedTemplate>
+                            <ResultTemplate>
+                                <strong>@context.titulo</strong>
+                            </ResultTemplate>
+                        </BlazoredTypeahead>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.idescriturapublica)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>
+
+                </MatTab>
+            </MatTabGroup>
+        </EditForm>
+    }
 </div>
 
 @code {
@@ -106,6 +121,7 @@
     private ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
     private EditContext _editContext;
     private bool loadprocess = false;
+    private bool firstLoad = true;
     public List<EscrituraPublica> escriturapublicasseleccionados = new List<EscrituraPublica>();
     public EscrituraPublica escriturapublicaselect;
     private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
@@ -123,6 +139,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        firstLoad = true;
         _editContext = new EditContext(conclusionFirma);
         var httpResponse = await repository.Get<ConclusionFirmaDTO>($"api/documentos/documentocf?iddoc={workspace.expedienteseleccionado.documento.id}");
         if (!httpResponse.Error)
@@ -135,6 +152,7 @@
         {
             Console.WriteLine("Algo Mal");
         }
+        firstLoad = false;
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)

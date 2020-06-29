@@ -17,13 +17,13 @@ namespace SISGED.Shared.DTOs
         public Notario idnotario { get; set; } = new Notario();
         public string actojuridico { get; set; }
         public string tipoprotocolo { get; set; }
-        public List<string> otorgantes { get; set; }
-        public DateTime fecharealizacion { get; set; }
+        public List<string> otorgantes { get; set; } = new List<string>();
+        public DateTime? fecharealizacion { get; set; }
         public string url { get; set; }
     }
     public class OficioBPNDTO : Documento
     {
-        public Estado estado { get; set; }
+        public Estado estado { get; set; } = new Estado();
         public ContenidoOficioBPNDTO contenidoDTO { get; set; } = new ContenidoOficioBPNDTO();
     }
 
@@ -49,5 +49,17 @@ namespace SISGED.Shared.DTOs
         public Estado estado { get; set; } = new Estado();
         public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
         public Notario notario { get; set; } = new Notario();
+    }
+    public class OficioBPNDTO_lookup2
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
+        public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
+        public Estado estado { get; set; } = new Estado();
+        public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
+        public Notario notario { get; set; } = new Notario();
+        public List<Usuario> cliente { get; set; } = new List<Usuario>();
     }
 }

@@ -62,70 +62,85 @@
 </style>
 
 <div class="div-form">
-    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
-              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
-        <FluentValidator></FluentValidator>
-        <MatTabGroup>
-            <MatTab Label="Datos de la solicitud de expediente de notario">
+    @if (firstLoad == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedientenotario.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@solicitudexpedientenotario.contenidoDTO.titulo" Class="text-field-style"
-                                  Label="Titulo de la solicitud" @oninput='@(e => KeyUp(e,"titulo",solicitudexpedientenotario.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.titulo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+            <span style="color:white">CARGANDO...</span>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+            <FluentValidator></FluentValidator>
+            <MatTabGroup>
+                <MatTab Label="Datos de la solicitud de expediente de notario">
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedientenotario.contenidoDTO.descripcion)">
-                    <MatTextField @bind-Value="@solicitudexpedientenotario.contenidoDTO.descripcion" Class="text-field-style"
-                                  Label="Descripción de la solicitud" @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedientenotario.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.descripcion)" />
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedientenotario.contenidoDTO.titulo)">
+                        <MatTextField @bind-Value="@solicitudexpedientenotario.contenidoDTO.titulo" Class="text-field-style"
+                                      Label="Titulo de la solicitud" @oninput='@(e => KeyUp(e,"titulo",solicitudexpedientenotario.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.titulo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudexpedientenotario.contenidoDTO.idnotario)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@solicitudexpedientenotario.contenidoDTO.idnotario"
-                                       Placeholder="Ingrese el Nombre del Notario">
-                        <SelectedTemplate>
-                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
-                        </SelectedTemplate>
-                        <ResultTemplate>
-                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
-                        </ResultTemplate>
-                        <NotFoundTemplate>
-                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
-                        </NotFoundTemplate>
-                    </BlazoredTypeahead>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.idnotario)" />
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedientenotario.contenidoDTO.descripcion)">
+                        <MatTextField @bind-Value="@solicitudexpedientenotario.contenidoDTO.descripcion" Class="text-field-style"
+                                      Label="Descripción de la solicitud" @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedientenotario.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.descripcion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
 
-                <div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>
-            </MatTab>
-        </MatTabGroup>
-    </EditForm>
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudexpedientenotario.contenidoDTO.idnotario)">
+                        <BlazoredTypeahead SearchMethod="match" @bind-Value="@solicitudexpedientenotario.contenidoDTO.idnotario"
+                                           Placeholder="Ingrese el Nombre del Notario">
+                            <SelectedTemplate>
+                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                            </SelectedTemplate>
+                            <ResultTemplate>
+                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                            </ResultTemplate>
+                            <NotFoundTemplate>
+                                <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                            </NotFoundTemplate>
+                        </BlazoredTypeahead>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.idnotario)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>
+                </MatTab>
+            </MatTabGroup>
+        </EditForm>
+    }
 </div>
 
 @code {
@@ -138,9 +153,11 @@
     private SolicitudExpedienteNotarioDTO solicitudexpedientenotario = new SolicitudExpedienteNotarioDTO();
     private EditContext _editContext;
     private bool loadprocess = false;
+    private bool firstLoad = true;
 
     protected override async Task OnInitializedAsync()
     {
+        firstLoad = true;
         _editContext = new EditContext(solicitudexpedientenotario);
         var httpResponse = await repository.Get<SolicitudExpedienteNotarioDTO>($"api/documentos/documentosen?iddoc={workspace.expedienteseleccionado.documento.id}");
         if (!httpResponse.Error)
@@ -153,6 +170,7 @@
         {
             Console.WriteLine("Algo Mal");
         }
+        firstLoad = false;
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)

@@ -567,7 +567,7 @@ namespace SISGED.Server.Services
         {
             var  match = new BsonDocument("$match", new BsonDocument("_id",
                         new ObjectId(id)));
-            OficioBPNDTO_ur oficioBPN = new OficioBPNDTO_ur();
+            OficioBPNDTO oficioBPN = new OficioBPNDTO();
             BsonArray subpipeline = new BsonArray();
             subpipeline.Add(
                 new BsonDocument("$match", new BsonDocument(
@@ -582,12 +582,49 @@ namespace SISGED.Server.Services
                                .Add("pipeline", subpipeline)
                                .Add("as", "notario"));
 
+            BsonArray subpipeline2 = new BsonArray();
+            subpipeline2.Add(
+              new BsonDocument("$match", new BsonDocument(
+                  "$expr", new BsonDocument(
+                      "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idcli") }
+                      )
+                  ))
+              );
+            var aggregation2 = new BsonDocument("$lookup",
+                               new BsonDocument("from", "usuarios")
+                               .Add("let", new BsonDocument("idcli", "$contenido.idcliente"))
+                               .Add("pipeline", subpipeline2)
+                               .Add("as", "cliente"));
+
+            var project = new BsonDocument("$project",
+                    new BsonDocument {
+                        { "_id","$_id"},
+                        { "tipo","$tipo"},
+                        { "estado","$estado"},
+                        { "historialcontenido","$historialcontenido"},
+                        { "historialproceso","$historialproceso"},
+                        { "contenidoDTO", new BsonDocument{
+                            { "titulo","$contenido.titulo"},
+                            { "descripcion","$contenido.descripcion"},
+                            { "idcliente",new BsonDocument("$arrayElemAt", new BsonArray{ "$cliente",0})},
+                            { "idnotario","$notario"},
+                            { "actojuridico","$contenido.actojuridico"},
+                            { "tipoprotocolo","$contenido.tipoprotocolo"},
+                            { "otorgantes","$contenido.otorgantes"},
+                            { "fecharealizacion","$contenido.fecharealizacion"},
+                            { "url","$url"}
+                        }},
+                    });
+
+
             oficioBPN = _documentos.Aggregate().
                 AppendStage<OficioBPN>(match)
                 .AppendStage<OficioBPNDTO_lookup>(aggregation)
-                .Unwind<OficioBPNDTO_lookup, OficioBPNDTO_ur>(x => x.notario).First();
+                .Unwind<OficioBPNDTO_lookup, OficioBPNDTO_ur>(x => x.notario)
+                .AppendStage<OficioBPNDTO_lookup2>(aggregation2)
+                .AppendStage<OficioBPNDTO>(project).First();
 
-            OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
+            /*OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
             oficioBPNDTO.id = oficioBPN.id;
             oficioBPNDTO.tipo = oficioBPN.tipo;
             oficioBPNDTO.historialcontenido = oficioBPN.historialcontenido;
@@ -605,8 +642,8 @@ namespace SISGED.Server.Services
                 fecharealizacion = oficioBPN.contenido.fecharealizacion,
                 url = oficioBPN.contenido.url
             };
-            oficioBPNDTO.estado = oficioBPN.estado;
-            return oficioBPNDTO;
+            oficioBPNDTO.estado = oficioBPN.estado;*/
+            return oficioBPN;
         }
 
         public DictamenDTO obtenerDictamenDTO(string id)

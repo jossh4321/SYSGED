@@ -118,6 +118,19 @@
 </style>
 
 <div class="div-form">
+    @if (firstLoad == true)
+    {
+    <div class="loader-block">
+        <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+
+        <span style="color:white">CARGANDO...</span>
+    </div>
+    }
+    else { 
     <EditForm EditContext="@_editContext" Context="CurrentEditContext"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
@@ -235,12 +248,13 @@
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Icon="@MatBlazor.MatIconNames.Edit"
                                Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
                 </div>
             </MatTab>
         </MatTabGroup>
     </EditForm>
+    }
 </div>
 
 @code {
@@ -254,10 +268,11 @@
     private EditContext _editContext;
     private string imagenTemporal;
     private bool loadprocess = false;
+    private bool firstLoad = true;
 
     protected override async Task OnInitializedAsync()
     {
-
+        firstLoad = true;
         resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0 } };
         _editContext = new EditContext(resolucion);
         var httpResponse = await repository.Get<ResolucionDTO>($"api/documentos/documentord?iddoc={workspace.expedienteseleccionado.documento.id}");
@@ -277,6 +292,7 @@
             imagenTemporal = resolucion.contenidoDTO.data;
             resolucion.contenidoDTO.data = null;
         }
+        firstLoad = false;
     }
 
     private void ImagenSeleccionada(string imagenbase64)
