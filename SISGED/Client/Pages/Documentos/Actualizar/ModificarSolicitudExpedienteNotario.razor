@@ -94,6 +94,29 @@
                     </div>
                 </div>
 
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudexpedientenotario.contenidoDTO.idnotario)">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@solicitudexpedientenotario.contenidoDTO.idnotario"
+                                       Placeholder="Ingrese el Nombre del Notario">
+                        <SelectedTemplate>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                        </ResultTemplate>
+                        <NotFoundTemplate>
+                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                        </NotFoundTemplate>
+                    </BlazoredTypeahead>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.idnotario)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -116,9 +139,20 @@
     private EditContext _editContext;
     private bool loadprocess = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(solicitudexpedientenotario);
+        var httpResponse = await repository.Get<SolicitudExpedienteNotarioDTO>($"api/documentos/documentosen?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            solicitudexpedientenotario = (SolicitudExpedienteNotarioDTO)httpResponse.Response;
+            _editContext = new EditContext(solicitudexpedientenotario);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Algo Mal");
+        }
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -150,6 +184,19 @@
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
         }
         loadprocess = false;
+    }
+
+    private async Task<IEnumerable<Notario>> match(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<Notario>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
     }
 
     public void handleInvalidSubmit()

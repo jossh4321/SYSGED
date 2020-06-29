@@ -370,6 +370,18 @@
         {
             Console.WriteLine("Ocurrio un error");
         }
+        var httpResponse2 = await repository.Get<AperturamientoDisciplinarioDTO>($"api/documentos/documentoad?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse2.Error)
+        {
+            aperturamientodisciplinario = (AperturamientoDisciplinarioDTO)httpResponse2.Response;
+            _editContext = new EditContext(aperturamientodisciplinario);
+            StateHasChanged();
+            Console.WriteLine("Todo Bien");
+        }
+        else
+        {
+            Console.WriteLine("Algo Mal");
+        }
     }
 
     private void addparticipante()

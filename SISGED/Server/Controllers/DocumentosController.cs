@@ -339,10 +339,20 @@ namespace SISGED.Server.Controllers
             return _documentoservice.ObtenerDocumentoApelacion(iddoc);
         }
         [HttpGet("documentocf")]
-        public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusio([FromQuery] string iddoc)
+        public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusionFirma([FromQuery] string iddoc)
         {
-
+            return _documentoservice.ObtenerDocumentoConclusionFirma(iddoc);
         }
 
+        [HttpGet("documentoad")]
+        public async Task<ActionResult<AperturamientoDisciplinarioDTO>> obtenerAperturamientoDisciplinario([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerDocumentoAperturamientoDisciplinario(iddoc);
+        }
+        [HttpGet("documentosen")]
+        public async Task<ActionResult<SolicitudExpedienteNotarioDTO>> obtenerSolicitudExpedienteNot([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerSolicitudExpedienteNotario(iddoc);
+        }
     }
 }

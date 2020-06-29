@@ -474,6 +474,7 @@ namespace SISGED.Server.Services
             {
                 titulo = solicitudExpedienteNotarioDTO.contenidoDTO.titulo,
                 descripcion = solicitudExpedienteNotarioDTO.contenidoDTO.descripcion,
+                idnotario = solicitudExpedienteNotarioDTO.contenidoDTO.idnotario.id,
                 fechaemision = DateTime.Now
             };
             SolicitudExpedienteNotario solicitudExpedienteNotarioAct = new SolicitudExpedienteNotario()
@@ -513,6 +514,7 @@ namespace SISGED.Server.Services
             return solicitudExpedienteNotarioAct;
         }
 
+        //C
         public OficioDesignacionNotarioDTO obtenerOficioDesignacionNotario(string id)
         {
             var match = new BsonDocument("$match",
@@ -685,16 +687,164 @@ namespace SISGED.Server.Services
             return apelacionDTO;
 
         }
-        /*public ConclusionFirmaDTO ObtenerDocumentoConclusionFirma(string id)
+        public ConclusionFirmaDTO ObtenerDocumentoConclusionFirma(string id)
         {
-            ConclusionFirma docConclusionFirma = new ConclusionFirma();
+            BsonArray pipeline = new BsonArray();
+            pipeline.Add(new BsonDocument("$match",
+                new BsonDocument("$expr",
+                    new BsonDocument("$eq",
+                        new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idescritura") } ))));
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument("from", "escrituraspublicas")
+                .Add("let", new BsonDocument("idescritura", "$contenido.idescriturapublica"))
+                .Add("pipeline", pipeline)
+                .Add("as", "escriturapublica"));
+
+            var project = new BsonDocument("$project",
+                new BsonDocument {
+                    { "_id","$_id" },
+                    { "tipo","$tipo"},
+                    { "contenidoDTO",new BsonDocument(
+                        new BsonDocument("idescriturapublica",
+                            new BsonDocument("$arrayElemAt",
+                                new BsonArray{ "$escriturapublica",0 }))
+                        )
+                    },
+                    { "estado","$estado"},
+                    { "historialcontenido", "$historialcontenido" },
+                    { "historialproceso", "$historialproceso" }
+                });
+
+            ConclusionFirmaDTO docConclusionFirma = new ConclusionFirmaDTO();
             var match = new BsonDocument("$match", new BsonDocument("_id",
                         new ObjectId(id)));
             docConclusionFirma = _documentos.Aggregate().
-              AppendStage<ConclusionFirma>(match).First();
+              AppendStage<ConclusionFirma>(match)
+              .AppendStage<ConclusionFirma_lookup>(lookup)
+              .AppendStage<ConclusionFirmaDTO>(project).First();
+
+
+            return docConclusionFirma;
+        }
+
+        public AperturamientoDisciplinarioDTO obtenerDocumentoAperturamientoDisciplinario(string id)
+        {
+
+            var match = new BsonDocument("$match",
+                new BsonDocument("_id", new ObjectId(id)));
+            BsonArray pipeline = new BsonArray {
+                new BsonDocument("$match",
+                    new BsonDocument("$expr",
+                        new BsonDocument("$eq",new BsonArray{"$_id", new BsonDocument("$toObjectId", "$$idnot") })))
+            };
+
+
+            var lookup = new BsonDocument("$lookup", new BsonDocument(
+                            "from", "notarios")
+                .Add("let", new BsonDocument("idnot", "$contenido.idnotario"))
+                .Add("pipeline", pipeline)
+                .Add("as", "notario"));
+
+
+            var project = new BsonDocument("$project",
+               new BsonDocument {{ "_id", "$_id" },
+                        { "estado", "$estado" },
+                        { "tipo", "$tipo" },
+                        { "contenido",  new BsonDocument{
+                          { "idnotario", new BsonDocument("$arrayElemAt",
+                                            new BsonArray
+                                {
+                                    "$notario",
+                                    0
+                                }) },
+                            { "idfiscal", "$contenido.idfiscal" },
+                            { "nombredenunciante", "$contenido.nombredenunciante" },
+                            { "titulo", "$contenido.titulo" },
+                            { "descripcion", "$contenido.descripcion" },
+                            { "fechainicioaudiencia", "$contenido.fechainicioaudiencia" },
+                            { "fechafinaudiencia", "$contenido.fechafinaudiencia" },
+                            { "participantes", "$contenido.participantes" },
+                            { "lugaraudiencia", "$contenido.lugaraudiencia" },
+                            { "hechosimputados", "$contenido.hechosimputados" },
+                            { "url", "$contenido.url" }
+            } },
+            { "historialproceso", "$historialproceso" },
+            { "historialcontenido", "$historialcontenido" }
+       });
 
 
 
-        }*/
+            AperturamientoD_project documentoAperturamiento = new AperturamientoD_project();
+            documentoAperturamiento = _documentos.Aggregate()
+                .AppendStage<AperturamientoDisciplinario>(match)
+                .AppendStage<AperturamientoD_lookup_notario>(lookup)
+                .AppendStage<AperturamientoD_project>(project).First();
+
+            AperturamientoDisciplinarioDTO aperturamientodto = new AperturamientoDisciplinarioDTO();
+            aperturamientodto.id = documentoAperturamiento.id;
+            aperturamientodto.tipo = documentoAperturamiento.tipo;
+            aperturamientodto.historialcontenido = documentoAperturamiento.historialcontenido;
+            aperturamientodto.historialproceso = documentoAperturamiento.historialproceso;
+            aperturamientodto.contenidoDTO = new ContenidoAperturamientoDisciplinarioDTO()
+            {
+                idnotario = documentoAperturamiento.contenido.idnotario,
+                idfiscal = documentoAperturamiento.contenido.idfiscal,
+                titulo = documentoAperturamiento.contenido.titulo,
+                descripcion = documentoAperturamiento.contenido.descripcion,
+                fechainicioaudiencia = documentoAperturamiento.contenido.fechainicioaudiencia,
+                fechafinaudiencia = documentoAperturamiento.contenido.fechafinaudiencia,
+                participantes = documentoAperturamiento.contenido.participantes.Select((x, y) => new Participante() { nombre = x, index = y }).ToList(),
+                lugaraudiencia = documentoAperturamiento.contenido.lugaraudiencia,
+                hechosimputados = documentoAperturamiento.contenido.hechosimputados.Select((x, y) => new Hecho() { descripcion = x, index = y }).ToList(),
+                url = documentoAperturamiento.contenido.url
+            };
+            return aperturamientodto;
+        }
+
+        public SolicitudExpedienteNotarioDTO obtenerSolicitudExpedienteNotario(string iddoc)
+        {
+            var match = new BsonDocument("$match",
+                new BsonDocument("_id", new ObjectId(iddoc)));
+
+            var pipeline = new BsonArray {
+                new BsonDocument("$match",
+                    new BsonDocument("$expr",
+                        new BsonDocument("$eq", new BsonArray{ "$_id",
+                            new BsonDocument("$toObjectId", "$$idnot") })))
+            };
+
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument { 
+                    { "from","notarios"},
+                    { "let",new BsonDocument("idnot","$contenido.idnotario")},
+                    { "pipeline",pipeline},
+                    { "as","notario"}
+                });
+
+            var project = new BsonDocument("$project",
+                new BsonDocument {
+                    { "_id", "$_id" },
+                    { "estado", "$estado" },
+                    { "tipo", "$tipo" },
+                    { "contenidoDTO",new BsonDocument{
+                        { "titulo","$contenido.titulo"},
+                        { "descripcion","$contenido.descripcion"},
+                        { "fechaemision","$contenido.fechaemision"},
+                        { "idnotario", new BsonDocument("$arrayElemAt",
+                                            new BsonArray{ "$notario", 0 })}
+                    }},
+                    { "historialproceso", "$historialproceso" },
+                    { "historialcontenido", "$historialcontenido" }
+                });
+
+            SolicitudExpedienteNotarioDTO solicitudExpNotario = new SolicitudExpedienteNotarioDTO();
+            solicitudExpNotario = _documentos.Aggregate()
+                .AppendStage<SolicitudExpedienteNotario>(match)
+                .AppendStage<SolicitudExpedienteNotario_lookup>(lookup)
+                .AppendStage<SolicitudExpedienteNotarioDTO>(project).First();
+
+            return solicitudExpNotario;
+        }
+        //C
     }
 }
