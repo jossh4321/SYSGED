@@ -59,15 +59,18 @@
     div.incorrecto i.bad-icon {
         color: red !important;
     }
-    div.mat-date-picker{
-        width:100% !important;
+
+    div.mat-date-picker {
+        width: 100% !important;
     }
+
     .contenedor-participantes {
         padding-top: 10px;
         margin: 20px;
         border: 2px solid #666666;
         border-radius: 5px;
     }
+
     .titulo-paticipantes {
         border: 1px solid black;
         margin: 0px 5px 0px 5px;
@@ -79,24 +82,29 @@
         justify-content: center;
         align-items: center;
     }
+
     .titulo {
-        
-        color:#d9d9d9;
+        color: #d9d9d9;
     }
+
     .icono {
-        margin-left:20px;
+        margin-left: 20px;
     }
-    .icono i{
-        margin:5px;
-    }
+
+        .icono i {
+            margin: 5px;
+        }
+
     .single-textfield-container {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
     }
+
     .base-field {
         flex-basis: 90%;
     }
+
     .base-icon {
         display: flex;
         flex-basis: 8%;
@@ -156,7 +164,7 @@
                 </div>
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => aperturamientodisciplinario.contenidoDTO.lugaraudiencia)">
-                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.lugaraudiencia"  Class="text-field-style"
+                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.lugaraudiencia" Class="text-field-style"
                                   Label="Lugar de la audiencia" @oninput='@(e => KeyUp(e,"lugaraudiencia",aperturamientodisciplinario.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -170,7 +178,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia)">
 
-                    <MatDatePicker Label="Fecha de Inicio" AllowInput="false"  @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia"></MatDatePicker>
+                    <MatDatePicker Label="Fecha de Inicio" AllowInput="false" @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia"></MatDatePicker>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                         <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia)" />
@@ -183,7 +191,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.fechafinaudiencia)">
 
-                    <MatDatePicker Label="Fecha de Finalizacion"  AllowInput="false"  @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechafinaudiencia"></MatDatePicker>
+                    <MatDatePicker Label="Fecha de Finalizacion" AllowInput="false" @bind-Value="@aperturamientodisciplinario.contenidoDTO.fechafinaudiencia"></MatDatePicker>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                         <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.fechafinaudiencia)" />
@@ -196,7 +204,7 @@
 
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.idnotario)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@aperturamientodisciplinario.contenidoDTO.idnotario" 
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@aperturamientodisciplinario.contenidoDTO.idnotario"
                                        Placeholder="Ingrese el Nombre del Notario">
                         <SelectedTemplate>
                             <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
@@ -340,12 +348,12 @@
     private EditContext _editContext;
     private string imagenTemporal;
     private bool loadprocess = false;
-    
+
     List<UsuarioRDTO> fiscales { get; set; } = new List<UsuarioRDTO>();
 
     protected override async Task OnInitializedAsync()
     {
-        aperturamientodisciplinario.contenidoDTO.participantes = new List<Participante>(){ new Participante() { index = 0, nombre = "" } };
+        aperturamientodisciplinario.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0, nombre = "" } };
         aperturamientodisciplinario.contenidoDTO.hechosimputados = new List<Hecho>() { new Hecho() { index = 0, descripcion = "" } };
         _editContext = new EditContext(aperturamientodisciplinario);
         if (!string.IsNullOrEmpty(aperturamientodisciplinario.contenidoDTO.url))
@@ -366,7 +374,7 @@
 
     private void addparticipante()
     {
-        aperturamientodisciplinario.contenidoDTO.participantes.Add(new Participante() { index = (aperturamientodisciplinario.contenidoDTO.participantes.Count)});
+        aperturamientodisciplinario.contenidoDTO.participantes.Add(new Participante() { index = (aperturamientodisciplinario.contenidoDTO.participantes.Count) });
         StateHasChanged();
     }
 

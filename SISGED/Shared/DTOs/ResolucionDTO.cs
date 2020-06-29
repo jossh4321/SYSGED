@@ -1,13 +1,14 @@
-﻿using System;
+﻿using SISGED.Shared.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SISGED.Shared.DTOs
 {
-    public class ResolucionDTO
+    public class ResolucionDTO:Documento
     {
 
-        public string estado { get; set; }
+        public Estado estado { get; set; } = new Estado();
         public ContenidoResolucionDTO contenidoDTO { get; set; } = new ContenidoResolucionDTO();
     }
 

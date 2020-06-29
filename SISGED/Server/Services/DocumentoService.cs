@@ -512,5 +512,189 @@ namespace SISGED.Server.Services
 
             return solicitudExpedienteNotarioAct;
         }
+
+        public OficioDesignacionNotarioDTO obtenerOficioDesignacionNotario(string id)
+        {
+            var match = new BsonDocument("$match",
+                        new BsonDocument("_id",
+                        new ObjectId(id)));
+
+            BsonArray subpipeline = new BsonArray();
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idnot") }
+                        )
+                    ))
+                );
+
+            var aggregation = new BsonDocument("$lookup",
+                                new BsonDocument("from","notarios")
+                                .Add("let",new BsonDocument("idnot", "$contenido.idnotario"))
+                                .Add("pipeline", subpipeline)
+                                .Add("as", "notario"));
+
+
+            OficioDesignacionNotario_ur documentoODN = new OficioDesignacionNotario_ur();
+            documentoODN = _documentos.Aggregate()
+                .AppendStage<OficioDesignacionNotario>(match)
+                .AppendStage<OficioDesignacionNotario_lookup>(aggregation)
+                .Unwind<OficioDesignacionNotario_lookup, OficioDesignacionNotario_ur>(x =>x.notario)
+                .First();
+
+            OficioDesignacionNotarioDTO oficioDesignacionNotario = new OficioDesignacionNotarioDTO();
+            oficioDesignacionNotario.id = documentoODN.id;
+            oficioDesignacionNotario.tipo = documentoODN.tipo;
+            oficioDesignacionNotario.contenidoDTO = new ContenidoOficioDesignacionNotarioDTO()
+            {
+                titulo = documentoODN.contenido.titulo,
+                descripcion = documentoODN.contenido.descripcion,
+                fecharealizacion = documentoODN.contenido.fecharealizacion,
+                lugaroficionotarial = documentoODN.contenido.lugaroficionotarial,
+                idusuario = documentoODN.contenido.idusuario,
+                idnotario = documentoODN.notario
+            };
+            oficioDesignacionNotario.historialcontenido = documentoODN.historialcontenido;
+            oficioDesignacionNotario.historialproceso = documentoODN.historialproceso;
+            oficioDesignacionNotario.estado = documentoODN.estado;
+
+            return oficioDesignacionNotario;
+
+        }
+        public OficioBPNDTO obtenerOficioBusquedaProtocoloNotarial(string id)
+        {
+            var  match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            OficioBPNDTO_ur oficioBPN = new OficioBPNDTO_ur();
+            BsonArray subpipeline = new BsonArray();
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idnot") }
+                        )
+                    ))
+                );
+            var aggregation = new BsonDocument("$lookup",
+                               new BsonDocument("from", "notarios")
+                               .Add("let", new BsonDocument("idnot", "$contenido.idnotario"))
+                               .Add("pipeline", subpipeline)
+                               .Add("as", "notario"));
+
+            oficioBPN = _documentos.Aggregate().
+                AppendStage<OficioBPN>(match)
+                .AppendStage<OficioBPNDTO_lookup>(aggregation)
+                .Unwind<OficioBPNDTO_lookup, OficioBPNDTO_ur>(x => x.notario).First();
+
+            OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
+            oficioBPNDTO.id = oficioBPN.id;
+            oficioBPNDTO.tipo = oficioBPN.tipo;
+            oficioBPNDTO.historialcontenido = oficioBPN.historialcontenido;
+            oficioBPNDTO.historialproceso = oficioBPN.historialproceso;
+            oficioBPNDTO.contenidoDTO = new ContenidoOficioBPNDTO()
+            {
+                titulo = oficioBPN.contenido.titulo,
+                descripcion = oficioBPN.contenido.descripcion,
+                idcliente = new Usuario() { id = oficioBPN.contenido.idcliente },
+                direccionoficio = oficioBPN.contenido.direccionoficio,
+                idnotario = oficioBPN.notario,
+                actojuridico = oficioBPN.contenido.actojuridico,
+                tipoprotocolo = oficioBPN.contenido.tipoprotocolo,
+                otorgantes = oficioBPN.contenido.otorgantes,
+                fecharealizacion = oficioBPN.contenido.fecharealizacion,
+                url = oficioBPN.contenido.url
+            };
+            oficioBPNDTO.estado = oficioBPN.estado;
+            return oficioBPNDTO;
+        }
+
+        public DictamenDTO obtenerDictamenDTO(string id)
+        {
+            Dictamen docDictamen = new Dictamen();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docDictamen = _documentos.Aggregate().
+              AppendStage<Dictamen>(match).First();
+
+            DictamenDTO dictamenDto = new DictamenDTO();
+            dictamenDto.id = docDictamen.id;
+            dictamenDto.historialcontenido = docDictamen.historialcontenido;
+            dictamenDto.historialcontenido = docDictamen.historialcontenido;
+            dictamenDto.estado = docDictamen.estado;
+            dictamenDto.tipo = docDictamen.tipo;
+            dictamenDto.contenidoDTO = new ContenidoDictamenDTO()
+            {
+                descripcion = docDictamen.contenido.descripcion,
+                nombredenunciante = docDictamen.contenido.nombredenunciante,
+                titulo = docDictamen.contenido.titulo,
+                observaciones = docDictamen.contenido.observaciones.Select((x, index) => new Observaciones() { descripcion = x, index = index }).ToList(),
+                conclusion = docDictamen.contenido.conclusion,
+                recomendaciones = docDictamen.contenido.recomendaciones.Select((x, index) => new Recomendaciones() { descripcion = x, index = index }).ToList()
+
+            };
+            return dictamenDto;
+        }
+
+        public ResolucionDTO obtenerResolucionDTO(string id)
+        {
+            Resolucion docResolucion = new Resolucion();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docResolucion = _documentos.Aggregate().
+              AppendStage<Resolucion>(match).First();
+
+            ResolucionDTO resolucionDTO = new ResolucionDTO();
+            resolucionDTO.id = docResolucion.id;
+            resolucionDTO.tipo = docResolucion.tipo;
+            resolucionDTO.historialcontenido = docResolucion.historialcontenido;
+            resolucionDTO.historialproceso = docResolucion.historialproceso;
+            resolucionDTO.estado = docResolucion.estado;
+            resolucionDTO.contenidoDTO = new ContenidoResolucionDTO()
+            {
+                descripcion = docResolucion.contenido.descripcion,
+                titulo = docResolucion.contenido.titulo,
+                fechainicioaudiencia = docResolucion.contenido.fechainicioaudiencia,
+                fechafinaudiencia = docResolucion.contenido.fechafinaudiencia,
+                participantes = docResolucion.contenido.participantes.Select((x, y) => new Participante() { nombre=x,index=y}).ToList(),
+                sancion = docResolucion.contenido.sancion,
+                data = docResolucion.contenido.url         
+            };
+            return resolucionDTO;
+        }
+
+        public ApelacionDTO ObtenerDocumentoApelacion(string id)
+        {
+            Apelacion docApelacion = new Apelacion();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docApelacion = _documentos.Aggregate().
+              AppendStage<Apelacion>(match).First();
+
+            ApelacionDTO apelacionDTO = new ApelacionDTO();
+            apelacionDTO.id = docApelacion.id;
+            apelacionDTO.tipo = docApelacion.tipo;
+            apelacionDTO.historialcontenido = docApelacion.historialcontenido;
+            apelacionDTO.historialproceso = docApelacion.historialproceso;
+            apelacionDTO.estado = docApelacion.estado;
+            apelacionDTO.contenidoDTO = new ContenidoApelacionDTO()
+            {
+                titulo = docApelacion.contenido.titulo,
+                descripcion = docApelacion.contenido.descripcion,
+                fechaapelacion = docApelacion.contenido.fechaapelacion,
+                data = docApelacion.contenido.url,
+            };
+            return apelacionDTO;
+
+        }
+        /*public ConclusionFirmaDTO ObtenerDocumentoConclusionFirma(string id)
+        {
+            ConclusionFirma docConclusionFirma = new ConclusionFirma();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docConclusionFirma = _documentos.Aggregate().
+              AppendStage<ConclusionFirma>(match).First();
+
+
+
+        }*/
     }
 }

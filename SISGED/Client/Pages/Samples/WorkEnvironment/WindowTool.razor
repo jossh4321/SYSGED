@@ -67,7 +67,7 @@
             }
             else if(itemArrastrado.nombre == "Evaluar Documento")
             {
-                ChildContentE = @<EvaluarDocumento></EvaluarDocumento>;
+                ChildContent = @<EvaluarDocumento></EvaluarDocumento>;
             }
             else if(itemArrastrado.nombre == "Buscar protocolo notarial")
             {
@@ -75,6 +75,9 @@
             }else if(itemArrastrado.nombre == "Subir Documento") //Por mientras para probar mi herramienta por no esta generar"
             {
                 ChildContent = @<GenerarDocumento></GenerarDocumento>;
+            }else if(itemArrastrado.nombre == "Modificar Documento")
+            {
+                ChildContent = @<ActualizacionDocumento></ActualizacionDocumento>;
             }
             else
             {
