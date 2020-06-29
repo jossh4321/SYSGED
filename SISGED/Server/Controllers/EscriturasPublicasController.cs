@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using SISGED.Server.Services;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
+using SISGED.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,12 +38,9 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpGet("filterespecial")]
-        public async Task<List<EscrituraPublicaRDTO>> autocompleteFilterCompleto()
+        public async Task<List<EscrituraPublicaRDTO>> autocompleteFilterCompleto([FromQuery] ParametrosBusquedaEscrituraPublica parametrosbusqueda)
         {
-            List<string> lista = new List<string>();
-            lista.Add("pepe");
-            lista.Add("jose");
-            List<EscrituraPublicaRDTO> listaescriturasPublicasFiltrado = await escriturasPublicasService.filtradoEspecial("Miraflores", "paredes","matrimonio",lista);
+            List<EscrituraPublicaRDTO> listaescriturasPublicasFiltrado = await escriturasPublicasService.filtradoEspecial(parametrosbusqueda);
             return listaescriturasPublicasFiltrado;
         }
     }
