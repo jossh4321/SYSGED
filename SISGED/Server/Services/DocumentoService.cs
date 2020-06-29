@@ -846,5 +846,30 @@ namespace SISGED.Server.Services
             return solicitudExpNotario;
         }
         //C
+
+        //actualizarDocumentoODN
+        public void actualizarDocumentoODN(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo OficioDesignacionNotarioDTO
+            OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            oficioDesignacionNotarioDTO = JsonConvert.DeserializeObject<OficioDesignacionNotarioDTO>(json);
+
+            //Creacion de Obj OficioDesignacionNotario y registro en coleccion de documentos 
+            ContenidoOficioDesignacionNotario contenidoODN = new ContenidoOficioDesignacionNotario()
+            {
+                titulo = oficioDesignacionNotarioDTO.contenidoDTO.titulo,
+                descripcion = oficioDesignacionNotarioDTO.contenidoDTO.descripcion,
+                fecharealizacion = DateTime.Now,
+                lugaroficionotarial = oficioDesignacionNotarioDTO.contenidoDTO.lugaroficionotarial,
+                idusuario = oficioDesignacionNotarioDTO.contenidoDTO.idusuario,
+                idnotario = oficioDesignacionNotarioDTO.contenidoDTO.idnotario.id,
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", oficioDesignacionNotarioDTO.id);
+            var update = Builders<Documento>.Update.Set("contenido", contenidoODN);
+            _documentos.UpdateOne(filter, update);
+
+        }
     }
 }
