@@ -1,0 +1,200 @@
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
+    p {
+        display: block;
+        color: black;
+    }
+
+    div {
+        color: black;
+    }
+
+    .demo-mat-card {
+        max-width: 250px;
+    }
+
+    .demo-mat-card-content {
+        padding: 1rem;
+        margin: 0px;
+    }
+
+    .demo-mat-card-clean-margin {
+        margin: 0px;
+    }
+
+    .demo-mat-card-text {
+        color: black;
+    }
+
+        .demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
+            text-align: left;
+            font-weight: bolder;
+            font-size: 15px;
+            padding-left: 5px;
+            color: black;
+        }
+
+        .demo-mat-card-text h5 {
+            text-transform: capitalize;
+            font-size: 19px !important;
+            font-weight: normal;
+        }
+
+        .demo-mat-card-text button {
+            display: flex;
+            margin-bottom: 5px;
+            margin-left: 5px;
+        }
+
+    .mat-color {
+        color: skyblue;
+    }
+
+    .dialogo .mdc-dialog__surface {
+        max-width: 800px !important;
+    }
+
+    .row-datos {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .col-datos-6 {
+        flex-grow: 1;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        flex-basis: calc((100%/2) - 10px);
+    }
+
+        .col-datos-6 div {
+            border-radius: 5px;
+        }
+
+    .mbottom-5 {
+        margin-bottom: 5px;
+    }
+
+    .pbottom-5 {
+        padding-bottom: 5px;
+    }
+
+    .mtop-5 {
+        margin-top: 5px;
+    }
+
+    .limegreen {
+        background-color: limegreen !important;
+    }
+
+    .col-datos-12 {
+        flex-basis: 100%;
+    }
+
+    .row-perfil {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+</style>
+@if (carga == false)
+{
+    <LoaderContent accion="Consultar historial documentario"></LoaderContent>
+}
+else
+{
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            @foreach (ExpedienteDTO2 expediente in expedientes)
+            {
+                <div class="mat-layout-grid-cell-span-4">
+                    <ExpedientesLista expediente="expediente" @key="expediente.id" listarDocumentos="VisualizarDocumentos">
+                    </ExpedientesLista>
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <MatDialog @bind-IsOpen="dialogoabierto" Class="dialogo">
+        <MatDialogTitle>Documentos en el expediente</MatDialogTitle>
+        <MatDialogContent>
+            <p>@expediente.tipo</p>
+            @if (expediente.documentosobj == null)
+            {
+                <h5>Esperate</h5>
+            }
+            else
+            {
+                @*@foreach (var documento in docu)
+                {
+                    <p>documento.id</p>
+                    <p>documento.tipo</p>
+                }*@
+
+                @foreach (DocumentoExpediente documento in expediente.documentos)
+                {
+                    @*<p>@documento.indice</p>
+                    <p>@documento.iddocumento</p>*@
+                    <p>@documento.tipo</p>
+                }
+            }
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoabierto = false; })">Volver</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+}
+
+@code {
+    public bool dialogoabierto = false;
+    bool carga;
+    public List<ExpedienteDTO2> expedientes = new List<ExpedienteDTO2>();
+    private List<ExpedienteDTO2> listaexpedientesdto { get; set; }
+    public List<Proceso> listaHistorialProceso { get; set; }
+    public ExpedienteDTO2 expediente = new ExpedienteDTO2();
+    public List<Documento> docu = new List<Documento>();
+    protected async override Task OnInitializedAsync()
+    {
+        listaexpedientesdto = new List<ExpedienteDTO2>();
+        await getExpedientes();
+        // await cargarExpedientes();
+    }
+
+    #region getsRegion
+    public async Task getExpedientes()
+    {
+
+        var httpResponse = await repository.Get<List<ExpedienteDTO2>>("api/expediente");
+        if (httpResponse.Error)
+        {
+            carga = false;
+            Console.WriteLine("Ha ocurrido un error al traer expedientes");
+        }
+        else
+        {
+            carga = true;
+            expedientes = httpResponse.Response;
+        }
+    }
+
+    public void VisualizarDocumentos(ExpedienteDTO2 expediente)
+    {
+        dialogoabierto = true;
+        this.expediente = expediente;
+    }
+
+    public void verHistorialProceso(List<Proceso> procesos)
+    {
+        dialogoabierto = true;
+        this.listaHistorialProceso = procesos;
+    }
+    #endregion
+
+
+}
+
+

@@ -338,11 +338,11 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.ObtenerDocumentoApelacion(iddoc);
         }
-        [HttpGet("documentocf")]
-        public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusio([FromQuery] string iddoc)
-        {
+        //[HttpGet("documentocf")]
+        //public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusion([FromQuery] string iddoc)
+        //{
 
-        }
+        //}
 
 
         //actualizarDocumentoODN
