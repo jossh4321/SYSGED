@@ -18,17 +18,19 @@
         }
         else
         {
-            @for (int i = 0; i < nombresotorgantes.Count; i++)
+            int contador = 0;
+            @foreach(var otorgante in nombresotorgantes)
             {
                 <div class="input-filtro-hijo">
-                    <MatTextField Icon="@MatIconNames.Verified_user" Label="Nombre del otorgante" @bind-Value="nombresotorgantes[i]"></MatTextField>
+                    <MatTextField Icon="@MatIconNames.Verified_user" Label="Nombre del otorgante" @bind-Value="nombresotorgantes[contador].nombre"></MatTextField>
                 </div>
+                contador++;
             }
 
         }
     </div>
     <div class="input-filtro-options">
-        <MatButton Icon="@MatIconNames.Search" Raised="true">Buscar</MatButton>
+        <MatButton Icon="@MatIconNames.Search" Raised="true" OnClick="BuscarEscriturasPublicas">Buscar</MatButton>
     </div>
 </div>
 
@@ -149,28 +151,43 @@ else
     </MatDialog>
 }
 @code {
-    private List<EscrituraPublicaRDTO> listaEscriturasPublicas { get; set; }
+    private List<EscrituraPublicaRDTO>
+    listaEscriturasPublicas
+    { get; set; }
     public bool dialogoabierto = false;
     public EscrituraPublicaRDTO escrituraPublica { get; set; }
     public bool dialogocontrato = false;
     public bool dialogootorgantes = false;
-    public List<Contrato> listacontratos { get; set; }
-    public List<Otorgante> listaotorgantes { get; set; }
-    public Dictionary<string, string> diccionariostrings = new Dictionary<string, string>();
+    public List<Contrato>
+        listacontratos
+    { get; set; }
+    public List<Otorgante>
+        listaotorgantes
+    { get; set; }
+    public Dictionary<string, string>
+        diccionariostrings = new Dictionary<string, string>
+            ();
     // Filtros realizados para la búsqueda
     public string direccionOficioNotarial = "";
     public string actojuridico = "";
     public string nombrenotario = "";
-    public List<string> nombresotorgantes { get; set; }
+    public List<Otorgante>
+        nombresotorgantes
+    { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
-        listaEscriturasPublicas = new List<EscrituraPublicaRDTO>();
+        listaEscriturasPublicas = new List<EscrituraPublicaRDTO>
+            ();
         escrituraPublica = new EscrituraPublicaRDTO();
-        listacontratos = new List<Contrato>();
-        listaotorgantes = new List<Otorgante>();
-        nombresotorgantes = new List<string>();
-        nombresotorgantes.Add("");
+        listacontratos = new List<Contrato>
+            ();
+        listaotorgantes = new List<Otorgante>
+            ();
+        nombresotorgantes = new List<Otorgante>
+            ();
+        Otorgante otorgante = new Otorgante();
+        nombresotorgantes.Add(otorgante);
         await CargarEscriturasPublicas();
     }
 
@@ -195,6 +212,31 @@ else
     {
         dialogocontrato = true;
         listacontratos = contratos;
+    }
+
+    public async Task BuscarEscriturasPublicas()
+    {
+        var queryoriginados = GenerarQuery();
+        Console.WriteLine(queryoriginados);
+        await Task.FromResult(0);
+    }
+
+    public string GenerarQuery()
+    {
+        if (diccionariostrings == null)
+        {
+            diccionariostrings = new Dictionary<string, string>();
+        }
+        diccionariostrings["direccionoficionotarial"] = direccionOficioNotarial;
+        diccionariostrings["nombrenotario"] = nombrenotario;
+        diccionariostrings["actojuridico"] = actojuridico;
+        foreach (var otorgante in nombresotorgantes)
+        {
+            diccionariostrings["nombreotorgantes"] = otorgante.nombre;
+        }
+        return string.Join("&",
+            diccionariostrings
+                 .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
     }
 
 }
