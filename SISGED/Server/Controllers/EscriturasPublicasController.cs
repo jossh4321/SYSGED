@@ -35,5 +35,15 @@ namespace SISGED.Server.Controllers
             listaescritura = escriturasPublicasService.filter(term);
             return listaescritura;
         }
+
+        [HttpGet("filterespecial")]
+        public async Task<List<EscrituraPublicaRDTO>> autocompleteFilterCompleto()
+        {
+            List<string> lista = new List<string>();
+            lista.Add("pepe");
+            lista.Add("jose");
+            List<EscrituraPublicaRDTO> listaescriturasPublicasFiltrado = await escriturasPublicasService.filtradoEspecial("Miraflores", "paredes","matrimonio",lista);
+            return listaescriturasPublicasFiltrado;
+        }
     }
 }
