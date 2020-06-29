@@ -1,0 +1,36 @@
+﻿<h3>DocumentosLista</h3>
+
+<div class="col-datos-6 mat-elevation-z5">
+    <div class="demo-mat-card-text mbottom-5">
+        <p>Título</p>
+        <h5>@documento.id</h5>
+        <h5>@documento.tipo</h5>
+    </div>
+    @if (documento.historialproceso == null)
+    {
+        <div class="demo-mat-card-text mbottom-5">
+            <p>Historial proceso</p>
+            <h5>No hay historial proceso</h5>
+        </div>
+    }
+    else
+    {
+        <div class="demo-mat-card-text mbottom-5 pbottom-5">
+            <p>Historial proceso</p>
+            <MatButton Raised="true" Icon="@MatIconNames.Security" @onclick="(() => listarHistorialProceso.InvokeAsync(documento.historialproceso))">Ver historial de procesos</MatButton>
+        </div>
+    }
+</div>
+@code {
+
+    [Parameter]
+    public Documento documento { get; set; }
+
+    //[Parameter]
+    //public EventCallback<List<ContenidoVersion>> listarHistorialContenido { get; set; }
+
+    [Parameter]
+    public EventCallback<List<Proceso>> listarHistorialProceso { get; set; }
+}
+
+

@@ -89,3 +89,37 @@
     flex-direction: column;
     flex-wrap: wrap;
 }
+
+/* Estilos de los filtros */
+.filtros {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 90%;
+    max-width: 750px;
+    margin: 0px auto;
+}
+.input-filtro {
+    flex-grow: 1;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    flex-basis: calc((100%/3) - 5px);
+}
+
+.input-filtro-multiple {
+    display:flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.input-filtro-hijo,.input-filtro-options {
+    margin-bottom: 10px;
+    margin-right: 5px;
+    flex-basis: calc((100%/3) - 5px);
+}
+
+.input-filtro-options button {
+    display: flex;
+    background-color: deepskyblue !important;
+}

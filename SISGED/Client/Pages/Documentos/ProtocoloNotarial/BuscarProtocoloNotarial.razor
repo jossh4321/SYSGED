@@ -1,6 +1,37 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalFireMessage
 <link rel="stylesheet" href="css/estilosEP/styleEP.css" />
+<div class="filtros">
+    <div class="input-filtro">
+        <MatTextField Icon="@MatIconNames.Directions" Label="Dirección oficio notarial" @bind-Value="direccionOficioNotarial"></MatTextField>
+    </div>
+    <div class="input-filtro">
+        <MatTextField Icon="@MatIconNames.Call_to_action" Label="Acto Jurídico" @bind-Value="actojuridico"></MatTextField>
+    </div>
+    <div class="input-filtro">
+        <MatTextField Icon="@MatIconNames.Supervised_user_circle" Label="Nombre notario" @bind-Value="nombrenotario"></MatTextField>
+    </div>
+    <div class="input-filtro-multiple">
+        @if (nombresotorgantes == null)
+        {
+            <text>Cargando...</text>
+        }
+        else
+        {
+            @for (int i = 0; i < nombresotorgantes.Count; i++)
+            {
+                <div class="input-filtro-hijo">
+                    <MatTextField Icon="@MatIconNames.Verified_user" Label="Nombre del otorgante" @bind-Value="nombresotorgantes[i]"></MatTextField>
+                </div>
+            }
+
+        }
+    </div>
+    <div class="input-filtro-options">
+        <MatButton Icon="@MatIconNames.Search" Raised="true">Buscar</MatButton>
+    </div>
+</div>
+
 @if (listaEscriturasPublicas.Count == 0)
 {
     <text>Cargando...</text>
@@ -99,7 +130,7 @@ else
         <MatDialogTitle>Otorgantes del Acto Jurídico</MatDialogTitle>
         <MatDialogContent>
             <div class="row-datos">
-                @if(listaotorgantes == null)
+                @if (listaotorgantes == null)
                 {
                     <text>Cargando...</text>
                 }
@@ -107,7 +138,7 @@ else
                 {
                     @foreach (var otorgante in listaotorgantes)
                     {
-                      <OtorganteC otorgante="otorgante"></OtorganteC>
+                        <OtorganteC otorgante="otorgante"></OtorganteC>
                     }
                 }
             </div>
@@ -125,12 +156,21 @@ else
     public bool dialogootorgantes = false;
     public List<Contrato> listacontratos { get; set; }
     public List<Otorgante> listaotorgantes { get; set; }
+    public Dictionary<string, string> diccionariostrings = new Dictionary<string, string>();
+    // Filtros realizados para la búsqueda
+    public string direccionOficioNotarial = "";
+    public string actojuridico = "";
+    public string nombrenotario = "";
+    public List<string> nombresotorgantes { get; set; }
+
     protected async override Task OnInitializedAsync()
     {
         listaEscriturasPublicas = new List<EscrituraPublicaRDTO>();
         escrituraPublica = new EscrituraPublicaRDTO();
         listacontratos = new List<Contrato>();
         listaotorgantes = new List<Otorgante>();
+        nombresotorgantes = new List<string>();
+        nombresotorgantes.Add("");
         await CargarEscriturasPublicas();
     }
 

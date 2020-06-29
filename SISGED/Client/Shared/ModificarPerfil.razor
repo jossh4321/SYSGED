@@ -1,0 +1,44 @@
+﻿@if (MostrarConfirmacion)///para mostrar la confirmacion si presionamos eliminar se vuelve verdadero y se muestra
+{
+
+    <div class="modal-backdrop show "></div>
+
+    <div class="modal fade show " id="exampleModal" tabindex="-1"
+         role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true" style="display: block;">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">@Titulo></h5>
+                    <button @onclick="onCancel" type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+
+                    @ChildContent
+                </div>
+                <div class="modal-footer">
+                    <button @onclick="onCancel" type="button" class="btn btn-secondary"
+                            data-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button @onclick="onConfirm" type="button" class="btn btn-primary">Modificar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@code{
+    private bool MostrarConfirmacion = false;//variable
+    [Parameter] public string Titulo { get; set; } = "Modificar Perfil";
+    [Parameter] public RenderFragment ChildContent { get; set; }//loq  va hacer cuando el usuario clickee
+    [Parameter] public EventCallback onConfirm { get; set; }
+    [Parameter] public EventCallback onCancel { get; set; }
+    public void Mostrar() => MostrarConfirmacion = true;
+    public void Ocultar() => MostrarConfirmacion = false;//metodos
+
+}
