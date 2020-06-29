@@ -323,5 +323,12 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerOficioBusquedaProtocoloNotarial(iddoc);
         }
+
+        //actualizarDocumentoODN
+        [HttpPost("actualizarDocumentoODN")]
+        public void modificarDocumentoODN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
+        }
     }
 }
