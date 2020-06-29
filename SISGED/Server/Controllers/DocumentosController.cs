@@ -13,7 +13,7 @@ namespace SISGED.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DocumentosController: ControllerBase
+    public class DocumentosController : ControllerBase
     {
         private readonly DocumentoService _documentoservice;
         private readonly ExpedienteService _expedienteservice;
@@ -29,14 +29,14 @@ namespace SISGED.Server.Controllers
         [HttpGet]
         public ActionResult<List<Documento>> Get()
         {
-             return _documentoservice.obtenerDocumentos();
+            return _documentoservice.obtenerDocumentos();
         }
         //Completo
         [HttpPost("documentoodn")]
         public ActionResult<OficioDesignacionNotario> RegistrarDocumentoODN(ExpedienteWrapper expediente)
         {
             OficioDesignacionNotario documentoODN = new OficioDesignacionNotario();
-             documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente);
+            documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente);
             return documentoODN;
         }
 
@@ -230,7 +230,7 @@ namespace SISGED.Server.Controllers
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
-       
+
         [HttpPut("cambiarestado")]
         public ActionResult<Documento> ModificarEstado(DocumentoEvaluadoDTO documento)
         {
@@ -338,11 +338,11 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.ObtenerDocumentoApelacion(iddoc);
         }
-        [HttpGet("documentocf")]
-        public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusio([FromQuery] string iddoc)
-        {
+        //[HttpGet("documentocf")]
+        //public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusio([FromQuery] string iddoc)
+        //{
 
-        }
+        //}
 
     }
 }

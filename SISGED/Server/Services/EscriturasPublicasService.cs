@@ -4,6 +4,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
+using SISGED.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,7 +83,7 @@ namespace SISGED.Server.Services
             return escrituraP;
         }
 
-        public async Task<List<EscrituraPublicaRDTO>> filtradoEspecial(string direccionoficionotarial, string nombrenotario, string actojuridico, List<string> nombreotorgantes)
+        public async Task<List<EscrituraPublicaRDTO>> filtradoEspecial(ParametrosBusquedaEscrituraPublica parametrosbusqueda)
         {
             BsonArray subpipeline = new BsonArray();
 
@@ -100,20 +101,21 @@ namespace SISGED.Server.Services
                .Add("as", "notario"));
 
             // Primero filtro para la direccion oficio notarial
-            var regexOficioNotarial = direccionoficionotarial + ".*";
+            var regexOficioNotarial = parametrosbusqueda.direccionoficionotarial + ".*";
             var filterRegexOficio = Builders<EscrituraPublicaRDTO>.Filter.Regex("direccionoficio", new BsonRegularExpression(regexOficioNotarial, "i"));
 
             // Segundo filtro del nombre del notario
-            var regexnombreNotario = nombrenotario + ".*";
+            var regexnombreNotario = parametrosbusqueda.nombrenotario + ".*";
             var filterRegexNotario = Builders<EscrituraPublicaRDTO>.Filter.Regex("notario", new BsonRegularExpression(regexnombreNotario, "i"));
 
             // Tercer filtro de los actos jurídicos
-            var regexactojuridico = actojuridico + ".*";
+            var regexactojuridico = parametrosbusqueda.actojuridico + ".*";
             var filterRegexActo = Builders<EscrituraPublicaRDTO>.Filter.Regex("actosjuridicos.titulo", new BsonRegularExpression(regexactojuridico, "i"));
 
             //Filtro final de los otorgantes
-            var listaOtorgantesRegex = nombreotorgantes.Select(o => new BsonRegularExpression(o + ".*", "i")).ToList();
-            var filterOtorgantes = Builders<EscrituraPublicaRDTO>.Filter.In("actosjuridicos.otorgantes.nombre", listaOtorgantesRegex);
+            var listaOtorgantesRegex = parametrosbusqueda.nombreotorgantes.Select(o => new Regex(o + ".*")).ToList();
+            var matchInRegexOtorgante = new BsonDocument("actosjuridicos.otorgantes.nombre",
+                                                    new BsonDocument("$in", new BsonArray().AddRange(listaOtorgantesRegex)));
             
             List<EscrituraPublicaRDTO> escrituraPublicas = new List<EscrituraPublicaRDTO>();
 
@@ -135,7 +137,7 @@ namespace SISGED.Server.Services
                 .Match(filterRegexOficio)
                 .Match(filterRegexNotario)
                 .Match(filterRegexActo)
-                .Match(filterOtorgantes)
+                .Match(matchInRegexOtorgante)
                 .ToListAsync();
 
             return escrituraPublicas;
