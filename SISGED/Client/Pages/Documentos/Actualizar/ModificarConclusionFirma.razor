@@ -121,9 +121,20 @@
         }
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(conclusionFirma);
+        var httpResponse = await repository.Get<ConclusionFirmaDTO>($"api/documentos/documentocf?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            conclusionFirma = (ConclusionFirmaDTO)httpResponse.Response;
+            _editContext = new EditContext(conclusionFirma);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Algo Mal");
+        }
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
