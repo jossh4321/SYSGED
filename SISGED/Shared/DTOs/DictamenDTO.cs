@@ -1,10 +1,11 @@
-﻿using System;
+﻿using SISGED.Shared.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SISGED.Shared.DTOs
 {
-    public class DictamenDTO
+    public class DictamenDTO: Documento
     {
 
         public string estado { get; set; }

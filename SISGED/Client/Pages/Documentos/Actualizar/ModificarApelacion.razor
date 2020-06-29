@@ -119,9 +119,20 @@
     private string imagenTemporal;
     private bool loadprocess = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(apelacion);
+        var httpResponse = await repository.Get<ApelacionDTO>("api/documentos/documentoape?iddoc=5ef51a0737e71c3858d0f3b4");
+        if (!httpResponse.Error)
+        {
+            apelacion = (ApelacionDTO)httpResponse.Response;
+            _editContext = new EditContext(apelacion);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Hubo un Error");
+        }
         if (!string.IsNullOrEmpty(apelacion.contenidoDTO.data))
         {
             imagenTemporal = apelacion.contenidoDTO.data;

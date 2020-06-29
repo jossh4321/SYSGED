@@ -247,16 +247,6 @@
     {
         Console.WriteLine("INICIE: WorkEnvironment");
         List<OficioBPNDTO> listaexpediente = new List<OficioBPNDTO>();
-        var httpResponse = await repository.Get<OficioBPNDTO>("api/documentos/documentoobpn?iddoc=5ed98fd4fed03c07c872c85a");
-        if (!httpResponse.Error)
-        {
-            
-        }
-        else
-        {
-
-        }
-
     }
 
     public void UpdateDraggableComponents(string newCurrentPlace)

@@ -13,4 +13,5 @@ namespace SISGED.Shared.DTOs
     {
         public EscrituraPublica idescriturapublica { get; set; }
     }
+
 }
