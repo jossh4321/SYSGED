@@ -31,7 +31,8 @@ namespace SISGED.Server.Controllers
         {
              return _documentoservice.obtenerDocumentos();
         }
-        //Completo
+
+        #region Registros de Documentos
         [HttpPost("documentoodn")]
         public ActionResult<OficioDesignacionNotario> RegistrarDocumentoODN(ExpedienteWrapper expediente)
         {
@@ -40,7 +41,6 @@ namespace SISGED.Server.Controllers
             return documentoODN;
         }
 
-        //Completo
         [HttpPost("documentosbpn")]
         public ActionResult<OficioBPN> RegistrarDocumentoOficioBPN(ExpedienteWrapper expediente)
         {
@@ -218,7 +218,7 @@ namespace SISGED.Server.Controllers
             return bandejaexpdto;
         }
 
-        //Completo
+
         [HttpPost("documentocf")]
         public ActionResult<ConclusionFirma> RegistrarDocumentoCF(ExpedienteWrapper expediente)
         {
@@ -230,14 +230,7 @@ namespace SISGED.Server.Controllers
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
-       
-        [HttpPut("cambiarestado")]
-        public ActionResult<Documento> ModificarEstado(DocumentoEvaluadoDTO documento)
-        {
-            return _documentoservice.modificarEstado(documento);
-        }
 
-        //Completo
         [HttpPost("documentoad")]
         public async Task<ActionResult<AperturamientoDisciplinario>> RegistrarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedientewrapper)
         {
@@ -257,7 +250,7 @@ namespace SISGED.Server.Controllers
             return _documentoservice.registrarAperturamientoDisciplinario(aperturamientoDisciplinarioDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
 
-        //Falta probar
+
         [HttpPost("documentoAPE")]
         public async Task<ActionResult<Apelacion>> registrarDocumentoApelacion(ExpedienteWrapper expedientewrapper)
         {
@@ -277,7 +270,7 @@ namespace SISGED.Server.Controllers
             return _documentoservice.registrarApelacion(apelacionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
 
-        //Falta probar
+
         [HttpPost("documentoSEN")]
         public async Task<ActionResult<SolicitudExpedienteNotario>> registrarSolicitudExpedienteNotario(ExpedienteWrapper expedientewrapper)
         {
@@ -312,6 +305,14 @@ namespace SISGED.Server.Controllers
             }
             return _documentoservice.registrarResolucion(resolucionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
+        #endregion
+
+        [HttpPut("cambiarestado")]
+        public ActionResult<Documento> ModificarEstado(DocumentoEvaluadoDTO documento)
+        {
+            return _documentoservice.modificarEstado(documento);
+        }
+
         //obteniendo documentos
         [HttpGet("documentoodn")]
         public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)
@@ -343,11 +344,6 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.ObtenerDocumentoConclusionFirma(iddoc);
         }
-        [HttpPost("actualizarDocumentoODN")]
-        public void modificarDocumentoODN(ExpedienteWrapper expedienteWrapper)
-        {
-            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
-        }
 
         [HttpGet("documentoad")]
         public async Task<ActionResult<AperturamientoDisciplinarioDTO>> obtenerAperturamientoDisciplinario([FromQuery] string iddoc)
@@ -359,6 +355,48 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerSolicitudExpedienteNotario(iddoc);
             
+        }
+
+        //Actualizaciones
+        [HttpPost("actualizarDocumentoODN")]
+        public void modificarDocumentoODN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoAPE")]
+        public void modificarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoApelacion(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoAD")]
+        public void modificarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoAperturamientoDisciplinario(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoCF")]
+        public void modificarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoConclusionFirma(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoD")]
+        public void modificarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoDictamen(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoOficioBPN")]
+        public void modificarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoOficioBPN(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoR")]
+        public void modificarDocumentoResolucion(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoResolucion(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoSEN")]
+        public void modificarDocumentoSEN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoSEN(expedienteWrapper);
         }
     }
 }

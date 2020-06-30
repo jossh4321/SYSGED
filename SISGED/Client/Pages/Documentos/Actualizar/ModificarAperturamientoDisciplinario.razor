@@ -457,44 +457,21 @@
         loadprocess = true;
         if (aperturamientodisciplinario.contenidoDTO.url != "" && aperturamientodisciplinario.contenidoDTO.url != null)
         {
-            /*ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
             expedienteWrapper.documento = aperturamientodisciplinario;
             expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
             expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, AperturamientoDisciplinario>($"api/documentos/documentoad", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, AperturamientoDisciplinario>($"api/documentos/actualizarDocumentoAD", expedienteWrapper);
             if (!httpResponse.Error)
             {
-                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-                expedientebandeja = workspace.expedienteseleccionado;
-                AperturamientoDisciplinario aperturamientodisciplinarioact = new AperturamientoDisciplinario();
-                aperturamientodisciplinarioact = httpResponse.Response;
-                expedientebandeja.documento.id = aperturamientodisciplinarioact.id;
-                expedientebandeja.documento.tipo = aperturamientodisciplinarioact.tipo;
-                expedientebandeja.documento.historialcontenido = aperturamientodisciplinarioact.historialcontenido;
-                expedientebandeja.documento.historialproceso = aperturamientodisciplinarioact.historialproceso;
-                expedientebandeja.documento.contenido = aperturamientodisciplinarioact.contenido;
-                expedientebandeja.documento.estado = aperturamientodisciplinarioact.estado;
-                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-                Item itemSalida = new Item()
-                {
-                    nombre = expedientebandeja.tipo,
-                    valor = expedientebandeja,
-                    icono = "alarm_add",
-                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                    currentPlace = "outputs",
-                    originPlace = "outputs",
-                    cliente = expedientebandeja.cliente
-                };
-                workspace.UpdateComponentBandeja(itemSalida);
-                await swalfire.successMessage("Aperturamiento Disciplinario registrado correctamente");
+                await swalfire.successMessage("Aperturamiento Disciplinario modificado correctamente");
             }
             else
             {
                 await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
-            }*/
-            await swalfire.successMessage("Aperturamiento Disciplinario registrado correctamente");
+            }
         }
         else
         {
