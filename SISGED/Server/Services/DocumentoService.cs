@@ -79,8 +79,8 @@ namespace SISGED.Server.Services
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaSalida);
 
             //actualizacion bandeja de entrada del usuario
-            UpdateDefinition<Bandeja> updateBandejaEntrada = 
-                Builders<Bandeja>.Update.PullFilter("bandejaentrada", 
+            UpdateDefinition<Bandeja> updateBandejaEntrada =
+                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                   Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
             return documentoODN;
@@ -199,7 +199,7 @@ namespace SISGED.Server.Services
             documentoExpediente.fechademora = null;
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id ==  expedienteWrapper.idexpediente, updateExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);
 
             //actualizando Bandeja salida
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
@@ -243,7 +243,7 @@ namespace SISGED.Server.Services
         }
 
         public AperturamientoDisciplinario registrarAperturamientoDisciplinario(AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO,
-            string urldata, string idusuario,string idexpediente , string iddocentrada)
+            string urldata, string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
             ContenidoAperturamientoDisciplinario contenidoAD = new ContenidoAperturamientoDisciplinario()
@@ -531,8 +531,8 @@ namespace SISGED.Server.Services
                 );
 
             var aggregation = new BsonDocument("$lookup",
-                                new BsonDocument("from","notarios")
-                                .Add("let",new BsonDocument("idnot", "$contenido.idnotario"))
+                                new BsonDocument("from", "notarios")
+                                .Add("let", new BsonDocument("idnot", "$contenido.idnotario"))
                                 .Add("pipeline", subpipeline)
                                 .Add("as", "notario"));
 
@@ -541,7 +541,7 @@ namespace SISGED.Server.Services
             documentoODN = _documentos.Aggregate()
                 .AppendStage<OficioDesignacionNotario>(match)
                 .AppendStage<OficioDesignacionNotario_lookup>(aggregation)
-                .Unwind<OficioDesignacionNotario_lookup, OficioDesignacionNotario_ur>(x =>x.notario)
+                .Unwind<OficioDesignacionNotario_lookup, OficioDesignacionNotario_ur>(x => x.notario)
                 .First();
 
             OficioDesignacionNotarioDTO oficioDesignacionNotario = new OficioDesignacionNotarioDTO();
@@ -565,7 +565,7 @@ namespace SISGED.Server.Services
         }
         public OficioBPNDTO obtenerOficioBusquedaProtocoloNotarial(string id)
         {
-            var  match = new BsonDocument("$match", new BsonDocument("_id",
+            var match = new BsonDocument("$match", new BsonDocument("_id",
                         new ObjectId(id)));
             OficioBPNDTO oficioBPN = new OficioBPNDTO();
             BsonArray subpipeline = new BsonArray();
@@ -693,9 +693,9 @@ namespace SISGED.Server.Services
                 titulo = docResolucion.contenido.titulo,
                 fechainicioaudiencia = docResolucion.contenido.fechainicioaudiencia,
                 fechafinaudiencia = docResolucion.contenido.fechafinaudiencia,
-                participantes = docResolucion.contenido.participantes.Select((x, y) => new Participante() { nombre=x,index=y}).ToList(),
+                participantes = docResolucion.contenido.participantes.Select((x, y) => new Participante() { nombre = x, index = y }).ToList(),
                 sancion = docResolucion.contenido.sancion,
-                data = docResolucion.contenido.url         
+                data = docResolucion.contenido.url
             };
             return resolucionDTO;
         }
@@ -730,7 +730,7 @@ namespace SISGED.Server.Services
             pipeline.Add(new BsonDocument("$match",
                 new BsonDocument("$expr",
                     new BsonDocument("$eq",
-                        new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idescritura") } ))));
+                        new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idescritura") }))));
             var lookup = new BsonDocument("$lookup",
                 new BsonDocument("from", "escrituraspublicas")
                 .Add("let", new BsonDocument("idescritura", "$contenido.idescriturapublica"))
@@ -851,7 +851,7 @@ namespace SISGED.Server.Services
             };
 
             var lookup = new BsonDocument("$lookup",
-                new BsonDocument { 
+                new BsonDocument {
                     { "from","notarios"},
                     { "let",new BsonDocument("idnot","$contenido.idnotario")},
                     { "pipeline",pipeline},
@@ -882,7 +882,6 @@ namespace SISGED.Server.Services
 
             return solicitudExpNotario;
         }
-        //C
 
         //actualizarDocumentoODN
         public void actualizarDocumentoODN(ExpedienteWrapper expedienteWrapper)
@@ -897,16 +896,251 @@ namespace SISGED.Server.Services
             {
                 titulo = oficioDesignacionNotarioDTO.contenidoDTO.titulo,
                 descripcion = oficioDesignacionNotarioDTO.contenidoDTO.descripcion,
-                fecharealizacion = DateTime.Now,
                 lugaroficionotarial = oficioDesignacionNotarioDTO.contenidoDTO.lugaroficionotarial,
                 idusuario = oficioDesignacionNotarioDTO.contenidoDTO.idusuario,
                 idnotario = oficioDesignacionNotarioDTO.contenidoDTO.idnotario.id,
             };
 
             var filter = Builders<Documento>.Filter.Eq("id", oficioDesignacionNotarioDTO.id);
-            var update = Builders<Documento>.Update.Set("contenido", contenidoODN);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", contenidoODN.titulo)
+                .Set("contenido.descripcion", contenidoODN.descripcion)
+                .Set("contenido.lugaroficionotarial", contenidoODN.lugaroficionotarial)
+                .Set("contenido.idusuario", contenidoODN.idusuario)
+                .Set("contenido.idnotario", contenidoODN.idnotario);
             _documentos.UpdateOne(filter, update);
+        }
 
+        public void actualizarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            ApelacionDTO apelacionDTO = new ApelacionDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            apelacionDTO = JsonConvert.DeserializeObject<ApelacionDTO>(json);
+
+            //Creacion de Obj Apelacion y registro en coleccion de documentos 
+            ContenidoApelacion contenidoAPE = new ContenidoApelacion()
+            {
+                titulo = apelacionDTO.contenidoDTO.titulo,
+                descripcion = apelacionDTO.contenidoDTO.descripcion
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", apelacionDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", contenidoAPE.titulo)
+                .Set("contenido.descripcion", contenidoAPE.descripcion);
+            _documentos.UpdateOne(filter, update);
+        }
+
+        public void actualizarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO = new AperturamientoDisciplinarioDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            aperturamientoDisciplinarioDTO = JsonConvert.DeserializeObject<AperturamientoDisciplinarioDTO>(json);
+
+            //Listas de participantes a string
+            List<String> listaParticipantes = new List<string>();
+            foreach (Participante part in aperturamientoDisciplinarioDTO.contenidoDTO.participantes)
+            {
+                listaParticipantes.Add(part.nombre);
+            }
+
+            //Listas de hechos a string
+            List<String> listaHechosImputados = new List<string>();
+            foreach (Hecho part in aperturamientoDisciplinarioDTO.contenidoDTO.hechosimputados)
+            {
+                listaHechosImputados.Add(part.descripcion);
+            }
+
+            //Creacion de Obj y registro en coleccion de documentos
+            ContenidoAperturamientoDisciplinario contenidoAD = new ContenidoAperturamientoDisciplinario()
+            {
+                titulo = aperturamientoDisciplinarioDTO.contenidoDTO.titulo,
+                descripcion = aperturamientoDisciplinarioDTO.contenidoDTO.descripcion,
+                nombredenunciante = aperturamientoDisciplinarioDTO.contenidoDTO.nombredenunciante,
+                lugaraudiencia = aperturamientoDisciplinarioDTO.contenidoDTO.lugaraudiencia,
+                idnotario = aperturamientoDisciplinarioDTO.contenidoDTO.idnotario.id,
+                idfiscal = aperturamientoDisciplinarioDTO.contenidoDTO.idfiscal,
+                participantes = listaParticipantes,
+                hechosimputados = listaHechosImputados,
+                fechainicioaudiencia = aperturamientoDisciplinarioDTO.contenidoDTO.fechainicioaudiencia,
+                fechafinaudiencia = aperturamientoDisciplinarioDTO.contenidoDTO.fechafinaudiencia
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", aperturamientoDisciplinarioDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", contenidoAD.titulo)
+                .Set("contenido.descripcion", contenidoAD.descripcion)
+                .Set("contenido.nombredenunciante", contenidoAD.nombredenunciante)
+                .Set("contenido.lugaraudiencia", contenidoAD.lugaraudiencia)
+                .Set("contenido.idnotario", contenidoAD.idnotario)
+                .Set("contenido.idfiscal", contenidoAD.idfiscal)
+                .Set("contenido.participantes", contenidoAD.participantes)
+                .Set("contenido.hechosimputados", contenidoAD.hechosimputados)
+                .Set("contenido.fechainicioaudiencia", contenidoAD.fechainicioaudiencia)
+                .Set("contenido.fechafinaudiencia", contenidoAD.fechafinaudiencia);
+            _documentos.UpdateOne(filter, update);
+        }
+        
+        public void actualizarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            ConclusionFirmaDTO conclusionFirmaDTO = new ConclusionFirmaDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            conclusionFirmaDTO = JsonConvert.DeserializeObject<ConclusionFirmaDTO>(json);
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoConclusionFirma contenidoCF = new ContenidoConclusionFirma()
+            {
+                idescriturapublica = conclusionFirmaDTO.contenidoDTO.idescriturapublica.id
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", conclusionFirmaDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica);
+            _documentos.UpdateOne(filter, update);
+        }
+
+        public void actualizarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            DictamenDTO dictamenDTO = new DictamenDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            dictamenDTO = JsonConvert.DeserializeObject<DictamenDTO>(json);
+
+            //Listas de participantes a string
+            List<String> listaObservaciones = new List<string>();
+            foreach (Observaciones obs in dictamenDTO.contenidoDTO.observaciones)
+            {
+                listaObservaciones.Add(obs.descripcion);
+            }
+
+            //Listas de hechos a string
+            List<String> listaRecomendaciones = new List<string>();
+            foreach (Recomendaciones rec in dictamenDTO.contenidoDTO.recomendaciones)
+            {
+                listaRecomendaciones.Add(rec.descripcion);
+            }
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoDictamen contenidoD = new ContenidoDictamen()
+            {
+                nombredenunciante = dictamenDTO.contenidoDTO.nombredenunciante,
+                titulo = dictamenDTO.contenidoDTO.titulo,
+                descripcion = dictamenDTO.contenidoDTO.descripcion,
+                conclusion = dictamenDTO.contenidoDTO.conclusion,
+                observaciones = listaObservaciones,
+                recomendaciones = listaRecomendaciones
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", dictamenDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", contenidoD.titulo)
+                .Set("contenido.descripcion", contenidoD.descripcion)
+                .Set("contenido.nombredenunciante", contenidoD.nombredenunciante)
+                .Set("contenido.conclusion", contenidoD.conclusion)
+                .Set("contenido.observaciones", contenidoD.observaciones)
+                .Set("contenido.recomendaciones", contenidoD.recomendaciones);
+            _documentos.UpdateOne(filter, update);
+        }
+        
+        public void actualizarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            oficioBPNDTO = JsonConvert.DeserializeObject<OficioBPNDTO>(json);
+
+            /*List<String> listaOtorgantes = new List<string>();
+            foreach (Otorgante obs in oficioBPNDTO.contenidoDTO.otorgantes)
+            {
+                listaOtorgantes.Add(obs.nombre + " " + obs.apellido);
+            }*/
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoOficioBPN contenidoOficioBPN = new ContenidoOficioBPN()
+            {
+                titulo = oficioBPNDTO.contenidoDTO.titulo,
+                descripcion = oficioBPNDTO.contenidoDTO.descripcion,
+                idcliente = oficioBPNDTO.contenidoDTO.idcliente.id,
+                direccionoficio = oficioBPNDTO.contenidoDTO.direccionoficio,
+                idnotario = oficioBPNDTO.contenidoDTO.idnotario.id,
+                actojuridico = oficioBPNDTO.contenidoDTO.actojuridico,
+                tipoprotocolo = oficioBPNDTO.contenidoDTO.tipoprotocolo,
+                otorgantes = oficioBPNDTO.contenidoDTO.otorgantes,
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", oficioBPNDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", contenidoOficioBPN.titulo)
+                .Set("contenido.descripcion", contenidoOficioBPN.descripcion)
+                .Set("contenido.idcliente", contenidoOficioBPN.idcliente)
+                .Set("contenido.direccionoficio", contenidoOficioBPN.direccionoficio)
+                .Set("contenido.idnotario", contenidoOficioBPN.idnotario)
+                .Set("contenido.actojuridico", contenidoOficioBPN.actojuridico)
+                .Set("contenido.tipoprotocolo", contenidoOficioBPN.tipoprotocolo)
+                .Set("contenido.otorgantes", contenidoOficioBPN.otorgantes);
+            _documentos.UpdateOne(filter, update);
+        }
+
+        public void actualizarDocumentoResolucion(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            ResolucionDTO resolucionDTO = new ResolucionDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            resolucionDTO = JsonConvert.DeserializeObject<ResolucionDTO>(json);
+
+            //Listas de participantes a string
+            List<String> listaParticipantes = new List<string>();
+            foreach (Participante part in resolucionDTO.contenidoDTO.participantes)
+            {
+                listaParticipantes.Add(part.nombre);
+            }
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoResolucion contenidoResolucion = new ContenidoResolucion()
+            {
+                titulo = resolucionDTO.contenidoDTO.titulo,
+                descripcion = resolucionDTO.contenidoDTO.descripcion,
+                sancion = resolucionDTO.contenidoDTO.sancion,
+                fechainicioaudiencia = resolucionDTO.contenidoDTO.fechainicioaudiencia,
+                fechafinaudiencia = resolucionDTO.contenidoDTO.fechafinaudiencia,
+                participantes = listaParticipantes
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", resolucionDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", contenidoResolucion.titulo)
+                .Set("contenido.descripcion", contenidoResolucion.descripcion)
+                .Set("contenido.sancion", contenidoResolucion.sancion)
+                .Set("contenido.fechainicioaudiencia", contenidoResolucion.fechainicioaudiencia)
+                .Set("contenido.fechafinaudiencia", contenidoResolucion.fechafinaudiencia)
+                .Set("contenido.participantes", contenidoResolucion.participantes);
+            _documentos.UpdateOne(filter, update);
+        }
+        
+        public void actualizarDocumentoSEN(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO = new SolicitudExpedienteNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            solicitudExpedienteNotarioDTO = JsonConvert.DeserializeObject<SolicitudExpedienteNotarioDTO>(json);
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoSolicitudExpedienteNotario contenidoSolicitudExpedienteNotario = new ContenidoSolicitudExpedienteNotario()
+            {
+                titulo = solicitudExpedienteNotarioDTO.contenidoDTO.titulo,
+                descripcion = solicitudExpedienteNotarioDTO.contenidoDTO.descripcion,
+                idnotario = solicitudExpedienteNotarioDTO.contenidoDTO.idnotario.id
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", solicitudExpedienteNotarioDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", contenidoSolicitudExpedienteNotario.titulo)
+                .Set("contenido.descripcion", contenidoSolicitudExpedienteNotario.descripcion)
+                .Set("contenido.idnotario", contenidoSolicitudExpedienteNotario.idnotario);
+            _documentos.UpdateOne(filter, update);
         }
     }
 }

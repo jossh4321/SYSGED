@@ -216,7 +216,7 @@
         var httpResponse = await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/actualizarDocumentoODN", expedienteWrapper);
         if (!httpResponse.Error)
         {
-            await swalfire.successMessage("Oficio de Designacion de Notario Registrada Correctamente");
+            await swalfire.successMessage("Oficio de Designacion de Notario modificada Correctamente");
         }
         else
         {

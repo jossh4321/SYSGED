@@ -329,10 +329,10 @@
             expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
             expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-            var httpResponse = await repository.Post<ExpedienteWrapper, Resolucion>($"api/documentos/documentor", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, Resolucion>($"api/documentos/actualizarDocumentoR", expedienteWrapper);
             if (!httpResponse.Error)
             {
-                await swalfire.successMessage("Resolución registrada correctamente");
+                await swalfire.successMessage("Resolución modificada correctamente");
             }
             else
             {

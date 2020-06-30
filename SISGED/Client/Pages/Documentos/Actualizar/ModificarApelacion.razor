@@ -181,32 +181,10 @@
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, Apelacion>($"api/documentos/documentoape", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, Apelacion>($"api/documentos/actualizarDocumentoAPE", expedienteWrapper);
         if (!httpResponse.Error)
         {
-            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-            expedientebandeja = workspace.expedienteseleccionado;
-            Apelacion apelacionact = new Apelacion();
-            apelacionact = httpResponse.Response;
-            expedientebandeja.documento.id = apelacionact.id;
-            expedientebandeja.documento.tipo = apelacionact.tipo;
-            expedientebandeja.documento.historialcontenido = apelacionact.historialcontenido;
-            expedientebandeja.documento.historialproceso = apelacionact.historialproceso;
-            expedientebandeja.documento.contenido = apelacionact.contenido;
-            expedientebandeja.documento.estado = apelacionact.estado;
-            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-            Item itemSalida = new Item()
-            {
-                nombre = expedientebandeja.tipo,
-                valor = expedientebandeja,
-                icono = "alarm_add",
-                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
-            };
-            workspace.UpdateComponentBandeja(itemSalida);
-            await swalfire.successMessage("Apelación registrado correctamente");
+            await swalfire.successMessage("Apelación modificada correctamente");
         }
         else
         {
