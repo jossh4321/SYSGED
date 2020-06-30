@@ -1,37 +1,100 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalFireMessage
+@inject NavigationManager navigationManager
 <link rel="stylesheet" href="css/estilosEP/styleEP.css" />
-<div class="filtros">
-    <div class="input-filtro">
-        <MatTextField Icon="@MatIconNames.Directions" Label="Dirección oficio notarial" @bind-Value="direccionOficioNotarial"></MatTextField>
-    </div>
-    <div class="input-filtro">
-        <MatTextField Icon="@MatIconNames.Call_to_action" Label="Acto Jurídico" @bind-Value="actojuridico"></MatTextField>
-    </div>
-    <div class="input-filtro">
-        <MatTextField Icon="@MatIconNames.Supervised_user_circle" Label="Nombre notario" @bind-Value="nombrenotario"></MatTextField>
-    </div>
-    <div class="input-filtro-multiple">
-        @if (nombresotorgantes == null)
-        {
-            <text>Cargando...</text>
-        }
-        else
-        {
-            int contador = 0;
-            @foreach(var otorgante in nombresotorgantes)
-            {
-                <div class="input-filtro-hijo">
-                    <MatTextField Icon="@MatIconNames.Verified_user" Label="Nombre del otorgante" @bind-Value="nombresotorgantes[contador].nombre"></MatTextField>
+<div>
+    @if (parametrosFiltros == null)
+    {
+        <text>Cargando...</text>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="BuscarEscriturasPublicas" OnInvalidSubmit="ValidacionFiltros">
+            <FluentValidator></FluentValidator>
+            <div class="filtros">
+                <div class="input-filtro @CurrentEditContext.FieldCssClass( () => parametrosFiltros.direccionoficionotarial)">
+                    <MatTextField Icon="@MatIconNames.Directions" Label="Dirección oficio notarial"
+                                  Class="bloque"
+                                  @bind-Value="parametrosFiltros.direccionoficionotarial" @oninput='@(e => KeyUp(e, "direccionoficionotarial", parametrosFiltros))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => parametrosFiltros.direccionoficionotarial)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
                 </div>
-                contador++;
-            }
+                <div class="input-filtro @CurrentEditContext.FieldCssClass( () => parametrosFiltros.actojuridico)">
+                    <MatTextField Icon="@MatIconNames.Call_to_action" Label="Acto Jurídico"
+                                  Class="bloque"
+                                  @bind-Value="parametrosFiltros.actojuridico" @oninput='@(e=> KeyUp(e, "actojuridico", parametrosFiltros))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => parametrosFiltros.actojuridico)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="input-filtro @CurrentEditContext.FieldCssClass( () => parametrosFiltros.nombrenotario)">
+                    <MatTextField Icon="@MatIconNames.Supervised_user_circle" Label="Nombre notario"
+                                  Class="bloque"
+                                  @bind-Value="parametrosFiltros.nombrenotario" @oninput='@(e => KeyUp(e, "nombrenotario", parametrosFiltros))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => parametrosFiltros.nombrenotario)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="input-filtro-multiple">
+                    @if (parametrosFiltros.nombreotorgantes == null)
+                    {
+                        <text>Cargando...</text>
+                    }
+                    else
+                    {
+                        @foreach (var otorgante in parametrosFiltros.nombreotorgantes)
+                        {
+                            @if (otorgante == null)
+                            {
+                                <text>Cargando ...</text>
+                            }
+                            else
+                            {
+                                <div class="input-filtro-hijo @CurrentEditContext.FieldCssClass( () => parametrosFiltros.nombreotorgantes[otorgante.index].nombre)">
+                                    <MatTextField Icon="@MatIconNames.Verified_user" Label="Nombre del otorgante"
+                                                  Class="bloque"
+                                                  @bind-Value="parametrosFiltros.nombreotorgantes[otorgante.index].nombre" @oninput='@(e => KeyUp(e, "nombre", parametrosFiltros.nombreotorgantes[otorgante.index]))'></MatTextField>
 
-        }
-    </div>
-    <div class="input-filtro-options">
-        <MatButton Icon="@MatIconNames.Search" Raised="true" OnClick="BuscarEscriturasPublicas">Buscar</MatButton>
-    </div>
+                                    <div class="incorrecto">
+                                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                        <ValidationMessage For="@(() => parametrosFiltros.nombreotorgantes[otorgante.index].nombre)" />
+                                    </div>
+                                    <div class="correcto">
+                                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                        <span class="good-msg">Correcto</span>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+
+                    }
+                </div>
+                <div class="input-filtro-options">
+                    <MatButton Icon="@MatIconNames.Search" Raised="true" type="submit">Buscar</MatButton>
+                </div>
+            </div>
+
+        </EditForm>
+    }
+
 </div>
 
 @if (listaEscriturasPublicas.Count == 0)
@@ -51,6 +114,8 @@ else
             }
         </div>
     </div>
+
+    <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
 
     <MatDialog @bind-IsOpen="dialogoabierto" Class="dialogo">
         <MatDialogTitle>Datos de la escritura pública</MatDialogTitle>
@@ -158,42 +223,39 @@ else
     public EscrituraPublicaRDTO escrituraPublica { get; set; }
     public bool dialogocontrato = false;
     public bool dialogootorgantes = false;
-    public List<Contrato>
-        listacontratos
-    { get; set; }
-    public List<Otorgante>
-        listaotorgantes
-    { get; set; }
-    public Dictionary<string, string>
-        diccionariostrings = new Dictionary<string, string>
-            ();
+    public List<Contrato> listacontratos { get; set; }
+    public List<Otorgante> listaotorgantes { get; set; }
+    public Dictionary<string, string> diccionariostrings = new Dictionary<string, string>();
     // Filtros realizados para la búsqueda
-    public string direccionOficioNotarial = "";
-    public string actojuridico = "";
-    public string nombrenotario = "";
-    public List<Otorgante>
-        nombresotorgantes
-    { get; set; }
-
+    ParametrosBusquedaEscrituraPublicaDTO parametrosFiltros;
+    private EditContext _editContext;
+    public int paginaactual = 1;
+    public int paginastotales;
     protected async override Task OnInitializedAsync()
     {
-        listaEscriturasPublicas = new List<EscrituraPublicaRDTO>
-            ();
+        listaEscriturasPublicas = new List<EscrituraPublicaRDTO>();
         escrituraPublica = new EscrituraPublicaRDTO();
-        listacontratos = new List<Contrato>
-            ();
-        listaotorgantes = new List<Otorgante>
-            ();
-        nombresotorgantes = new List<Otorgante>
-            ();
-        Otorgante otorgante = new Otorgante();
-        nombresotorgantes.Add(otorgante);
+        listacontratos = new List<Contrato>();
+        listaotorgantes = new List<Otorgante>();
+        parametrosFiltros = new ParametrosBusquedaEscrituraPublicaDTO();
+        parametrosFiltros.nombreotorgantes = new List<OtorganteDTO>();
+        OtorganteDTO otorgante = new OtorganteDTO();
+        otorgante.nombre = "";
+        otorgante.index = 0;
+        parametrosFiltros.nombreotorgantes.Add(otorgante);
+        _editContext = new EditContext(parametrosFiltros);
         await CargarEscriturasPublicas();
+    }
+
+    public void paginaSeleccionada(int pagina)
+    {
+        paginaactual = pagina;
     }
 
     private async Task CargarEscriturasPublicas()
     {
         var responseHttp = await repositorio.Get<List<EscrituraPublicaRDTO>>("api/EscriturasPublicas");
+        paginastotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
         listaEscriturasPublicas = responseHttp.Response;
     }
 
@@ -217,8 +279,19 @@ else
     public async Task BuscarEscriturasPublicas()
     {
         var queryoriginados = GenerarQuery();
-        Console.WriteLine(queryoriginados);
-        await Task.FromResult(0);
+        //navigationManager.NavigateTo(navigationManager.Uri + "?" + queryoriginados);
+        await ConsultarEscriturasPublicasFiltros(queryoriginados);
+    }
+
+    public async Task ConsultarEscriturasPublicasFiltros(String queryoriginados)
+    {
+        var responseHttp = await repositorio.Get<List<EscrituraPublicaRDTO>>("api/EscriturasPublicas/filterespecial?" + queryoriginados);
+        listaEscriturasPublicas = responseHttp.Response;
+    }
+
+    public void ValidacionFiltros()
+    {
+        swalFireMessage.errorMessage("Debe ingresar los filtros correctamente");
     }
 
     public string GenerarQuery()
@@ -227,16 +300,26 @@ else
         {
             diccionariostrings = new Dictionary<string, string>();
         }
-        diccionariostrings["direccionoficionotarial"] = direccionOficioNotarial;
-        diccionariostrings["nombrenotario"] = nombrenotario;
-        diccionariostrings["actojuridico"] = actojuridico;
-        foreach (var otorgante in nombresotorgantes)
-        {
-            diccionariostrings["nombreotorgantes"] = otorgante.nombre;
-        }
-        return string.Join("&",
+        diccionariostrings["direccionoficionotarial"] = parametrosFiltros.direccionoficionotarial;
+        diccionariostrings["nombrenotario"] = parametrosFiltros.nombrenotario;
+        diccionariostrings["actojuridico"] = parametrosFiltros.actojuridico;
+
+        string primerJoin = string.Join("&",
             diccionariostrings
                  .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
+        string segundoJoin = string.Join("&",
+            parametrosFiltros.nombreotorgantes
+                  .Select(x => $"nombreotorgantes={System.Web.HttpUtility.UrlEncode(x.nombre)}").ToArray());
+
+        return primerJoin + "&" + segundoJoin;
+    }
+
+    void KeyUp(ChangeEventArgs e, string membername, object val)
+    {
+        var property = val.GetType().GetProperty(membername);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, membername);
+        _editContext.NotifyFieldChanged(fi);
     }
 
 }
