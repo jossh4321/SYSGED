@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
+using SISGED.Server.Helpers;
 using SISGED.Server.Services;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
@@ -22,13 +24,6 @@ namespace SISGED.Server.Controllers
             this.escriturasPublicasService = escriturasPublicasService;
         }
 
-        [HttpGet]
-        public async Task<List<EscrituraPublicaRDTO>> Get()
-        {
-            List<EscrituraPublicaRDTO> listaEscriturasPublicas =await escriturasPublicasService.obtenerEscriturasPublicas();
-            return listaEscriturasPublicas;
-        }
-
         [HttpGet("filter")]
         public ActionResult<List<EscrituraPublica>> autocompletefilter([FromQuery] string term)
         {
@@ -41,7 +36,10 @@ namespace SISGED.Server.Controllers
         public async Task<List<EscrituraPublicaRDTO>> autocompleteFilterCompleto([FromQuery] ParametrosBusquedaEscrituraPublica parametrosbusqueda)
         {
             List<EscrituraPublicaRDTO> listaescriturasPublicasFiltrado = await escriturasPublicasService.filtradoEspecial(parametrosbusqueda);
-            return listaescriturasPublicasFiltrado;
+            await HttpContext.InsertPagedParameterOnResponse(listaescriturasPublicasFiltrado.AsQueryable(),parametrosbusqueda.cantidadregistros);
+            List<EscrituraPublicaRDTO> listaescriturasPublicasFiltradoPaginado =
+                listaescriturasPublicasFiltrado.AsQueryable().Paginate(parametrosbusqueda.Paginacion).ToList();
+            return listaescriturasPublicasFiltradoPaginado;
         }
     }
 }

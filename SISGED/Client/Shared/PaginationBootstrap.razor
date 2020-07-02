@@ -18,7 +18,7 @@
     [Parameter] public EventCallback<int> selectedPage { get; set; }
     List<ModelPage> links = new List<ModelPage>();
 
-      protected override void OnParametersSet()
+    protected override void OnParametersSet()
     {
         links = new List<ModelPage>();
 
@@ -41,7 +41,7 @@
         Console.WriteLine(links.Count);
     }
 
-      private async Task PaginaSeleccionadaInterno(ModelPage modelPage)
+    private async Task PaginaSeleccionadaInterno(ModelPage modelPage)
     {
         if (modelPage.Pagina == currentPage)
         {
@@ -58,7 +58,7 @@
 
 
 
-     class ModelPage
+    class ModelPage
     {
 
         public ModelPage(int pagina)
