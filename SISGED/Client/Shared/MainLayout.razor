@@ -28,8 +28,9 @@
                 {
                     <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
                         <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
-                        <span class="bartext-color" @onclick="@(() => onclickButtonNav(interfaz.url))">
+                        <span class="bartext-color" @onclick="@(() => onclickButtonNav(interfaz.url="/ModificarPerfil"))">
                             @interfaz.label
+                            
                         </span>
                     </MatNavItem>
                 }
