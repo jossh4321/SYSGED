@@ -883,6 +883,24 @@ namespace SISGED.Server.Services
             return solicitudExpNotario;
         }
 
+        public DocumentoDTO obtenerDocumentoDTO(string id)
+        {
+            DocumentoDTO docDocumento = new DocumentoDTO();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docDocumento = _documentos.Aggregate().
+              AppendStage<DocumentoDTO>(match).First();
+
+            //DocumentoDTO documentoDto = new DocumentoDTO
+            //{
+            //    id = docDocumento.id,
+            //    historialcontenido = docDocumento.historialcontenido,
+            //    historialproceso = docDocumento.historialproceso,
+            //    tipo = docDocumento.tipo,
+            //    urlanexo = docDocumento.urlanexo
+            //};
+            return docDocumento;
+        }
         //actualizarDocumentoODN
         public void actualizarDocumentoODN(ExpedienteWrapper expedienteWrapper)
         {

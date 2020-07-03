@@ -3,12 +3,17 @@
 @inject NavigationManager navigationManager
 @using SISGED.Shared
 @using Microsoft.AspNetCore.WebUtilities
+
 <link rel="stylesheet" href="css/processing.css" />
 
-<div id="preloader" style="display:@(Gif ? "block" : "none")">
+@if (firstLoad)
+{
+<div id="preloader" style="display:"block">
     <div id="loader"></div>
 </div>
-
+}
+else
+{
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 
     <tr>
@@ -94,15 +99,15 @@
         </td>
     </tr>
 </table>
-
+}
 @code {
-    bool Gif;
+    private bool firstLoad = true;
     string estado_retornado;
     System.Uri uri;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Gif = true;
+        firstLoad = true;
         //Paso1: Leer url
         uri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
         //Paso2: Try leer estado
@@ -120,13 +125,29 @@
                     referencia = referencia.ToString(),
                     tipopago = payment_type.ToString()
                 };
-                Gif = false;
+                DocumentoDTO solicitud = new DocumentoDTO
+                {
+                    id = mercadoPago.referencia.Split("-")[1]
+                };
+                //Paso4: Obtener el documento
+                Console.WriteLine("Soli---> "+solicitud.id);
+                var httpResponse = await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={solicitud.id}");
+                if (!httpResponse.Error)
+                {
+                    solicitud = (DocumentoDTO)httpResponse.Response;
+                    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(solicitud));
+                }
+                else
+                {
+                    Console.WriteLine("Algo Mal");
+                }
+                //UltimoPaso: Actualizar Estado
             }
         }
         else
         {
             //Rechazado papi
-            Gif = false;
         }
+        firstLoad = false;
     }
 }
