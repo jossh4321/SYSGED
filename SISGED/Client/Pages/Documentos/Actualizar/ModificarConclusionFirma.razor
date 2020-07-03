@@ -172,7 +172,7 @@
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, ConclusionFirma>($"api/documentos/actualizarDocumentoCF", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoCF", expedienteWrapper);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");

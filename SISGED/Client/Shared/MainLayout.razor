@@ -28,7 +28,7 @@
                 {
                     <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
                         <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
-                        <span class="bartext-color">
+                        <span class="bartext-color" @onclick="@(() => onclickButtonNav(interfaz.url))">
                             @interfaz.label
                         </span>
                     </MatNavItem>
@@ -359,6 +359,12 @@
         }
     }
     #endregion
+    void onclickButtonNav(string url)
+    {
+        
+        navigationManager.NavigateTo(url);
+        //navigationManager.NavigateTo(permiso.url);
+    }
 }
 
 
