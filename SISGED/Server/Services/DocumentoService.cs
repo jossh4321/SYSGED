@@ -989,6 +989,7 @@ namespace SISGED.Server.Services
             ConclusionFirmaDTO conclusionFirmaDTO = new ConclusionFirmaDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             conclusionFirmaDTO = JsonConvert.DeserializeObject<ConclusionFirmaDTO>(json);
+            ConclusionFirma documentocf = new ConclusionFirma();
 
             //Creacion de Obj y registro en coleccion de documentos 
             ContenidoConclusionFirma contenidoCF = new ContenidoConclusionFirma()
@@ -999,7 +1000,7 @@ namespace SISGED.Server.Services
             var filter = Builders<Documento>.Filter.Eq("id", conclusionFirmaDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica);
-            _documentos.UpdateOne(filter, update);
+             _documentos.UpdateOne(filter, update);
         }
 
         public void actualizarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
