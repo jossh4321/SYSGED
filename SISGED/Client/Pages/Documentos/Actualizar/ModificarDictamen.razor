@@ -351,7 +351,7 @@
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-        var httpResponse = await repository.Post<ExpedienteWrapper, Dictamen>("api/documentos/actualizarDocumentoD", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper>("api/documentos/actualizarDocumentoD", expedienteWrapper);
         if (!httpResponse.Error)
         {
             await swalfire.successMessage("Dictamen modificada correctamente");

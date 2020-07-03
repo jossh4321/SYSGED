@@ -257,7 +257,7 @@
 
     protected override void OnInitialized()
     {
-        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0 } };
+        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0,nombre="" } };
         _editContext = new EditContext(resolucion);
         if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
         {
@@ -273,11 +273,13 @@
 
     private void addParticipante()
     {
-        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count) });
+        Console.WriteLine("INDEX ADD ==> " + resolucion.contenidoDTO.participantes.Count);
+        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count),nombre="" });
         StateHasChanged();
     }
     private void removeParticipante(int index)
     {
+        Console.WriteLine("INDEX REMOVE ==> " + index);
         resolucion.contenidoDTO.participantes.RemoveAt(index);
         StateHasChanged();
     }

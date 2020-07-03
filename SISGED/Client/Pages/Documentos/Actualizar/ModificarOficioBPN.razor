@@ -334,7 +334,7 @@
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>($"api/documentos/actualizarDocumentoOficioBPN", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoOficioBPN", expedienteWrapper);
         if (!httpResponse.Error)
         {
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial modificada Correctamente");
