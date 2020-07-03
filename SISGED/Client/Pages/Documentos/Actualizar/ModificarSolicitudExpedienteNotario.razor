@@ -191,7 +191,7 @@
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, Apelacion>($"api/documentos/actualizarDocumentoSEN", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoSEN", expedienteWrapper);
         if (!httpResponse.Error)
         {
             await swalfire.successMessage("Solicitud de expediente de notario modificado correctamente");

@@ -463,7 +463,7 @@
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
             expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, AperturamientoDisciplinario>($"api/documentos/actualizarDocumentoAD", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoAD", expedienteWrapper);
             if (!httpResponse.Error)
             {
                 await swalfire.successMessage("Aperturamiento Disciplinario modificado correctamente");
