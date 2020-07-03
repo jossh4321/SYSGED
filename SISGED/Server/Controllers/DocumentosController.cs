@@ -356,6 +356,11 @@ namespace SISGED.Server.Controllers
             return _documentoservice.obtenerSolicitudExpedienteNotario(iddoc);
             
         }
+        [HttpGet("documentodto")]
+        public async Task<ActionResult<DocumentoDTO>> obtenerDocumento([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerDocumentoDTO(iddoc);
+        }
 
         //Actualizaciones
         [HttpPost("actualizarDocumentoODN")]

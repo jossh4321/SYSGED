@@ -1,4 +1,4 @@
-﻿@page  "/modificarperfil"
+﻿@page  "/ModificarPerfil"
 @inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
@@ -7,7 +7,8 @@
         background-color: #BDECB6;
         flex-basis: 100%;
         border-radius: 2px 2px 1px 1px;
-        width: 100%;
+        width: 80%;
+        heigth: 4px;
     }
     .centro {
         margin-left: auto;
@@ -22,7 +23,7 @@
 
     .text-field-style {
         display: block !important;
-        width: 1800px;
+        width: 350px;
         heigth: 4px
     }
    
@@ -111,7 +112,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Nombre de Usuario"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "Nombre de Usuario", documento.contenidoDTO))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -126,7 +127,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Nombres"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "Nombres", documento.contenidoDTO))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -141,7 +142,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Apellidos"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "Apellidos", documento.contenidoDTO))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -155,13 +156,13 @@
                 </div>
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Tipo de documento"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
+                    <MatTextField @bind-Value="@documento.contenidoDTO.actojuridico" Class="text-field-style" Label="Tipo de documento"
+                                  @oninput='@(e => KeyUp(e, "Tipo de Documento ", documento.contenidoDTO))'></MatTextField>
 
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenidoDTO.titulo)" />
+                        <ValidationMessage For="@(() => documento.contenidoDTO.actojuridico)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -171,7 +172,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.descripcion)">
                     <MatTextField @bind-Value="@documento.contenidoDTO.descripcion" Class="text-field-style" Label="Numero de documento"
-                                  @oninput='@(e => KeyUp(e, "descripcion", documento.contenidoDTO))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "Numero de Documento", documento.contenidoDTO))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -182,30 +183,16 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+                
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Titulo de documento"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
+                    <MatTextField @bind-Value="@documento.contenidoDTO.direccionoficio" Class="text-field-style" Label="Direccion"
+                                  @oninput='@(e => KeyUp(e, "Direccion", documento.contenidoDTO))'></MatTextField>
 
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenidoDTO.titulo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-                @*///////////////////////////////////////////////////*@
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Direccion"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
-
-
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenidoDTO.titulo)" />
+                        <ValidationMessage For="@(() => documento.contenidoDTO.direccionoficio)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -215,7 +202,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Email"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "Email", documento.contenidoDTO))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -230,7 +217,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Sexo"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "Sexo", documento.contenidoDTO))'></MatTextField>
 
 
                     <div class="incorrecto">
