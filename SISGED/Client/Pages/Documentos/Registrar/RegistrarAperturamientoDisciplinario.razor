@@ -248,23 +248,24 @@
                             <MatIcon Icon="add_circle_outline"></MatIcon>
                         </div>
                     </div>
-                    @foreach (Participante p in aperturamientodisciplinario.contenidoDTO.participantes)
+                    @for(int i = 0; i< aperturamientodisciplinario.contenidoDTO.participantes.Count;i++)
                     {
+                        int index = i;
                         <div class="single-textfield-container">
-                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre)">
-                                <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre" Class="text-field-style"
+                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes[index].nombre)">
+                                <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.participantes[index].nombre" Class="text-field-style"
                                               Label="Nombre del participante"
-                                              @oninput='@(e => KeyUp(e, "nombre", aperturamientodisciplinario.contenidoDTO.participantes[p.index]))'></MatTextField>
+                                              @oninput='@(e => KeyUp(e, "nombre", aperturamientodisciplinario.contenidoDTO.participantes[index]))'></MatTextField>
                                 <div class="incorrecto">
                                     <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes[p.index].nombre)" />
+                                    <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes[index].nombre)" />
                                 </div>
                                 <div class="correcto">
                                     <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                                     <span class="good-msg">Correcto</span>
                                 </div>
                             </div>
-                            <div class="base-icon" @onclick="@(() => removeparticipante(p.index))">
+                            <div class="base-icon" @onclick="@(() => removeparticipante(index))">
                                 <MatIcon Icon="remove_circle_outline"></MatIcon>
                             </div>
                         </div>
@@ -288,23 +289,24 @@
                             <MatIcon Icon="add_circle_outline"></MatIcon>
                         </div>
                     </div>
-                    @foreach (Hecho h in aperturamientodisciplinario.contenidoDTO.hechosimputados)
+                    @for(int i = 0; i < aperturamientodisciplinario.contenidoDTO.hechosimputados.Count;i++)
                     {
+                        int index = i;
                         <div class="single-textfield-container">
-                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion)">
-                                <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion" Class="text-field-style"
+                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.hechosimputados[index].descripcion)">
+                                <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.hechosimputados[index].descripcion" Class="text-field-style"
                                               Label="Nombre del participante"
-                                              @oninput='@(e => KeyUp(e, "descripcion", aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index]))'></MatTextField>
+                                              @oninput='@(e => KeyUp(e, "descripcion", aperturamientodisciplinario.contenidoDTO.hechosimputados[index]))'></MatTextField>
                                 <div class="incorrecto">
                                     <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.hechosimputados[h.index].descripcion)" />
+                                    <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.hechosimputados[index].descripcion)" />
                                 </div>
                                 <div class="correcto">
                                     <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                                     <span class="good-msg">Correcto</span>
                                 </div>
                             </div>
-                            <div class="base-icon" @onclick="@(() => removehecho(h.index))">
+                            <div class="base-icon" @onclick="@(() => removehecho(index))">
                                 <MatIcon Icon="remove_circle_outline"></MatIcon>
                             </div>
                         </div>
