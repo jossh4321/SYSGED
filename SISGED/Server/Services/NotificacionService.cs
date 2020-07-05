@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
 using System;
@@ -27,6 +28,19 @@ namespace SISGED.Server.Services
         public List<NotificacionDTO> obtenernotificacionDTO()
         {
             return new List<NotificacionDTO>();
+        }
+
+        public List<Notificacion> obtenernotificacion()
+        {
+
+            var match = new BsonDocument("$match",
+                    new BsonDocument("estado", "novisto"));
+
+            List<Notificacion> notificacion = new List<Notificacion>();
+            notificacion = _notificaciones.Aggregate()
+                .AppendStage<Notificacion>(match).ToList();
+
+            return notificacion;
         }
     }
 }
