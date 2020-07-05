@@ -568,7 +568,6 @@ namespace SISGED.Server.Services
             oficioDesignacionNotario.historialcontenido = documentoODN.historialcontenido;
             oficioDesignacionNotario.historialproceso = documentoODN.historialproceso;
             oficioDesignacionNotario.estado = documentoODN.estado;
-
             return oficioDesignacionNotario;
 
         }
