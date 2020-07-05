@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SISGED.Server.Services;
+using SISGED.Shared.DTOs;
+using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +22,15 @@ namespace SISGED.Server.Controllers
         public ActionResult<List<Notificacion>> Get()
         {
             return _notificacion.Get();
+        }
+        [HttpGet]
+        public ActionResult<List<NotificacionDTO>> getnotificaciones()
+        {
+            return _notificacion.obtenernotificacionDTO();
+            
+            
+            
+             
         }
     }
 }

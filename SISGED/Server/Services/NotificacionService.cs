@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,11 @@ namespace SISGED.Server.Services
         public List<Notificacion> Get()
         {
             return _notificaciones.Find<Notificacion>(notifiacion => true).ToList();
+        }
+
+        public List<NotificacionDTO> obtenernotificacionDTO()
+        {
+            return new List<NotificacionDTO>();
         }
     }
 }
