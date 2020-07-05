@@ -204,6 +204,17 @@
             };
             workspace.UpdateDocRegistrado(itemSalida);
             workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = oficiodesignacionnotario.id;
+            documentoDTO.tipo = oficiodesignacionnotario.tipo;
+            documentoDTO.estado = oficiodesignacionnotario.estado;
+            documentoDTO.contenido = oficiodesignacionnotario.contenido;
+            documentoDTO.historialcontenido = oficiodesignacionnotario.historialcontenido;
+            documentoDTO.historialproceso = oficiodesignacionnotario.historialproceso;
+            documentoDTO.urlanexo = oficiodesignacionnotario.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
             StateHasChanged();
             await swalfire.successMessage("Oficio de Designacion de Notario Registrada Correctamente");
         }
