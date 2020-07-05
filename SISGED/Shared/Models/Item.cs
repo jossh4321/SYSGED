@@ -16,5 +16,6 @@ namespace SISGED.Shared.Models
         public string currentPlace { get; set; } = "tools";
         public string originPlace { get; set; }
         public Cliente cliente { get; set; }
+        public string itemstatus { get; set; } = "ninguno";
     }
 }

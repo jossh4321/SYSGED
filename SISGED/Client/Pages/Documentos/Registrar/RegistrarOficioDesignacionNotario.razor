@@ -197,11 +197,14 @@
                 valor = expedientebandeja,
                 icono = "alarm_add",
                 descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
             };
-            workspace.UpdateComponentBandeja(itemSalida);
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            StateHasChanged();
             await swalfire.successMessage("Oficio de Designacion de Notario Registrada Correctamente");
         }
         else

@@ -68,7 +68,7 @@ namespace SISGED.Server.Services
             documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
             documentoExpediente.fechademora = null;
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5ee5f24e7d8f833f68cc88a0", updateExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);
 
 
             //actualizacion bandeja salida del usuario
