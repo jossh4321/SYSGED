@@ -9,6 +9,14 @@ p {
     margin-block-end: 1em;
 }
 
+    p > ul {
+        color: #b0b3b4;
+    }
+
+        p > ul > li {
+            color: #b0b3b4;
+        }
+
 #preloader {
     position: fixed;
     top: 0;
