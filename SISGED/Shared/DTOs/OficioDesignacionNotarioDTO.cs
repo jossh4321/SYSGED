@@ -35,7 +35,7 @@ namespace SISGED.Shared.DTOs
         public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
         public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
         public List<Notario> notario { get; set; } = new List<Notario>();
-
+        public List<string> urlanexo { get; set; } = new List<string>();
     }
 
     public class OficioDesignacionNotario_ur
@@ -48,7 +48,7 @@ namespace SISGED.Shared.DTOs
         public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
         public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
         public Notario notario { get; set; } = new Notario();
-
+        public List<string> urlanexo { get; set; } = new List<string>();
     }
 
 }

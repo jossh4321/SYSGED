@@ -313,6 +313,12 @@ namespace SISGED.Server.Controllers
             return _documentoservice.modificarEstado(documento);
         }
 
+        [HttpPut("cambiarestadodocumento")]
+        public ActionResult<Documento> ModificarEstado(DocumentoDTO documento)
+        {
+            return _documentoservice.modificarEstadoDocumento(documento);
+        }
+
         //obteniendo documentos
         [HttpGet("documentoodn")]
         public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)
