@@ -6,7 +6,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace SISGED.Shared.Entities
 {
-    [BsonDiscriminator(RootClass = true)]
+    
     public class EscrituraPublica
     {
         [BsonId]

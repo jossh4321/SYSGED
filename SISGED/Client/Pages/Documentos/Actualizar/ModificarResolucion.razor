@@ -1,0 +1,356 @@
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
+    .div-form {
+        background-color: #a6a6a6;
+        flex-basis: 100%;
+        border-radius: 5px 5px 0px 0px;
+        width: 100%;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+
+    div.mat-date-picker {
+        width: 100% !important;
+    }
+
+    .contenedor-participantes {
+        padding-top: 10px;
+        margin: 20px;
+        border: 2px solid #666666;
+        border-radius: 5px;
+    }
+
+    .titulo-paticipantes {
+        border: 1px solid black;
+        margin: 0px 5px 0px 5px;
+        border-radius: 5px 5px 0px 0px;
+        background-color: #404040;
+        color: white;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .titulo {
+        color: #d9d9d9;
+    }
+
+    .icono {
+        margin-left: 20px;
+    }
+
+        .icono i {
+            margin: 5px;
+        }
+
+    .single-textfield-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .base-field {
+        flex-basis: 90%;
+    }
+
+    .base-icon {
+        display: flex;
+        flex-basis: 8%;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 2px;
+        background: #ff1a1a;
+        border-radius: 3px;
+        border: 1px solid #800000
+    }
+</style>
+
+<div class="div-form">
+    @if (firstLoad == true)
+    {
+    <div class="loader-block">
+        <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+
+        <span style="color:white">CARGANDO...</span>
+    </div>
+    }
+    else { 
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <FluentValidator></FluentValidator>
+        <MatTabGroup>
+            <MatTab Label="General">
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@resolucion.contenidoDTO.titulo" Class="text-field-style"     
+                                  Label="Titulo de la resolución" @oninput='@(e => KeyUp(e,"titulo",resolucion.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => resolucion.contenidoDTO.titulo)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@resolucion.contenidoDTO.descripcion" Class="text-field-style"
+                                  Label="Descripcion" @oninput='@(e => KeyUp(e,"descripcion",resolucion.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => resolucion.contenidoDTO.descripcion)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.sancion)">
+                    <MatTextField @bind-Value="@resolucion.contenidoDTO.sancion" Class="text-field-style"
+                                  Label="Sancion" @oninput='@(e => KeyUp(e,"sancion",resolucion.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => resolucion.contenidoDTO.sancion)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.fechainicioaudiencia)">
+
+                    <MatDatePicker Label="Fecha de Inicio" @bind-Value="@resolucion.contenidoDTO.fechainicioaudiencia"></MatDatePicker>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => resolucion.contenidoDTO.fechainicioaudiencia)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.fechafinaudiencia)">
+
+                    <MatDatePicker AllowInput="false" Label="Fecha de Fin" @bind-Value="@resolucion.contenidoDTO.fechafinaudiencia"></MatDatePicker>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => resolucion.contenidoDTO.fechafinaudiencia)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+
+            </MatTab>
+            <MatTab Label="Participantes">
+
+                <div class="contenedor-participantes">
+                    <div class="titulo-paticipantes">
+                        <div><span class="titulo">Participantes de la resolucion</span></div>
+                        <div class="icono" @onclick="@(addParticipante)">
+                            <MatIcon Icon="add_circle_outline"></MatIcon>
+                        </div>
+                    </div>
+                    @for(int i = 0; i < resolucion.contenidoDTO.participantes.Count;i++)
+                    {
+                        int index = i;
+                        <div class="single-textfield-container">
+                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes[index].nombre)">
+                                <MatTextField @bind-Value="@resolucion.contenidoDTO.participantes[index].nombre" Class="text-field-style"
+                                              Label="Ingrese una observación"
+                                              @oninput='@(e => KeyUp(e, "nombre", resolucion.contenidoDTO.participantes[index]))'></MatTextField>
+                                <div class="incorrecto">
+                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                    <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes[index].nombre)" />
+                                </div>
+                                <div class="correcto">
+                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                    <span class="good-msg">Correcto</span>
+                                </div>
+                            </div>
+                            <div class="base-icon" @onclick="@(() => removeParticipante(index))">
+                                <MatIcon Icon="remove_circle_outline"></MatIcon>
+                            </div>
+                        </div>
+                    }
+                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes)">
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Edit"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>
+            </MatTab>
+        </MatTabGroup>
+    </EditForm>
+    }
+</div>
+
+@code {
+    //Variables de sesion
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+
+    //Datos del formulario
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
+    private ResolucionDTO resolucion = new ResolucionDTO();
+    private EditContext _editContext;
+    private string imagenTemporal;
+    private bool loadprocess = false;
+    private bool firstLoad = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        firstLoad = true;
+        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0 } };
+        _editContext = new EditContext(resolucion);
+        var httpResponse = await repository.Get<ResolucionDTO>($"api/documentos/documentord?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            resolucion = (ResolucionDTO)httpResponse.Response;
+            _editContext = new EditContext(resolucion);
+            StateHasChanged();
+        }
+        else
+        {
+
+        }
+
+        if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
+        {
+            imagenTemporal = resolucion.contenidoDTO.data;
+            resolucion.contenidoDTO.data = null;
+        }
+        firstLoad = false;
+    }
+
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        resolucion.contenidoDTO.data = imagenbase64;
+    }
+
+    private void addParticipante()
+    {
+        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count) });
+        StateHasChanged();
+    }
+    private void removeParticipante(int index)
+    {
+        resolucion.contenidoDTO.participantes.RemoveAt(index);
+        StateHasChanged();
+    }
+
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        loadprocess = true;
+        if (resolucion.contenidoDTO.data != "" && resolucion.contenidoDTO.data != null)
+        {
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            expedienteWrapper.documento = resolucion;
+            expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+            expedienteWrapper.idusuarioactual = sesion.usuario.id;
+            expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+            var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoR", expedienteWrapper);
+            if (!httpResponse.Error)
+            {
+                await swalfire.successMessage("Resolución modificada correctamente");
+            }
+            else
+            {
+                await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+            }
+        }
+        else
+        {
+            await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
+        }
+        loadprocess = false;
+    }
+
+    public void handleInvalidSubmit()
+    {
+        loadprocess = false;
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+
+}

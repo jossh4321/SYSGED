@@ -1,0 +1,31 @@
+﻿<style>
+    .demo-mat-card-content {
+        padding: 1rem;
+        margin: 0px;
+    }
+</style>
+<MatCard class="demo-mat-card">
+    <MatCardContent>
+        <MatHeadline6 class="demo-mat-card-clean-margin demo-mat-card-text">@expediente.tipo</MatHeadline6>
+        @*<MatCardMedia Wide="true" ImageUrl="https://images.unsplash.com/photo-1589801573208-4f24de17391d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80"></MatCardMedia>*@
+        <div class="demo-mat-card-content">
+            <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">@expediente.estado</MatSubtitle2>
+            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@expediente.cliente.nombre</MatBody2>
+            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@expediente.cliente.tipodocumento : @expediente.cliente.numerodocumento</MatBody2>
+        </div>
+    </MatCardContent>
+    <MatCardActions>
+        <div class="demo-mat-card-content">
+            @*<button @onclick="VisualizarDocumentos"></button>*@
+            <MatButton Raised="true" Icon="@MatIconNames.Book" OnClick="(() => listarDocumentos.InvokeAsync(expediente))" Class="mat-color">Documentos</MatButton>
+            <MatButton Raised="true" Icon="@MatIconNames.Search" Class="mat-color">Derivaciones</MatButton>
+        </div>
+    </MatCardActions>
+</MatCard>
+
+@code {
+    [Parameter]
+    public ExpedienteDTO2 expediente { get; set; }
+    [Parameter]
+    public EventCallback<ExpedienteDTO2> listarDocumentos { get; set; }
+}

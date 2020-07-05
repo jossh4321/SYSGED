@@ -196,11 +196,9 @@
                 </DraggableList>
             </div>
             <div class="workspace common-box-style">
-                
                 <DraggableList place="workspace">
                     <WindowTool itemArrastrado="@(sesion.herramientasutilizables.SingleOrDefault(x => x.currentPlace.Equals("workspace")))"></WindowTool>
                 </DraggableList>
-
             </div>
             <div class="container-ot">
                 <div class="output common-box-style">
@@ -225,7 +223,6 @@
                     {
                         <DraggableList place="tools"></DraggableList>
                     }
-
                 </div>
             </div>
         </div>
@@ -239,36 +236,20 @@
     //public String expedienteseleccionado = null;
     //public String idexpedienteSalida = null;
     public ExpedienteBandejaDTO expedienteseleccionado = null;
-
-
     public Item currentItemDragged;
     public Bandeja bandejaUsuario = new Bandeja();
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("INICIE: WorkEnvironment");
-        List<ExpedienteDTO> listaexpediente = new List<ExpedienteDTO>();
-        /*listaexpediente.Add(expedientedto1);
-        listaexpediente.Add(expedientedto2);
-        listaexpediente.Add(expedientedto3);*/
-        /*var httpResponse = await repository.Get<List<Documento>>("api/documentos");
+        List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
+        /*var httpResponse = await repository.Get <List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {
-            bandejasalida = httpResponse.Response;
-            bandejasalida.ForEach(x => Console.WriteLine(x.id));
+            Console.WriteLine("todo bien!");
         }
         else
         {
-            Console.WriteLine("Ocurrio un error");
-        }*/
-        /*List<BandejaEntradaDTOR> lexdto = new List<BandejaEntradaDTOR>();
-        var httpResponse = await repository.Get<List<BandejaEntradaDTOR>>("api/bandejas/bandejaentrada/5ee2e87bd12fcd05d6b6b13e");
-        if (!httpResponse.Error)
-        {
-            //lexdto = httpResponse.Response;
-        }
-        else
-        {
-            Console.WriteLine("Ocurrio un error");
+            Console.WriteLine("algo mal");
         }*/
     }
 
@@ -285,7 +266,8 @@
                 sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre))] = tool;
                 StateHasChanged();
             }
-        }else if(currentItemDragged.originPlace == "inputs")
+        }
+        else if(currentItemDragged.originPlace == "inputs")
         {
             var tool = sesion.listaentradas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
             if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
@@ -298,7 +280,8 @@
                 sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
                 StateHasChanged();
             }
-        }else if(currentItemDragged.originPlace == "outputs")
+        }
+        else if(currentItemDragged.originPlace == "outputs")
         {
             var tool = sesion.listasalidas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
             if(tool != null)
@@ -310,15 +293,27 @@
                 StateHasChanged();
             }
         }
-
     }
-
     public void UpdateComponentBandeja(Item itemnuevo)
     {
         sesion.listasalidas.Add(itemnuevo);
         StateHasChanged();
     }
-
+    public void UpdateDocRegistrado(Item itemnuevo)
+    {
+        sesion.listaentradas[sesion.listaentradas.FindIndex(ind =>
+        ind.originPlace=="inputs" &&
+        ind.currentPlace== "workspace")] = itemnuevo;
+        //sesion.herramientasutilizables[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "tools";
+        StateHasChanged();
+    }
+    public void UpdateTools(string nombre)
+    {
+        var tool = sesion.herramientasutilizables.SingleOrDefault(x => x.nombre == nombre);
+        tool.currentPlace = "tools";
+        sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(nombre))] = tool;
+        StateHasChanged();
+    }
     /*
     public ExpedienteDTO expedientedto1 = new ExpedienteDTO()
     {
@@ -382,6 +377,4 @@
         derivaciones = new List<Derivacion>(),
         estado = "pendiente"
     };*/
-
-
 }

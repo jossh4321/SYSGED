@@ -10,4 +10,10 @@ namespace SISGED.Shared.Entities
         public string apellido { get; set; }
         public string dni { get; set; }
     }
+
+    public class OtorganteDTO
+    {
+        public string nombre { get; set; }
+        public int index { get; set; }
+    }
 }

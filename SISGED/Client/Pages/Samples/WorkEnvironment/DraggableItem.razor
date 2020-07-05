@@ -1,4 +1,10 @@
-﻿
+﻿@using Newtonsoft.Json;
+<style>
+    .registro {
+        color: #cca300;
+        font-weight: bold;
+    }
+</style>
 <li draggable="true" class="li-tool @classname" @ondragstart="@(() => HandleDragStart(herramienta))">
     <div class="tool-container">
         <MatIcon>@MatIconNames.Assistant</MatIcon>
@@ -12,6 +18,16 @@
             else
             {
                 <p class="tool-client-name">@herramienta.cliente.nombre  -  @herramienta.cliente.numerodocumento </p>
+                if (herramienta.itemstatus.Equals("registrado") && herramienta.originPlace.Equals("inputs"))
+                {
+                    ExpedienteBandejaDTO documento = (ExpedienteBandejaDTO)herramienta.valor;
+                    <p class="registro">Documento Registrado: @documento.tipo</p>
+                }
+                if (herramienta.itemstatus.Equals("escogido") && herramienta.originPlace.Equals("inputs"))
+                {
+                    EscrituraPublicaRDTO escrituraPublica = herramienta.escriturapublica;
+                    <p class="registro">Escritura Pública escogido: @escrituraPublica.titulo</p>
+                }
             }
 
         </div>

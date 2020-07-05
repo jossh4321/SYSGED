@@ -1,0 +1,197 @@
+﻿p {
+    display: block;
+}
+
+.demo-mat-card {
+    max-width: 200px;
+}
+
+.demo-mat-card-content {
+    padding: 1rem;
+}
+
+.demo-mat-card-clean-margin {
+    margin: 0px;
+}
+
+.demo-mat-card-text {
+    color: black;
+}
+
+    .demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
+        text-align: left;
+        font-weight: bolder;
+        font-size: 15px;
+        padding-left: 5px;
+        color: black;
+    }
+
+    .demo-mat-card-text h5 {
+        text-transform: capitalize;
+        font-size: 19px !important;
+        font-weight: normal;
+    }
+
+    .demo-mat-card-text button {
+        display: flex;
+        margin-bottom: 5px;
+        margin-left: 5px;
+    }
+
+.mat-color {
+    background-color: skyblue !important;
+}
+
+.mat-color-green {
+    background-color: green !important;
+}
+
+.mat-card-actions-modificado {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    flex-direction: column !important;
+    align-items: start !important;
+
+}
+
+.mat-card-actions-modificado button {
+    margin-bottom: 15px !important;
+}
+
+.dialogo .mdc-dialog__surface {
+    max-width: 800px !important;
+}
+
+.row-datos {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.col-datos-6 {
+    flex-grow: 1;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    flex-basis: calc((100%/2) - 10px);
+}
+
+    .col-datos-6 div {
+        border-radius: 5px;
+    }
+
+.mbottom-5 {
+    margin-bottom: 5px;
+}
+
+.pbottom-5 {
+    padding-bottom: 5px;
+}
+
+.mtop-5 {
+    margin-top: 5px;
+}
+
+.limegreen {
+    background-color: limegreen !important;
+}
+
+.col-datos-12 {
+    flex-basis: 100%;
+}
+
+.row-perfil {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+/* Estilos de los filtros */
+.filtros {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 90%;
+    max-width: 750px;
+    margin: 0px auto;
+    margin-top: 5px;
+}
+
+.input-filtro {
+    flex-grow: 1;
+    margin-bottom: 25px;
+    margin-right: 5px;
+    flex-basis: calc((100%/3) - 5px);
+}
+
+.input-filtro-multiple {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.input-filtro-hijo, .input-filtro-options {
+    margin-bottom: 25px;
+    margin-right: 5px;
+    flex-basis: calc((100%/3) - 5px);
+}
+
+    .input-filtro-options button {
+        display: flex;
+        background-color: deepskyblue !important;
+    }
+
+.bloque {
+    display: block;
+}
+/* Estandares de validaciones de colombo*/
+
+.validation-message {
+    display: inline;
+}
+
+div.invalid .correcto {
+    display: none;
+}
+
+div.valid .incorrecto,
+div.valid:not(.modified) .correcto {
+    display: none;
+}
+
+.correcto {
+    color: green !important;
+    font-family: sans-serif;
+    font-size: 15px;
+    display: flex;
+    height: 18px;
+}
+
+.incorrecto {
+    color: red !important;
+    font-family: sans-serif;
+    font-size: 15px;
+    display: flex;
+    height: 18px;
+}
+
+i.val-icon {
+    font-size: 20px;
+}
+
+.good-msg, div.correcto i.good-icon {
+    color: green !important;
+}
+
+div.incorrecto i.bad-icon {
+    color: red !important;
+}
+
+.invalid {
+    outline: none !important;
+}
+
+.prueba {
+    display: block;
+}

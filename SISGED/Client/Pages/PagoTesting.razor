@@ -1,0 +1,17 @@
+﻿@page "/pagartest"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@using SISGED.Shared
+
+<h3>Pago</h3>
+
+<button @onclick="NavigateToPaid">Pagar Che</button>
+
+@code {
+    private async Task NavigateToPaid()
+    {
+
+        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = "5ef9f9c1afdbc540d868b3ce-5ed99e50fed03c07c872c85c", descripcion = "Prueba papi", monto = "30.00" });
+        navigationManager.NavigateTo(httpResponse.Response.url);
+    }
+}

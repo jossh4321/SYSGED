@@ -1,14 +1,196 @@
-﻿<style>
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
     .div-form {
         background-color: #a6a6a6;
         flex-basis: 100%;
         border-radius: 5px 5px 0px 0px;
         width: 100%;
     }
-</style>
-<div class="div-form">
-    <h3>RegistrarApelacion</h3>
-</div>
-    @code {
 
+    .field-container {
+        display: block;
+        padding: 10px;
     }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+</style>
+
+<div class="div-form">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <FluentValidator></FluentValidator>
+        <MatTabGroup>
+            <MatTab Label="Datos de la Apelación">
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@apelacion.contenidoDTO.titulo" Class="text-field-style"
+                                  Label="Titulo de la Apelación" @oninput='@(e => KeyUp(e,"titulo",apelacion.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => apelacion.contenidoDTO.titulo)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => apelacion.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@apelacion.contenidoDTO.descripcion" Class="text-field-style"
+                                  Label="Descripción de la apelación" @oninput='@(e => KeyUp(e,"descripcion",apelacion.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => apelacion.contenidoDTO.descripcion)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+
+                <div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>
+            </MatTab>
+        </MatTabGroup>
+    </EditForm>
+</div>
+
+@code {
+    //Variables de sesion
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+
+    //Datos del formulario
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
+    private ApelacionDTO apelacion = new ApelacionDTO();
+    private EditContext _editContext;
+    private string imagenTemporal;
+    private bool loadprocess = false;
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(apelacion);
+        if (!string.IsNullOrEmpty(apelacion.contenidoDTO.data))
+        {
+            imagenTemporal = apelacion.contenidoDTO.data;
+            apelacion.contenidoDTO.data = null;
+        }
+    }
+
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        apelacion.contenidoDTO.data = imagenbase64;
+    }
+
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        loadprocess = true;
+        //aperturamientodisciplinario.contenidoDTO.idusuario = sesion.usuario.id;
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = apelacion;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper, Apelacion>($"api/documentos/documentoAPE", expedienteWrapper);
+        if (!httpResponse.Error)
+        {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            Apelacion apelacionact = new Apelacion();
+            apelacionact = httpResponse.Response;
+            expedientebandeja.documento.id = apelacionact.id;
+            expedientebandeja.documento.tipo = apelacionact.tipo;
+            expedientebandeja.documento.historialcontenido = apelacionact.historialcontenido;
+            expedientebandeja.documento.historialproceso = apelacionact.historialproceso;
+            expedientebandeja.documento.contenido = apelacionact.contenido;
+            expedientebandeja.documento.estado = apelacionact.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = expedientebandeja.cliente
+            };
+            workspace.UpdateComponentBandeja(itemSalida);
+            await swalfire.successMessage("Apelación registrado correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        loadprocess = false;
+    }
+
+    public void handleInvalidSubmit()
+    {
+        loadprocess = false;
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+
+}
+

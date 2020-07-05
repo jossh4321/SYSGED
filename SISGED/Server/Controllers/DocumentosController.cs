@@ -31,7 +31,8 @@ namespace SISGED.Server.Controllers
         {
              return _documentoservice.obtenerDocumentos();
         }
-        //Completo
+
+        #region Registros de Documentos
         [HttpPost("documentoodn")]
         public ActionResult<OficioDesignacionNotario> RegistrarDocumentoODN(ExpedienteWrapper expediente)
         {
@@ -40,7 +41,6 @@ namespace SISGED.Server.Controllers
             return documentoODN;
         }
 
-        //Completo
         [HttpPost("documentosbpn")]
         public ActionResult<OficioBPN> RegistrarDocumentoOficioBPN(ExpedienteWrapper expediente)
         {
@@ -218,7 +218,7 @@ namespace SISGED.Server.Controllers
             return bandejaexpdto;
         }
 
-        //Completo
+
         [HttpPost("documentocf")]
         public ActionResult<ConclusionFirma> RegistrarDocumentoCF(ExpedienteWrapper expediente)
         {
@@ -230,11 +230,184 @@ namespace SISGED.Server.Controllers
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
-       
+
+        [HttpPost("documentoad")]
+        public async Task<ActionResult<AperturamientoDisciplinario>> RegistrarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedientewrapper)
+        {
+            //Deserealizacion de objeto de tipo AperturamientoDisciplinario
+            AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO = new AperturamientoDisciplinarioDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            aperturamientoDisciplinarioDTO = JsonConvert.DeserializeObject<AperturamientoDisciplinarioDTO>(json);
+
+            //Almacenando el pdf en el servidor de archivos y obtencion de la url
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(aperturamientoDisciplinarioDTO.contenidoDTO.url))
+            {
+                var solicitudBytes = Convert.FromBase64String(aperturamientoDisciplinarioDTO.contenidoDTO.url);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "aperturamientodisciplinario");
+            }
+
+            return _documentoservice.registrarAperturamientoDisciplinario(aperturamientoDisciplinarioDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
+
+
+        [HttpPost("documentoAPE")]
+        public async Task<ActionResult<Apelacion>> registrarDocumentoApelacion(ExpedienteWrapper expedientewrapper)
+        {
+            //Deserealizacion de objeto de tipo Apelacion
+            ApelacionDTO apelacionDTO = new ApelacionDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            apelacionDTO = JsonConvert.DeserializeObject<ApelacionDTO>(json);
+
+            //Almacenando el pdf en el servidor de archivos y obtencion de la url
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(apelacionDTO.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(apelacionDTO.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "apelaciones");
+            }
+
+            return _documentoservice.registrarApelacion(apelacionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
+
+
+        [HttpPost("documentoSEN")]
+        public async Task<ActionResult<SolicitudExpedienteNotario>> registrarSolicitudExpedienteNotario(ExpedienteWrapper expedientewrapper)
+        {
+            //Deserealizacion de objeto de tipo Apelacion
+            SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO = new SolicitudExpedienteNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            solicitudExpedienteNotarioDTO = JsonConvert.DeserializeObject<SolicitudExpedienteNotarioDTO>(json);
+
+            return _documentoservice.registrarSolicitudExpedienteNotario(solicitudExpedienteNotarioDTO, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
+
+
+        [HttpPost("documentod")]
+        public async Task<ActionResult<Dictamen>> RegistrarDocumentoDictamen(ExpedienteWrapper expedientewrapper)
+        {
+            return _documentoservice.RegistrarDictamen(expedientewrapper);
+        }
+
+        [HttpPost("documentor")]
+        public async Task<ActionResult<Resolucion>> RegistrarDocumentoResolucion(ExpedienteWrapper expedientewrapper)
+        {
+            ResolucionDTO resolucionDTO = new ResolucionDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            resolucionDTO = JsonConvert.DeserializeObject<ResolucionDTO>(json);
+
+            //Almacenando el pdf en el servidor de archivos y obtencion de la url
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(resolucionDTO.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(resolucionDTO.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "resolucion");
+            }
+            return _documentoservice.registrarResolucion(resolucionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
+        #endregion
+
         [HttpPut("cambiarestado")]
         public ActionResult<Documento> ModificarEstado(DocumentoEvaluadoDTO documento)
         {
             return _documentoservice.modificarEstado(documento);
+        }
+
+        [HttpPut("cambiarestadodocumento")]
+        public ActionResult<Documento> ModificarEstado(DocumentoDTO documento)
+        {
+            return _documentoservice.modificarEstadoDocumento(documento);
+        }
+
+        //obteniendo documentos
+        [HttpGet("documentoodn")]
+        public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerOficioDesignacionNotario(iddoc);
+        }
+        [HttpGet("documentoobpn")]
+        public async Task<ActionResult<OficioBPNDTO>> obtenerOficioBpn([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerOficioBusquedaProtocoloNotarial(iddoc);
+        }
+        [HttpGet("documentod")]
+        public async Task<ActionResult<DictamenDTO>> obtenerDictamen([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerDictamenDTO(iddoc);
+        }
+        [HttpGet("documentord")]
+        public async Task<ActionResult<ResolucionDTO>> obtenerResolucion([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerResolucionDTO(iddoc);
+        }
+        [HttpGet("documentoape")]
+        public async Task<ActionResult<ApelacionDTO>> obtenerApelacionDTO([FromQuery] string iddoc)
+        {
+            return _documentoservice.ObtenerDocumentoApelacion(iddoc);
+        }
+        [HttpGet("documentocf")]
+        public async Task<ActionResult<ConclusionFirmaDTO>> obtenerConclusionFirma([FromQuery] string iddoc)
+        {
+            return _documentoservice.ObtenerDocumentoConclusionFirma(iddoc);
+        }
+
+        [HttpGet("documentoad")]
+        public async Task<ActionResult<AperturamientoDisciplinarioDTO>> obtenerAperturamientoDisciplinario([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerDocumentoAperturamientoDisciplinario(iddoc);
+        }
+        [HttpGet("documentosen")]
+        public async Task<ActionResult<SolicitudExpedienteNotarioDTO>> obtenerSolicitudExpedienteNot([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerSolicitudExpedienteNotario(iddoc);
+            
+        }
+        [HttpGet("documentodto")]
+        public async Task<ActionResult<DocumentoDTO>> obtenerDocumento([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerDocumentoDTO(iddoc);
+        }
+
+        //Actualizaciones
+        [HttpPost("actualizarDocumentoODN")]
+        public void modificarDocumentoODN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoAPE")]
+        public void modificarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoApelacion(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoAD")]
+        public void modificarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoAperturamientoDisciplinario(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoCF")]
+        public void modificarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoConclusionFirma(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoD")]
+        public void modificarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoDictamen(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoOficioBPN")]
+        public void modificarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoOficioBPN(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoR")]
+        public void modificarDocumentoResolucion(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoResolucion(expedienteWrapper);
+        }
+        [HttpPost("actualizarDocumentoSEN")]
+        public void modificarDocumentoSEN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoSEN(expedienteWrapper);
         }
     }
 }

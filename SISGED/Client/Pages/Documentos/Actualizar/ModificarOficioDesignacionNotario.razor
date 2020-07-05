@@ -1,0 +1,233 @@
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
+<style>
+    .div-form {
+        background-color: #a6a6a6;
+        flex-basis: 100%;
+        border-radius: 5px 5px 0px 0px;
+        width: 100%;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+</style>
+
+<div class="div-form">
+    @if (firstLoad == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+
+            <span style="color:white">CARGANDO...</span>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+            <FluentValidator></FluentValidator>
+            <MatTabGroup>
+                <MatTab Label="Datos Generales">
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => oficiodesignacion.contenidoDTO.titulo)">
+                        <MatTextField @bind-Value="@oficiodesignacion.contenidoDTO.titulo" Class="text-field-style"
+                                      Label="Titulo del Oficio" @oninput='@(e => KeyUp(e, "titulo", oficiodesignacion.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => oficiodesignacion.contenidoDTO.titulo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => oficiodesignacion.contenidoDTO.descripcion)">
+                        <MatTextField @bind-Value="@oficiodesignacion.contenidoDTO.descripcion" Class="text-field-style"
+                                      Label="Descripcion del Oficio" @oninput='@(e => KeyUp(e, "descripcion", oficiodesignacion.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => oficiodesignacion.contenidoDTO.descripcion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => oficiodesignacion.contenidoDTO.lugaroficionotarial)">
+                        <MatTextField @bind-Value="@oficiodesignacion.contenidoDTO.lugaroficionotarial" Class="text-field-style"
+                                      Label="Dir. Oficio Notarial" @oninput='@(e => KeyUp(e, "lugaroficionotarial", oficiodesignacion.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => oficiodesignacion.contenidoDTO.lugaroficionotarial)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => oficiodesignacion.contenidoDTO.idnotario)">
+                        <BlazoredTypeahead SearchMethod="match" @bind-Value="@oficiodesignacion.contenidoDTO.idnotario"
+                                           Placeholder="Ingrese el Nombre del Notario">
+                            <SelectedTemplate>
+                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                            </SelectedTemplate>
+                            <ResultTemplate>
+                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                            </ResultTemplate>
+                            <NotFoundTemplate>
+                                <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                            </NotFoundTemplate>
+                        </BlazoredTypeahead>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => oficiodesignacion.contenidoDTO.idnotario)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>
+                </MatTab>
+            </MatTabGroup>
+        </EditForm>
+    }
+</div>
+
+@code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    public List<Notario> notariosseleccionados = new List<Notario>();
+    public Notario notarioselect;
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
+    private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
+    private EditContext _editContext;
+    private bool loadprocess = false;
+    private bool firstLoad = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        firstLoad = true;
+        //ContenidoOficio JsonConvert.DeserializeObject<ContenidoOficioDesignacionNotarioDTO>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        _editContext = new EditContext(oficiodesignacion);
+        OficioDesignacionNotarioDTO odn = new OficioDesignacionNotarioDTO();
+        var httpResponse = await repository.Get<OficioDesignacionNotarioDTO>($"api/documentos/documentoodn?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            oficiodesignacion = (OficioDesignacionNotarioDTO)httpResponse.Response;
+            _editContext = new EditContext(oficiodesignacion);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un Error");
+        }
+        firstLoad = false;
+    }
+    private async Task<IEnumerable<Notario>> match(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<Notario>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        loadprocess = true;
+        oficiodesignacion.contenidoDTO.idusuario = sesion.usuario.id;
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = oficiodesignacion;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoODN", expedienteWrapper);
+        if (!httpResponse.Error)
+        {
+            await swalfire.successMessage("Oficio de Designacion de Notario modificada Correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        loadprocess = false;
+    }
+
+    public void handleInvalidSubmit()
+    {
+        loadprocess = false;
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+}

@@ -1,0 +1,161 @@
+﻿@inject IDocumentRepository documentRepository
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
+    div.tool-content-style {
+        width: 100%;
+        flex-basis: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .txt-area {
+        background: #f2f2f2;
+    }
+
+    .mat-success-c {
+        color: green !important;
+        border: 1px solid green !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-info-c {
+        color: #3333ff !important;
+        border: 1px solid #3333ff !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-warning-c {
+        color: #e68a00 !important;
+        border: 2px solid #e68a00 !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-danger-c {
+        color: #ff3333 !important;
+        border: 1px solid #ff3333 !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+        .mat-success-c:hover, .mat-info-c:hover .mat-danger-c:hover, .mat-warning-c:hover/*, .mat-dark-c:hover*/ {
+            background-color: none !important;
+            transform: scale(1.04,1.04) !important;
+        }
+
+    * {
+        color: black;
+    }
+
+    div.mdc-select__anchor {
+        width: 90% !important;
+    }
+
+    .caja-selector {
+        flex-basis: 10%;
+        padding: 2px 5px 5px 5px;
+    }
+
+    .caja-vista-doc {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 90%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .no-select-style {
+        color: white;
+        font-size: 26px;
+    }
+
+    .sub-but {
+        display: block !important;
+        width: 100%;
+    }
+
+    .button-input-style {
+        display: block !important;
+    }
+
+    select.custom-select {
+        background: #f2f2f2;
+    }
+    .loader-block {
+        display: flex;
+        height: 100%;
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .spin {
+        margin-bottom: 5px;
+    }
+</style>
+<div class="tool-content-style">
+    @if (workspace.expedienteseleccionado != null)
+    {
+        if (workspace.expedienteseleccionado.documento.tipo == "Apelacion")
+        {
+            <ModificarApelacion></ModificarApelacion>
+        }
+        else if (workspace.expedienteseleccionado.documento.tipo == "AperturamientoDisciplinario")
+        {
+            <ModificarAperturamientoDisciplinario></ModificarAperturamientoDisciplinario>
+        }
+        else if (workspace.expedienteseleccionado.documento.tipo == "ConclusionFirma")
+        {
+            <ModificarConclusionFirma></ModificarConclusionFirma>
+        }
+        else if (workspace.expedienteseleccionado.documento.tipo == "Dictamen")
+        {
+            <ModificarDictamen></ModificarDictamen>
+        }
+        else if (workspace.expedienteseleccionado.documento.tipo == "OficioBPN")
+        {
+            <ModificarOficioBPN></ModificarOficioBPN>
+        }
+        else if (workspace.expedienteseleccionado.documento.tipo == "OficioDesignacionNotario")
+        {
+            <ModificarOficioDesignacionNotario></ModificarOficioDesignacionNotario>
+        }
+        else if(workspace.expedienteseleccionado.documento.tipo == "Resolucion")
+        {
+            <ModificarResolucion></ModificarResolucion>
+        }
+        else if(workspace.expedienteseleccionado.documento.tipo == "SolicitudDenuncia")
+        {
+            <ModificarSolicitudDenuncia></ModificarSolicitudDenuncia>
+        }else if(workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedicionFirma")
+        {
+            <ModificarSolicitudExpedicionFirma></ModificarSolicitudExpedicionFirma>
+        }else if(workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario")
+        {
+            <ModificarSolicitudExpedienteNotario></ModificarSolicitudExpedienteNotario>
+        }
+        else
+        {
+            <h3>Este es otro tipo de Documento</h3>
+        }
+    }
+    else
+    {
+        <h3>No Esta el Expediente</h3>
+    }
+</div>
+@code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    protected override void OnInitialized()
+    {
+        
+    }
+
+}

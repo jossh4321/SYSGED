@@ -1,0 +1,192 @@
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+
+<style>
+    .div-form {
+        background-color: #a6a6a6;
+        flex-basis: 100%;
+        border-radius: 5px 5px 0px 0px;
+        width: 100%;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+</style>
+
+<div class="div-form">
+    @if (firstLoad == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+
+            <span style="color:white">CARGANDO...</span>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+            <FluentValidator></FluentValidator>
+            <MatTabGroup>
+                <MatTab Label="Datos para conclusion de firma">
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idescriturapublica)">
+                        <BlazoredTypeahead SearchMethod="match" @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica"
+                                           Placeholder="Ingrese el titulo del Acto Juridico">
+                            <SelectedTemplate>
+                                <strong>@context.titulo</strong>
+                            </SelectedTemplate>
+                            <ResultTemplate>
+                                <strong>@context.titulo</strong>
+                            </ResultTemplate>
+                        </BlazoredTypeahead>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.idescriturapublica)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>
+
+                </MatTab>
+            </MatTabGroup>
+        </EditForm>
+    }
+</div>
+
+@code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    private ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
+    private EditContext _editContext;
+    private bool loadprocess = false;
+    private bool firstLoad = true;
+    public List<EscrituraPublica> escriturapublicasseleccionados = new List<EscrituraPublica>();
+    public EscrituraPublica escriturapublicaselect;
+    private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<EscrituraPublica>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        firstLoad = true;
+        _editContext = new EditContext(conclusionFirma);
+        var httpResponse = await repository.Get<ConclusionFirmaDTO>($"api/documentos/documentocf?iddoc={workspace.expedienteseleccionado.documento.id}");
+        if (!httpResponse.Error)
+        {
+            conclusionFirma = (ConclusionFirmaDTO)httpResponse.Response;
+            _editContext = new EditContext(conclusionFirma);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Algo Mal");
+        }
+        firstLoad = false;
+    }
+
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        loadprocess = true;
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = conclusionFirma;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoCF", expedienteWrapper);
+        if (httpResponse.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Conclusión de Firma modificada Correctamente");
+        }
+        loadprocess = false;
+    }
+
+    public void handleInvalidSubmit()
+    {
+        loadprocess = false;
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+}

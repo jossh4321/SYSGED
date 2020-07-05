@@ -6,11 +6,11 @@ using System.Text;
 
 namespace SISGED.Shared.Validators.DocumentosValidator.ConclusionFirma
 {
-    public class CFValidator : AbstractValidator<ConclusionFirmaDTO>
+    public class ADValidator : AbstractValidator<ConclusionFirmaDTO>
     {
-        public CFValidator()
+        public ADValidator()
         {
-            RuleFor(x => x.contenidoDTO).SetValidator(new ContenidoCFValidator());
+            RuleFor(x => x.contenidoDTO).SetValidator(new ContenidoADValidator());
         }
     }
 }

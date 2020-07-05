@@ -28,8 +28,9 @@
                 {
                     <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
                         <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
-                        <span class="bartext-color">
+                        <span class="bartext-color" @onclick="@(() => onclickButtonNav(interfaz.url="/ModificarPerfil"))">
                             @interfaz.label
+                            
                         </span>
                     </MatNavItem>
                 }
@@ -171,7 +172,7 @@
             {
                 sesion = (Sesion)datosSesion.Response;
                 await setearBandeja(sesion.usuario.id);
-                await setearBandejaEntrada(sesion.usuario.id);
+                //await setearBandejaEntrada(sesion.usuario.id);
                 sesion.herramientasutilizables = obtenerListaheramientas(sesion.permisosHerram);
                 sesion.listaentradas = obtenerListaEntradas(bandejaunificada.expedienteentrada);
                 sesion.listasalidas = obtenerListaSalidas(bandejaunificada.expedientesalida);
@@ -190,7 +191,6 @@
     }
     public List<Item> obtenerListaEntradas(List<ExpedienteBandejaDTO> listaentrada)
     {
-
         if(listaentrada.ElementAt(0).tipo != null)
         {
             return listaentrada.Select(x => new Item()
@@ -206,13 +206,13 @@
         }
         else
         {
-            return new List<Item>();    
+            return new List<Item>();
         }
-
     }
     public List<Item> obtenerListaSalidas(List<ExpedienteBandejaDTO> listasalida)
     {
-        if(listasalida.ElementAt(0).tipo != null)
+        //if (listasalida.ElementAt(0).tipo != null)
+        if (listasalida.ElementAt(0).tipo != null)
         {
             return listasalida.Select(x => new Item()
             {
@@ -360,6 +360,12 @@
         }
     }
     #endregion
+    void onclickButtonNav(string url)
+    {
+        
+        navigationManager.NavigateTo(url);
+        //navigationManager.NavigateTo(permiso.url);
+    }
 }
 
 

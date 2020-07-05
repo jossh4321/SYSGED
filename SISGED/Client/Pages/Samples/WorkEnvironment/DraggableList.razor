@@ -64,7 +64,7 @@
     {
         if (place == "tools")
         {
-            Console.WriteLine("Parameter ToolList");
+            //Console.WriteLine("Parameter ToolList");
             listaherramientas.Clear();
             listaherramientas.AddRange(sesion.herramientasutilizables.
             Where(x => x.currentPlace == place));
@@ -72,7 +72,7 @@
         }
         else if (place == "inputs")
         {
-            Console.WriteLine("Parameter ToolList");
+            //Console.WriteLine("Parameter ToolList");
             listaentradas.Clear();
             listaentradas.AddRange(sesion.listaentradas.
             Where(x => x.currentPlace == place));
@@ -80,7 +80,7 @@
         }
         if (place == "workspace")
         {
-            Console.WriteLine("Parameter ToolList");
+            //Console.WriteLine("Parameter ToolList");
             listaherramientas.Clear();
             listaherramientas.AddRange(sesion.herramientasutilizables.
             Where(x => x.currentPlace == place));
@@ -93,7 +93,7 @@
         }
         if (place == "outputs")
         {
-            Console.WriteLine("Parameter OutputList");
+            //Console.WriteLine("Parameter OutputList");
             listasalidas.Clear();
             listasalidas.AddRange(sesion.listasalidas.Where(x => x.currentPlace == place));
             StateHasChanged();

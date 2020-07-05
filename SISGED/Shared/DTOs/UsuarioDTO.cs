@@ -21,4 +21,34 @@ namespace SISGED.Shared.Entities
 
         public  string rolid { get; set; } 
     }
+
+
+    public class Usuario_LK
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public string usuario { get; set; }
+        public string clave { get; set; }
+        public Datos datos { get; set; } = new Datos();
+        public string estado { get; set; }
+        public string rol { get; set; }
+        public List<Rol> rolobj { get; set; }
+    }
+
+
+    public class UsuarioRDTO
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public string usuario { get; set; }
+        public string clave { get; set; }
+        public Datos datos { get; set; } = new Datos();
+        public string estado { get; set; }
+        public string rol { get; set; }
+        public Rol rolobj { get; set; } = new Rol();
+    }
+
+
 }
