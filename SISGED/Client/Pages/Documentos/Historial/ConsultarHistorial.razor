@@ -111,58 +111,84 @@ else
             @foreach (ExpedienteDTO2 expediente in expedientes)
             {
                 <div class="mat-layout-grid-cell-span-4">
-                    <ExpedientesLista expediente="expediente" @key="expediente.id" listarDocumentos="VisualizarDocumentos">
+                    <ExpedientesLista expediente="expediente" @key="expediente.id" listarDocumentos="VisualizarDocumentos" listarDerivaciones="VisualizarDerivaciones">
                     </ExpedientesLista>
                 </div>
             }
         </div>
     </div>
 
-
-    <MatDialog @bind-IsOpen="dialogoabierto" Class="dialogo">
-        <MatDialogTitle>Documentos en el expediente</MatDialogTitle>
+    <MatDialog @bind-IsOpen="dialogoDocumentos" Class="dialogo">
+        <MatDialogTitle>Documentos - @expediente.tipo</MatDialogTitle>
         <MatDialogContent>
-            <p>@expediente.tipo</p>
-            @if (expediente.documentosobj == null)
+            @if (expediente.documentos == null)
             {
-                <h5>Esperate</h5>
+                <LoaderContent accion="Documentos"></LoaderContent>
             }
             else
             {
-                @*@foreach (var documento in docu)
-                {
-                    <p>documento.id</p>
-                    <p>documento.tipo</p>
-                }*@
-
-                @foreach (DocumentoExpediente documento in expediente.documentos)
-                {
-                    @*<p>@documento.indice</p>
-                    <p>@documento.iddocumento</p>*@
-                    <p>@documento.tipo</p>
-                }
+                <div class="mat-layout-grid">
+                    <div class="mat-layout-grid-inner">
+                        @foreach (DocumentoExpediente documento in expediente.documentos)
+                        {
+                            <div class="mat-layout-grid-cell-span-4">
+                                <DocumentosLista documento="documento" @key="documento.iddocumento"></DocumentosLista>
+                            </div>
+                        }
+                    </div>
+                </div>
             }
+
         </MatDialogContent>
         <MatDialogActions>
-            <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoabierto = false; })">Volver</MatButton>
+            <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoDocumentos = false; })">Volver</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+    <MatDialog @bind-IsOpen="dialogoderivaciones" Class="dialogo">
+        <MatDialogTitle>Derivaciones </MatDialogTitle>
+        <MatDialogContent>
+            @if (listaderivaciones == null)
+            {
+                <p>El expediente no cuenta con historial de derivaciones</p>
+            }
+            else
+            {
+                foreach (var derivacion in listaderivaciones)
+                {
+                    <hr />
+                    <p>@derivacion.areadestino</p>
+                    <p>@derivacion.areaprocedencia</p>
+                    <p>@derivacion.fechaderivacion</p>
+                    <p>@derivacion.tipo</p>
+                    <p>@derivacion.usuarioemisor</p>
+                }
+            }
+
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoderivaciones = false; })">Volver</MatButton>
         </MatDialogActions>
     </MatDialog>
 }
 
 @code {
-    public bool dialogoabierto = false;
+    public bool dialogoDocumentos = false;
+    public bool dialogoderivaciones = false;
     bool carga;
     public List<ExpedienteDTO2> expedientes = new List<ExpedienteDTO2>();
-    private List<ExpedienteDTO2> listaexpedientesdto { get; set; }
+    private List<ExpedienteDTO2> listaexpedientesdto = new List<ExpedienteDTO2>();
+    private List<Derivacion> listaderivaciones = new List<Derivacion>();
     public List<Proceso> listaHistorialProceso { get; set; }
     public ExpedienteDTO2 expediente = new ExpedienteDTO2();
-    public List<Documento> docu = new List<Documento>();
+    public Derivacion derivacion = new Derivacion();
+    public List<Documento> docu = new List<Documento>();   
     protected async override Task OnInitializedAsync()
     {
-        listaexpedientesdto = new List<ExpedienteDTO2>();
+
         await getExpedientes();
-        // await cargarExpedientes();
     }
+   
 
     #region getsRegion
     public async Task getExpedientes()
@@ -177,19 +203,27 @@ else
         else
         {
             carga = true;
-            expedientes = httpResponse.Response;
+            expedientes = httpResponse.Response;           
         }
     }
 
     public void VisualizarDocumentos(ExpedienteDTO2 expediente)
     {
-        dialogoabierto = true;
+        dialogoDocumentos = true;
         this.expediente = expediente;
+    }
+
+    public void VisualizarDerivaciones(List<Derivacion> derivaciones)
+    {
+        dialogoderivaciones = true;
+        listaderivaciones = derivaciones;
+        dialogoderivaciones = true;
+
     }
 
     public void verHistorialProceso(List<Proceso> procesos)
     {
-        dialogoabierto = true;
+        dialogoDocumentos = true;
         this.listaHistorialProceso = procesos;
     }
     #endregion

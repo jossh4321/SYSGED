@@ -1,36 +1,110 @@
-﻿<h3>DocumentosLista</h3>
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+<style>
+    .mdc-dialog {
+        z-index: 10000 !important;
+    }
+    .demo-mat-card-content {
+        padding: 1rem;
+        margin: 0px;
+        z-index: 10000 !important;
+    }
+</style>
 
-<div class="col-datos-6 mat-elevation-z5">
-    <div class="demo-mat-card-text mbottom-5">
-        <p>Título</p>
-        <h5>@documento.id</h5>
-        <h5>@documento.tipo</h5>
-    </div>
-    @if (documento.historialproceso == null)
-    {
-        <div class="demo-mat-card-text mbottom-5">
-            <p>Historial proceso</p>
-            <h5>No hay historial proceso</h5>
+<MatCard class="demo-mat-card">
+    <MatCardContent>
+        <p>@documento.iddocumento</p>
+        <MatHeadline6 class="demo-mat-card-clean-margin demo-mat-card-text">@documento.tipo</MatHeadline6>
+        <div class="demo-mat-card-content">
+            <p>Fecha de creacion</p>
+            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@documento.fechacreacion</MatBody2>
+            <p>Fecha exceso</p>
+            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@documento.fechaexceso</MatBody2>
         </div>
-    }
-    else
-    {
-        <div class="demo-mat-card-text mbottom-5 pbottom-5">
-            <p>Historial proceso</p>
-            <MatButton Raised="true" Icon="@MatIconNames.Security" @onclick="(() => listarHistorialProceso.InvokeAsync(documento.historialproceso))">Ver historial de procesos</MatButton>
+    </MatCardContent>
+    <MatCardActions>
+        <div class="demo-mat-card-content">
+            <MatButton Raised="true" Icon="@MatIconNames.Book" @onclick="@getHistorialProceso" Class="mat-color">Historial proceso</MatButton>
+            <MatButton Raised="true" Icon="@MatIconNames.History"  @onclick="@getHistorialContenido" Class="mat-color">Historial Contenido</MatButton>
         </div>
-    }
-</div>
+    </MatCardActions>
+</MatCard>
+
+<MatDialog @bind-IsOpen="dialogoHistorialProceso" Class="dialogo">
+    <MatDialogTitle>Historial Proceso</MatDialogTitle>
+    <MatDialogContent>
+        @foreach (Proceso proceso in historialproceso)
+        {
+            <p>@proceso.area</p>
+            <p>@proceso.fechaemision</p>
+            <p>@proceso.fecharecepcion</p>
+            <p>@proceso.idusuario</p>
+            <p>@proceso.indice</p>            
+        }
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoHistorialProceso = false; })">Volver</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+
+<MatDialog @bind-IsOpen="dialogoHistorialContenido" Class="dialogo">
+    <MatDialogTitle>Historial Contenido</MatDialogTitle>
+    <MatDialogContent>       
+        @foreach (ContenidoVersion contenido in historialcontenido)
+        {
+            <p>@contenido.fechamodificacion</p>
+            <p>@contenido.url</p>
+            <p>@contenido.version</p>
+        }
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoHistorialContenido = false; })">Volver</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+
 @code {
 
     [Parameter]
-    public Documento documento { get; set; }
+    public DocumentoExpediente documento { get; set; }
 
-    //[Parameter]
-    //public EventCallback<List<ContenidoVersion>> listarHistorialContenido { get; set; }
+    bool dialogoHistorialProceso = false;
+    bool dialogoHistorialContenido = false;
 
-    [Parameter]
-    public EventCallback<List<Proceso>> listarHistorialProceso { get; set; }
+    public DocumentoDTO documentodto = new DocumentoDTO();
+    public List<ContenidoVersion> historialcontenido = new List<ContenidoVersion>();
+    public List<Proceso> historialproceso = new List<Proceso>();
+    string iddoc;
+
+    public async Task getDocumento()
+    {
+        var httpResponse = await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={iddoc}");
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Ha ocurrido un error al traer usuarios");
+        }
+        else
+        {
+            documentodto = httpResponse.Response;
+        }
+    }
+    public async Task getHistorialContenido()
+    {
+        iddoc = documento.iddocumento;
+        dialogoHistorialContenido = true;
+        await getDocumento();
+        historialcontenido = documentodto.historialcontenido;
+    }
+
+    public async Task getHistorialProceso()
+    {
+        iddoc = documento.iddocumento;
+        dialogoHistorialProceso = true;
+        await getDocumento();
+        historialproceso = documentodto.historialproceso;
+    }
+
 }
 
 
