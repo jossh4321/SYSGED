@@ -15,8 +15,9 @@ else
             <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@escriturapublica.direccionoficio</MatBody2>
         </MatCardContent>
         <MatCardActions>
-            <MatCardActionButtons>
+            <MatCardActionButtons Class="mat-card-actions-modificado">
                 <MatButton Raised="true" Icon="@MatIconNames.Search" Class="mat-color" @onclick="(() => mostrarDatosEscrituraPublica.InvokeAsync(escriturapublica))">Consultar</MatButton>
+                <MatButton Raised="true" Icon="@MatIconNames.Select_all" Class="mat-color-green" @onclick="(() => escogerEscrituraPublica.InvokeAsync(escriturapublica))">Escoger</MatButton>
             </MatCardActionButtons>
         </MatCardActions>
     </MatCard>
@@ -27,4 +28,6 @@ else
     public EscrituraPublicaRDTO escriturapublica { get; set; }
     [Parameter]
     public EventCallback<EscrituraPublicaRDTO> mostrarDatosEscrituraPublica { get; set; }
+    [Parameter]
+    public EventCallback<EscrituraPublicaRDTO> escogerEscrituraPublica { get; set; }
 }

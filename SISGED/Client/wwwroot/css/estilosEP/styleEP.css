@@ -39,7 +39,23 @@
     }
 
 .mat-color {
-    color: skyblue;
+    background-color: skyblue !important;
+}
+
+.mat-color-green {
+    background-color: green !important;
+}
+
+.mat-card-actions-modificado {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    flex-direction: column !important;
+    align-items: start !important;
+
+}
+
+.mat-card-actions-modificado button {
+    margin-bottom: 15px !important;
 }
 
 .dialogo .mdc-dialog__surface {
