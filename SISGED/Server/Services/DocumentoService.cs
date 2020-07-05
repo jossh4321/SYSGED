@@ -562,7 +562,7 @@ namespace SISGED.Server.Services
             return oficioDesignacionNotario;
 
         }
-        public OficioBPNDTO obtenerOficioBusquedaProtocoloNotarial(string id)
+        public OficioBPNDTO  obtenerOficioBusquedaProtocoloNotarial(string id)
         {
             var match = new BsonDocument("$match", new BsonDocument("_id",
                         new ObjectId(id)));
