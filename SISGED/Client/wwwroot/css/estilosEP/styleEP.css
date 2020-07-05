@@ -195,3 +195,8 @@ div.incorrecto i.bad-icon {
 .prueba {
     display: block;
 }
+
+.mat-previsualizador-pdf .mdc-dialog__surface {
+    width: 652px !important;
+    max-width: 652px !important;
+}

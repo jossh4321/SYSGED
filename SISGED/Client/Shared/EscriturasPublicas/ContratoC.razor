@@ -11,7 +11,7 @@
         </div>
         <div>
             <p>Contrato</p>
-            <MatButton Raised="true" Class="limegreen" Icon="@MatIconNames.Picture_as_pdf">Previsualizar</MatButton>
+            <MatButton Raised="true" Class="limegreen" Icon="@MatIconNames.Picture_as_pdf" OnClick="@(() => elegirContrato.InvokeAsync(contrato))">Previsualizar</MatButton>
         </div>
     </div>
 </div>
@@ -20,4 +20,6 @@
 @code {
     [Parameter]
     public Contrato contrato { get; set; }
+    [Parameter]
+    public EventCallback<Contrato> elegirContrato { get; set; }
 }
