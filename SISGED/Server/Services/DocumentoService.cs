@@ -242,6 +242,15 @@ namespace SISGED.Server.Services
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
         }
 
+        public Documento modificarEstadoDocumento(DocumentoDTO documento)
+        {
+            var filter = Builders<Documento>.Filter.Eq("id", documento.id);
+            var update = Builders<Documento>.Update
+                .Set("estado", documento.estado);
+
+            return _documentos.FindOneAndUpdate<Documento>(filter, update);
+        }
+
         public AperturamientoDisciplinario registrarAperturamientoDisciplinario(AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO,
             string urldata, string idusuario, string idexpediente, string iddocentrada)
         {
