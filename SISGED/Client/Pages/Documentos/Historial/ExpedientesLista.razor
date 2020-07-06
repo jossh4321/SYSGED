@@ -18,7 +18,7 @@
         width: 250px !important; 
         height: 391px !important;
         background: #fff;
-        border-top-right-radius: 10px;
+        border-radius: 10px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -68,7 +68,7 @@
     }
 
     .card p {
-        font-size: 18px;
+        font-size: 16px;
         color: #4C5656;        
         z-index: 50;
         transition: color 0.3s ease-out;
@@ -113,8 +113,8 @@
         height: 90px;
         border-radius: 50%;
         background: var(--bg-color);
-        top: 50px;
-        left: 80px;
+        top: 48px;
+        left: 76px;
         z-index: 0;
         transition: transform 0.3s ease-out;
     }
@@ -140,7 +140,7 @@
 <div class="card expediente">
     <div class="overlay"></div>
     <div class="circle">
-        <img src="https://image.flaticon.com/icons/png/512/2179/2179512.png" height="76px" width="71px">
+        <img src="https://image.flaticon.com/icons/png/512/2179/2179512.png" height="76" width="71">
     </div>
     <p>@expediente.tipo</p>
     <p>Estado: @expediente.estado</p>
@@ -148,22 +148,6 @@
     <button @onclick="(() => listarDocumentos.InvokeAsync(expediente))" class="btn">Documentos</button>
     <button @onclick="(() => listarDerivaciones.InvokeAsync(expediente.derivaciones))" class="btn">Derivaciones</button>
 </div>
-@*<MatCard class="demo-mat-card">
-    <MatCardContent>
-        <MatHeadline6 class="demo-mat-card-clean-margin demo-mat-card-text">@expediente.tipo</MatHeadline6>
-        <div class="demo-mat-card-content">
-            <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">@expediente.estado</MatSubtitle2>
-            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@expediente.cliente.nombre</MatBody2>
-            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@expediente.cliente.tipodocumento : @expediente.cliente.numerodocumento</MatBody2>
-        </div>
-    </MatCardContent>
-    <MatCardActions>
-        <div class="demo-mat-card-content">
-            <MatButton Raised="true" Icon="@MatIconNames.Book" OnClick="(() => listarDocumentos.InvokeAsync(expediente))" Class="mat-color">Documentos</MatButton>
-            <MatButton Raised="true" Icon="@MatIconNames.Search" OnClick="(() => listarDerivaciones.InvokeAsync(expediente.derivaciones))" Class="mat-color">Derivaciones</MatButton>
-        </div>
-    </MatCardActions>
-</MatCard>*@
 
 @code {
     [Parameter]

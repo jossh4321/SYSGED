@@ -1,6 +1,7 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@page "/historial" 
 <style>
     p {
         display: block;
@@ -10,11 +11,12 @@
     div {
         color: black;
     }
-
     .demo-mat-card {
         max-width: 250px;
     }
-
+    .mdc-dialog__content{
+        padding: 0 !important;
+    }
     .demo-mat-card-content {
         padding: 1rem;
         margin: 0px;
@@ -28,25 +30,25 @@
         color: black;
     }
 
-        .demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
-            text-align: left;
-            font-weight: bolder;
-            font-size: 15px;
-            padding-left: 5px;
-            color: black;
-        }
+    .demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
+        text-align: left;
+        font-weight: bolder;
+        font-size: 15px;
+        padding-left: 5px;
+        color: black;
+    }
 
-        .demo-mat-card-text h5 {
-            text-transform: capitalize;
-            font-size: 19px !important;
-            font-weight: normal;
-        }
+    .demo-mat-card-text h5 {
+        text-transform: capitalize;
+        font-size: 19px !important;
+        font-weight: normal;
+    }
 
-        .demo-mat-card-text button {
-            display: flex;
-            margin-bottom: 5px;
-            margin-left: 5px;
-        }
+    .demo-mat-card-text button {
+        display: flex;
+        margin-bottom: 5px;
+        margin-left: 5px;
+    }
 
     .mat-color {
         color: skyblue;
@@ -70,25 +72,25 @@
         flex-basis: calc((100%/2) - 10px);
     }
 
-        .col-datos-6 div {
-            border-radius: 5px;
-        }
+    .col-datos-6 div {
+        border-radius: 5px;
+    }
 
     .mbottom-5 {
         margin-bottom: 5px;
     }
 
-    .pbottom-5 {
+    /*.pbottom-5 {
         padding-bottom: 5px;
     }
 
     .mtop-5 {
         margin-top: 5px;
-    }
-
+    }*/
+/*
     .limegreen {
         background-color: limegreen !important;
-    }
+    }*/
 
     .col-datos-12 {
         flex-basis: 100%;
@@ -98,6 +100,15 @@
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
+    }
+    .card-derivaciones {
+        margin: 5px;
+        /*border: 1px solid;*/
+        transition: all 0.3s ease-out;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
     }
 </style>
 @if (carga == false)
@@ -148,24 +159,28 @@ else
     <MatDialog @bind-IsOpen="dialogoderivaciones" Class="dialogo">
         <MatDialogTitle>Derivaciones </MatDialogTitle>
         <MatDialogContent>
-            @if (listaderivaciones == null)
+            @if (listaderivaciones.Count == 0)
             {
-                <p>El expediente no cuenta con historial de derivaciones</p>
+                <div class="card-derivaciones">
+                    <p>El expediente no cuenta con historial de derivaciones</p>
+                </div>
             }
             else
             {
+
                 foreach (var derivacion in listaderivaciones)
                 {
                     <hr />
-                    <p>@derivacion.areadestino</p>
-                    <p>@derivacion.areaprocedencia</p>
-                    <p>@derivacion.fechaderivacion</p>
-                    <p>@derivacion.tipo</p>
-                    <p>@derivacion.usuarioemisor</p>
+                    <div class="card-derivaciones">
+                        <p>@derivacion.tipo</p>
+                        <p>Usuario: @derivacion.usuarioemisor</p>
+                        <p>Área destino: @derivacion.areadestino</p>
+                        <p>Área procedencia: @derivacion.areaprocedencia</p>
+                        <p>Fecha derivación: @derivacion.fechaderivacion</p>
+                    </div>
                 }
             }
-
-        </MatDialogContent>
+            </MatDialogContent>
         <MatDialogActions>
             <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoderivaciones = false; })">Volver</MatButton>
         </MatDialogActions>
