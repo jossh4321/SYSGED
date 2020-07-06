@@ -1,7 +1,8 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
-@page "/historial" 
+@page "/historial"
+    @*<link rel="stylesheet" href="css/estilosEP/styleEP.css" />*@
 <style>
     p {
         display: block;
@@ -11,12 +12,15 @@
     div {
         color: black;
     }
+
     .demo-mat-card {
         max-width: 250px;
     }
-    .mdc-dialog__content{
+
+    .mdc-dialog__content {
         padding: 0 !important;
     }
+
     .demo-mat-card-content {
         padding: 1rem;
         margin: 0px;
@@ -30,25 +34,25 @@
         color: black;
     }
 
-    .demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
-        text-align: left;
-        font-weight: bolder;
-        font-size: 15px;
-        padding-left: 5px;
-        color: black;
-    }
+        .demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
+            text-align: left;
+            font-weight: bolder;
+            font-size: 15px;
+            padding-left: 5px;
+            color: black;
+        }
 
-    .demo-mat-card-text h5 {
-        text-transform: capitalize;
-        font-size: 19px !important;
-        font-weight: normal;
-    }
+        .demo-mat-card-text h5 {
+            text-transform: capitalize;
+            font-size: 19px !important;
+            font-weight: normal;
+        }
 
-    .demo-mat-card-text button {
-        display: flex;
-        margin-bottom: 5px;
-        margin-left: 5px;
-    }
+        .demo-mat-card-text button {
+            display: flex;
+            margin-bottom: 5px;
+            margin-left: 5px;
+        }
 
     .mat-color {
         color: skyblue;
@@ -72,9 +76,9 @@
         flex-basis: calc((100%/2) - 10px);
     }
 
-    .col-datos-6 div {
-        border-radius: 5px;
-    }
+        .col-datos-6 div {
+            border-radius: 5px;
+        }
 
     .mbottom-5 {
         margin-bottom: 5px;
@@ -87,7 +91,7 @@
     .mtop-5 {
         margin-top: 5px;
     }*/
-/*
+    /*
     .limegreen {
         background-color: limegreen !important;
     }*/
@@ -101,6 +105,7 @@
         flex-direction: column;
         flex-wrap: wrap;
     }
+
     .card-derivaciones {
         margin: 5px;
         /*border: 1px solid;*/
@@ -110,7 +115,62 @@
         box-shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
         overflow: hidden;
     }
+
+    .filtros {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 90%;
+        max-width: 750px;
+        margin: 0px auto;
+        margin-top: 5px;
+        padding: 0px;
+    }
+
+    .input-filtro {
+        flex-grow: 1;
+        /*margin-bottom: 25px;*/
+        margin-right: 5px;
+        flex-basis: calc((100%/3) - 5px);
+    }
+
+    .bloque {
+        display: block;
+    }
+
 </style>
+
+<div>
+    @if (parametrosFiltros == null)
+    {
+        <text>Cargando....</text>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="buscarExpedientes" OnInvalidSubmit="ValidacionFiltros">
+            <FluentValidator></FluentValidator>
+            <div class="filtros">
+                <div class="input-filtro @CurrentEditContext.FieldCssClass( () => parametrosFiltros.tipo)">
+                    <MatTextField Icon="@MatIconNames.Directions" Label="Tipo de expediente"
+                                  Class="bloque"
+                                  @bind-Value="parametrosFiltros.tipo" @oninput='@(e => KeyUp(e, "tipo", parametrosFiltros))'></MatTextField>                    
+                </div>
+                <div class="input-filtro @CurrentEditContext.FieldCssClass( () => parametrosFiltros.estado)">
+                    <MatTextField Icon="@MatIconNames.Call_to_action" Label="Estado"
+                                  Class="bloque"
+                                  @bind-Value="parametrosFiltros.estado" @oninput='@(e=> KeyUp(e, "estado", parametrosFiltros))'></MatTextField>                    
+                </div>
+                <div class="input-filtro-options">
+                    <MatButton Icon="@MatIconNames.Search" Raised="true" type="submit">Buscar</MatButton>
+                </div>
+            </div>
+
+        </EditForm>
+    }
+
+</div>
+
 @if (carga == false)
 {
     <LoaderContent accion="Consultar historial documentario"></LoaderContent>
@@ -128,6 +188,7 @@ else
             }
         </div>
     </div>
+    <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
 
     <MatDialog @bind-IsOpen="dialogoDocumentos" Class="dialogo">
         <MatDialogTitle>Documentos - @expediente.tipo</MatDialogTitle>
@@ -180,7 +241,7 @@ else
                     </div>
                 }
             }
-            </MatDialogContent>
+        </MatDialogContent>
         <MatDialogActions>
             <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoderivaciones = false; })">Volver</MatButton>
         </MatDialogActions>
@@ -191,19 +252,34 @@ else
     public bool dialogoDocumentos = false;
     public bool dialogoderivaciones = false;
     bool carga;
-    public List<ExpedienteDTO2> expedientes = new List<ExpedienteDTO2>();
-    private List<ExpedienteDTO2> listaexpedientesdto = new List<ExpedienteDTO2>();
-    private List<Derivacion> listaderivaciones = new List<Derivacion>();
-    public List<Proceso> listaHistorialProceso { get; set; }
+    public List<ExpedienteDTO2> expedientes { get; set; }
+    private List<Derivacion> listaderivaciones { get; set; }
     public ExpedienteDTO2 expediente = new ExpedienteDTO2();
     public Derivacion derivacion = new Derivacion();
-    public List<Documento> docu = new List<Documento>();   
+    public List<Documento> docu = new List<Documento>();
+    ParametrosBusquedaExpedienteDTO parametrosFiltros;
+    public Dictionary<string, string> diccionariostrings = new Dictionary<string, string>();
+    private EditContext _editContext;
+    public int paginaactual = 1;
+    public int paginastotales;
+
     protected async override Task OnInitializedAsync()
     {
-
-        await getExpedientes();
+        expedientes = new List<ExpedienteDTO2>();
+        listaderivaciones = new List<Derivacion>();
+        parametrosFiltros = new ParametrosBusquedaExpedienteDTO();
+        _editContext = new EditContext(parametrosFiltros);
+        await consultarExpedientes("");
+        //await getExpedientes();
     }
-   
+
+
+    public async Task paginaSeleccionada(int pagina)
+    {
+        paginaactual = pagina;
+        await buscarExpedientes();
+    }
+
 
     #region getsRegion
     public async Task getExpedientes()
@@ -218,7 +294,7 @@ else
         else
         {
             carga = true;
-            expedientes = httpResponse.Response;           
+            expedientes = httpResponse.Response;
         }
     }
 
@@ -236,13 +312,49 @@ else
 
     }
 
-    public void verHistorialProceso(List<Proceso> procesos)
+    public async Task consultarExpedientes(String query)
     {
-        dialogoDocumentos = true;
-        this.listaHistorialProceso = procesos;
+        carga = true;
+        var responseHttp = await repository.Get<List<ExpedienteDTO2>>("api/expediente/filter?" + query);
+        expedientes = responseHttp.Response;
+        paginastotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
     }
+
     #endregion
 
+    public async Task buscarExpedientes()
+    {
+        var query = GenerarQuery();
+        await consultarExpedientes(query);
+    }
+
+    public string GenerarQuery()
+    {
+        if (diccionariostrings == null)
+        {
+            diccionariostrings = new Dictionary<string, string>();
+        }
+        diccionariostrings["estado"] = parametrosFiltros.estado;
+        diccionariostrings["cliente"] = parametrosFiltros.nombrecliente;
+        diccionariostrings["tipo"] = parametrosFiltros.tipo;
+        diccionariostrings["pagina"] = paginaactual.ToString();
+        string primerJoin = string.Join("&",
+            diccionariostrings
+                 .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());       
+        return primerJoin; 
+    }
+
+    public void ValidacionFiltros()
+    {
+        swalfire.errorMessage("Debe ingresar los datos correctamente");
+    }
+    void KeyUp(ChangeEventArgs e, string membername, object val)
+    {
+        var property = val.GetType().GetProperty(membername);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, membername);
+        _editContext.NotifyFieldChanged(fi);
+    }
 
 }
 
