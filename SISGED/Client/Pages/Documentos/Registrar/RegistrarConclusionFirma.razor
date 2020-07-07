@@ -167,11 +167,26 @@
                 valor = expedientebandeja,
                 icono = "alarm_add",
                 descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
             };
-            workspace.UpdateComponentBandeja(itemSalida);
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = oficioconclusionfirma.id;
+            documentoDTO.tipo = oficioconclusionfirma.tipo;
+            documentoDTO.estado = oficioconclusionfirma.estado;
+            documentoDTO.contenido = oficioconclusionfirma.contenido;
+            documentoDTO.historialcontenido = oficioconclusionfirma.historialcontenido;
+            documentoDTO.historialproceso = oficioconclusionfirma.historialproceso;
+            documentoDTO.urlanexo = oficioconclusionfirma.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
+            //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Conclusión de Firma registrada Correctamente");
         }
         loadprocess = false;

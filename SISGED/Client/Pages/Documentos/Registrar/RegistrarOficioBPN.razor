@@ -324,11 +324,27 @@
                 valor = expedientebandeja,
                 icono = "alarm_add",
                 descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
             };
-            workspace.UpdateComponentBandeja(itemSalida);
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = oficiobpn.id;
+            documentoDTO.tipo = oficiobpn.tipo;
+            documentoDTO.estado = oficiobpn.estado;
+            documentoDTO.contenido = oficiobpn.contenido;
+            documentoDTO.historialcontenido = oficiobpn.historialcontenido;
+            documentoDTO.historialproceso = oficiobpn.historialproceso;
+            documentoDTO.urlanexo = oficiobpn.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
+            //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
 
         }

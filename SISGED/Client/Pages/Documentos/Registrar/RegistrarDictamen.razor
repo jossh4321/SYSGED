@@ -332,6 +332,43 @@
         var httpResponse = await repository.Post<ExpedienteWrapper, Dictamen>("api/documentos/documentod", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            Dictamen documentoDictamen = new Dictamen();
+            documentoDictamen = httpResponse.Response;
+            expedientebandeja.documento.id = documentoDictamen.id;
+            expedientebandeja.documento.tipo = documentoDictamen.tipo;
+            expedientebandeja.documento.historialcontenido = documentoDictamen.historialcontenido;
+            expedientebandeja.documento.historialproceso = documentoDictamen.historialproceso;
+            expedientebandeja.documento.contenido = documentoDictamen.contenido;
+            expedientebandeja.documento.estado = documentoDictamen.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = documentoDictamen.id;
+            documentoDTO.tipo = documentoDictamen.tipo;
+            documentoDTO.estado = documentoDictamen.estado;
+            documentoDTO.contenido = documentoDictamen.contenido;
+            documentoDTO.historialcontenido = documentoDictamen.historialcontenido;
+            documentoDTO.historialproceso = documentoDictamen.historialproceso;
+            documentoDTO.urlanexo = documentoDictamen.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
             await swalfire.successMessage("Dictamen registrado correctamente");
         }
         else
