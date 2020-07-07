@@ -54,6 +54,9 @@ namespace SISGED.Server.Controllers
             listaroles = _roleservice.Get();
             return listaroles;
         }
+
+
+
         [HttpGet("id")]
         public ActionResult<Usuario> GetById([FromQuery] string id)
         {
