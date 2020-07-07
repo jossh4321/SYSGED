@@ -1,6 +1,8 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@page "/historial"
+    @*<link rel="stylesheet" href="css/estilosEP/styleEP.css" />*@
 <style>
     p {
         display: block;
@@ -13,6 +15,10 @@
 
     .demo-mat-card {
         max-width: 250px;
+    }
+
+    .mdc-dialog__content {
+        padding: 0 !important;
     }
 
     .demo-mat-card-content {
@@ -78,17 +84,17 @@
         margin-bottom: 5px;
     }
 
-    .pbottom-5 {
+    /*.pbottom-5 {
         padding-bottom: 5px;
     }
 
     .mtop-5 {
         margin-top: 5px;
-    }
-
+    }*/
+    /*
     .limegreen {
         background-color: limegreen !important;
-    }
+    }*/
 
     .col-datos-12 {
         flex-basis: 100%;
@@ -99,7 +105,72 @@
         flex-direction: column;
         flex-wrap: wrap;
     }
+
+    .card-derivaciones {
+        margin: 5px;
+        /*border: 1px solid;*/
+        transition: all 0.3s ease-out;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .filtros {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 90%;
+        max-width: 750px;
+        margin: 0px auto;
+        margin-top: 5px;
+        padding: 0px;
+    }
+
+    .input-filtro {
+        flex-grow: 1;
+        /*margin-bottom: 25px;*/
+        margin-right: 5px;
+        flex-basis: calc((100%/3) - 5px);
+    }
+
+    .bloque {
+        display: block;
+    }
+
 </style>
+
+<div>
+    @if (parametrosFiltros == null)
+    {
+        <text>Cargando....</text>
+    }
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="buscarExpedientes" OnInvalidSubmit="ValidacionFiltros">
+            <FluentValidator></FluentValidator>
+            <div class="filtros">
+                <div class="input-filtro @CurrentEditContext.FieldCssClass( () => parametrosFiltros.tipo)">
+                    <MatTextField Icon="@MatIconNames.Directions" Label="Tipo de expediente"
+                                  Class="bloque"
+                                  @bind-Value="parametrosFiltros.tipo" @oninput='@(e => KeyUp(e, "tipo", parametrosFiltros))'></MatTextField>                    
+                </div>
+                <div class="input-filtro @CurrentEditContext.FieldCssClass( () => parametrosFiltros.estado)">
+                    <MatTextField Icon="@MatIconNames.Call_to_action" Label="Estado"
+                                  Class="bloque"
+                                  @bind-Value="parametrosFiltros.estado" @oninput='@(e=> KeyUp(e, "estado", parametrosFiltros))'></MatTextField>                    
+                </div>
+                <div class="input-filtro-options">
+                    <MatButton Icon="@MatIconNames.Search" Raised="true" type="submit">Buscar</MatButton>
+                </div>
+            </div>
+
+        </EditForm>
+    }
+
+</div>
+
 @if (carga == false)
 {
     <LoaderContent accion="Consultar historial documentario"></LoaderContent>
@@ -111,58 +182,104 @@ else
             @foreach (ExpedienteDTO2 expediente in expedientes)
             {
                 <div class="mat-layout-grid-cell-span-4">
-                    <ExpedientesLista expediente="expediente" @key="expediente.id" listarDocumentos="VisualizarDocumentos">
+                    <ExpedientesLista expediente="expediente" @key="expediente.id" listarDocumentos="VisualizarDocumentos" listarDerivaciones="VisualizarDerivaciones">
                     </ExpedientesLista>
                 </div>
             }
         </div>
     </div>
+    <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
 
-
-    <MatDialog @bind-IsOpen="dialogoabierto" Class="dialogo">
-        <MatDialogTitle>Documentos en el expediente</MatDialogTitle>
+    <MatDialog @bind-IsOpen="dialogoDocumentos" Class="dialogo">
+        <MatDialogTitle>Documentos - @expediente.tipo</MatDialogTitle>
         <MatDialogContent>
-            <p>@expediente.tipo</p>
-            @if (expediente.documentosobj == null)
+            @if (expediente.documentos == null)
             {
-                <h5>Esperate</h5>
+                <LoaderContent accion="Documentos"></LoaderContent>
             }
             else
             {
-                @*@foreach (var documento in docu)
-                {
-                    <p>documento.id</p>
-                    <p>documento.tipo</p>
-                }*@
+                <div class="mat-layout-grid">
+                    <div class="mat-layout-grid-inner">
+                        @foreach (DocumentoExpediente documento in expediente.documentos)
+                        {
+                            <div class="mat-layout-grid-cell-span-4">
+                                <DocumentosLista documento="documento" @key="documento.iddocumento"></DocumentosLista>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
 
-                @foreach (DocumentoExpediente documento in expediente.documentos)
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoDocumentos = false; })">Volver</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+    <MatDialog @bind-IsOpen="dialogoderivaciones" Class="dialogo">
+        <MatDialogTitle>Derivaciones </MatDialogTitle>
+        <MatDialogContent>
+            @if (listaderivaciones.Count == 0)
+            {
+                <div class="card-derivaciones">
+                    <p>El expediente no cuenta con historial de derivaciones</p>
+                </div>
+            }
+            else
+            {
+
+                foreach (var derivacion in listaderivaciones)
                 {
-                    @*<p>@documento.indice</p>
-                    <p>@documento.iddocumento</p>*@
-                    <p>@documento.tipo</p>
+                    <hr />
+                    <div class="card-derivaciones">
+                        <p>@derivacion.tipo</p>
+                        <p>Usuario: @derivacion.usuarioemisor</p>
+                        <p>Área destino: @derivacion.areadestino</p>
+                        <p>Área procedencia: @derivacion.areaprocedencia</p>
+                        <p>Fecha derivación: @derivacion.fechaderivacion</p>
+                    </div>
                 }
             }
         </MatDialogContent>
         <MatDialogActions>
-            <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoabierto = false; })">Volver</MatButton>
+            <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoderivaciones = false; })">Volver</MatButton>
         </MatDialogActions>
     </MatDialog>
 }
 
 @code {
-    public bool dialogoabierto = false;
+    public bool dialogoDocumentos = false;
+    public bool dialogoderivaciones = false;
     bool carga;
-    public List<ExpedienteDTO2> expedientes = new List<ExpedienteDTO2>();
-    private List<ExpedienteDTO2> listaexpedientesdto { get; set; }
-    public List<Proceso> listaHistorialProceso { get; set; }
+    public List<ExpedienteDTO2> expedientes { get; set; }
+    private List<Derivacion> listaderivaciones { get; set; }
     public ExpedienteDTO2 expediente = new ExpedienteDTO2();
+    public Derivacion derivacion = new Derivacion();
     public List<Documento> docu = new List<Documento>();
+    ParametrosBusquedaExpedienteDTO parametrosFiltros;
+    public Dictionary<string, string> diccionariostrings = new Dictionary<string, string>();
+    private EditContext _editContext;
+    public int paginaactual = 1;
+    public int paginastotales;
+
     protected async override Task OnInitializedAsync()
     {
-        listaexpedientesdto = new List<ExpedienteDTO2>();
-        await getExpedientes();
-        // await cargarExpedientes();
+        expedientes = new List<ExpedienteDTO2>();
+        listaderivaciones = new List<Derivacion>();
+        parametrosFiltros = new ParametrosBusquedaExpedienteDTO();
+        _editContext = new EditContext(parametrosFiltros);
+        await consultarExpedientes("");
+        //await getExpedientes();
     }
+
+
+    public async Task paginaSeleccionada(int pagina)
+    {
+        paginaactual = pagina;
+        await buscarExpedientes();
+    }
+
 
     #region getsRegion
     public async Task getExpedientes()
@@ -183,17 +300,61 @@ else
 
     public void VisualizarDocumentos(ExpedienteDTO2 expediente)
     {
-        dialogoabierto = true;
+        dialogoDocumentos = true;
         this.expediente = expediente;
     }
 
-    public void verHistorialProceso(List<Proceso> procesos)
+    public void VisualizarDerivaciones(List<Derivacion> derivaciones)
     {
-        dialogoabierto = true;
-        this.listaHistorialProceso = procesos;
+        dialogoderivaciones = true;
+        listaderivaciones = derivaciones;
+        dialogoderivaciones = true;
+
     }
+
+    public async Task consultarExpedientes(String query)
+    {
+        carga = true;
+        var responseHttp = await repository.Get<List<ExpedienteDTO2>>("api/expediente/filter?" + query);
+        expedientes = responseHttp.Response;
+        paginastotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+    }
+
     #endregion
 
+    public async Task buscarExpedientes()
+    {
+        var query = GenerarQuery();
+        await consultarExpedientes(query);
+    }
+
+    public string GenerarQuery()
+    {
+        if (diccionariostrings == null)
+        {
+            diccionariostrings = new Dictionary<string, string>();
+        }
+        diccionariostrings["estado"] = parametrosFiltros.estado;
+        diccionariostrings["cliente"] = parametrosFiltros.nombrecliente;
+        diccionariostrings["tipo"] = parametrosFiltros.tipo;
+        diccionariostrings["pagina"] = paginaactual.ToString();
+        string primerJoin = string.Join("&",
+            diccionariostrings
+                 .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());       
+        return primerJoin; 
+    }
+
+    public void ValidacionFiltros()
+    {
+        swalfire.errorMessage("Debe ingresar los datos correctamente");
+    }
+    void KeyUp(ChangeEventArgs e, string membername, object val)
+    {
+        var property = val.GetType().GetProperty(membername);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, membername);
+        _editContext.NotifyFieldChanged(fi);
+    }
 
 }
 

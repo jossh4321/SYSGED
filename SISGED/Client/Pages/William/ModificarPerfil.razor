@@ -10,15 +10,16 @@
         width: 80%;
         heigth: 4px;
     }
+
     .centro {
         margin-left: auto;
         margin-right: auto;
         text-align: center;
     }
-        .field-container{
+
+    .field-container {
         display: block;
         padding: 5px;
-     
     }
 
     .text-field-style {
@@ -26,7 +27,7 @@
         width: 350px;
         heigth: 4px
     }
-   
+
     /*validacion*/
     .validation-message {
         display: inline;
@@ -98,9 +99,9 @@
         margin-top: 5px;
         color: #FFFFFF;
     }
-    
 </style>
 <div class="div-form">
+
     <EditForm EditContext="@_editContext" Context="CurrentEditContext"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
@@ -183,7 +184,7 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-                
+
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@documento.contenidoDTO.direccionoficio" Class="text-field-style" Label="Direccion"
@@ -230,11 +231,12 @@
                     </div>
                 </div>
                 @*///////////////////////////////////////////////////*@
+
+                <InputImgModificarUsuario></InputImgModificarUsuario>
                 <div class="field-container">
                     <MatCardActions>
                         <MatButton Raised="true"
                                    Class="centro"
-                                   
                                    type="submit"
                                    Icon="@MatBlazor.MatIconNames.Check_circle_outline">Modificar</MatButton>
                     </MatCardActions>
@@ -260,6 +262,7 @@
                         <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
                     </div>
                     <div class="otorgantes">
+                        @***************************************************************************@
                         <p class="title-ot">OTORGANTES REGISTRADOS</p>
 
                         <MatChipSet>
@@ -268,7 +271,7 @@
                                 <MatChip Label="@otorgante" LeadingIcon="@MatIconNames.Supervised_user_circle"></MatChip>
                             }
                         </MatChipSet>
-
+                        @***************************************************************************@
                     </div>
                     <div class="field-container input-group-2">
                         <MatDatePicker @bind-Value="@docSolicitudBPNDTO.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
@@ -298,11 +301,11 @@
                 </MatTab>
                 <MatTab Label="Notario">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del Notario">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del Notario">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
@@ -330,6 +333,9 @@
     public bool abrirDialogo = false;
     public void openDialog() { abrirDialogo = true; }
     public void closeDialog() { abrirDialogo = false; }
+    /// //////////////////////
+
+
 
     public SolicitudBPNDTO docSolicitudBPNDTO = new SolicitudBPNDTO()
     {
@@ -376,6 +382,11 @@
 
     private OficioBPNDTO documento = new OficioBPNDTO();
     private EditContext _editContext;
+
+  /// /////////////////////////////////
+    private ModificarPerfil 
+  
+    //////////////////////////////////////
     protected override void OnInitialized()
     {
         _editContext = new EditContext(documento);
@@ -447,5 +458,43 @@
         loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
+
+    /// //////////////////////////////////////////////////////////////////////
+    public class Usuarios
+    {
+        public string Id { get; set; }
+        public string Nombre_usuario { get; set; }
+        public string Nombres { get; set; }
+        public string Apellidos { get; set; }
+        public string Tipo_documento { get; set; }
+        public int Ndocumento { get; set; }
+        public string Direccion { get; set; }
+        public string Email { get; set; }
+        public string Sexo { get; set; }
+
+
+        public Usuarios(string id, string nombre_usuario, string nombres, string apellidos, string tipo_documento, int ndocumento, string direccion, string email, string sexo)
+        {
+            Id = id;
+            Nombre_usuario = nombre_usuario;
+            Nombres = nombres;
+            Apellidos = apellidos;
+            Tipo_documento = tipo_documento;
+            Ndocumento = ndocumento;
+            Direccion = direccion;
+            Email = email;
+            Sexo = sexo;
+
+        }
+    }
+
+
+    Usuarios[] usuario = new[]
+    {
+                new Usuarios("usu001","FEDEPRO","Jose luis","torres alvares","dni",72369985,"av.bolognesi","jose123@gmail.com","M"),
+};
+
+
 }
+
 
