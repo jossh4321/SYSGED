@@ -66,8 +66,7 @@ else
                     {
                         <option class="text-black-50" Value="@usuario.id">@usuario.datos.nombre @usuario.datos.apellido</option>
                     }
-                </select>
-                @*<p>@usuarioId</p>*@
+                </select>                
                 <MatCardActions>
                     <MatButton Raised="true"
                                Class="centro"
@@ -95,7 +94,7 @@ else
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     [CascadingParameter] WorkEnvironment workspace { get; set; }
 
-    #region variableeeees
+    #region variables
     bool carga = false;
     bool dialogIsOpen = false;
     string dialogDerivar = null;
@@ -169,8 +168,7 @@ else
     public void userChanged(ChangeEventArgs e)
     {
         usuarioId = "";
-        usuarioId = e.Value.ToString();
-        Console.WriteLine("Usuario:  {0} ", usuarioId);
+        usuarioId = e.Value.ToString();        
     }
 
     public async Task handleValidSubmit()
@@ -211,8 +209,7 @@ else
         }
         else
         {
-            await swalfire.successMessage("Documento derivado correctamente");
-            //Console.WriteLine("Derivar documento:  {0} a {1} ", workspace.expedienteseleccionado.id, usuarioId);
+            await swalfire.successMessage("Documento derivado correctamente");          
         }
     }
     //quitar luego
