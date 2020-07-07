@@ -200,23 +200,24 @@
                             <MatIcon Icon="add_circle_outline"></MatIcon>
                         </div>
                     </div>
-                    @foreach (Participante p in resolucion.contenidoDTO.participantes)
+                    @for (int i = 0; i < resolucion.contenidoDTO.participantes.Count; i++)
                     {
+                        int index = i;
                         <div class="single-textfield-container">
-                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes[p.index].nombre)">
-                                <MatTextField @bind-Value="@resolucion.contenidoDTO.participantes[p.index].nombre" Class="text-field-style"
+                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes[index].nombre)">
+                                <MatTextField @bind-Value="@resolucion.contenidoDTO.participantes[index].nombre" Class="text-field-style"
                                               Label="Ingrese una observación"
-                                              @oninput='@(e => KeyUp(e, "nombre", resolucion.contenidoDTO.participantes[p.index]))'></MatTextField>
+                                              @oninput='@(e => KeyUp(e, "nombre", resolucion.contenidoDTO.participantes[index]))'></MatTextField>
                                 <div class="incorrecto">
                                     <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes[p.index].nombre)" />
+                                    <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes[index].nombre)" />
                                 </div>
                                 <div class="correcto">
                                     <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                                     <span class="good-msg">Correcto</span>
                                 </div>
                             </div>
-                            <div class="base-icon" @onclick="@(() => removeParticipante(p.index))">
+                            <div class="base-icon" @onclick="@(() => removeParticipante(index))">
                                 <MatIcon Icon="remove_circle_outline"></MatIcon>
                             </div>
                         </div>
@@ -257,7 +258,7 @@
 
     protected override void OnInitialized()
     {
-        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0 } };
+        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0,nombre="" } };
         _editContext = new EditContext(resolucion);
         if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
         {
@@ -271,13 +272,15 @@
         resolucion.contenidoDTO.data = imagenbase64;
     }
 
-    private void addParticipante()
+    private async Task addParticipante()
     {
-        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count) });
+        Console.WriteLine("INDEX ADD ==> " + resolucion.contenidoDTO.participantes.Count);
+        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count),nombre="" });
         StateHasChanged();
     }
-    private void removeParticipante(int index)
+    private async Task removeParticipante(int index)
     {
+        Console.WriteLine("INDEX REMOVE ==> " + index);
         resolucion.contenidoDTO.participantes.RemoveAt(index);
         StateHasChanged();
     }
@@ -303,6 +306,44 @@
             var httpResponse = await repository.Post<ExpedienteWrapper, Resolucion>($"api/documentos/documentor", expedienteWrapper);
             if (!httpResponse.Error)
             {
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja = workspace.expedienteseleccionado;
+                Resolucion resolucion = new Resolucion();
+                resolucion = httpResponse.Response;
+                expedientebandeja.documento.id = resolucion.id;
+                expedientebandeja.documento.tipo = resolucion.tipo;
+                Console.WriteLine("tipo :" + resolucion.tipo);
+                expedientebandeja.documento.historialcontenido = resolucion.historialcontenido;
+                expedientebandeja.documento.historialproceso = resolucion.historialproceso;
+                expedientebandeja.documento.contenido = resolucion.contenido;
+                expedientebandeja.documento.estado = resolucion.estado;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                Item itemSalida = new Item()
+                {
+                    nombre = expedientebandeja.tipo,
+                    valor = expedientebandeja,
+                    icono = "alarm_add",
+                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                    currentPlace = "workspace",
+                    originPlace = "inputs",
+                    cliente = expedientebandeja.cliente,
+                    itemstatus = "registrado"
+                };
+                Console.WriteLine(expedientebandeja.documento.tipo);
+                workspace.UpdateDocRegistrado(itemSalida);
+                workspace.UpdateTools("Registrar Documento");
+                DocumentoDTO documentoDTO = new DocumentoDTO();
+                documentoDTO.id = resolucion.id;
+                documentoDTO.tipo = resolucion.tipo;
+                documentoDTO.estado = resolucion.estado;
+                documentoDTO.contenido = resolucion.contenido;
+                documentoDTO.historialcontenido = resolucion.historialcontenido;
+                documentoDTO.historialproceso = resolucion.historialproceso;
+                documentoDTO.urlanexo = resolucion.urlanexo;
+                workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+                workspace.expedienteseleccionado.documento = documentoDTO;
+
+                StateHasChanged();
                 await swalfire.successMessage("Resolución registrada correctamente");
             }
             else

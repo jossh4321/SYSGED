@@ -65,6 +65,7 @@ namespace SISGED.Server
             services.AddSingleton<EscriturasPublicasService>();
             services.AddSingleton<ExpedienteService>();
             services.AddSingleton<BandejaService>();
+            services.AddSingleton<NotificacionService>();
             services.AddMvc().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); ;
 

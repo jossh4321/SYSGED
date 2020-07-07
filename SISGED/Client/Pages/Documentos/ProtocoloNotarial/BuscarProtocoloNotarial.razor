@@ -1,7 +1,8 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalFireMessage
 @inject NavigationManager navigationManager
-<link rel="stylesheet" href="css/estilosEP/styleEP.css"/>
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<link rel="stylesheet" href="css/estilosEP/styleEP.css" />
 <div>
     @if (parametrosFiltros == null)
     {
@@ -109,7 +110,7 @@ else
             {
                 <div class="mat-layout-grid-cell-span-4">
                     <EscrituraPublicaC escriturapublica="escriturapublica" @key="escriturapublica.id"
-                                       mostrarDatosEscrituraPublica="VisualizarEscrituraPublica"></EscrituraPublicaC>
+                                       mostrarDatosEscrituraPublica="VisualizarEscrituraPublica" escogerEscrituraPublica="EscogerEscrituraPublica"></EscrituraPublicaC>
                 </div>
             }
         </div>
@@ -216,6 +217,8 @@ else
     </MatDialog>
 }
 @code {
+    [CascadingParameter]
+    WorkEnvironment workspace { get; set; }
     private List<EscrituraPublicaRDTO>
     listaEscriturasPublicas
     { get; set; }
@@ -256,6 +259,25 @@ else
     {
         dialogoabierto = true;
         this.escrituraPublica = escrituraPublica;
+    }
+
+    private async Task EscogerEscrituraPublica(EscrituraPublicaRDTO escrituraPublica)
+    {
+        Item itemEscogido = new Item()
+        {
+            nombre = workspace.expedienteseleccionado.tipo,
+            valor = workspace.expedienteseleccionado,
+            icono = "alarm_add",
+            descripcion = ((DocumentoDTO) workspace.expedienteseleccionado.documento).tipo,
+            currentPlace = "workspace",
+            originPlace = "inputs",
+            cliente = workspace.expedienteseleccionado.cliente,
+            itemstatus = "escogido",
+            escriturapublica = escrituraPublica
+        };
+        workspace.UpdateDocRegistrado(itemEscogido);
+        workspace.UpdateTools("Buscar protocolo notarial");
+        await Task.FromResult(0);
     }
 
     private void VisualizarOtorgantes(List<Otorgante> otorgantes)
@@ -315,5 +337,7 @@ else
         var fi = new FieldIdentifier(val, membername);
         _editContext.NotifyFieldChanged(fi);
     }
+
+
 
 }

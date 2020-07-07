@@ -1,5 +1,93 @@
-﻿<h3>GenerarSolicitudBPN</h3>
+﻿@inject IJSRuntime js
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json
+@inject IRepository repositorio
 
+@if (faltaCargar)
+{
+    <p>Cargando......</p>
+}
+else
+{
+    <style>
+        * {
+            color: black;
+        }
+
+        .contenedor-PDF {
+            height: 400px;
+            width: 600px;
+        }
+    </style>
+    <MatButton Raised="true" OnClick="@GenerarPDF"> Previsualizar Documento</MatButton>
+    <MatDialog @bind-IsOpen="@generado">
+        <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
+        <MatDialogContent Class="contenedor-PDF">
+            <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
+        </MatDialogContent>
+    </MatDialog>
+    <div style="display: none">
+        <table id="convertirPDF">
+            <tbody>
+                <tr>
+                    <th colspan="7">Solicitud de Búsqueda de Protocolos Notariales</th>
+                </tr>
+                <tr><td colspan="7"> </td></tr>
+                <tr><td colspan="7">Datos del Cliente: </td></tr>
+                <tr><td></td><td>- Nombre: @usuario.datos.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Apellidos: @usuario.datos.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Tipo de documento: @usuario.datos.tipodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Número de documento: @usuario.datos.numerodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td colspan="7"> Datos del notario: </td></tr>
+                <tr><td></td><td>- Nombre: @notario.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Apellidos: @notario.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- DNI: @notario.dni</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td colspan="7">Dirección de oficio: </td></tr>
+                <tr><td colspan="7">@documento.direccionoficio </td></tr>
+                <tr><td colspan="7">Acto juridico: @documento.actojuridico </td></tr>
+                <tr><td colspan="7">Tipo de protocolo: @documento.tipoprotocolo</td></tr>
+                <tr><td colspan="7">Fecha de realización: @documento.fecharealizacion.ToString("dd-MM-yy")</td></tr>
+                <tr><td colspan="7"> Otorgantes: </td></tr>
+                @foreach (string i in documento.otorgantes)
+                {
+                    <tr><td></td><td>- @i </td><td></td><td></td><td></td><td></td><td></td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
 @code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    private ContenidoSolicitudBPN documento { get; set; }
+    private Usuario usuario;
+    private Notario notario;
+    private bool generado = false;
+    private bool faltaCargar = true;
 
+    private async Task GenerarPDF()
+    {
+        generado = true;
+        await js.InvokeVoidAsync("gPDF");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        documento = JsonConvert.DeserializeObject<ContenidoSolicitudBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        usuario = new Usuario();
+        notario = new Notario();
+        await getUsuario();
+        await getNotario();
+        faltaCargar = false;
+    }
+
+    private async Task getUsuario()
+    {
+        var responseHttp = await repositorio.Get<Usuario>($"api/usuarios/id?id={documento.idcliente}");
+        usuario = responseHttp.Response;
+    }
+    private async Task getNotario()
+    {
+        var responseHttp = await repositorio.Get<Notario>($"api/notarios/id?id={documento.idnotario}");
+        notario = responseHttp.Response;
+    }
 }

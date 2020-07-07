@@ -30,6 +30,7 @@
                         <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
                         <span class="bartext-color" @onclick="@(() => onclickButtonNav(interfaz.url))">
                             @interfaz.label
+                            
                         </span>
                     </MatNavItem>
                 }
@@ -190,7 +191,6 @@
     }
     public List<Item> obtenerListaEntradas(List<ExpedienteBandejaDTO> listaentrada)
     {
-
         if(listaentrada.ElementAt(0).tipo != null)
         {
             return listaentrada.Select(x => new Item()
@@ -208,11 +208,11 @@
         {
             return new List<Item>();
         }
-
     }
     public List<Item> obtenerListaSalidas(List<ExpedienteBandejaDTO> listasalida)
     {
-        if(listasalida.ElementAt(0).tipo != null)
+        //if (listasalida.ElementAt(0).tipo != null)
+        if (listasalida.ElementAt(0).tipo != null)
         {
             return listasalida.Select(x => new Item()
             {
