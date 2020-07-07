@@ -26,6 +26,12 @@ namespace SISGED.Server.Services
             var filter = Builders<Notario>.Filter.Regex("nombre", new BsonRegularExpression(regex, "i"));
             return _notarios.Find(filter).ToList();
         }
+        public Notario GetById(string id)
+        {
+            Notario notario = new Notario();
+            notario = _notarios.Find(notario => notario.id == id).FirstOrDefault();
+            return notario;
+        }
 
     }
 }

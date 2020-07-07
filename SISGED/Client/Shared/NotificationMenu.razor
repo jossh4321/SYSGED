@@ -1,4 +1,10 @@
-﻿<MatCard Style="width:352px;background-color:rgb(68, 68, 68);">
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+<style>
+    .clase1{
+    }
+</style>
+<MatCard Style="width:352px;background-color:rgb(68, 68, 68);">
     <span style="display: block;font-size: 12px;color: rgba(255, 255, 255, 0.54);font-family: sans-serif;padding:16px">
         Tienes 5 nuevas notificaciones
     </span>
@@ -95,5 +101,98 @@
 </MatCard>
 
 @code {
+
+    public string nombredeusuario = "";
+    public bool disabled = false;
+    public class Message
+    {
+        public string message { get; set; }
+        public string connectionId { get; set; }
+        public string sender { get; set; }
+    }
+
+
+    private HubConnection _hubConnection;
+    //private List<string> _messages = new List<string>();
+    private List<Message> _messages = new List<Message>();
+    private string _messageInput;
+
+    public async Task connect()
+    {
+
+        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            Message chatMessage = new Message()
+            {
+                message = encodedMsg,
+                connectionId = _hubConnection.ConnectionId,
+                sender = user
+            };
+            _messages.Add(chatMessage);
+            StateHasChanged();
+        });
+
+        _hubConnection.On<string>("SomeoneJoinRoom", (user) =>
+        {
+            var someoneJoinMessage = $"el Usuario {user}, ha ingresado al Chat";
+            Message chatMessage = new Message()
+            {
+                message = someoneJoinMessage,
+                connectionId = _hubConnection.ConnectionId,
+                sender = "system"
+            };
+            _messages.Add(chatMessage);
+            StateHasChanged();
+        });
+        _hubConnection.On<string>("SomeoneLeftRoom", (user) =>
+        {
+            var someoneLeftMessage = $"el Usuario {user}, ha salido del Chat";
+            Message chatMessage = new Message()
+            {
+                message = someoneLeftMessage,
+                connectionId = _hubConnection.ConnectionId,
+                sender = "system"
+            };
+            _messages.Add(chatMessage);
+            StateHasChanged();
+        });
+        await _hubConnection.StartAsync();
+        await ConnectToRoom();
+        disabled = true;
+    }
+
+    public async Task disconnect()
+    {
+        await DisconnectToRoom();
+        await _hubConnection.DisposeAsync();
+        disabled = false;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chatHub"))
+            .Build();
+
+        /*_hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            _messages.Add(encodedMsg);
+            StateHasChanged();
+        });
+
+        await _hubConnection.StartAsync();*/
+    }
+    Task DisconnectToRoom() =>
+        _hubConnection.SendAsync("DisconnectToRoom", _hubConnection.ConnectionId, nombredeusuario);
+    Task ConnectToRoom() =>
+        _hubConnection.SendAsync("ConnectToRoom", _hubConnection.ConnectionId, nombredeusuario);
+    Task Send() =>
+        _hubConnection.SendAsync("SendMessage", nombredeusuario, _messageInput);
+
+    public bool IsConnected =>
+        _hubConnection.State == HubConnectionState.Connected;
+
+
 
 }

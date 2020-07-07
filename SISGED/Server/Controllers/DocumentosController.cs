@@ -80,7 +80,8 @@ namespace SISGED.Server.Controllers
                 contenido = contenidoSolicitudDenuncia,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
+                historialproceso = new List<Proceso>(),
+
             };
             solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
 
@@ -311,6 +312,12 @@ namespace SISGED.Server.Controllers
         public ActionResult<Documento> ModificarEstado(DocumentoEvaluadoDTO documento)
         {
             return _documentoservice.modificarEstado(documento);
+        }
+
+        [HttpPut("cambiarestadodocumento")]
+        public ActionResult<Documento> ModificarEstado(DocumentoDTO documento)
+        {
+            return _documentoservice.modificarEstadoDocumento(documento);
         }
 
         //obteniendo documentos

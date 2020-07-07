@@ -137,7 +137,7 @@ namespace SISGED.Server.Services
             documentoExpediente.fechademora = null;
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5ee5f24e7d8f833f68cc88a0", updateExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5eeadf0b8ca4ff53a0b791e3", updateExpediente);
 
             //Actualizacion de bandeja de salida de usuario
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
@@ -185,9 +185,10 @@ namespace SISGED.Server.Services
             {
                 idescriturapublica = conclusionfirmaDTO.contenidoDTO.idescriturapublica.id
             };
+
             ConclusionFirma documentoDF = new ConclusionFirma()
             {
-                tipo = "ConclusionFirma",
+                tipo = "ConclusionFirma", 
                 contenido = contenidoCF,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
@@ -244,6 +245,15 @@ namespace SISGED.Server.Services
 
             UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
+
+            return _documentos.FindOneAndUpdate<Documento>(filter, update);
+        }
+
+        public Documento modificarEstadoDocumento(DocumentoDTO documento)
+        {
+            var filter = Builders<Documento>.Filter.Eq("id", documento.id);
+            var update = Builders<Documento>.Update
+                .Set("estado", documento.estado);
 
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
         }
@@ -364,6 +374,7 @@ namespace SISGED.Server.Services
             //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
             ContenidoResolucion contenidoResolucion = new ContenidoResolucion()
             {
+                titulo= resolucionDTO.contenidoDTO.titulo,
                 descripcion = resolucionDTO.contenidoDTO.descripcion,
                 fechainicioaudiencia = resolucionDTO.contenidoDTO.fechainicioaudiencia,
                 fechafinaudiencia = resolucionDTO.contenidoDTO.fechafinaudiencia,
@@ -568,7 +579,7 @@ namespace SISGED.Server.Services
             return oficioDesignacionNotario;
 
         }
-        public OficioBPNDTO obtenerOficioBusquedaProtocoloNotarial(string id)
+        public OficioBPNDTO  obtenerOficioBusquedaProtocoloNotarial(string id)
         {
             var match = new BsonDocument("$match", new BsonDocument("_id",
                         new ObjectId(id)));

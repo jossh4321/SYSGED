@@ -101,14 +101,17 @@ namespace SISGED.Server.Services
                 .Add("pipeline", subpipeline)
                 .Add("as", "rolobj"));
 
-            var filter = new BsonDocument("$match",
+            var filter2 = new BsonDocument("$match",
                 new BsonDocument("rolobj.label","Fiscal"));
+            var filter1 = new BsonDocument("$match",
+                new BsonDocument("tipo", "administracion"));
 
             List<UsuarioRDTO> fiscales = new List<UsuarioRDTO>();
             fiscales = await _usuarios.Aggregate()
+                .AppendStage<Usuario>(filter1)
                 .AppendStage<Usuario_LK>(lookup)
                 .Unwind<Usuario_LK, UsuarioRDTO>(p => p.rolobj)
-                .AppendStage<UsuarioRDTO>(filter)
+                .AppendStage<UsuarioRDTO>(filter2)
                 .ToListAsync();
             return fiscales;
         }

@@ -25,6 +25,47 @@ namespace SISGED.Server.Services
             _escriturapublicas = database.GetCollection<EscrituraPublica>("escrituraspublicas");
             _notarios = database.GetCollection<Notario>("notarios");
         }
+
+        public async Task<List<EscrituraPublicaRDTO>> obtenerEscriturasPublicas()
+        {
+
+            BsonArray subpipeline = new BsonArray();
+
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$notariox") }
+                        )
+                    ))
+                );
+            var lookup = new BsonDocument("$lookup",
+             new BsonDocument("from", "notarios")
+               .Add("let", new BsonDocument("notariox", "$idnotario"))
+               .Add("pipeline", subpipeline)
+               .Add("as", "notario"));
+
+            List<EscrituraPublicaRDTO> escrituraPublicas = new List<EscrituraPublicaRDTO>();
+
+            escrituraPublicas = await _escriturapublicas.Aggregate()
+                .AppendStage<EscrituraPublicasDTO>(lookup)
+                .Unwind<EscrituraPublicasDTO, EscrituraPublicaDTO>(p => p.notario)
+                .Project(ep => new EscrituraPublicaRDTO
+                {
+                    id = ep.id,
+                    direccionoficio = ep.direccionoficio,
+                    idnotario = ep.idnotario,
+                    actosjuridicos = ep.actosjuridicos,
+                    fechaescriturapublica = ep.fechaescriturapublica,
+                    url = ep.url,
+                    estado = ep.estado,
+                    notario = ep.notario.nombre + " " + ep.notario.apellido,
+                    titulo = ep.titulo
+                })
+                .ToListAsync();
+
+            return escrituraPublicas;
+        }
+
         public List<EscrituraPublica> filter(string term)
         {
             string regex = "\\b" + term.ToLower() + ".*";
@@ -59,37 +100,22 @@ namespace SISGED.Server.Services
                .Add("pipeline", subpipeline)
                .Add("as", "notario"));
 
-            //Creación del BsonDocument del filtros de busqueda
-            var filtroDocumento = new BsonDocument();
-            if(parametrosbusqueda.direccionoficionotarial != null & parametrosbusqueda.direccionoficionotarial != "")
-            {
-                filtroDocumento.Add("direccionoficio",
-                                   new BsonDocument("$regex", parametrosbusqueda.direccionoficionotarial + ".*")
-                                   .Add("$options", "i"));
-            }
-            if(parametrosbusqueda.nombrenotario != null & parametrosbusqueda.nombrenotario != null)
-            {
-                filtroDocumento.Add("notario",
-                                    new BsonDocument("$regex", parametrosbusqueda.nombrenotario + ".*")
-                                    .Add("$options", "i"));
-            }
-            if(parametrosbusqueda.actojuridico != null & parametrosbusqueda.actojuridico !="")
-            {
-                filtroDocumento.Add("actosjuridicos.titulo",
-                                    new BsonDocument("$regex", parametrosbusqueda.actojuridico + ".*")
-                                    .Add("$options", "i"));
-            }
-            if(parametrosbusqueda.nombreotorgantes !=null)
-            {
-                if(parametrosbusqueda.nombreotorgantes.Count != 0)
-                {
-                    var listaOtorgantesRegex = parametrosbusqueda.nombreotorgantes.Select(o => new Regex(o + ".*")).ToList();
-                    filtroDocumento.Add("actosjuridicos.otorgantes.nombre",
-                                        new BsonDocument("$in", new BsonArray().AddRange(listaOtorgantesRegex)));
-                }
-                
-            }
-           
+            // Primero filtro para la direccion oficio notarial
+            var regexOficioNotarial = parametrosbusqueda.direccionoficionotarial + ".*";
+            var filterRegexOficio = Builders<EscrituraPublicaRDTO>.Filter.Regex("direccionoficio", new BsonRegularExpression(regexOficioNotarial, "i"));
+
+            // Segundo filtro del nombre del notario
+            var regexnombreNotario = parametrosbusqueda.nombrenotario + ".*";
+            var filterRegexNotario = Builders<EscrituraPublicaRDTO>.Filter.Regex("notario", new BsonRegularExpression(regexnombreNotario, "i"));
+
+            // Tercer filtro de los actos jurídicos
+            var regexactojuridico = parametrosbusqueda.actojuridico + ".*";
+            var filterRegexActo = Builders<EscrituraPublicaRDTO>.Filter.Regex("actosjuridicos.titulo", new BsonRegularExpression(regexactojuridico, "i"));
+
+            //Filtro final de los otorgantes
+            var listaOtorgantesRegex = parametrosbusqueda.nombreotorgantes.Select(o => new Regex(o + ".*")).ToList();
+            var matchInRegexOtorgante = new BsonDocument("actosjuridicos.otorgantes.nombre",
+                                                    new BsonDocument("$in", new BsonArray().AddRange(listaOtorgantesRegex)));
             
             List<EscrituraPublicaRDTO> escrituraPublicas = new List<EscrituraPublicaRDTO>();
 
@@ -108,10 +134,19 @@ namespace SISGED.Server.Services
                     notario = ep.notario.nombre + " " + ep.notario.apellido,
                     titulo = ep.titulo
                 })
-                .Match(filtroDocumento)
+                .Match(filterRegexOficio)
+                .Match(filterRegexNotario)
+                .Match(filterRegexActo)
+                .Match(matchInRegexOtorgante)
                 .ToListAsync();
 
             return escrituraPublicas;
+        }
+        public EscrituraPublica GetById(string id)
+        {
+            EscrituraPublica escrituraPublica = new EscrituraPublica();
+            escrituraPublica = _escriturapublicas.Find(escritura => escritura.id == id).FirstOrDefault();
+            return escrituraPublica;
         }
     }
 }

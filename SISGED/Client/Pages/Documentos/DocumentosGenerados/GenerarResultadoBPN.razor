@@ -1,5 +1,64 @@
-﻿<h3>GenerarResultadoBPN</h3>
+﻿@inject IJSRuntime js
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json
+@inject IRepository repositorio
 
+@if (faltaCargar)
+{
+    <p>Cargando......</p>
+}
+else
+{
+    <style>
+        * {
+            color: black;
+        }
+
+        .contenedor-PDF {
+            height: 400px;
+            width: 600px;
+        }
+    </style>
+    <MatButton Raised="true" OnClick="@GenerarPDF"> Previsualizar Documento</MatButton>
+    <MatDialog @bind-IsOpen="@generado">
+        <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
+        <MatDialogContent Class="contenedor-PDF">
+            <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
+        </MatDialogContent>
+    </MatDialog>
+}
 @code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    private ContenidoResultadoBPN documento { get; set; }
+    private EscrituraPublica escrituraPublica;
+    private Notario notario;
+    private bool generado = false;
+    private bool faltaCargar = true;
 
+    private async Task GenerarPDF()
+    {
+        generado = true;
+        await js.InvokeVoidAsync("gPDF");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        documento = JsonConvert.DeserializeObject<ContenidoResultadoBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        escrituraPublica = new EscrituraPublica();
+        notario = new Notario();
+        await getEscritura();
+        await getNotario();
+        faltaCargar = false;
+    }
+
+    private async Task getEscritura()
+    {
+        var responseHttp = await repositorio.Get<EscrituraPublica>($"api/escrituraspublicas/id?id={documento.idescriturapublica}");
+        escrituraPublica = responseHttp.Response;
+    }
+    private async Task getNotario()
+    {
+        var responseHttp = await repositorio.Get<Notario>($"api/notarios/id?id={escrituraPublica.idnotario}");
+        notario = responseHttp.Response;
+    }
 }
