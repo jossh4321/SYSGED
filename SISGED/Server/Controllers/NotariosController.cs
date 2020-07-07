@@ -29,12 +29,12 @@ namespace SISGED.Server.Controllers
             return listanotario;
         }
 
-        /*[HttpGet("id")]
-        public ActionResult<Usuario> GetById([FromQuery] string id)
+        [HttpGet("id")]
+        public ActionResult<Notario> GetById([FromQuery] string id)
         {
-            Usuario usuario = new Usuario();
-            usuario = _usuarioservice.GetById(id);
-            return usuario;
-        }*/
+            Notario notario = new Notario();
+            notario = _notarioService.GetById(id);
+            return notario;
+        }
     }
 }

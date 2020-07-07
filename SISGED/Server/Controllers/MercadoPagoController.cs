@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
+using SISGED.Shared.Models;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SISGED.Shared.Models;
 using ws_mercadopago;
 
 namespace SISGED.Server.Controllers

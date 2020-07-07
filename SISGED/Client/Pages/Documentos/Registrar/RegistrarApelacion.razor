@@ -172,11 +172,24 @@
                 valor = expedientebandeja,
                 icono = "alarm_add",
                 descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
             };
-            workspace.UpdateComponentBandeja(itemSalida);
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = apelacionact.id;
+            documentoDTO.tipo = apelacionact.tipo;
+            documentoDTO.estado = apelacionact.estado;
+            documentoDTO.contenido = apelacionact.contenido;
+            documentoDTO.historialcontenido = apelacionact.historialcontenido;
+            documentoDTO.historialproceso = apelacionact.historialproceso;
+            documentoDTO.urlanexo = apelacionact.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+            StateHasChanged();
             await swalfire.successMessage("Apelación registrado correctamente");
         }
         else

@@ -213,23 +213,24 @@
                             <MatIcon Icon="add_circle_outline"></MatIcon>
                         </div>
                     </div>
-                    @foreach (Participante p in resolucion.contenidoDTO.participantes)
+                    @for(int i = 0; i < resolucion.contenidoDTO.participantes.Count;i++)
                     {
+                        int index = i;
                         <div class="single-textfield-container">
-                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes[p.index].nombre)">
-                                <MatTextField @bind-Value="@resolucion.contenidoDTO.participantes[p.index].nombre" Class="text-field-style"
+                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes[index].nombre)">
+                                <MatTextField @bind-Value="@resolucion.contenidoDTO.participantes[index].nombre" Class="text-field-style"
                                               Label="Ingrese una observación"
-                                              @oninput='@(e => KeyUp(e, "nombre", resolucion.contenidoDTO.participantes[p.index]))'></MatTextField>
+                                              @oninput='@(e => KeyUp(e, "nombre", resolucion.contenidoDTO.participantes[index]))'></MatTextField>
                                 <div class="incorrecto">
                                     <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes[p.index].nombre)" />
+                                    <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes[index].nombre)" />
                                 </div>
                                 <div class="correcto">
                                     <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                                     <span class="good-msg">Correcto</span>
                                 </div>
                             </div>
-                            <div class="base-icon" @onclick="@(() => removeParticipante(p.index))">
+                            <div class="base-icon" @onclick="@(() => removeParticipante(index))">
                                 <MatIcon Icon="remove_circle_outline"></MatIcon>
                             </div>
                         </div>
@@ -329,7 +330,7 @@
             expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
             expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-            var httpResponse = await repository.Post<ExpedienteWrapper, Resolucion>($"api/documentos/actualizarDocumentoR", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoR", expedienteWrapper);
             if (!httpResponse.Error)
             {
                 await swalfire.successMessage("Resolución modificada correctamente");

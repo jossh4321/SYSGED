@@ -1,11 +1,12 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalFireMessage
 @inject NavigationManager navigationManager
+@using SISGED.Client.Pages.Samples.WorkEnvironment
 <link rel="stylesheet" href="css/estilosEP/styleEP.css" />
 <div>
     @if (parametrosFiltros == null)
     {
-        <text>Cargando...</text>
+        <text>Cargando....</text>
     }
     else
     {
@@ -109,7 +110,7 @@ else
             {
                 <div class="mat-layout-grid-cell-span-4">
                     <EscrituraPublicaC escriturapublica="escriturapublica" @key="escriturapublica.id"
-                                       mostrarDatosEscrituraPublica="VisualizarEscrituraPublica"></EscrituraPublicaC>
+                                       mostrarDatosEscrituraPublica="VisualizarEscrituraPublica" escogerEscrituraPublica="EscogerEscrituraPublica"></EscrituraPublicaC>
                 </div>
             }
         </div>
@@ -216,6 +217,8 @@ else
     </MatDialog>
 }
 @code {
+    [CascadingParameter]
+    WorkEnvironment workspace { get; set; }
     private List<EscrituraPublicaRDTO>
     listaEscriturasPublicas
     { get; set; }
@@ -240,29 +243,41 @@ else
         parametrosFiltros = new ParametrosBusquedaEscrituraPublicaDTO();
         parametrosFiltros.nombreotorgantes = new List<OtorganteDTO>();
         OtorganteDTO otorgante = new OtorganteDTO();
-        otorgante.nombre = "";
         otorgante.index = 0;
         parametrosFiltros.nombreotorgantes.Add(otorgante);
         _editContext = new EditContext(parametrosFiltros);
-        await CargarEscriturasPublicas();
+        await ConsultarEscriturasPublicasFiltros("");
     }
 
-    public void paginaSeleccionada(int pagina)
+    public async Task paginaSeleccionada(int pagina)
     {
         paginaactual = pagina;
-    }
-
-    private async Task CargarEscriturasPublicas()
-    {
-        var responseHttp = await repositorio.Get<List<EscrituraPublicaRDTO>>("api/EscriturasPublicas");
-        paginastotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
-        listaEscriturasPublicas = responseHttp.Response;
+        await BuscarEscriturasPublicas();
     }
 
     private void VisualizarEscrituraPublica(EscrituraPublicaRDTO escrituraPublica)
     {
         dialogoabierto = true;
         this.escrituraPublica = escrituraPublica;
+    }
+
+    private async Task EscogerEscrituraPublica(EscrituraPublicaRDTO escrituraPublica)
+    {
+        Item itemEscogido = new Item()
+        {
+            nombre = workspace.expedienteseleccionado.tipo,
+            valor = workspace.expedienteseleccionado,
+            icono = "alarm_add",
+            descripcion = ((DocumentoDTO) workspace.expedienteseleccionado.documento).tipo,
+            currentPlace = "workspace",
+            originPlace = "inputs",
+            cliente = workspace.expedienteseleccionado.cliente,
+            itemstatus = "escogido",
+            escriturapublica = escrituraPublica
+        };
+        workspace.UpdateDocRegistrado(itemEscogido);
+        workspace.UpdateTools("Buscar protocolo notarial");
+        await Task.FromResult(0);
     }
 
     private void VisualizarOtorgantes(List<Otorgante> otorgantes)
@@ -287,6 +302,7 @@ else
     {
         var responseHttp = await repositorio.Get<List<EscrituraPublicaRDTO>>("api/EscriturasPublicas/filterespecial?" + queryoriginados);
         listaEscriturasPublicas = responseHttp.Response;
+        paginastotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
     }
 
     public void ValidacionFiltros()
@@ -303,7 +319,7 @@ else
         diccionariostrings["direccionoficionotarial"] = parametrosFiltros.direccionoficionotarial;
         diccionariostrings["nombrenotario"] = parametrosFiltros.nombrenotario;
         diccionariostrings["actojuridico"] = parametrosFiltros.actojuridico;
-
+        diccionariostrings["pagina"] = paginaactual.ToString();
         string primerJoin = string.Join("&",
             diccionariostrings
                  .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
@@ -321,5 +337,7 @@ else
         var fi = new FieldIdentifier(val, membername);
         _editContext.NotifyFieldChanged(fi);
     }
+
+
 
 }

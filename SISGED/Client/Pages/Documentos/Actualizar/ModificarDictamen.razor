@@ -200,23 +200,24 @@
                                 <MatIcon Icon="add_circle_outline"></MatIcon>
                             </div>
                         </div>
-                        @foreach (Observaciones p in dictamen.contenidoDTO.observaciones)
+                        @for(int i = 0; i < dictamen.contenidoDTO.observaciones.Count;i++)
                         {
+                            int index = i;
                             <div class="single-textfield-container">
-                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.observaciones[p.index].descripcion)">
-                                    <MatTextField @bind-Value="@dictamen.contenidoDTO.observaciones[p.index].descripcion" Class="text-field-style"
+                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.observaciones[index].descripcion)">
+                                    <MatTextField @bind-Value="@dictamen.contenidoDTO.observaciones[index].descripcion" Class="text-field-style"
                                                   Label="Ingrese una observación"
-                                                  @oninput='@(e => KeyUp(e, "descripcion", dictamen.contenidoDTO.observaciones[p.index]))'></MatTextField>
+                                                  @oninput='@(e => KeyUp(e, "descripcion", dictamen.contenidoDTO.observaciones[index]))'></MatTextField>
                                     <div class="incorrecto">
                                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                        <ValidationMessage For="@(() => dictamen.contenidoDTO.observaciones[p.index].descripcion)" />
+                                        <ValidationMessage For="@(() => dictamen.contenidoDTO.observaciones[index].descripcion)" />
                                     </div>
                                     <div class="correcto">
                                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                                         <span class="good-msg">Correcto</span>
                                     </div>
                                 </div>
-                                <div class="base-icon" @onclick="@(() => removeObservaciones(p.index))">
+                                <div class="base-icon" @onclick="@(() => removeObservaciones(index))">
                                     <MatIcon Icon="remove_circle_outline"></MatIcon>
                                 </div>
                             </div>
@@ -240,23 +241,24 @@
                                 <MatIcon Icon="add_circle_outline"></MatIcon>
                             </div>
                         </div>
-                        @foreach (Recomendaciones h in dictamen.contenidoDTO.recomendaciones)
+                        @for (int i = 0; i < dictamen.contenidoDTO.recomendaciones.Count; i++)
                         {
+                            int index = i;
                             <div class="single-textfield-container">
-                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.recomendaciones[h.index].descripcion)">
-                                    <MatTextField @bind-Value="@dictamen.contenidoDTO.recomendaciones[h.index].descripcion" Class="text-field-style"
+                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.recomendaciones[index].descripcion)">
+                                    <MatTextField @bind-Value="@dictamen.contenidoDTO.recomendaciones[index].descripcion" Class="text-field-style"
                                                   Label="Contenido de la recomendación"
-                                                  @oninput='@(e => KeyUp(e, "descripcion", dictamen.contenidoDTO.recomendaciones[h.index]))'></MatTextField>
+                                                  @oninput='@(e => KeyUp(e, "descripcion", dictamen.contenidoDTO.recomendaciones[index]))'></MatTextField>
                                     <div class="incorrecto">
                                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                        <ValidationMessage For="@(() => dictamen.contenidoDTO.recomendaciones[h.index].descripcion)" />
+                                        <ValidationMessage For="@(() => dictamen.contenidoDTO.recomendaciones[index].descripcion)" />
                                     </div>
                                     <div class="correcto">
                                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                                         <span class="good-msg">Correcto</span>
                                     </div>
                                 </div>
-                                <div class="base-icon" @onclick="@(() => removeRecomendaciones(h.index))">
+                                <div class="base-icon" @onclick="@(() => removeRecomendaciones(index))">
                                     <MatIcon Icon="remove_circle_outline"></MatIcon>
                                 </div>
                             </div>
@@ -351,7 +353,7 @@
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-        var httpResponse = await repository.Post<ExpedienteWrapper, Dictamen>("api/documentos/actualizarDocumentoD", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper>("api/documentos/actualizarDocumentoD", expedienteWrapper);
         if (!httpResponse.Error)
         {
             await swalfire.successMessage("Dictamen modificada correctamente");

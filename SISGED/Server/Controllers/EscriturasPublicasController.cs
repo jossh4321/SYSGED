@@ -51,5 +51,12 @@ namespace SISGED.Server.Controllers
                 listaescriturasPublicasFiltrado.AsQueryable().Paginate(parametrosbusqueda.Paginacion).ToList();
             return listaescriturasPublicasFiltradoPaginado;
         }
+        [HttpGet("id")]
+        public ActionResult<EscrituraPublica> GetById([FromQuery] string id)
+        {
+            EscrituraPublica escrituraPublica = new EscrituraPublica();
+            escrituraPublica = escriturasPublicasService.GetById(id);
+            return escrituraPublica;
+        }
     }
 }

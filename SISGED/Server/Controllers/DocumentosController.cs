@@ -80,7 +80,8 @@ namespace SISGED.Server.Controllers
                 contenido = contenidoSolicitudDenuncia,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
+                historialproceso = new List<Proceso>(),
+
             };
             solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
 
@@ -313,6 +314,12 @@ namespace SISGED.Server.Controllers
             return _documentoservice.modificarEstado(documento);
         }
 
+        [HttpPut("cambiarestadodocumento")]
+        public ActionResult<Documento> ModificarEstado(DocumentoDTO documento)
+        {
+            return _documentoservice.modificarEstadoDocumento(documento);
+        }
+
         //obteniendo documentos
         [HttpGet("documentoodn")]
         public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)
@@ -355,6 +362,11 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerSolicitudExpedienteNotario(iddoc);
             
+        }
+        [HttpGet("documentodto")]
+        public async Task<ActionResult<DocumentoDTO>> obtenerDocumento([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerDocumentoDTO(iddoc);
         }
 
         //Actualizaciones

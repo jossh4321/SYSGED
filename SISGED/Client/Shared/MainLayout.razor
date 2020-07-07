@@ -17,30 +17,25 @@
         <div style="height:56px">
 
         </div>
-		<MatNavMenu Style="margin-top:0px;">
-			@if (sesion == null)
-			{
-				<p><em>Loading...</em></p>
-			}
-			else
-			{
-				@foreach (Permiso interfaz in sesion.permisosInterfaz)
-				{
-					<MatNavItem OnClick="ButtonClicked" Style="width:inherit">
-						<MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
-						<span class="bartext-color">
-							@interfaz.label
-						</span>
-					</MatNavItem>
-				}
-			}
-			<MatNavItem  Style="width:inherit">
-				<MatIcon Icon="@MatIconNames.Calendar_view_day" Class="bar-side-icons-style"></MatIcon>
-				<span class="bartext-color">
-					Visualizar Agenda
-				</span>
-			</MatNavItem>
-		</MatNavMenu>
+        <MatNavMenu Style="margin-top:0px;">
+            @if (sesion == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                @foreach (Permiso interfaz in sesion.permisosInterfaz)
+                {
+                    <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
+                        <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
+                        <span class="bartext-color" @onclick="@(() => onclickButtonNav(interfaz.url))">
+                            @interfaz.label
+                            
+                        </span>
+                    </MatNavItem>
+                }
+            }
+        </MatNavMenu>
     </MatDrawer>
 
     <MatDrawerContent>
@@ -196,7 +191,6 @@
     }
     public List<Item> obtenerListaEntradas(List<ExpedienteBandejaDTO> listaentrada)
     {
-
         if(listaentrada.ElementAt(0).tipo != null)
         {
             return listaentrada.Select(x => new Item()
@@ -212,13 +206,13 @@
         }
         else
         {
-            return new List<Item>();    
+            return new List<Item>();
         }
-
     }
     public List<Item> obtenerListaSalidas(List<ExpedienteBandejaDTO> listasalida)
     {
-        if(listasalida.ElementAt(0).tipo != null)
+        //if (listasalida.ElementAt(0).tipo != null)
+        if (listasalida.ElementAt(0).tipo != null)
         {
             return listasalida.Select(x => new Item()
             {
@@ -366,6 +360,12 @@
         }
     }
     #endregion
+    void onclickButtonNav(string url)
+    {
+        
+        navigationManager.NavigateTo(url);
+        //navigationManager.NavigateTo(permiso.url);
+    }
 }
 
 

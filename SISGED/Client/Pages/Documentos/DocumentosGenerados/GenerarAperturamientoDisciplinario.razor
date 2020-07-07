@@ -1,62 +1,100 @@
 ﻿@inject IJSRuntime js
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 @using Newtonsoft.Json
-<style>
-    * {
-        color: black;
-    }
-    .contenedor-PDF {
-        height: 400px;
-        width: 600px;
-    }
-</style>
-<MatButton Raised="true" OnClick="@GenerarPDF"> Previsualizar Documento</MatButton>
-<MatDialog @bind-IsOpen="@generado">
-    <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
-    <MatDialogContent Class="contenedor-PDF">
-        <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
-    </MatDialogContent>
-</MatDialog>
-<div id="target" style="display: none">
-    <h1>@oficio.titulo</h1>
-    <h3>Nombre del denunciante: @oficio.nombredenunciante </h3>
-    <h3>Descripción: </h3>
-    <h4>@oficio.descripcion</h4>
-    <h3>Fiscal: @oficio.idfiscal</h3>
-    <h3>Lugar de audiencia: @oficio.lugaraudiencia</h3>
-    <h3>Datos del Notario:</h3>
-    <h4>- Nombre:</h4>
-    <h4>- Apellidos:</h4>
-    <h4>- DNI:</h4>
-    <h4>- Email: </h4>
-    <h3>Fecha de audencia:</h3>
-    <h4>- Inicio: @oficio.fechainicioaudiencia.ToString("dd-MM-yy")</h4>
-    <h4>- Fin: @oficio.fechafinaudiencia.ToString("dd-MM-yy")</h4>
-    <h3>Participantes:</h3>
-    @foreach (string i in oficio.participantes)
-    {
-        <h4>- @i</h4>
-    }
-    <h3>Hechos imputados:</h3>
-    @foreach (string i in oficio.hechosimputados)
-    {
-        <h4>- @i</h4>
-    }
-</div>
+@inject IRepository repositorio
+
+@if (faltaCargar)
+{
+    <p>Cargando......</p>
+}
+else
+{
+    <style>
+        * {
+            color: black;
+        }
+
+        .contenedor-PDF {
+            height: 400px;
+            width: 600px;
+        }
+    </style>
+    <MatButton Raised="true" OnClick="@GenerarPDF"> Previsualizar Documento</MatButton>
+    <MatDialog @bind-IsOpen="@generado">
+        <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
+        <MatDialogContent Class="contenedor-PDF">
+            <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
+        </MatDialogContent>
+    </MatDialog>
+    <div style="display: none">
+        <table id="convertirPDF">
+            <tbody>
+                <tr>
+                    <th colspan="7">@documento.titulo</th>
+                </tr>
+                <tr><td colspan="7"> </td></tr>
+                <tr><td colspan="7">Nombre del denunciante: @documento.nombredenunciante </td></tr>
+                <tr><td colspan="7">Descripción: </td></tr>
+                <tr><td colspan="7">@documento.descripcion</td></tr>
+                <tr><td colspan="7">Datos del fiscal: </td></tr>
+                <tr><td></td><td>- Nombre: @usuario.datos.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Apellidos: @usuario.datos.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Tipo de documento: @usuario.datos.tipodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Número de documento: @usuario.datos.numerodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td colspan="7">Lugar de audiencia: </td></tr>
+                <tr><td colspan="7"> @documento.lugaraudiencia </td></tr>
+                <tr><td colspan="7">Datos del notario: </td></tr>
+                <tr><td></td><td>- Nombre: @notario.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Apellidos: @notario.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- DNI: @notario.dni</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td colspan="7">Fecha de audiencia: </td></tr>
+                <tr><td></td><td>- Inicio: @documento.fechainicioaudiencia.ToString("dd-MM-yy")</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Fin: @documento.fechafinaudiencia.ToString("dd-MM-yy")</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td colspan="7">Participantes: </td></tr>
+                @foreach (string i in documento.participantes)
+                {
+                    <tr><td></td><td>- @i</td><td></td><td></td><td></td><td></td><td></td></tr>
+                }
+                <tr><td colspan="7">Hechos imputados: </td></tr>
+                @foreach (string i in documento.hechosimputados)
+                {
+                    <tr><td></td><td>- @i</td><td></td><td></td><td></td><td></td><td></td></tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+}
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
-    private ContenidoAperturamientoDisciplinario oficio { get; set; }
+    private ContenidoAperturamientoDisciplinario documento { get; set; }
+    private Usuario usuario;
+    private Notario notario;
     private bool generado = false;
+    private bool faltaCargar = true;
+
     private async Task GenerarPDF()
     {
         generado = true;
         await js.InvokeVoidAsync("gPDF");
     }
-    protected override void OnInitialized()
+
+    protected async override Task OnInitializedAsync()
     {
-        oficio = JsonConvert.DeserializeObject<ContenidoAperturamientoDisciplinario>(workspace.expedienteseleccionado.documento.contenido.ToString());
-        Console.WriteLine(oficio.titulo);
+        documento = JsonConvert.DeserializeObject<ContenidoAperturamientoDisciplinario>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        usuario = new Usuario();
+        await getUsuario();
+        faltaCargar = false;
     }
-    //  doc.save('conversion.pdf');
-    // await js.InvokeVoidAsync("gPDF");
+
+    private async Task getUsuario()
+    {
+        var responseHttp = await repositorio.Get<Usuario>($"api/usuarios/id?id={documento.idfiscal}");
+        usuario = responseHttp.Response;
+    }
+    private async Task getNotario()
+    {
+        var responseHttp = await repositorio.Get<Notario>($"api/notarios/id?id={documento.idnotario}");
+        notario = responseHttp.Response;
+    }
 }

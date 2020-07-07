@@ -68,7 +68,7 @@ namespace SISGED.Server.Services
             documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
             documentoExpediente.fechademora = null;
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5ee5f24e7d8f833f68cc88a0", updateExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);
 
 
             //actualizacion bandeja salida del usuario
@@ -131,7 +131,7 @@ namespace SISGED.Server.Services
             documentoExpediente.fechademora = null;
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5ee5f24e7d8f833f68cc88a0", updateExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5eeadf0b8ca4ff53a0b791e3", updateExpediente);
 
             //Actualizacion de bandeja de salida de usuario
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
@@ -179,9 +179,10 @@ namespace SISGED.Server.Services
             {
                 idescriturapublica = conclusionfirmaDTO.contenidoDTO.idescriturapublica.id
             };
+
             ConclusionFirma documentoDF = new ConclusionFirma()
             {
-                tipo = "ConclusionFirma",
+                tipo = "ConclusionFirma", 
                 contenido = contenidoCF,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
@@ -238,6 +239,15 @@ namespace SISGED.Server.Services
 
             UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
+
+            return _documentos.FindOneAndUpdate<Documento>(filter, update);
+        }
+
+        public Documento modificarEstadoDocumento(DocumentoDTO documento)
+        {
+            var filter = Builders<Documento>.Filter.Eq("id", documento.id);
+            var update = Builders<Documento>.Update
+                .Set("estado", documento.estado);
 
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
         }
@@ -358,6 +368,7 @@ namespace SISGED.Server.Services
             //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
             ContenidoResolucion contenidoResolucion = new ContenidoResolucion()
             {
+                titulo= resolucionDTO.contenidoDTO.titulo,
                 descripcion = resolucionDTO.contenidoDTO.descripcion,
                 fechainicioaudiencia = resolucionDTO.contenidoDTO.fechainicioaudiencia,
                 fechafinaudiencia = resolucionDTO.contenidoDTO.fechafinaudiencia,
@@ -559,11 +570,10 @@ namespace SISGED.Server.Services
             oficioDesignacionNotario.historialcontenido = documentoODN.historialcontenido;
             oficioDesignacionNotario.historialproceso = documentoODN.historialproceso;
             oficioDesignacionNotario.estado = documentoODN.estado;
-
             return oficioDesignacionNotario;
 
         }
-        public OficioBPNDTO obtenerOficioBusquedaProtocoloNotarial(string id)
+        public OficioBPNDTO  obtenerOficioBusquedaProtocoloNotarial(string id)
         {
             var match = new BsonDocument("$match", new BsonDocument("_id",
                         new ObjectId(id)));
@@ -883,6 +893,24 @@ namespace SISGED.Server.Services
             return solicitudExpNotario;
         }
 
+        public DocumentoDTO obtenerDocumentoDTO(string id)
+        {
+            DocumentoDTO docDocumento = new DocumentoDTO();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docDocumento = _documentos.Aggregate().
+              AppendStage<DocumentoDTO>(match).First();
+
+            //DocumentoDTO documentoDto = new DocumentoDTO
+            //{
+            //    id = docDocumento.id,
+            //    historialcontenido = docDocumento.historialcontenido,
+            //    historialproceso = docDocumento.historialproceso,
+            //    tipo = docDocumento.tipo,
+            //    urlanexo = docDocumento.urlanexo
+            //};
+            return docDocumento;
+        }
         //actualizarDocumentoODN
         public void actualizarDocumentoODN(ExpedienteWrapper expedienteWrapper)
         {
@@ -989,6 +1017,7 @@ namespace SISGED.Server.Services
             ConclusionFirmaDTO conclusionFirmaDTO = new ConclusionFirmaDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             conclusionFirmaDTO = JsonConvert.DeserializeObject<ConclusionFirmaDTO>(json);
+            ConclusionFirma documentocf = new ConclusionFirma();
 
             //Creacion de Obj y registro en coleccion de documentos 
             ContenidoConclusionFirma contenidoCF = new ContenidoConclusionFirma()
@@ -999,7 +1028,7 @@ namespace SISGED.Server.Services
             var filter = Builders<Documento>.Filter.Eq("id", conclusionFirmaDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica);
-            _documentos.UpdateOne(filter, update);
+             _documentos.UpdateOne(filter, update);
         }
 
         public void actualizarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
