@@ -49,7 +49,7 @@
                 ms.Read(bytesImage, 0, (int)ms.Length);
                 imagenBase64 = Convert.ToBase64String(bytesImage);
                 estilo = imagenBase64 != null ? "selected" : "not-selected";
-                estado = imagenBase64 != null ? "Archivo Seleccionado" : "Seleccione un Archivo";
+                estado = imagenBase64 != null ? "Imagen seleccionada" : "Seleccione un Archivo";
                 await imagenSeleccionada.InvokeAsync(imagenBase64);
             }
         }

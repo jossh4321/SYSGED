@@ -1,14 +1,8 @@
 ﻿@inject IJSRuntime js
+@inject IRepository repositorio;
 @using SISGED.Client.Pages.Samples.WorkEnvironment
-@using Newtonsoft.Json
-@inject IRepository repositorio
+@using Newtonsoft.Json;
 
-@if (faltaCargar)
-{
-    <p>Cargando......</p>
-}
-else
-{
     <style>
         * {
             color: black;
@@ -18,8 +12,16 @@ else
             height: 400px;
             width: 600px;
         }
+        .mat-success-c {
+            color: green !important;
+            border: 1px solid green !important;
+            border-radius: 15px !important;
+            font-size: 13px !important;
+            transition: all 300ms !important;
+            width: 100%;
+        }
     </style>
-    <MatButton Raised="true" OnClick="@GenerarPDF"> Previsualizar Documento</MatButton>
+    <MatButton Disabled="@faltaCargar" OnClick="@GenerarPDF" Class="mat-success-c"> Generar Documento</MatButton>
     <MatDialog @bind-IsOpen="@generado">
         <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
         <MatDialogContent Class="contenedor-PDF">
@@ -57,7 +59,7 @@ else
             </tbody>
         </table>
     </div>
-}
+
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     private ContenidoOficioBPN documento { get; set; }
@@ -77,7 +79,7 @@ else
         documento = JsonConvert.DeserializeObject<ContenidoOficioBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
         usuario = new Usuario();
         notario = new Notario();
-        await getUsuario();
+        //await getUsuario();
         await getNotario();
         faltaCargar = false;
     }

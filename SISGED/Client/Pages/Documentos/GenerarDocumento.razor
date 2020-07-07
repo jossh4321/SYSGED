@@ -1,6 +1,6 @@
 ﻿@using SISGED.Client.Pages.Samples.WorkEnvironment
 @using SISGED.Client.Pages.Documentos.DocumentosGenerados
-
+@using Newtonsoft.Json;
 <style>
     * {
         color: black;
@@ -42,7 +42,7 @@
             <MatTabGroup>
                 <MatTab Label="Informacion Descriptiva">
                     <div class="field-container">
-                        <MatTextField @bind-Value="@codigo" Class="text-field-style" Label="Código"></MatTextField>
+                        <MatTextField @bind-Value="@codigo" ReadOnly="true" Class="text-field-style" Label="Código"></MatTextField>
                     </div>
                     <SeleccionarImagen imagenSeleccionada="imagenSeleccionada"></SeleccionarImagen>
                     @if (imagen != null)
@@ -66,7 +66,6 @@
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     public RenderFragment ChildContent = null;
     public string codigo = "";
-    public string codigoInsertado;
     private string imagen = null;
     private void imagenSeleccionada(string imagenBase64)
     {
@@ -74,20 +73,48 @@
         Console.WriteLine(imagen);
         StateHasChanged();
     }
-    private void TipoArchivo()
+    protected override void OnInitialized()
     {
-        Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
-        if (workspace.expedienteseleccionado.documento.tipo == "SolicitudDenuncia") ChildContent = @<GenerarSolicitudDenuncia> </GenerarSolicitudDenuncia>;
-        if (workspace.expedienteseleccionado.documento.tipo == "OficioBPN") ChildContent = @<GenerarOficioBPN> </GenerarOficioBPN >;
-        if (workspace.expedienteseleccionado.documento.tipo == "SolicitudBPN") ChildContent = @<GenerarSolicitudBPN> </GenerarSolicitudBPN>;
-        if (workspace.expedienteseleccionado.documento.tipo == "ResultadoBPN") ChildContent = @<GenerarResultadoBPN> </GenerarResultadoBPN>;
-        if (workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedicionFirma") ChildContent = @<GenerarSolicitudExpedicionFirma> </GenerarSolicitudExpedicionFirma>;
-        if (workspace.expedienteseleccionado.documento.tipo == "OficioDesignacionNotario") ChildContent = @<GenerarOficioDesignacionNotario> </GenerarOficioDesignacionNotario>;
-        if (workspace.expedienteseleccionado.documento.tipo == "ConclusionFirma") ChildContent = @<GenerarConclusionFirma> </GenerarConclusionFirma>;
-        if (workspace.expedienteseleccionado.documento.tipo == "AperturamientoDisciplinario") ChildContent = @<GenerarAperturamientoDisciplinario> </GenerarAperturamientoDisciplinario>;
-        if (workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario") ChildContent = @<GenerarSolicitudExpediente> </GenerarSolicitudExpediente>;
-        if (workspace.expedienteseleccionado.documento.tipo == "Dictamen") ChildContent = @<GenerarDictamen> </GenerarDictamen>;
-        if (workspace.expedienteseleccionado.documento.tipo == "Resolucion") ChildContent = @<GenerarResolucion> </GenerarResolucion>;
-        if (workspace.expedienteseleccionado.documento.tipo == "Apelacion") ChildContent = @<GenerarApelacion> </GenerarApelacion>;
+        Console.WriteLine(workspace.expedienteseleccionado.cliente.numerodocumento);
+        GenerarCodigo();
+        if (workspace.expedienteseleccionado.documento.tipo == "SolicitudDenuncia") ChildContent = @<GenerarSolicitudDenuncia></GenerarSolicitudDenuncia>;
+        if (workspace.expedienteseleccionado.documento.tipo == "OficioBPN") ChildContent = @<GenerarOficioBPN></GenerarOficioBPN>;
+        if (workspace.expedienteseleccionado.documento.tipo == "SolicitudBPN") ChildContent = @<GenerarSolicitudBPN></GenerarSolicitudBPN>;
+        if (workspace.expedienteseleccionado.documento.tipo == "ResultadoBPN") ChildContent = @<GenerarResultadoBPN></GenerarResultadoBPN>;
+        if (workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedicionFirma") ChildContent = @<GenerarSolicitudExpedicionFirma></GenerarSolicitudExpedicionFirma>;
+        if (workspace.expedienteseleccionado.documento.tipo == "OficioDesignacionNotario") ChildContent = @<GenerarOficioDesignacionNotario></GenerarOficioDesignacionNotario>;
+        if (workspace.expedienteseleccionado.documento.tipo == "ConclusionFirma") ChildContent = @<GenerarConclusionFirma></GenerarConclusionFirma>;
+        if (workspace.expedienteseleccionado.documento.tipo == "AperturamientoDisciplinario") ChildContent = @<GenerarAperturamientoDisciplinario></GenerarAperturamientoDisciplinario>;
+        if (workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario") ChildContent = @<GenerarSolicitudExpediente></GenerarSolicitudExpediente>;
+        if (workspace.expedienteseleccionado.documento.tipo == "Dictamen") ChildContent = @<GenerarDictamen></GenerarDictamen>;
+        if (workspace.expedienteseleccionado.documento.tipo == "Resolucion") ChildContent = @<GenerarResolucion></GenerarResolucion>;
+        if (workspace.expedienteseleccionado.documento.tipo == "Apelacion") ChildContent = @<GenerarApelacion></GenerarApelacion>;
     }
+    private void GenerarCodigo()
+    {
+        codigo = workspace.expedienteseleccionado.documento.tipo;
+        codigo = codigo + "-" + workspace.expedienteseleccionado.cliente.numerodocumento;
+        codigo = codigo + "-" + ToUnixTime(DateTime.Now);
+        codigo = codigo + "-" + Serializacion();
+    }
+    public long ToUnixTime(DateTime dateTime)
+    {
+        DateTime mydate = dateTime;
+        DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        return (long)((mydate - UnixEpoch).TotalSeconds);
+    }
+    public string Serializacion()
+    {
+        int serie=1;
+        foreach(DocumentoDTO i in workspace.expedienteseleccionado.documentosobj)
+        {
+            if(i.id == workspace.expedienteseleccionado.documento.id)
+            {
+                break;
+            }
+            serie++;
+        }
+        return string.Format("{0:000}", serie);
+    }
+
 }

@@ -22,7 +22,7 @@ namespace SISGED.Server.Services
             _usuario = database.GetCollection<Usuario>("usuarios");
         }
 
-        public Usuario
+        /*public Usuario
             //Actualizamos el expediente y agregamos el documento a sus documentos contenidos
             DocumentoExpediente documentoExpediente = new DocumentoExpediente();
         documentoExpediente.indice = 8;
@@ -33,6 +33,6 @@ namespace SISGED.Server.Services
             documentoExpediente.fechademora = null;
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-        Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);
+        Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);*/
     }
 }
