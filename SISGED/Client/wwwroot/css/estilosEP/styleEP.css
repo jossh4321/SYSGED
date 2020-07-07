@@ -18,25 +18,25 @@
     color: black;
 }
 
-    .demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
+.demo-mat-card-text p, .demo-mat-card-text h5, .demo-mat-card-text h6 {
         text-align: left;
         font-weight: bolder;
         font-size: 15px;
-        padding-left: 5px;
+        padding-left: 5px; 
         color: black;
-    }
+}
 
-    .demo-mat-card-text h5 {
-        text-transform: capitalize;
-        font-size: 19px !important;
-        font-weight: normal;
-    }
+.demo-mat-card-text h5 {
+    text-transform: capitalize;
+    font-size: 19px !important;
+    font-weight: normal;
+}
 
-    .demo-mat-card-text button {
-        display: flex;
-        margin-bottom: 5px;
-        margin-left: 5px;
-    }
+.demo-mat-card-text button {
+    display: flex;
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
 
 .mat-color {
     color: skyblue;
@@ -60,9 +60,9 @@
     flex-basis: calc((100%/2) - 10px);
 }
 
-    .col-datos-6 div {
-        border-radius: 5px;
-    }
+.col-datos-6 div {
+    border-radius: 5px;
+}
 
 .mbottom-5 {
     margin-bottom: 5px;
@@ -98,33 +98,31 @@
     width: 90%;
     max-width: 750px;
     margin: 0px auto;
-    margin-top: 5px;
 }
-
 .input-filtro {
     flex-grow: 1;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     margin-right: 5px;
     flex-basis: calc((100%/3) - 5px);
 }
 
 .input-filtro-multiple {
-    display: flex;
-    flex-direction: row;
+    display:flex;
+    flex-direction:row;
     flex-wrap: wrap;
     width: 100%;
 }
 
-.input-filtro-hijo, .input-filtro-options {
-    margin-bottom: 25px;
+.input-filtro-hijo,.input-filtro-options {
+    margin-bottom: 10px;
     margin-right: 5px;
     flex-basis: calc((100%/3) - 5px);
 }
 
-    .input-filtro-options button {
-        display: flex;
-        background-color: deepskyblue !important;
-    }
+.input-filtro-options button {
+    display: flex;
+    background-color: deepskyblue !important;
+}
 
 .bloque {
     display: block;
@@ -174,8 +172,4 @@ div.incorrecto i.bad-icon {
 
 .invalid {
     outline: none !important;
-}
-
-.prueba {
-    display: block;
 }

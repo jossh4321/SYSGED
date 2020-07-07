@@ -24,6 +24,16 @@ namespace SISGED.Server.Controllers
             this.escriturasPublicasService = escriturasPublicasService;
         }
 
+        [HttpGet]
+        public async Task<List<EscrituraPublicaRDTO>> Get()
+        {
+            ParametrosBusquedaEscrituraPublica parametrosbusqueda = new ParametrosBusquedaEscrituraPublica();
+            List<EscrituraPublicaRDTO> listaEscriturasPublicas =await escriturasPublicasService.obtenerEscriturasPublicas();
+            await HttpContext.InsertPagedParameterOnResponse(listaEscriturasPublicas.AsQueryable(), parametrosbusqueda.cantidadregistros);
+            List<EscrituraPublicaRDTO> listaEscriturasPublicasPaginado = listaEscriturasPublicas.AsQueryable().Paginate(parametrosbusqueda.Paginacion).ToList();
+            return listaEscriturasPublicasPaginado;
+        }
+
         [HttpGet("filter")]
         public ActionResult<List<EscrituraPublica>> autocompletefilter([FromQuery] string term)
         {

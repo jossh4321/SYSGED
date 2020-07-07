@@ -17,24 +17,30 @@
         <div style="height:56px">
 
         </div>
-        <MatNavMenu Style="margin-top:0px;">
-            @if (sesion == null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else
-            {
-                @foreach (Permiso interfaz in sesion.permisosInterfaz)
-                {
-                    <MatNavItem OnClick="ButtonClicked" Style="width:inherit">
-                        <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
-                        <span class="bartext-color">
-                            @interfaz.label
-                        </span>
-                    </MatNavItem>
-                }
-            }
-        </MatNavMenu>
+		<MatNavMenu Style="margin-top:0px;">
+			@if (sesion == null)
+			{
+				<p><em>Loading...</em></p>
+			}
+			else
+			{
+				@foreach (Permiso interfaz in sesion.permisosInterfaz)
+				{
+					<MatNavItem OnClick="ButtonClicked" Style="width:inherit">
+						<MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
+						<span class="bartext-color">
+							@interfaz.label
+						</span>
+					</MatNavItem>
+				}
+			}
+			<MatNavItem  Style="width:inherit">
+				<MatIcon Icon="@MatIconNames.Calendar_view_day" Class="bar-side-icons-style"></MatIcon>
+				<span class="bartext-color">
+					Visualizar Agenda
+				</span>
+			</MatNavItem>
+		</MatNavMenu>
     </MatDrawer>
 
     <MatDrawerContent>

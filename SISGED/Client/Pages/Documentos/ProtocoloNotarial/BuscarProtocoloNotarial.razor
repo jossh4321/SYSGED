@@ -1,11 +1,11 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalFireMessage
 @inject NavigationManager navigationManager
-<link rel="stylesheet" href="css/estilosEP/styleEP.css"/>
+<link rel="stylesheet" href="css/estilosEP/styleEP.css" />
 <div>
     @if (parametrosFiltros == null)
     {
-        <text>Cargando....</text>
+        <text>Cargando...</text>
     }
     else
     {
@@ -240,16 +240,23 @@ else
         parametrosFiltros = new ParametrosBusquedaEscrituraPublicaDTO();
         parametrosFiltros.nombreotorgantes = new List<OtorganteDTO>();
         OtorganteDTO otorgante = new OtorganteDTO();
+        otorgante.nombre = "";
         otorgante.index = 0;
         parametrosFiltros.nombreotorgantes.Add(otorgante);
         _editContext = new EditContext(parametrosFiltros);
-        await ConsultarEscriturasPublicasFiltros("");
+        await CargarEscriturasPublicas();
     }
 
-    public async Task paginaSeleccionada(int pagina)
+    public void paginaSeleccionada(int pagina)
     {
         paginaactual = pagina;
-        await BuscarEscriturasPublicas();
+    }
+
+    private async Task CargarEscriturasPublicas()
+    {
+        var responseHttp = await repositorio.Get<List<EscrituraPublicaRDTO>>("api/EscriturasPublicas");
+        paginastotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
+        listaEscriturasPublicas = responseHttp.Response;
     }
 
     private void VisualizarEscrituraPublica(EscrituraPublicaRDTO escrituraPublica)
@@ -280,7 +287,6 @@ else
     {
         var responseHttp = await repositorio.Get<List<EscrituraPublicaRDTO>>("api/EscriturasPublicas/filterespecial?" + queryoriginados);
         listaEscriturasPublicas = responseHttp.Response;
-        paginastotales = int.Parse(responseHttp.HttpResponseMessage.Headers.GetValues("totalPaginas").FirstOrDefault());
     }
 
     public void ValidacionFiltros()
@@ -297,7 +303,7 @@ else
         diccionariostrings["direccionoficionotarial"] = parametrosFiltros.direccionoficionotarial;
         diccionariostrings["nombrenotario"] = parametrosFiltros.nombrenotario;
         diccionariostrings["actojuridico"] = parametrosFiltros.actojuridico;
-        diccionariostrings["pagina"] = paginaactual.ToString();
+
         string primerJoin = string.Join("&",
             diccionariostrings
                  .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
