@@ -2,45 +2,77 @@
 @inject ISwalFireMessage swalfire
 <style>
     .mdc-dialog {
-        z-index: 10000 !important;
+        z-index: 1000 !important;
     }
+
     .demo-mat-card-content {
-        padding: 1rem;
+       /* padding: 1rem;*/
         margin: 0px;
-        z-index: 10000 !important;
+        z-index: 100 !important;
+    }
+    .mdc-dialog__content {
+        padding: 0 !important;
+    }
+    p{
+        font-size: 12px;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto;               
+    }
+
+    .card-historial {
+        margin: 5px;
+        /*border: 1px solid;*/
+        transition: all 0.3s ease-out;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+    .mar{
+        padding: 10px;
     }
 </style>
 
-<MatCard class="demo-mat-card">
-    <MatCardContent>
-        <p>@documento.iddocumento</p>
-        <MatHeadline6 class="demo-mat-card-clean-margin demo-mat-card-text">@documento.tipo</MatHeadline6>
-        <div class="demo-mat-card-content">
-            <p>Fecha de creacion</p>
-            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@documento.fechacreacion</MatBody2>
-            <p>Fecha exceso</p>
-            <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin demo-mat-card-text">@documento.fechaexceso</MatBody2>
-        </div>
-    </MatCardContent>
-    <MatCardActions>
-        <div class="demo-mat-card-content">
-            <MatButton Raised="true" Icon="@MatIconNames.Book" @onclick="@getHistorialProceso" Class="mat-color">Historial proceso</MatButton>
-            <MatButton Raised="true" Icon="@MatIconNames.History"  @onclick="@getHistorialContenido" Class="mat-color">Historial Contenido</MatButton>
-        </div>
-    </MatCardActions>
-</MatCard>
+<div class="card expediente">
+    <div class="overlay"></div>
+    <div class="circle">
+        <img src="https://image.flaticon.com/icons/png/512/1925/1925392.png" height="76" width="71">
+    </div>
+    <p>@documento.tipo</p>
+    <p>Fecha exceso: @documento.fechaexceso</p>
+    <p>Fecha creación: @documento.fechacreacion</p>
+    <button @onclick="@getHistorialProceso" class="btn">Historial proceso</button>
+    <button @onclick="@getHistorialContenido" class="btn">Historial Contenido</button>
+</div>
 
-<MatDialog @bind-IsOpen="dialogoHistorialProceso" Class="dialogo">
+
+<MatDialog @bind-IsOpen="dialogoHistorialProceso" Class="dialogo"> 
     <MatDialogTitle>Historial Proceso</MatDialogTitle>
     <MatDialogContent>
-        @foreach (Proceso proceso in historialproceso)
+        @if (historialproceso.Count == 0)
         {
-            <p>@proceso.area</p>
-            <p>@proceso.fechaemision</p>
-            <p>@proceso.fecharecepcion</p>
-            <p>@proceso.idusuario</p>
-            <p>@proceso.indice</p>            
+            <div class="card-historial">
+                <p>El documento no cuenta con historial de procesos</p>
+            </div>
         }
+        else
+        {
+            <div class="grid-container">
+                @foreach (Proceso proceso in historialproceso)
+                {
+                    <div class="card-historial">
+                        <p>Área: @proceso.area</p>
+                        <p>Fecha emisión: @proceso.fechaemision</p>
+                        <p>Fecha recepción: @proceso.fecharecepcion</p>
+                        <p>Usuario: @proceso.idusuario</p>
+                    </div>
+
+                }
+            </div>
+        }
+
     </MatDialogContent>
     <MatDialogActions>
         <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoHistorialProceso = false; })">Volver</MatButton>
@@ -50,14 +82,28 @@
 
 <MatDialog @bind-IsOpen="dialogoHistorialContenido" Class="dialogo">
     <MatDialogTitle>Historial Contenido</MatDialogTitle>
-    <MatDialogContent>       
-        @foreach (ContenidoVersion contenido in historialcontenido)
+    <MatDialogContent>
+        @if (historialcontenido.Count == 0)
         {
-            <p>@contenido.fechamodificacion</p>
-            <p>@contenido.url</p>
-            <p>@contenido.version</p>
+            <div class="card-historial">
+                <p>El documento no cuenta con historial de contenido</p>
+            </div>
         }
-    </MatDialogContent>
+        else
+        {
+        <div class="grid-container">
+            @foreach (ContenidoVersion contenido in historialcontenido)
+            {
+                <div class="card-historial">
+                    <p>Fecha de modificación: @contenido.fechamodificacion</p>
+                    <p>Versión: @contenido.version</p>
+                    <p> @contenido.url</p>
+                </div>
+            }
+        </div>
+        }
+
+        </MatDialogContent>
     <MatDialogActions>
         <MatButton Icon="@MatIconNames.Arrow_left" @onclick="@((e) => { dialogoHistorialContenido = false; })">Volver</MatButton>
     </MatDialogActions>
@@ -106,5 +152,6 @@
     }
 
 }
+
 
 

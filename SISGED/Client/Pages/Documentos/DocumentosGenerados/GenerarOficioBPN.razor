@@ -1,34 +1,98 @@
 ﻿@inject IJSRuntime js
+@inject IRepository repositorio;
 @using SISGED.Client.Pages.Samples.WorkEnvironment
-@using Newtonsoft.Json
+@using Newtonsoft.Json;
 
-<MatButton Raised="true" OnClick="@GenerarPDF"> Generar OficioBPN</MatButton>
-@if (generado)
-{
-<iframe id="pdf_preview" type="application/pdf" src="" width="800" height="400">
-</iframe>
-} 
-<div id="target" style="display: none">
-    <h1>@oficio.titulo</h1>
-    <h2>Descripción: </h2>
-    <p>@oficio.descripcion</p>
-    <h2>Dirección de Oficio: </h2>
-    <p>@oficio.direccionoficio</p>
-   
-</div>
+    <style>
+        * {
+            color: black;
+        }
+
+        .contenedor-PDF {
+            height: 400px;
+            width: 600px;
+        }
+        .mat-success-c {
+            color: green !important;
+            border: 1px solid green !important;
+            border-radius: 15px !important;
+            font-size: 13px !important;
+            transition: all 300ms !important;
+            width: 100%;
+        }
+    </style>
+    <MatButton Disabled="@faltaCargar" OnClick="@GenerarPDF" Class="mat-success-c"> Generar Documento</MatButton>
+    <MatDialog @bind-IsOpen="@generado">
+        <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
+        <MatDialogContent Class="contenedor-PDF">
+            <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
+        </MatDialogContent>
+    </MatDialog>
+    <div style="display: none">
+        <table id="convertirPDF">
+            <tbody>
+                <tr>
+                    <th colspan="7">@documento.titulo</th>
+                </tr>
+                <tr><td colspan="7"> </td></tr>
+                <tr><td colspan="7">Descripción: </td></tr>
+                <tr><td colspan="7">@documento.descripcion</td></tr>
+                <tr><td colspan="7">Fecha de realización: @documento.fecharealizacion.ToString("dd-MM-yy")</td></tr>
+                <tr><td colspan="7">Datos del Cliente: </td></tr>
+                <tr><td></td><td>- Nombre: @usuario.datos.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Apellidos: @usuario.datos.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Tipo de documento: @usuario.datos.tipodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Número de documento: @usuario.datos.numerodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td colspan="7">Datos del notario: </td></tr>
+                <tr><td></td><td>- Nombre: @notario.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Apellidos: @notario.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- DNI: @notario.dni</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td colspan="7">Dirección de oficio: </td></tr>
+                <tr><td colspan="7">@documento.direccionoficio </td></tr>
+                <tr><td colspan="7">Acto juridico: @documento.actojuridico </td></tr>
+                <tr><td colspan="7">Tipo de protocolo: @documento.tipoprotocolo</td></tr>
+                <tr><td colspan="7"> Otorgantes: </td></tr>
+                @foreach (string i in documento.otorgantes)
+                {
+                    <tr><td></td><td>- @i </td><td></td><td></td><td></td><td></td><td></td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
-    private ContenidoOficioBPN oficio { get; set; }
+    private ContenidoOficioBPN documento { get; set; }
+    private Usuario usuario;
+    private Notario notario;
     private bool generado = false;
+    private bool faltaCargar = true;
+
     private async Task GenerarPDF()
     {
-        await js.InvokeVoidAsync("gPDF");
         generado = true;
+        await js.InvokeVoidAsync("gPDF");
     }
-    protected override void OnInitialized()
+
+    protected async override Task OnInitializedAsync()
     {
-        oficio = JsonConvert.DeserializeObject<ContenidoOficioBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
-        Console.WriteLine(oficio.titulo);
+        documento = JsonConvert.DeserializeObject<ContenidoOficioBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        usuario = new Usuario();
+        notario = new Notario();
+        //await getUsuario();
+        await getNotario();
+        faltaCargar = false;
     }
-    //    doc.save('conversion.pdf');
+
+    private async Task getUsuario()
+    {
+        var responseHttp = await repositorio.Get<Usuario>($"api/usuarios/id?id={documento.idcliente}");
+        usuario = responseHttp.Response;
+    }
+    private async Task getNotario()
+    {
+        var responseHttp = await repositorio.Get<Notario>($"api/notarios/id?id={documento.idnotario}");
+        notario = responseHttp.Response;
+    }
 }
+

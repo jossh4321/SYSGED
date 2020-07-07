@@ -113,5 +113,11 @@ namespace SISGED.Server.Services
 
             return escrituraPublicas;
         }
+        public EscrituraPublica GetById(string id)
+        {
+            EscrituraPublica escrituraPublica = new EscrituraPublica();
+            escrituraPublica = _escriturapublicas.Find(escritura => escritura.id == id).FirstOrDefault();
+            return escrituraPublica;
+        }
     }
 }
