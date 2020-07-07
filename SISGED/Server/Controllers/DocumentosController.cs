@@ -80,7 +80,8 @@ namespace SISGED.Server.Controllers
                 contenido = contenidoSolicitudDenuncia,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
+                historialproceso = new List<Proceso>(),
+
             };
             solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
 

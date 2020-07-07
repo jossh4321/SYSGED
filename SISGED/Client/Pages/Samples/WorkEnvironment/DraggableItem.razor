@@ -21,7 +21,7 @@
                 if (herramienta.itemstatus.Equals("registrado") && herramienta.originPlace.Equals("inputs"))
                 {
                     ExpedienteBandejaDTO documento = (ExpedienteBandejaDTO)herramienta.valor;
-                    <p class="registro">Documento Registrado: @documento.tipo</p>
+                    <p class="registro">Documento Registrado: @documento.documento.tipo</p>
                 }
                 if (herramienta.itemstatus.Equals("escogido") && herramienta.originPlace.Equals("inputs"))
                 {
