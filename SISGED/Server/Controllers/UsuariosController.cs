@@ -101,5 +101,13 @@ namespace SISGED.Server.Controllers
             return await _usuarioservice.obtenerFiscales();
         }
 
+        [HttpGet("clientes")]
+        public ActionResult<List<Usuario>> autocompletefilter([FromQuery] string term)
+        {
+            List<Usuario> listanotario = new List<Usuario>();
+            listanotario = _usuarioservice.filter(term);
+            return listanotario;
+        }
+
     }
 }

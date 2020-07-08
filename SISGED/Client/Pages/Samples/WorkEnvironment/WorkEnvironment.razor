@@ -242,15 +242,19 @@
     {
         Console.WriteLine("INICIE: WorkEnvironment");
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
-        /*var httpResponse = await repository.Get <List<Notificacion>>("api/notificacion/notificacion");
+        var httpResponse = await repository.Get <List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {
-            Console.WriteLine("todo bien!");
+            List<Documento> docs = new List<Documento>();
+            foreach(Documento doc in docs)
+            {
+                Console.WriteLine("valor: "+doc.id);
+            }
         }
         else
         {
             Console.WriteLine("algo mal");
-        }*/
+        }
     }
 
     public void UpdateDraggableComponents(string newCurrentPlace)

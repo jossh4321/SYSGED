@@ -15,6 +15,10 @@ namespace SISGED.Shared.DTOs
     public class ContenidoConclusionFirmaDTO
     {
         public EscrituraPublica idescriturapublica { get; set; }
+        public Notario idnotario { get; set; }
+        public Usuario idcliente { get; set; }
+        public Int32 cantidadfoja { get; set; } = 2;
+        public double precio { get; set; }
     }
 
     public class ConclusionFirma_lookup

@@ -17,7 +17,7 @@ namespace SISGED.Shared.DTOs
     public class DocumentoEvaluadoDTO
     {
         public string id { get; set; } = null;
-        public Estado estado { get; set; } = new Estado()
+        public Evaluacion evaluacion { get; set; } = new Evaluacion()
         {
             status = "",
             observacion = null,
