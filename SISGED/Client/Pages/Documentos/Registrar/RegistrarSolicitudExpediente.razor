@@ -187,6 +187,7 @@
                 cliente = expedientebandeja.cliente,
                 itemstatus = "registrado"
             };
+
             workspace.UpdateDocRegistrado(itemSalida);
             workspace.UpdateTools("Registrar Documento");
             DocumentoDTO documentoDTO = new DocumentoDTO();
@@ -201,6 +202,7 @@
             workspace.expedienteseleccionado.documento = documentoDTO;
 
             StateHasChanged();
+            //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Solicitud de expediente de notario registrado correctamente");
         }
         else

@@ -318,6 +318,7 @@
             expedientebandeja.documento.estado = oficiobpn.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
+
             {
                 nombre = expedientebandeja.tipo,
                 valor = expedientebandeja,
@@ -328,6 +329,7 @@
                 cliente = expedientebandeja.cliente,
                 itemstatus = "registrado"
             };
+
             workspace.UpdateDocRegistrado(itemSalida);
             workspace.UpdateTools("Registrar Documento");
             DocumentoDTO documentoDTO = new DocumentoDTO();
@@ -342,7 +344,9 @@
             workspace.expedienteseleccionado.documento = documentoDTO;
 
             StateHasChanged();
+            //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
+
         }
         else
         {
