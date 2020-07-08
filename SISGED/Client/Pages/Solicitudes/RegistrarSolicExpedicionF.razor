@@ -150,7 +150,7 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+                <!-- <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>-->
 
                 <div class="field-container">
                     <MatButton type="submit"
@@ -196,8 +196,10 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
+        /*
         if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
         {
+
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
             solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
             expedienteWrapper.documento = solicitudexpedicionfirma;
@@ -225,12 +227,13 @@
                 };
                 workspace.UpdateComponentBandeja(itemSalida);
                 await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
-            }
+
         }
         else
         {
             await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
-        }
+        }*/
+        await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
         loadprocess = false;
     }
 
