@@ -33,8 +33,10 @@ namespace SISGED.Shared.Entities
         public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
         [BsonElement("urlanexo")]
         public List<string> urlanexo { get; set; } = new List<string>();
+        [BsonElement("estado")]
+        public string estado { get; set; }
     }
-    public class Estado
+    public class Evaluacion
     {
         public string status { get; set; }
         public string observacion { get; set;}
@@ -50,8 +52,7 @@ namespace SISGED.Shared.Entities
     }
     public class SolicitudDenuncia : Documento
     {
-        [BsonElement("estado")]
-        public string estado { get; set; }
+
         public ContenidoSolicitudDenuncia contenido { get; set; } = new ContenidoSolicitudDenuncia();
     }
 
@@ -72,8 +73,8 @@ namespace SISGED.Shared.Entities
     }
     public class OficioBPN : Documento
     {
-        [BsonElement("estado")]
-        public Estado estado { get; set; }
+        [BsonElement("evaluacion")]
+        public Evaluacion evaluacion { get; set; }
         public ContenidoOficioBPN contenido { get; set; } = new ContenidoOficioBPN();
      
     }
@@ -90,8 +91,6 @@ namespace SISGED.Shared.Entities
     }
     public class SolicitudBPN : Documento
     {
-        [BsonElement("estado")]
-        public string estado { get; set; }
         public ContenidoSolicitudBPN contenido { get; set; } = new ContenidoSolicitudBPN();
 
     }
@@ -106,8 +105,6 @@ namespace SISGED.Shared.Entities
 
     public class ResultadoBPN : Documento
     {
-        [BsonElement("estado")]
-        public string estado { get; set; }
         public ContenidoResultadoBPN contenido { get; set; }
 
     }
@@ -125,8 +122,6 @@ namespace SISGED.Shared.Entities
 
     public class SolicitudExpedicionFirma : Documento
     {
-        [BsonElement("estado")]
-        public string estado { get; set; }
         public ContenidoSolicitudExpedicionFirma contenido { get; set; }
 
     }
@@ -134,21 +129,21 @@ namespace SISGED.Shared.Entities
     public class ContenidoConclusionFirma
     {
         public string idescriturapublica { get; set; }
-        public List<string> urlanexo { get; set; } = new List<string>();
-
+        public string idnotario { get; set; }
+        public string idcliente { get; set; }
+        public Int32 cantidadfoja { get; set; }
+        public double precio { get; set; }
     }
     public class ConclusionFirma : Documento
     {
-        [BsonElement("estado")]
-        public string estado { get; set; }
         public ContenidoConclusionFirma contenido { get; set; }
     }
 
     
     public class OficioDesignacionNotario : Documento
     {
-        [BsonElement("estado")]
-        public Estado estado { get; set; }
+        [BsonElement("evaluacion")]
+        public Evaluacion evaluacion { get; set; }
         public ContenidoOficioDesignacionNotario contenido { get; set; } = new ContenidoOficioDesignacionNotario();
     }
     public class ContenidoOficioDesignacionNotario
@@ -180,8 +175,6 @@ namespace SISGED.Shared.Entities
     }
     public class AperturamientoDisciplinario : Documento
     {
-        [BsonElement("estado")]
-        public string estado { get; set; }
         public ContenidoAperturamientoDisciplinario contenido { get; set; }
     }
 
@@ -195,8 +188,6 @@ namespace SISGED.Shared.Entities
     }
     public class SolicitudExpedienteNotario : Documento
     {
-        [BsonElement("estado")]
-        public string estado { get; set; }
         public ContenidoSolicitudExpedienteNotario contenido { get; set; }
     }
 
@@ -213,8 +204,6 @@ namespace SISGED.Shared.Entities
 
     public class Dictamen : Documento
     {
-        [BsonElement("estado")]
-        public string estado { get; set; }
         public ContenidoDictamen contenido { get; set; }
     }
 
@@ -231,8 +220,8 @@ namespace SISGED.Shared.Entities
     }
     public class Resolucion : Documento
     {
-        [BsonElement("estado")]
-        public Estado estado { get; set; }
+        [BsonElement("evaluacion")]
+        public Evaluacion evaluacion { get; set; }
         public ContenidoResolucion contenido { get; set; }
     }
     public class ContenidoApelacion
@@ -246,18 +235,8 @@ namespace SISGED.Shared.Entities
     }
     public class Apelacion : Documento
     {
-        [BsonElement("estado")]
-        public Estado estado { get; set; }
+        [BsonElement("evaluacion")]
+        public Evaluacion evaluacion { get; set; }
         public ContenidoApelacion contenido { get; set; }
     }
-
-    /*public class OficioDesignacionNotario : Documento
-    {
-        public string titulo { get; set; }
-        public string descripcion { get; set; }
-        public DateTime fecharealizacion { get; set; }
-        public string lugaroficionotarial { get; set; }
-        public string idusuario { get; set; }
-        public string idnotario { get; set; }
-    }*/
 }

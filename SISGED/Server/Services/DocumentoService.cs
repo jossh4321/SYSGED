@@ -49,7 +49,7 @@ namespace SISGED.Server.Services
             {
                 tipo = "OficioDesignacionNotario",
                 contenido = contenidoODN,
-                estado = new Estado()
+                evaluacion = new Evaluacion()
                 {
                     status = "pendiente",
                     observacion = null
@@ -117,7 +117,7 @@ namespace SISGED.Server.Services
                 tipo = "OficioBPN",
                 contenido = contenidoSolicitudBPN,
                 //estado = "pendiente",
-                estado = new Estado()
+                evaluacion = new Evaluacion()
                 {
                     status = "pendiente",
                     observacion = "Ninguna",
@@ -183,7 +183,11 @@ namespace SISGED.Server.Services
             //Insertando la conclusion normal
             ContenidoConclusionFirma contenidoCF = new ContenidoConclusionFirma()
             {
-                idescriturapublica = conclusionfirmaDTO.contenidoDTO.idescriturapublica.id
+                idescriturapublica = conclusionfirmaDTO.contenidoDTO.idescriturapublica.id,
+                idnotario = conclusionfirmaDTO.contenidoDTO.idnotario.id,
+                idcliente = conclusionfirmaDTO.contenidoDTO.idcliente.id,
+                cantidadfoja = conclusionfirmaDTO.contenidoDTO.cantidadfoja,
+                precio = (conclusionfirmaDTO.contenidoDTO.cantidadfoja * 30)
             };
 
             ConclusionFirma documentoDF = new ConclusionFirma()
@@ -235,7 +239,7 @@ namespace SISGED.Server.Services
         {
             var filter = Builders<Documento>.Filter.Eq("id", documento.id);
             var update = Builders<Documento>.Update
-                .Set("estado", documento.estado);
+                .Set("estado", documento.evaluacion);
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = documento.idexpediente;
             bandejaDocumento.iddocumento = documento.id;
@@ -388,7 +392,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoResolucion,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
-                estado = new Estado()
+                evaluacion = new Evaluacion()
                 {
                     status = "pendiente",
                     observacion = ""
@@ -447,7 +451,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoApe,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
-                estado = new Estado()
+                evaluacion = new Evaluacion()
                 {
                     status = "pendiente",
                     observacion = "Ninguna",
@@ -575,7 +579,7 @@ namespace SISGED.Server.Services
             };
             oficioDesignacionNotario.historialcontenido = documentoODN.historialcontenido;
             oficioDesignacionNotario.historialproceso = documentoODN.historialproceso;
-            oficioDesignacionNotario.estado = documentoODN.estado;
+            oficioDesignacionNotario.evaluacion = documentoODN.evaluacion;
             return oficioDesignacionNotario;
 
         }

@@ -89,8 +89,8 @@ else
     private async Task AprobarDocumento()
     {
         documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
-        documentoEvaluado.estado.status = "aprobado";
-        documentoEvaluado.estado.observacion = "Ninguna";
+        documentoEvaluado.evaluacion.status = "aprobado";
+        documentoEvaluado.evaluacion.observacion = "Ninguna";
         documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
         documentoEvaluado.idusuario = sesion.usuario.id;
         await Actualizar();
@@ -104,8 +104,8 @@ else
         else
         {
             documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
-            documentoEvaluado.estado.status = "desaprobado";
-            documentoEvaluado.estado.observacion = observacion.Trim();
+            documentoEvaluado.evaluacion.status = "desaprobado";
+            documentoEvaluado.evaluacion.observacion = observacion.Trim();
             documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
             documentoEvaluado.idusuario = sesion.usuario.id;
             await Actualizar();
@@ -135,9 +135,9 @@ else
         string tipo = workspace.expedienteseleccionado.documento.tipo;
         if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
         {
-            Estado estado = JsonConvert.DeserializeObject<Estado>(workspace.expedienteseleccionado.documento.estado.ToString());
-            Console.WriteLine(estado.status);
-            if (estado.status == "pendiente")
+            Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.estado.ToString());
+            Console.WriteLine(evaluacion.status);
+            if (evaluacion.status == "pendiente")
             {
                 DocumentoRevisado = false;
             }

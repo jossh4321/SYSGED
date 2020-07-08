@@ -8,7 +8,7 @@ namespace SISGED.Shared.DTOs
     public class ResolucionDTO:Documento
     {
 
-        public Estado estado { get; set; } = new Estado();
+        public Evaluacion evaluacion { get; set; } = new Evaluacion();
         public ContenidoResolucionDTO contenidoDTO { get; set; } = new ContenidoResolucionDTO();
     }
 

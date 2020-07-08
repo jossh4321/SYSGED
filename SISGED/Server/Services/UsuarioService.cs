@@ -115,5 +115,14 @@ namespace SISGED.Server.Services
                 .ToListAsync();
             return fiscales;
         }
+
+        public List<Usuario> filter(string term)
+        {
+            string regex = "\\b" + term.ToLower() + ".*";
+            var filter = Builders<Usuario>.Filter.Regex("datos.nombre", new BsonRegularExpression(regex, "i"));
+            var filter2 = Builders<Usuario>.Filter.Eq("tipo", "cliente");
+            return _usuarios.Find(filter & filter2).ToList();
+        }
+
     }
 }
