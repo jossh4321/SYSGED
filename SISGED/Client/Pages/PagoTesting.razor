@@ -11,7 +11,7 @@
     private async Task NavigateToPaid()
     {
 
-        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = "5ef9f9c1afdbc540d868b3ce-5ed99e50fed03c07c872c85c", descripcion = "Prueba papi", monto = "30.00" });
+        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = "5ed99e50fed03c07c872c85c", descripcion = "Solicitud BPN Adquisicion de Inmuebles", monto = "50.00" });
         navigationManager.NavigateTo(httpResponse.Response.url);
     }
 }
