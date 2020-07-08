@@ -9,7 +9,7 @@ namespace SISGED.Shared.Models
     public class ParametrosBusquedaEscrituraPublica
     {
         public int pagina { get; set; } = 1;
-        public int cantidadregistros { get; set; } = 10;
+        public int cantidadregistros { get; set; } = 1;
 
         public Pagination Paginacion
         {

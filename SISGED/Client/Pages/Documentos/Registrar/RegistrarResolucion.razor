@@ -308,17 +308,17 @@
             {
                 ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
                 expedientebandeja = workspace.expedienteseleccionado;
-                Resolucion resolucion = new Resolucion();
-                resolucion = httpResponse.Response;
-                expedientebandeja.documento.id = resolucion.id;
-                expedientebandeja.documento.tipo = resolucion.tipo;
-                Console.WriteLine("tipo :" + resolucion.tipo);
-                expedientebandeja.documento.historialcontenido = resolucion.historialcontenido;
-                expedientebandeja.documento.historialproceso = resolucion.historialproceso;
-                expedientebandeja.documento.contenido = resolucion.contenido;
-                expedientebandeja.documento.estado = resolucion.estado;
+                Resolucion documentoResolucion = new Resolucion();
+                documentoResolucion = httpResponse.Response;
+                expedientebandeja.documento.id = documentoResolucion.id;
+                expedientebandeja.documento.tipo = documentoResolucion.tipo;
+                expedientebandeja.documento.historialcontenido = documentoResolucion.historialcontenido;
+                expedientebandeja.documento.historialproceso = documentoResolucion.historialproceso;
+                expedientebandeja.documento.contenido = documentoResolucion.contenido;
+                expedientebandeja.documento.estado = documentoResolucion.estado;
                 expedientebandeja.documentosobj.Add(expedientebandeja.documento);
                 Item itemSalida = new Item()
+
                 {
                     nombre = expedientebandeja.tipo,
                     valor = expedientebandeja,
@@ -329,17 +329,17 @@
                     cliente = expedientebandeja.cliente,
                     itemstatus = "registrado"
                 };
-                Console.WriteLine(expedientebandeja.documento.tipo);
+
                 workspace.UpdateDocRegistrado(itemSalida);
                 workspace.UpdateTools("Registrar Documento");
                 DocumentoDTO documentoDTO = new DocumentoDTO();
-                documentoDTO.id = resolucion.id;
-                documentoDTO.tipo = resolucion.tipo;
-                documentoDTO.estado = resolucion.estado;
-                documentoDTO.contenido = resolucion.contenido;
-                documentoDTO.historialcontenido = resolucion.historialcontenido;
-                documentoDTO.historialproceso = resolucion.historialproceso;
-                documentoDTO.urlanexo = resolucion.urlanexo;
+                documentoDTO.id = documentoResolucion.id;
+                documentoDTO.tipo = documentoResolucion.tipo;
+                documentoDTO.estado = documentoResolucion.estado;
+                documentoDTO.contenido = documentoResolucion.contenido;
+                documentoDTO.historialcontenido = documentoResolucion.historialcontenido;
+                documentoDTO.historialproceso = documentoResolucion.historialproceso;
+                documentoDTO.urlanexo = documentoResolucion.urlanexo;
                 workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
                 workspace.expedienteseleccionado.documento = documentoDTO;
 

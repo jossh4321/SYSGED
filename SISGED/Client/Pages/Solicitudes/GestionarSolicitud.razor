@@ -3,20 +3,32 @@
 
 <style>
     .mdc-dialog .mdc-dialog__surface {
-            width: 800px;
-
+        width: 800px;
     }
 
+    .mdc-paginator-container {
+        color: white;
+    }
+
+    th {
+        text-align: center;
+        text-emphasis: filled;
+    }
+
+    td {
+        text-align: center;
+    }
 </style>
 
-<div>
+<div style="width:1050px;position:fixed;">
     <MainLayout />
     <MatButton OnClick="@OpenDialogRegistrar" Unelevated="true">Registrar Solicitud</MatButton>
-    <MatTable style="background-color:aliceblue;color:darkslateblue" Items="@cars" class="mat-elevation-z5">
+    <MatTable style="background-color:aliceblue;color:darkslateblue;border-radius:40px;text-align:center" Items="@cars" class="mat-elevation-z5">
         <MatTableHeader>
             <th>Nombre</th>
             <th>Número de Documento</th>
             <th>Tipo de Protocolo Notarial</th>
+            <th>Estado</th>
             <th>Fecha</th>
             <th>Funciones</th>
         </MatTableHeader>
@@ -24,6 +36,7 @@
             <td>@context.Name</td>
             <td>@String.Format("${0:f2}", @context.Price)</td>
             <td>@context.Horsepower</td>
+            <td>asdasd</td>
             <td>asdasd</td>
             <td>
                 <MatButton Icon="@MatIconNames.Build" OnClick="@OpenDialogModificar">Modificar</MatButton>
@@ -34,53 +47,122 @@
     </MatTable>
 </div>
 
-  
-
 
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-    <MatDialogTitle>Registrar Solicitud</MatDialogTitle>
-    <MatDialogContent>
-        <RegistrarSolicitudes/>
-    </MatDialogContent>
+    @if (TipoSolicitud == "Solic_ExpedicionFirma")
+    {
+    <MatDialogTitle>Registrar Solicitud de Expedicion de Firma</MatDialogTitle>
+        <MatDialogContent>
+            <RegistrarSolicExpedicionF />
+        </MatDialogContent>
+    }
+    @if (TipoSolicitud == "Solic_Denuncia")
+    {
+        <MatDialogTitle>Registrar Solicitud de Denuncia</MatDialogTitle>
+        <MatDialogContent>
+            <RegistrarSolicDenuncias />
+        </MatDialogContent>
+    }
+    @if (TipoSolicitud == "Solic_BPN")
+    {
+        <MatDialogTitle>Registrar Solicitud de BPN</MatDialogTitle>
+        <MatDialogContent>
+            <RegistrarSolicBPN />
+        </MatDialogContent>
+    }
+
     <MatDialogActions>
-        <MatButton OnClick="@OkClick">OK</MatButton>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
     </MatDialogActions>
 </MatDialog>
+
+
+
+
+
+
+
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
     <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
     <MatDialogContent>
-        <RegistrarSolicitudes />
+        @if (TipoSolicitud == "Solic_ExpedicionFirma")
+        {<RegistrarSolicExpedicionF />}
+        @if (TipoSolicitud == "Solic_Denuncia")
+        {<RegistrarSolicDenuncias />}
+        @if (TipoSolicitud == "Solic_BPN")
+        {<RegistrarSolicBPN/> }
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@OkClick">OK</MatButton>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
     </MatDialogActions>
 </MatDialog>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_VerDetalles">
     <MatDialogTitle>Detalles de la Solicitud</MatDialogTitle>
     <MatDialogContent>
-        <RegistrarSolicitudes />
+        @if (TipoSolicitud == "Solic_ExpedicionFirma")
+        {<RegistrarSolicExpedicionF />}
+        @if (TipoSolicitud == "Solic_Denuncia")
+        {<RegistrarSolicDenuncias />}
+        @if (TipoSolicitud == "Solic_BPN")
+        { }
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@OkClick">OK</MatButton>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
     </MatDialogActions>
 </MatDialog>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Cancelar">
     <MatDialogTitle>Cancelar Solicitud</MatDialogTitle>
     <MatDialogContent>
-        <RegistrarSolicitudes />
+        @if (TipoSolicitud == "Solic_ExpedicionFirma")
+        {<RegistrarSolicExpedicionF />}
+        @if (TipoSolicitud == "Solic_Denuncia")
+        {<RegistrarSolicDenuncias />}
+        @if (TipoSolicitud == "Solic_BPN")
+        { }
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton OnClick="@OkClick">OK</MatButton>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
+    </MatDialogActions>
+</MatDialog>
+<MatDialog @bind-IsOpen="@dialogPrincipal">
+    <MatDialogTitle>Elegir Tipo de Solicitud</MatDialogTitle>
+    <MatDialogContent>
+        <p>
+            <MatSelect Label="" @bind-Value="@TipoSolicitud">
+                <MatOptionString Value="nulo"></MatOptionString>
+                <MatOptionString Value="Solic_ExpedicionFirma">Expedicion de Firmas</MatOptionString>
+                <MatOptionString Value="Solic_Denuncia">Denuncia</MatOptionString>
+                <MatOptionString Value="Solic_BPN">Busqueda de Protocolo Notarial</MatOptionString>
+            </MatSelect>
+        </p>
+    </MatDialogContent>
+    <MatDialogActions>
+        @if (TipoSolicitud == "Solic_ExpedicionFirma" || TipoSolicitud == "Solic_Denuncia" || TipoSolicitud == "Solic_BPN")
+        {
+            <MatButton OnClick="@OkEleccionSolic">OK</MatButton>
+        }
+        <MatButton OnClick="@CancelButton">Cerrar</MatButton>
     </MatDialogActions>
 </MatDialog>
 
 
 
+
+
+
+
+
+
 @code {
+
+    string TipoSolicitud;
+
+
+    bool dialogPrincipal = false;
 
     bool dialogIsOpen_Registrar = false;
 
@@ -88,9 +170,47 @@
     bool dialogIsOpen_VerDetalles = false;
     bool dialogIsOpen_Cancelar = false;
 
+    bool Registrar_SolicDenuncia = false;
+    bool Registrar_SolicBPN = false;
+    bool Registrar_SolicEF = false;
+
+    void CancelButton()
+    {
+        dialogPrincipal = !dialogPrincipal;
+
+        Registrar_SolicDenuncia = false;
+        Registrar_SolicBPN = false;
+        Registrar_SolicEF = false;
+    }
+
+    void OkEleccionSolic()
+    {
+        if (dialogPrincipal)
+        {
+
+            dialogIsOpen_Registrar = true;
+            if (TipoSolicitud == "Solic_ExpedicionFirma")
+            {
+                Registrar_SolicEF = true;
+            }
+            else if (TipoSolicitud == "Solic_Denuncia")
+            {
+                Registrar_SolicDenuncia = true;
+            }
+            else if (TipoSolicitud == "Solic_BPN")
+            {
+                Registrar_SolicBPN = true;
+            }
+            dialogPrincipal = false;
+
+        }
+
+    }
+
     void OpenDialogRegistrar()
     {
-        dialogIsOpen_Registrar = true;
+        dialogPrincipal = true;
+        //dialogIsOpen_Registrar = true;
         //navigationManager.NavigateTo("solicitud/crear");
     }
     void OpenDialogModificar()
@@ -116,6 +236,9 @@
         dialogIsOpen_Modificar = false;
         dialogIsOpen_VerDetalles = false;
         dialogIsOpen_Cancelar = false;
+
+
+        TipoSolicitud = "nulo";
     }
 
     public class Car

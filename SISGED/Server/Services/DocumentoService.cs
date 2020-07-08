@@ -83,6 +83,12 @@ namespace SISGED.Server.Services
                 Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                   Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
+
+            //Actulizar el documento anterior a revisado
+            //var filter = Builders<Documento>.Filter.Eq("id", expedienteWrapper.documentoentrada);
+            //var update = Builders<Documento>.Update
+            //    .Set("estado.status", "revisado");
+            //_documentos.UpdateOne(filter, update);
             return documentoODN;
         }
         public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)

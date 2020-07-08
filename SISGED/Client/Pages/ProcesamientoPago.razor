@@ -137,7 +137,7 @@ else
                 };
                 DocumentoDTO solicitud = new DocumentoDTO
                 {
-                    id = mercadoPago.referencia.Split("-")[1]
+                    id = mercadoPago.referencia
                 };
                 //Paso4: Obtener el documento
                 var httpResponse = await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={solicitud.id}");

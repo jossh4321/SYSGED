@@ -217,6 +217,11 @@
                 </MatTab>
             </MatTabGroup>
         </div>
+        <div class="field-container">
+            <MatButton type="button" Icon="@MatBlazor.MatIconNames.Info"
+                       @onclick="@closeDialog"
+                       Class="button-input-style mat-info-c sub-but">Cerrar</MatButton>
+        </div>
     </MatDialog>
 
 </div>
@@ -233,7 +238,7 @@
         tipo = "SolicitudBPN",
         estado = "Pendiente",
         historialcontenido = new List<ContenidoVersion>()
-    {
+{
             new ContenidoVersion() { version = 1, url = "www.cnl/solicitud_BPN/1", fechamodificacion = new DateTime() }
         },
         historialproceso = new List<Proceso>(),
@@ -266,7 +271,7 @@
             },
             actojuridico = "Mancomunacion de vienes por casamiento civil",
             tipoprotocolo = "minuta",
-            otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo" },
+            otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo" },
             fecharealizacion = DateTime.Now
         }
     };
@@ -318,7 +323,6 @@
             expedientebandeja.documento.estado = oficiobpn.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
-
             {
                 nombre = expedientebandeja.tipo,
                 valor = expedientebandeja,
@@ -329,9 +333,8 @@
                 cliente = expedientebandeja.cliente,
                 itemstatus = "registrado"
             };
-
-            workspace.UpdateDocRegistrado(itemSalida);
-            workspace.UpdateTools("Registrar Documento");
+            //workspace.UpdateDocRegistrado(itemSalida);
+            //workspace.UpdateTools("Registrar Documento");
             DocumentoDTO documentoDTO = new DocumentoDTO();
             documentoDTO.id = oficiobpn.id;
             documentoDTO.tipo = oficiobpn.tipo;
@@ -344,9 +347,7 @@
             workspace.expedienteseleccionado.documento = documentoDTO;
 
             StateHasChanged();
-            //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
-
         }
         else
         {
