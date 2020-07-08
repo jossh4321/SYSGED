@@ -189,7 +189,9 @@
             documentoDTO.urlanexo = apelacionact.urlanexo;
             workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
             workspace.expedienteseleccionado.documento = documentoDTO;
+
             StateHasChanged();
+            //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Apelación registrado correctamente");
         }
         else
