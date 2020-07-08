@@ -110,6 +110,22 @@ namespace SISGED.Server.Services
             return expediente;
         }
 
+        public ExpedienteDTO getbynestediddoc(string iddoc)
+        {
+            Expediente expediente = _expedientes.Find(exp => exp.documentos.Any(doc=>doc.iddocumento == iddoc)).FirstOrDefault();
+            ExpedienteDTO dTO = new ExpedienteDTO
+            {
+                cliente = expediente.cliente,
+                derivaciones = expediente.derivaciones,
+                documentos = expediente.documentos,
+                estado = expediente.estado,
+                fechafin = expediente.fechafin,
+                fechainicio = expediente.fechainicio,
+                id = expediente.id,
+                tipo = expediente.tipo
+            };
+            return dTO;
+        }
 
         public async Task<List<ExpedienteDTO>> filtrado(ParametrosBusquedaExpediente parametrosbusqueda)
         {
