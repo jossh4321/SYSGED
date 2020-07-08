@@ -1,12 +1,11 @@
-﻿@using System.IO
-@inject IRepository repository
+﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
         background-color: #a6a6a6;
         flex-basis: 100%;
-        border-radius: 15px 15px 15px 15px;
+        border-radius: 5px 5px 0px 0px;
         width: 100%;
     }
 
@@ -59,19 +58,57 @@
     div.incorrecto i.bad-icon {
         color: red !important;
     }
+
+    .modal-info-solicitudBPN {
+        display: flex;
+        flex-direction: column;
+        /*height: 700px;*/
+        width: 500px;
+        background-color: #808080;
+    }
+
+    .div-form.mat-tab-group {
+        max-width: 500px;
+    }
+
+    .otorgantes {
+        border: 1px solid #ccc;
+        background: #f2f2f2;
+        display: flex;
+        margin: 7px 10px;
+        align-items: center;
+        flex-direction: column;
+        border-radius: 5px 5px 0px 0px;
+        border-bottom: 1px solid black;
+    }
+
+    .title-ot {
+        font-size: 16px;
+        margin-bottom: 0px;
+        margin-top: 5px;
+        color: #595959;
+    }
 </style>
 <div class="div-form">
     <EditForm EditContext="@_editContext" Context="CurrentEditContext"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
         <MatTabGroup>
-            <MatTab Label="Datos Generales">
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.nombrecliente)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.nombrecliente" Class="text-field-style"
-                                  Label="Nombre del cliente" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudexpedicionfirma))'></MatTextField>
+            <MatTab Label="Informacion Descriptiva">
+
+                <div class="field-container">
+                    <MatButton type="button" Icon="@MatBlazor.MatIconNames.Info"
+                               @onclick="@openDialog"
+                               Class="button-input-style mat-info-c sub-but">Informacion de Solicitud</MatButton>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Titulo de documento"
+                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
+
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.nombrecliente)" />
+                        <ValidationMessage For="@(() => documento.contenidoDTO.titulo)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -79,78 +116,19 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.tipodocumento)">
-                    <InputSelect @bind-Value="@solicitudexpedicionfirma.tipodocumento" class="text-field-style  custom-select">
-                        <option value="nulo">--Seleccione el Tipo de Documento--</option>
-                        <option value="CE">Carnet de Extranjeria</option>
-                        <option value="DNI">D.N.I.</option>
-                        <option value="pasaporte">Pasaporte</option>
-                    </InputSelect>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@documento.contenidoDTO.descripcion" Class="text-field-style" Label="Descripcion del documento"
+                                  @oninput='@(e => KeyUp(e, "descripcion", documento.contenidoDTO))'></MatTextField>
+
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.tipodocumento)" />
+                        <ValidationMessage For="@(() => documento.contenidoDTO.descripcion)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.numerodocumento)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.numerodocumento" Class="text-field-style"
-                                  Label="N° de documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudexpedicionfirma))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.numerodocumento)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitud"
-                                  @oninput='@(e => KeyUp(e,"codigo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
-
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.codigo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.titulo" Class="text-field-style" Label="Título del solicitud"
-                                  @oninput='@(e => KeyUp(e,"titulo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
-
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.titulo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.descripcion)">
-                    <textarea class="form-control text-field-style txt-area" @bind="@solicitudexpedicionfirma.contenidoDTO.descripcion"
-                              @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedicionfirma.contenidoDTO))' placeholder="Descripcion de la Solicitud"></textarea>
-
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.descripcion)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
                 <div class="field-container">
                     <MatButton type="submit"
@@ -161,28 +139,148 @@
             </MatTab>
         </MatTabGroup>
     </EditForm>
+
+    <MatDialog @bind-IsOpen="@abrirDialogo">
+        <div class="modal-info-solicitudBPN">
+            <MatTabGroup>
+                <MatTab Label="Solicitud">
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.actojuridico" ReadOnly="true" Class="text-field-style" Label="Acto Juridico"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.tipoprotocolo" ReadOnly="true" Class="text-field-style" Label="Tipo de Protocolo"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
+                    </div>
+                    <div class="otorgantes">
+                        <p class="title-ot">OTORGANTES REGISTRADOS</p>
+
+                        <MatChipSet>
+                            @foreach (string otorgante in docSolicitudBPNDTO.contenidoDTO.otorgantes)
+                            {
+                                <MatChip Label="@otorgante" LeadingIcon="@MatIconNames.Supervised_user_circle"></MatChip>
+                            }
+                        </MatChipSet>
+
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatDatePicker @bind-Value="@docSolicitudBPNDTO.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
+                    </div>
+                </MatTab>
+                <MatTab Label="Solicitante">
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idcliente.datos.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del solicitante">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idcliente.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del solicitante">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idcliente.datos.tipodocumento" ReadOnly="true" Class="text-field-style" Label="Tipo de Documento">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idcliente.datos.numerodocumento" ReadOnly="true" Class="text-field-style" Label="Numero de Documento">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idcliente.datos.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
+                        </MatTextField>
+                    </div>
+                </MatTab>
+                <MatTab Label="Notario">
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del Notario">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del Notario">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.dni" ReadOnly="true" Class="text-field-style" Label="DNI">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.colegiatura" ReadOnly="true" Class="text-field-style" Label="Codigo de Colegiatura">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
+                        </MatTextField>
+                    </div>
+                </MatTab>
+            </MatTabGroup>
+        </div>
+        <div class="field-container">
+            <MatButton type="button" Icon="@MatBlazor.MatIconNames.Info"
+                       @onclick="@closeDialog"
+                       Class="button-input-style mat-info-c sub-but">Cerrar</MatButton>
+        </div>
+    </MatDialog>
+
 </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
-    private SolicitudExpedicionFirmaDTO solicitudexpedicionfirma = new SolicitudExpedicionFirmaDTO();
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-    private EditContext _editContext;
-    private string documentoTemporal { get; set; } = null;
-    private string imagenTemporal;
     private bool loadprocess = false;
+    public bool abrirDialogo = false;
+    public void openDialog() { abrirDialogo = true; }
+    public void closeDialog() { abrirDialogo = false; }
+
+    public SolicitudBPNDTO docSolicitudBPNDTO = new SolicitudBPNDTO()
+    {
+        tipo = "SolicitudBPN",
+        estado = "Pendiente",
+        historialcontenido = new List<ContenidoVersion>()
+{
+            new ContenidoVersion() { version = 1, url = "www.cnl/solicitud_BPN/1", fechamodificacion = new DateTime() }
+        },
+        historialproceso = new List<Proceso>(),
+        contenidoDTO = new ContenidoSolicitudBPNDTO()
+        {
+            idcliente = new Usuario()
+            {
+                id = "5eaba912d1768c4570dc1a80",
+                tipo = "Cliente",
+                usuario = "user1",
+                clave = "pass1",
+                datos = new Datos()
+                {
+                    nombre = "Juan Carlos",
+                    apellido = "Pillaca",
+                    tipodocumento = "D.N.I.",
+                    numerodocumento = "12345678",
+                    email = "jcPillaca@urp.edu.pe"
+                }
+            },
+            direccionoficio = "av. surco 123",
+            idnotario = new Notario()
+            {
+                id = "5ecb15b38e511a1d5cca29c4",
+                nombre = "Fernando Jose",
+                apellido = "Ezzpinoza Paredes",
+                dni = "4321",
+                colegiatura = "4H5H4K6K6V5J233O6HU6U676",
+                email = "fernandoparedes@cnl.gob.pe"
+            },
+            actojuridico = "Mancomunacion de vienes por casamiento civil",
+            tipoprotocolo = "minuta",
+            otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo" },
+            fecharealizacion = DateTime.Now
+        }
+    };
+
+    private OficioBPNDTO documento = new OficioBPNDTO();
+    private EditContext _editContext;
     protected override void OnInitialized()
     {
-        _editContext = new EditContext(solicitudexpedicionfirma);
-        if (!string.IsNullOrEmpty(solicitudexpedicionfirma.contenidoDTO.data))
-        {
-            imagenTemporal = solicitudexpedicionfirma.contenidoDTO.data;
-            solicitudexpedicionfirma.contenidoDTO.data = null;
-        }
-    }
-
-    private void ImagenSeleccionada(string imagenbase64)
-    {
-        solicitudexpedicionfirma.contenidoDTO.data = imagenbase64;
+        _editContext = new EditContext(documento);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -196,40 +294,64 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
+        documento.contenidoDTO.idcliente = docSolicitudBPNDTO.contenidoDTO.idcliente;
+        documento.contenidoDTO.direccionoficio = docSolicitudBPNDTO.contenidoDTO.direccionoficio;
+        documento.contenidoDTO.idnotario = docSolicitudBPNDTO.contenidoDTO.idnotario;
+        documento.contenidoDTO.actojuridico = docSolicitudBPNDTO.contenidoDTO.actojuridico;
+        documento.contenidoDTO.tipoprotocolo = docSolicitudBPNDTO.contenidoDTO.tipoprotocolo;
+        documento.contenidoDTO.otorgantes = docSolicitudBPNDTO.contenidoDTO.otorgantes;
+        documento.contenidoDTO.fecharealizacion = DateTime.Now;
+
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = documento;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>($"api/documentos/documentosbpn", expedienteWrapper);
+        if (!httpResponse.Error)
         {
-            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-            solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
-            expedienteWrapper.documento = solicitudexpedicionfirma;
-
-            expedienteWrapper.idusuarioactual = sesion.usuario.id;
-
-            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosef", expedienteWrapper);
-            if (httpResponse.Error)
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            OficioBPN oficiobpn = new OficioBPN();
+            oficiobpn = httpResponse.Response;
+            expedientebandeja.documento.id = oficiobpn.id;
+            expedientebandeja.documento.tipo = oficiobpn.tipo;
+            expedientebandeja.documento.historialcontenido = oficiobpn.historialcontenido;
+            expedientebandeja.documento.historialproceso = oficiobpn.historialproceso;
+            expedientebandeja.documento.contenido = oficiobpn.contenido;
+            expedientebandeja.documento.estado = oficiobpn.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
             {
-                await swalfire.errorMessage("Error en el servidor 505, intentelo de nuevo");
-            }
-            else
-            {
-                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-                expedientebandeja = httpResponse.Response;
-                Item itemSalida = new Item()
-                {
-                    nombre = expedientebandeja.tipo,
-                    valor = expedientebandeja,
-                    icono = "alarm_add",
-                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                    currentPlace = "outputs",
-                    originPlace = "outputs",
-                    cliente = expedientebandeja.cliente
-                };
-                workspace.UpdateComponentBandeja(itemSalida);
-                await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
-            }
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+            //workspace.UpdateDocRegistrado(itemSalida);
+            //workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = oficiobpn.id;
+            documentoDTO.tipo = oficiobpn.tipo;
+            documentoDTO.estado = oficiobpn.estado;
+            documentoDTO.contenido = oficiobpn.contenido;
+            documentoDTO.historialcontenido = oficiobpn.historialcontenido;
+            documentoDTO.historialproceso = oficiobpn.historialproceso;
+            documentoDTO.urlanexo = oficiobpn.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
+            await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
         }
         else
         {
-            await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
+            await swalfire.errorMessage("Error en el servidor");
         }
         loadprocess = false;
     }
