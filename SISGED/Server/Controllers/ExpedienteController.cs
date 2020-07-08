@@ -46,6 +46,12 @@ namespace SISGED.Server.Controllers
             return listaExpedientesFiltradoPaginado;
         }
 
+        [HttpGet("getbynested")]
+        public async Task<ActionResult<ExpedienteDTO>> getbynestediddoc([FromQuery] string iddoc)
+        {
+            return _expedienteService.getbynestediddoc(iddoc);
+        }
+
         [HttpPost("derivacion")]
         public ActionResult<Expediente> registrarDerivacion(Expediente expediente, [FromQuery] string userId)
         {
