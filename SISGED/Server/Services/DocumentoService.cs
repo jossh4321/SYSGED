@@ -40,7 +40,7 @@ namespace SISGED.Server.Services
             {
                 titulo = oficioDesignacionNotarioDTO.contenidoDTO.titulo,
                 descripcion = oficioDesignacionNotarioDTO.contenidoDTO.descripcion,
-                fecharealizacion = new DateTime(),
+                fecharealizacion = DateTime.Now,
                 lugaroficionotarial = oficioDesignacionNotarioDTO.contenidoDTO.lugaroficionotarial,
                 idusuario = oficioDesignacionNotarioDTO.contenidoDTO.idusuario,
                 idnotario = oficioDesignacionNotarioDTO.contenidoDTO.idnotario.id,

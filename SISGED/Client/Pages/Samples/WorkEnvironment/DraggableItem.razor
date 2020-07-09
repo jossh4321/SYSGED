@@ -3,6 +3,14 @@
     .registro {
         color: #cca300;
         font-weight: bold;
+        margin-left:7px;
+    }
+    .mat-info-c {
+        color: #3333ff !important;
+        border: 1px solid #3333ff !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
     }
 </style>
 <li draggable="true" class="li-tool @classname" @ondragstart="@(() => HandleDragStart(herramienta))">
@@ -22,6 +30,7 @@
                 {
                     ExpedienteBandejaDTO documento = (ExpedienteBandejaDTO)herramienta.valor;
                     <p class="registro">Documento Registrado: @documento.documento.tipo</p>
+                    <MatButton Class="mat-info-c" @onclick="@(()=>workSpace.openDialog())" >Visualizar</MatButton>
                 }
                 if (herramienta.itemstatus.Equals("escogido") && herramienta.originPlace.Equals("inputs"))
                 {
@@ -37,6 +46,7 @@
 @code {
     [CascadingParameter] public WorkEnvironment workSpace { get; set; }
     [Parameter] public Item herramienta { get; set; }
+
     public string classname = "li-drag-style";
 
     private void HandleDragStart(Item tool)

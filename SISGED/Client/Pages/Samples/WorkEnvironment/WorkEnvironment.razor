@@ -181,6 +181,14 @@
         margin: 0px 0px 0px 7px;
         color: #b3b3b3;
     }
+
+    .modal-info-solicitudBPN {
+        display: flex;
+        flex-direction: column;
+        /*height: 700px;*/
+        width: 500px;
+        background-color: #808080;
+    }
 </style>
 <div style="flex-basis:100%">
     <div class="work-box-title-style">
@@ -227,14 +235,24 @@
             </div>
         </div>
     </CascadingValue>
+    @if (expedienteseleccionado != null)
+    {
+    <MatDialog @bind-IsOpen="@abrirDialogo">
+        <div class="modal-info-solicitudBPN">
+            @if (expedienteseleccionado.documento.tipo.Equals("OficioDesignacionNotario"))
+            {
+                <VerOficioDesignacionNotario iddocumento="@expedienteseleccionado.documento.id"></VerOficioDesignacionNotario>
+            }
+
+        </div>
+    </MatDialog>
+    }
+
 </div>
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Item> listaherramientas = new List<Item>();
-    //List<ExpedienteDTO> listaentradas = new List<ExpedienteDTO>();
-
-    //public String expedienteseleccionado = null;
-    //public String idexpedienteSalida = null;
+    public bool abrirDialogo = false;
     public ExpedienteBandejaDTO expedienteseleccionado = null;
     public EscrituraPublicaRDTO escrituraPublicaseleccionada = null;
     public Item currentItemDragged;
@@ -257,7 +275,8 @@
             Console.WriteLine("algo mal");
         }
     }
-
+    public void openDialog() { abrirDialogo = true; StateHasChanged(); }
+    public void closeDialog() { abrirDialogo = false; }
     public void UpdateDraggableComponents(string newCurrentPlace)
     {
         if(currentItemDragged.originPlace == "tools")
