@@ -14,7 +14,7 @@
     }
 </style>
 <div>
-    <img  class src="https://www.softzone.es/app/uploads-softzone.es/2018/04/guest.png" width="300px" height="300px" alt="imgf" />
+    
     <label>@Label</label>
     <div>
         <input type="file" @ref="inputElement" @onchange="ImageFileSelected"
@@ -28,10 +28,17 @@
         <div class="img-container">
             <div>
                 <img src="data:image/jpeg;base64, @imagenBase64"
-                      width="300px" height="300px"
+                     width="300px" height="300px"
                      class="img" />
             </div>
         </div>
+
+
+    }
+    else
+    {
+
+        <img class src="https://www.softzone.es/app/uploads-softzone.es/2018/04/guest.png" width="300px" height="300px" alt="imgf" />
     }
     <!--modo de edicion, imagen proviene del servidor de imagenes-->
     @if (ImagenTemporal != null)
