@@ -137,6 +137,7 @@ namespace SISGED.Server.Controllers
         [HttpPost("documentosef")]
         public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
         {
+            /*
             //Conversion de Obj a tipo SolicitudExpedicionFirmaDTO
             SolicitudExpedicionFirmaDTO conclusionfirmaDTO = new SolicitudExpedicionFirmaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
@@ -209,16 +210,18 @@ namespace SISGED.Server.Controllers
             doc.contenido = documentoSEF.contenido;
             doc.estado = documentoSEF.estado;
 
-            ExpedienteBandejaDTO bandejaexpdto = new ExpedienteBandejaDTO();
+            
             bandejaexpdto.idexpediente = expediente.id;
             bandejaexpdto.cliente = expediente.cliente;
             bandejaexpdto.documento = doc;
             bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
             bandejaexpdto.tipo = expediente.tipo;
 
+            */
+            ExpedienteBandejaDTO bandejaexpdto = new ExpedienteBandejaDTO();
             return bandejaexpdto;
         }
-
+        
 
         [HttpPost("documentocf")]
         public ActionResult<ConclusionFirma> RegistrarDocumentoCF(ExpedienteWrapper expediente)
