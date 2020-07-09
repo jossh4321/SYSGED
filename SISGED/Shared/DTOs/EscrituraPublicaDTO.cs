@@ -41,7 +41,7 @@ namespace SISGED.Shared.DTOs
         public string id { get; set; }
         public string direccionoficio { get; set; }
         public string idnotario { get; set; }
-        public List<ActoJuridico> actosjuridicos { get; set; }
+        public List<ActoJuridico> actosjuridicos { get; set; } = new List<ActoJuridico>();
         public DateTime fechaescriturapublica { get; set; }
         public string url { get; set; }
         public string estado { get; set; }

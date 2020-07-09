@@ -7,7 +7,7 @@ namespace SISGED.Shared.DTOs
 {
     public class ContenidoSolicitudBPNDTO
     {
-        public Usuario idcliente { get; set; }
+        public Usuario idcliente { get; set; } = new Usuario();
         public string direccionoficio { get; set; }
         public Notario idnotario { get; set; } = new Notario();
         public string actojuridico { get; set; }
@@ -19,6 +19,9 @@ namespace SISGED.Shared.DTOs
     }
     public class SolicitudBPNDTO : Documento
     {
+        public string nombrecliente { get; set; }
+        public string tipodocumento { get; set; }
+        public string numerodocumento { get; set; }
         public string estado { get; set; } //cambiado por mi
         public ContenidoSolicitudBPNDTO contenidoDTO { get; set; } = new ContenidoSolicitudBPNDTO();
 

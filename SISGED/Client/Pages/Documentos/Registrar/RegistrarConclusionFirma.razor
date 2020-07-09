@@ -158,7 +158,7 @@
                             <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                             <span class="good-msg">Correcto</span>
                         </div>
-</div>
+                    </div>
 
                 <div>
                     Precio Total: 
@@ -197,6 +197,7 @@
     private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
     {
         var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
+
         if (httpResponse.Error)
         {
             return new List<EscrituraPublica>();
@@ -235,8 +236,23 @@
 
     protected override void OnInitialized()
     {
-        workspace.expedienteseleccionado.
         _editContext = new EditContext(conclusionFirma);
+        EscrituraPublicaRDTO epdto = new EscrituraPublicaRDTO();
+        epdto = workspace.escrituraPublicaseleccionada;
+        EscrituraPublica ep = new EscrituraPublica();
+        Console.WriteLine(epdto.id);
+        ep.id = epdto.id;
+        ep.direccionoficio = epdto.direccionoficio;
+        ep.direccionoficio = epdto.idnotario;
+        ep.actosjuridicos = epdto.actosjuridicos;
+        ep.fechaescriturapublica = epdto.fechaescriturapublica;
+        ep.estado = epdto.estado;
+        ep.titulo = epdto.titulo;
+        ep.url = epdto.url;
+        conclusionFirma.contenidoDTO.idescriturapublica = ep;
+        _editContext = new EditContext(conclusionFirma);
+        StateHasChanged();
+
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
