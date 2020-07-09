@@ -254,6 +254,7 @@
     public List<Item> listaherramientas = new List<Item>();
     public bool abrirDialogo = false;
     public ExpedienteBandejaDTO expedienteseleccionado = null;
+    public EscrituraPublicaRDTO escrituraPublicaseleccionada = null;
     public Item currentItemDragged;
     public Bandeja bandejaUsuario = new Bandeja();
     protected override async Task OnInitializedAsync()
@@ -295,8 +296,12 @@
             var tool = sesion.listaentradas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
             if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
             {
-                if (newCurrentPlace == "workspace") { expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor; }
+                if (newCurrentPlace == "workspace") {
+                    expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor;
+                    escrituraPublicaseleccionada = tool.escriturapublica;
+                }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
+                if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
                 Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
 
                 tool.currentPlace = newCurrentPlace;
@@ -310,7 +315,8 @@
             if(tool != null)
             {
                 if(newCurrentPlace == "workspace") { expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor; }
-                if(newCurrentPlace == "inputs") { expedienteseleccionado = null; }
+                if(newCurrentPlace == "outputs") { expedienteseleccionado = null; }
+                if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
                 tool.currentPlace = newCurrentPlace;
                 sesion.listasalidas[sesion.listasalidas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
                 StateHasChanged();
