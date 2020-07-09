@@ -35,13 +35,34 @@
             <iframe id="docpdf" style="background-color:#EEE; height:650px; width:500px"></iframe>
         </MatDialogContent>
         <MatDialogActions>
+            <MatButton @onclick="@ConfirmacionGenerar">Generar</MatButton>
             <MatButton @onclick="@((e) => { generado = false; })">Volver</MatButton>
         </MatDialogActions>
     </MatDialog>
-
+    <div style="display: none">
+        <table id="convertirPDF">
+            <tbody>
+                <tr>
+                    <th colspan="7">@documento.titulo</th>
+                </tr>
+                <tr><td colspan="7"> </td></tr>
+                <tr><td colspan="7">Código de generación: @codigo</td></tr>
+                <tr><td colspan="7">Descripción: </td></tr>
+                <tr><td colspan="7">@documento.descripcion</td></tr>
+                <tr><td colspan="7">Fecha de emisión: @documento.fechaemision.ToString("dd-MM-yy")</td></tr>
+                <tr><td colspan="7">Datos del notario: </td></tr>
+                <tr><td></td><td>- Nombre: @notario.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- Apellidos: @notario.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td>- DNI: @notario.dni</td><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+        </table>
+    </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "imagen")] string imagen { get; set; }
+    [CascadingParameter(Name = "codigo")] string codigo { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    private DocumentoGenerarDTO generarD { get; set; }
     private ContenidoSolicitudExpedienteNotario documento { get; set; }
     private Notario notario;
     private bool generado = false;
@@ -76,5 +97,26 @@
     {
         var responseHttp = await repositorio.Get<Notario>($"api/notarios/id?id={documento.idnotario}");
         notario = responseHttp.Response;
+    }
+    private async Task ConfirmacionGenerar()
+    {
+        generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
+        generarD.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        generarD.idusuario = sesion.usuario.id;
+        await ConfirmacionG();
+
+    }
+    private async Task ConfirmacionG()
+    {
+        var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", generarD);
+        if (responseHttp.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Generado correctamente");
+            generado = false;
+        }
     }
 }

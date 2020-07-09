@@ -46,7 +46,7 @@
                     <th colspan="7">Conclusión Firma</th>
                 </tr>
                 <tr><td colspan="7"> </td></tr>
-                <tr><td colspan="7">Codigo: @codigo</td></tr>
+                <tr><td colspan="7">Código de generación: @codigo</td></tr>
                 <tr><td colspan="7">Cantidad foja: @documento.cantidadfoja </td></tr>
                 <tr><td colspan="7">Cantidad precio: @documento.precio </td></tr>
                 <tr><td colspan="7">Datos del cliente: </td></tr>
@@ -112,6 +112,11 @@
         if (responseHttp.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Generado correctamente");
+            generado = false;
         }
     }
 

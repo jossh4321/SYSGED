@@ -35,6 +35,7 @@
             <iframe id="docpdf" style="background-color:#EEE; height:650px; width:500px"></iframe>
         </MatDialogContent>
         <MatDialogActions>
+            <MatButton @onclick="@ConfirmacionGenerar">Generar</MatButton>
             <MatButton @onclick="@((e) => { generado = false; })">Volver</MatButton>
         </MatDialogActions>
     </MatDialog>
@@ -45,6 +46,7 @@
                     <th colspan="7">Solicitud de Búsqueda de Protocolos Notariales</th>
                 </tr>
                 <tr><td colspan="7"> </td></tr>
+                <tr><td colspan="7">Código de generación: @codigo</td></tr>
                 <tr><td colspan="7">Datos del Cliente: </td></tr>
                 <tr><td></td><td>- Nombre: @usuario.datos.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
                 <tr><td></td><td>- Apellidos: @usuario.datos.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -71,6 +73,9 @@
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "imagen")] string imagen { get; set; }
+    [CascadingParameter(Name = "codigo")] string codigo { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    private DocumentoGenerarDTO generarD { get; set; }
     private ContenidoSolicitudBPN documento { get; set; }
     private Usuario usuario;
     private Notario notario;
@@ -113,5 +118,26 @@
     {
         var responseHttp = await repositorio.Get<Notario>($"api/notarios/id?id={documento.idnotario}");
         notario = responseHttp.Response;
+    }
+    private async Task ConfirmacionGenerar()
+    {
+        generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
+        generarD.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        generarD.idusuario = sesion.usuario.id;
+        await ConfirmacionG();
+
+    }
+    private async Task ConfirmacionG()
+    {
+        var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", generarD);
+        if (responseHttp.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Generado correctamente");
+            generado = false;
+        }
     }
 }
