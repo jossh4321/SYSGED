@@ -110,49 +110,7 @@
                     <div class="field-container input-group-2">
                         <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
                     </div>
-                    <div class="otorgantes">
-                        <div class="titulo-paticipantes">
-                            <div><span class="titulo">Participantes</span></div>
-                            <div class="icono" @onclick="@(addparticipante)">
-                                <MatIcon Icon="add_circle_outline"></MatIcon>
-                            </div>
-                        </div>
-                        @for (int i = 0; i < docSolicitudBPNDTO.contenidoDTO.otorgantes.Count; i++)
-                        {
-                            int index = i;
-                            <div class="single-textfield-container">
-                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => docSolicitudBPNDTO.contenidoDTO.otorgantes[index])">
-                                    <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.otorgantes[index]" Class="text-field-style"
-                                                  Label="Nombre del participante"
-                                                  @oninput='@(e => KeyUp(e, "nombre", docSolicitudBPNDTO.contenidoDTO.otorgantes[index]))'></MatTextField>
-                                    <div class="incorrecto">
-                                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                        <ValidationMessage For="@(() => docSolicitudBPNDTO.contenidoDTO.otorgantes[index])" />
-                                    </div>
-                                    <div class="correcto">
-                                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                                        <span class="good-msg">Correcto</span>
-                                    </div>
-                                </div>
-                                <div class="base-icon" @onclick="@(() => removeparticipante(index))">
-                                    <MatIcon Icon="remove_circle_outline"></MatIcon>
-                                </div>
-                            </div>
-                        }
-                        <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => docSolicitudBPNDTO.contenidoDTO.otorgantes)">
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                <ValidationMessage For="@(() => docSolicitudBPNDTO.contenidoDTO.otorgantes)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                                <span class="good-msg">Correcto</span>
-                            </div>
-                        </div>
-                    </div>
-
-
-
+                    <!--Copiar y pegar codigo del div para el for de Otorgantes-->
                     <div class="field-container input-group-2">
                         <MatDatePicker @bind-Value="@docSolicitudBPNDTO.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
                     </div>
@@ -182,6 +140,9 @@
                 
             </MatTabGroup>
         </div>
+        
+
+
     </EditForm>
 </div>
 @code {
@@ -189,9 +150,11 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
 
+
     private void addparticipante()
     {
-        //docSolicitudBPNDTO.contenidoDTO.otorgantes.Add(new Otorgante() { index = docSolicitudBPNDTO.contenidoDTO.otorgantes.Count() });
+        //Corregir
+        //docSolicitudBPNDTO.contenidoDTO.otorgantes.Add(new OtorganteDTO() { index = (docSolicitudBPNDTO.contenidoDTO.otorgantes.Count) });
         StateHasChanged();
     }
 
@@ -239,7 +202,8 @@
             },
             actojuridico = "Mancomunacion de vienes por casamiento civil",
             tipoprotocolo = "minuta",
-            otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo" },
+            //Corregir
+            //otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo" },
             fecharealizacion = DateTime.Now
         }
     };
@@ -248,6 +212,7 @@
     private EditContext _editContext;
     protected override void OnInitialized()
     {
+
         _editContext = new EditContext(documento);
     }
 
