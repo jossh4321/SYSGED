@@ -396,7 +396,7 @@ namespace SISGED.Server.Services
         }
 
         public Resolucion registrarResolucion(ResolucionDTO resolucionDTO,
-            string urldata, string idusuario, string idexpediente, string iddocentrada)
+            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
             ContenidoResolucion contenidoResolucion = new ContenidoResolucion()
@@ -415,6 +415,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoResolucion,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo = url2,
                 evaluacion = new Evaluacion()
                 {
                     status = "pendiente",

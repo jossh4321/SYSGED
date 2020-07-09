@@ -191,6 +191,7 @@
                 <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
             </MatTab>
+
             <MatTab Label="Participantes">
 
                 <div class="contenedor-participantes">
@@ -233,6 +234,15 @@
                         </div>
                     </div>
                 </div>
+                @*<div class="field-container">
+                <MatButton type="submit"
+                           Disabled="@loadprocess"
+                           Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                           Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+            </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -254,12 +264,22 @@
     private ResolucionDTO resolucion = new ResolucionDTO();
     private EditContext _editContext;
     private string imagenTemporal;
+    private string imagenTemporal2;
     private bool loadprocess = false;
 
     protected override void OnInitialized()
     {
         resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0,nombre="" } };
+        resolucion.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(resolucion);
+        foreach (string u in resolucion.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                resolucion.contenidoDTO.Urlanexo = null;
+            }
+        }
         if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
         {
             imagenTemporal = resolucion.contenidoDTO.data;
@@ -270,6 +290,11 @@
     private void ImagenSeleccionada(string imagenbase64)
     {
         resolucion.contenidoDTO.data = imagenbase64;
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        resolucion.contenidoDTO.Urlanexo.Add(imagenbase64);
     }
 
     private async Task addParticipante()

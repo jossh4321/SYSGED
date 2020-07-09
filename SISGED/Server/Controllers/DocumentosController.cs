@@ -300,7 +300,17 @@ namespace SISGED.Server.Controllers
             ResolucionDTO resolucionDTO = new ResolucionDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             resolucionDTO = JsonConvert.DeserializeObject<ResolucionDTO>(json);
-
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in resolucionDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    url2.Add(urlData2);
+                }
+            }
             //Almacenando el pdf en el servidor de archivos y obtencion de la url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(resolucionDTO.contenidoDTO.data))
@@ -308,7 +318,7 @@ namespace SISGED.Server.Controllers
                 var solicitudBytes = Convert.FromBase64String(resolucionDTO.contenidoDTO.data);
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "resolucion");
             }
-            return _documentoservice.registrarResolucion(resolucionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+            return _documentoservice.registrarResolucion(resolucionDTO, urlData, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
         #endregion
 
