@@ -343,6 +343,21 @@ namespace SISGED.Server.Services
 
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
         }
+        public Documento generarDocumento(DocumentoGenerarDTO documento)
+        {
+            Documento doc = new Documento();
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = documento.idexpediente;
+            bandejaDocumento.iddocumento = documento.iddocumento;
+
+            UpdateDefinition<Bandeja> updateBandejaD = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaD);
+
+            UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
+
+            return doc;
+        }
 
         public Documento modificarEstadoDocumento(DocumentoDTO documento)
         {

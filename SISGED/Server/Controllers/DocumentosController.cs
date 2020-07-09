@@ -328,6 +328,11 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.modificarEstado(documento);
         }
+        [HttpPut("generardocumento")]
+        public ActionResult<Documento> GenerarEstado(DocumentoGenerarDTO documento)
+        {
+            return _documentoservice.generarDocumento(documento);
+        }
 
         [HttpPut("cambiarestadodocumento")]
         public ActionResult<Documento> ModificarEstado(DocumentoDTO documento)
