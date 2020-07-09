@@ -54,6 +54,7 @@ namespace SISGED.Server.Services
                     status = "pendiente",
                     observacion = null
                 },
+                estado = "creado",
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
@@ -122,6 +123,7 @@ namespace SISGED.Server.Services
                     status = "pendiente",
                     observacion = "Ninguna",
                 },
+                estado = "Creado",
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
@@ -396,7 +398,7 @@ namespace SISGED.Server.Services
                 {
                     status = "pendiente",
                     observacion = ""
-                }
+                },estado = "creado"
             };
             _documentos.InsertOne(resolucion);
 
@@ -455,7 +457,8 @@ namespace SISGED.Server.Services
                 {
                     status = "pendiente",
                     observacion = "Ninguna",
-                }
+                },
+                estado = "creado"
             };
             _documentos.InsertOne(apelacion);
 
@@ -535,7 +538,6 @@ namespace SISGED.Server.Services
             return solicitudExpedienteNotarioAct;
         }
 
-        //C
         public OficioDesignacionNotarioDTO obtenerOficioDesignacionNotario(string id)
         {
             var match = new BsonDocument("$match",
@@ -846,6 +848,7 @@ namespace SISGED.Server.Services
             {
                 idnotario = documentoAperturamiento.contenido.idnotario,
                 idfiscal = documentoAperturamiento.contenido.idfiscal,
+                nombredenunciante = documentoAperturamiento.contenido.nombredenunciante,
                 titulo = documentoAperturamiento.contenido.titulo,
                 descripcion = documentoAperturamiento.contenido.descripcion,
                 fechainicioaudiencia = documentoAperturamiento.contenido.fechainicioaudiencia,

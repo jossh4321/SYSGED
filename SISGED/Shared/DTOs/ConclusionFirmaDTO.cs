@@ -9,7 +9,6 @@ namespace SISGED.Shared.DTOs
 {
     public class ConclusionFirmaDTO : Documento
     {
-        public string estado { get; set; }
         public ContenidoConclusionFirmaDTO contenidoDTO { get; set; } = new ContenidoConclusionFirmaDTO();
     }
     public class ContenidoConclusionFirmaDTO
