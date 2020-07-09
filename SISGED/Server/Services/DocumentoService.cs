@@ -239,16 +239,16 @@ namespace SISGED.Server.Services
         {
             var filter = Builders<Documento>.Filter.Eq("id", documento.id);
             var update = Builders<Documento>.Update
-                .Set("estado", documento.evaluacion);
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
-            bandejaDocumento.idexpediente = documento.idexpediente;
-            bandejaDocumento.iddocumento = documento.id;
+                .Set("evaluacion", documento.evaluacion);
+            //BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            //bandejaDocumento.idexpediente = documento.idexpediente;
+            //bandejaDocumento.iddocumento = documento.id;
 
-            UpdateDefinition<Bandeja> updateBandejaD = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaD);
+            //UpdateDefinition<Bandeja> updateBandejaD = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
+            //_bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaD);
 
-            UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
+            //UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            //_bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
 
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
         }

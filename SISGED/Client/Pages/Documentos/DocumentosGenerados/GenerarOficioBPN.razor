@@ -20,13 +20,21 @@
             transition: all 300ms !important;
             width: 100%;
         }
+        .dialogo .mdc-dialog__surface {
+            max-width: none !important;
+            max-height: none !important;
+        }
     </style>
     <MatButton Disabled="@faltaCargar" OnClick="@GenerarPDF" Class="mat-success-c"> Generar Documento</MatButton>
-    <MatDialog @bind-IsOpen="@generado">
+    
+<MatDialog @bind-IsOpen="@generado" Class="dialogo">
         <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
         <MatDialogContent Class="contenedor-PDF">
-            <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
+            <iframe id="docpdf" style="background-color:#EEE; height:650px; width:500px"></iframe>
         </MatDialogContent>
+        <MatDialogActions>
+            <MatButton  @onclick="@((e) => { generado = false; })">Volver</MatButton>
+        </MatDialogActions>
     </MatDialog>
     <div style="display: none">
         <table id="convertirPDF">
@@ -62,6 +70,7 @@
 
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "imagen")] string imagen { get; set; }
     private ContenidoOficioBPN documento { get; set; }
     private Usuario usuario;
     private Notario notario;
@@ -71,7 +80,7 @@
     private async Task GenerarPDF()
     {
         generado = true;
-        await js.InvokeVoidAsync("gPDF");
+        await js.InvokeVoidAsync("gPDF",imagen);
     }
 
     protected async override Task OnInitializedAsync()
@@ -79,7 +88,7 @@
         documento = JsonConvert.DeserializeObject<ContenidoOficioBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
         usuario = new Usuario();
         notario = new Notario();
-        //await getUsuario();
+        await getUsuario();
         await getNotario();
         faltaCargar = false;
     }

@@ -35,5 +35,7 @@ function gPDF(image) {
             }
         } 
     });
+    var imgData = 'data:image/jpeg;base64,' + image;
+    doc.addImage(imgData, 'JPEG', 50, doc.autoTableEndPosY()+10, 90, 50);
     $('#docpdf').attr('src', doc.output('datauristring'));
 }
