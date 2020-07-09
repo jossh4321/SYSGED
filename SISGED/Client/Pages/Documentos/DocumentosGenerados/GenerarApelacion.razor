@@ -1,6 +1,8 @@
 ﻿@inject IJSRuntime js
+@inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 @using Newtonsoft.Json
+@inject IRepository repositorio
 <style>
     * {
         color: black;
@@ -10,13 +12,31 @@
         height: 400px;
         width: 600px;
     }
+
+    .mat-success-c {
+        color: green !important;
+        border: 1px solid green !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+        width: 100%;
+    }
+
+    .dialogo .mdc-dialog__surface {
+        max-width: none !important;
+        height: 800px !important;
+    }
 </style>
-<MatButton Raised="true" OnClick="@GenerarPDF"> Previsualizar Documento</MatButton>
-<MatDialog @bind-IsOpen="@generado">
+<MatButton OnClick="@GenerarPDF" Class="mat-success-c"> Generar Documento</MatButton>
+<MatDialog @bind-IsOpen="@generado" Class="dialogo">
     <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
     <MatDialogContent Class="contenedor-PDF">
-        <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
+        <iframe id="docpdf" style="background-color:#EEE; height:650px; width:500px"></iframe>
     </MatDialogContent>
+    <MatDialogActions>
+        <MatButton @onclick="@ConfirmacionGenerar">Generar</MatButton>
+        <MatButton @onclick="@((e) => { generado = false; })">Volver</MatButton>
+    </MatDialogActions>
 </MatDialog>
 <div style="display: none">
     <table id="convertirPDF">
@@ -25,6 +45,7 @@
                 <th colspan="7">@documento.titulo</th>
             </tr>
             <tr><td colspan="7"> </td></tr>
+            <tr><td colspan="7">Código de generación: @codigo</td></tr>
             <tr><td colspan="7">Fecha de apelación: @documento.fechaapelacion.ToString("dd-MM-yy") </td></tr>
             <tr><td colspan="7">Descripción: </td></tr>
             <tr><td colspan="7"> @documento.descripcion</td></tr>
@@ -33,16 +54,54 @@
 </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "imagen")] string imagen { get; set; }
+    [CascadingParameter(Name = "codigo")] string codigo { get; set; }
     private ContenidoApelacion documento { get; set; }
     private bool generado = false;
-    private async Task GenerarPDF()
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    private DocumentoGenerarDTO generarD { get; set; }
+
+    private async Task Generar()
     {
         generado = true;
-        await js.InvokeVoidAsync("gPDF");
+        await js.InvokeVoidAsync("gPDF", imagen);
+    }
+    private async Task GenerarPDF()
+    {
+        if (imagen == null)
+        {
+            await swalfire.errorMessage("Debe insertar la imagen de su firma");
+        }
+        else
+        {
+            await Generar();
+        }
     }
     protected override void OnInitialized()
     {
         documento = JsonConvert.DeserializeObject<ContenidoApelacion>(workspace.expedienteseleccionado.documento.contenido.ToString());
         Console.WriteLine(documento.titulo);
+    }
+
+    private async Task ConfirmacionGenerar()
+    {
+        generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
+        generarD.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        generarD.idusuario = sesion.usuario.id;
+        await ConfirmacionG();
+
+    }
+    private async Task ConfirmacionG()
+    {
+        var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", generarD);
+        if (responseHttp.Error)
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        else
+        {
+            await swalfire.successMessage("Generado correctamente");
+            generado = false;
+        }
     }
 }
