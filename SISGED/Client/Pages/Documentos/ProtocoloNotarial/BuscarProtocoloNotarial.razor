@@ -285,6 +285,7 @@ else
             itemstatus = "escogido",
             escriturapublica = escrituraPublica
         };
+        workspace.escrituraPublicaseleccionada = escrituraPublica;
         workspace.UpdateDocRegistrado(itemEscogido);
         workspace.UpdateTools("Buscar protocolo notarial");
         await Task.FromResult(0);
