@@ -50,7 +50,8 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("documentosd")]
-        public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
+        //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<SolicitudDenunciaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
             //conversion de Object a Tipo especifico
             SolicitudDenunciaDTO documento = new SolicitudDenunciaDTO();
@@ -78,9 +79,10 @@ namespace SISGED.Server.Controllers
             {
                 tipo = "SolicitudDenuncia",
                 contenido = contenidoSolicitudDenuncia,
-                estado = "pendiente",
+                estado = "creado",
                 historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
+                historialproceso = new List<Proceso>(),
+
             };
             solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
 
@@ -115,7 +117,7 @@ namespace SISGED.Server.Controllers
             _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
 
             //creacion de obj ExpedienteBandejaDTO
-            DocumentoDTO doc = new DocumentoDTO();
+            /*DocumentoDTO doc = new DocumentoDTO();
             doc.id = solicitudDenuncia.id;
             doc.id = solicitudDenuncia.tipo;
             doc.historialcontenido = new List<ContenidoVersion>();
@@ -130,33 +132,35 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
             bandejaexpdto.tipo = expediente.tipo;
 
-            return bandejaexpdto;
+            return bandejaexpdto;*/
+            return documento;
         }
 
         [HttpPost("documentosef")]
-        public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
+        //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<SolicitudExpedicionFirmaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
         {
             //Conversion de Obj a tipo SolicitudExpedicionFirmaDTO
-            SolicitudExpedicionFirmaDTO conclusionfirmaDTO = new SolicitudExpedicionFirmaDTO();
+            SolicitudExpedicionFirmaDTO solicitudExpedicionFirmasDTO = new SolicitudExpedicionFirmaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
-            conclusionfirmaDTO = JsonConvert.DeserializeObject<SolicitudExpedicionFirmaDTO>(json);
+            solicitudExpedicionFirmasDTO = JsonConvert.DeserializeObject<SolicitudExpedicionFirmaDTO>(json);
 
             //Almacenamiento de archivo en repositorio y obtnecion de url
             string urlData = "";
-            if (!string.IsNullOrWhiteSpace(conclusionfirmaDTO.contenidoDTO.data))
+            if (!string.IsNullOrWhiteSpace(solicitudExpedicionFirmasDTO.contenidoDTO.data))
             {
-                var solicitudBytes = Convert.FromBase64String(conclusionfirmaDTO.contenidoDTO.data);
+                var solicitudBytes = Convert.FromBase64String(solicitudExpedicionFirmasDTO.contenidoDTO.data);
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicitudexpedicionfirma");
             }
 
             //Registro de objeto ContenidoSolicitudExpedicionFirma y registro en coleccion documentos
             ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
             {
-                titulo = conclusionfirmaDTO.contenidoDTO.titulo,
-                descripcion = conclusionfirmaDTO.contenidoDTO.descripcion,
+                titulo = solicitudExpedicionFirmasDTO.contenidoDTO.titulo,
+                descripcion = solicitudExpedicionFirmasDTO.contenidoDTO.descripcion,
                 fecharealizacion = DateTime.Now,
-                cliente = conclusionfirmaDTO.contenidoDTO.cliente,
-                codigo = conclusionfirmaDTO.contenidoDTO.codigo,
+                cliente = solicitudExpedicionFirmasDTO.contenidoDTO.cliente,
+                codigo = solicitudExpedicionFirmasDTO.contenidoDTO.codigo,
                 url = urlData
             };
             SolicitudExpedicionFirma documentoSEF = new SolicitudExpedicionFirma()
@@ -172,9 +176,9 @@ namespace SISGED.Server.Controllers
             //Creacion del objeto Expediente y registro en la coleccion Expedientes
             Cliente cliente = new Cliente()
             {
-                nombre = conclusionfirmaDTO.nombrecliente,
-                tipodocumento = conclusionfirmaDTO.tipodocumento,
-                numerodocumento = conclusionfirmaDTO.numerodocumento
+                nombre = solicitudExpedicionFirmasDTO.nombrecliente,
+                tipodocumento = solicitudExpedicionFirmasDTO.tipodocumento,
+                numerodocumento = solicitudExpedicionFirmasDTO.numerodocumento
             };
             Expediente expediente = new Expediente();
             expediente.tipo = "Expedicion de Firmas";
@@ -197,10 +201,10 @@ namespace SISGED.Server.Controllers
             expediente = _expedienteservice.saveExpediente(expediente);
 
             //Actualizacion de la bandeja de salida del usuario con el expediente
-            _documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, expedientewrapper.idusuarioactual);
+            ///_documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, expedientewrapper.idusuarioactual);
 
             //Creacion del objeto ExpedienteBandejaDTO y retorno
-            DocumentoDTO doc = new DocumentoDTO();
+            /*DocumentoDTO doc = new DocumentoDTO();
             doc.id = documentoSEF.id;
             doc.id = documentoSEF.tipo;
             doc.historialcontenido = new List<ContenidoVersion>();
@@ -214,8 +218,9 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.documento = doc;
             bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
             bandejaexpdto.tipo = expediente.tipo;
-
-            return bandejaexpdto;
+            
+            return bandejaexpdto;*/
+            return solicitudExpedicionFirmasDTO;
         }
 
 

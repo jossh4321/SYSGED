@@ -232,7 +232,7 @@
                     </div>
                     @for(int i = 0; i < dictamen.contenidoDTO.recomendaciones.Count;i++)
                     {
-                        int index = 0;
+                        int index = i;
                         <div class="single-textfield-container">
                             <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => dictamen.contenidoDTO.recomendaciones[index].descripcion)">
                                 <MatTextField @bind-Value="@dictamen.contenidoDTO.recomendaciones[index].descripcion" Class="text-field-style"
@@ -332,6 +332,42 @@
         var httpResponse = await repository.Post<ExpedienteWrapper, Dictamen>("api/documentos/documentod", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            Dictamen dictamen = new Dictamen();
+            dictamen = httpResponse.Response;
+            expedientebandeja.documento.id = dictamen.id;
+            expedientebandeja.documento.tipo = dictamen.tipo;
+            expedientebandeja.documento.historialcontenido = dictamen.historialcontenido;
+            expedientebandeja.documento.historialproceso = dictamen.historialproceso;
+            expedientebandeja.documento.contenido = dictamen.contenido;
+            expedientebandeja.documento.estado = dictamen.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = dictamen.id;
+            documentoDTO.tipo = dictamen.tipo;
+            documentoDTO.estado = dictamen.estado;
+            documentoDTO.contenido = dictamen.contenido;
+            documentoDTO.historialcontenido = dictamen.historialcontenido;
+            documentoDTO.historialproceso = dictamen.historialproceso;
+            documentoDTO.urlanexo = dictamen.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
             await swalfire.successMessage("Dictamen registrado correctamente");
         }
         else

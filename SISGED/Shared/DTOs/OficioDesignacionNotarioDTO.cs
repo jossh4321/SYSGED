@@ -9,7 +9,7 @@ namespace SISGED.Shared.DTOs
 {
     public class OficioDesignacionNotarioDTO:Documento
     {
-        public Estado estado { get; set; } = new Estado();
+        public Evaluacion evaluacion{ get; set; } = new Evaluacion();
         public ContenidoOficioDesignacionNotarioDTO contenidoDTO { get; set; } = new ContenidoOficioDesignacionNotarioDTO();
     }
 
@@ -31,11 +31,12 @@ namespace SISGED.Shared.DTOs
         public string id { get; set; }
         public string tipo { get; set; }
         public ContenidoOficioDesignacionNotario contenido { get; set; } = new ContenidoOficioDesignacionNotario();
-        public Estado estado { get; set; }
+        public Evaluacion evaluacion { get; set; }
         public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
         public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
         public List<Notario> notario { get; set; } = new List<Notario>();
         public List<string> urlanexo { get; set; } = new List<string>();
+        public string estado { get; set; }
     }
 
     public class OficioDesignacionNotario_ur
@@ -44,11 +45,12 @@ namespace SISGED.Shared.DTOs
         public string id { get; set; }
         public string tipo { get; set; }
         public ContenidoOficioDesignacionNotario contenido { get; set; } = new ContenidoOficioDesignacionNotario();
-        public Estado estado { get; set; }
+        public Evaluacion evaluacion { get; set; }
         public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
         public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
         public Notario notario { get; set; } = new Notario();
         public List<string> urlanexo { get; set; } = new List<string>();
+        public string estado { get; set; }
     }
 
 }

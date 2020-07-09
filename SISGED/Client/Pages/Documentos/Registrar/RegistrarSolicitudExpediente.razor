@@ -182,11 +182,27 @@
                 valor = expedientebandeja,
                 icono = "alarm_add",
                 descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
             };
-            workspace.UpdateComponentBandeja(itemSalida);
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = solicitudExpedienteNotarioAct.id;
+            documentoDTO.tipo = solicitudExpedienteNotarioAct.tipo;
+            documentoDTO.estado = solicitudExpedienteNotarioAct.estado;
+            documentoDTO.contenido = solicitudExpedienteNotarioAct.contenido;
+            documentoDTO.historialcontenido = solicitudExpedienteNotarioAct.historialcontenido;
+            documentoDTO.historialproceso = solicitudExpedienteNotarioAct.historialproceso;
+            documentoDTO.urlanexo = solicitudExpedienteNotarioAct.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
+            //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Solicitud de expediente de notario registrado correctamente");
         }
         else

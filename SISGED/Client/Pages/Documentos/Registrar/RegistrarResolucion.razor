@@ -306,6 +306,44 @@
             var httpResponse = await repository.Post<ExpedienteWrapper, Resolucion>($"api/documentos/documentor", expedienteWrapper);
             if (!httpResponse.Error)
             {
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja = workspace.expedienteseleccionado;
+                Resolucion documentoResolucion = new Resolucion();
+                documentoResolucion = httpResponse.Response;
+                expedientebandeja.documento.id = documentoResolucion.id;
+                expedientebandeja.documento.tipo = documentoResolucion.tipo;
+                expedientebandeja.documento.historialcontenido = documentoResolucion.historialcontenido;
+                expedientebandeja.documento.historialproceso = documentoResolucion.historialproceso;
+                expedientebandeja.documento.contenido = documentoResolucion.contenido;
+                expedientebandeja.documento.estado = documentoResolucion.estado;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                Item itemSalida = new Item()
+
+                {
+                    nombre = expedientebandeja.tipo,
+                    valor = expedientebandeja,
+                    icono = "alarm_add",
+                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                    currentPlace = "workspace",
+                    originPlace = "inputs",
+                    cliente = expedientebandeja.cliente,
+                    itemstatus = "registrado"
+                };
+
+                workspace.UpdateDocRegistrado(itemSalida);
+                workspace.UpdateTools("Registrar Documento");
+                DocumentoDTO documentoDTO = new DocumentoDTO();
+                documentoDTO.id = documentoResolucion.id;
+                documentoDTO.tipo = documentoResolucion.tipo;
+                documentoDTO.estado = documentoResolucion.estado;
+                documentoDTO.contenido = documentoResolucion.contenido;
+                documentoDTO.historialcontenido = documentoResolucion.historialcontenido;
+                documentoDTO.historialproceso = documentoResolucion.historialproceso;
+                documentoDTO.urlanexo = documentoResolucion.urlanexo;
+                workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+                workspace.expedienteseleccionado.documento = documentoDTO;
+
+                StateHasChanged();
                 await swalfire.successMessage("Resolución registrada correctamente");
             }
             else

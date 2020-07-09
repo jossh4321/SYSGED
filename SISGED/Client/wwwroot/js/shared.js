@@ -20,16 +20,22 @@ async function SwalFireEliminacion(titlex,estado,nombreusuario) {
     });
     return res;
 }
-function gPDF() {
-    var specialElementHandlers = {
-        "#editor": function (element, redenderer) {
-            return true;
-        }
-    };
-    var doc = new jsPDF();
-    doc.fromHTML($("#target").html(), 15, 15, {
-        "width": 170,
-        "elementHandlers": specialElementHandlers
+function gPDF(image) {
+    const doc = new jsPDF();
+    doc.setFontSize(15);
+    doc.autoTable({
+        html: '#convertirPDF',
+        theme: 'plain',
+        didParseCell: function (data) {
+            if (data.row.index === 0) {
+                data.cell.styles.fontSize = 20;
+                data.cell.styles.halign = 'center';
+            }else{
+                data.cell.styles.fontSize = 12;
+            }
+        } 
     });
+    var imgData = 'data:image/jpeg;base64,' + image;
+    doc.addImage(imgData, 'JPEG', 50, doc.autoTableEndPosY()+10, 90, 50);
     $('#docpdf').attr('src', doc.output('datauristring'));
 }

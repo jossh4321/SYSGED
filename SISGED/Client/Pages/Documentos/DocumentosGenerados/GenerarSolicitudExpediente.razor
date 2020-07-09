@@ -1,5 +1,56 @@
-﻿<h3>GenerarSolicitudExpediente</h3>
+﻿@inject IJSRuntime js
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json
+@inject IRepository repositorio
 
+@if (faltaCargar)
+{
+    <p>Cargando......</p>
+}
+else
+{
+    <style>
+        * {
+            color: black;
+        }
+
+        .contenedor-PDF {
+            height: 400px;
+            width: 600px;
+        }
+    </style>
+    <MatButton Raised="true" OnClick="@GenerarPDF"> Previsualizar Documento</MatButton>
+    <MatDialog @bind-IsOpen="@generado">
+        <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
+        <MatDialogContent Class="contenedor-PDF">
+            <iframe id="docpdf" style="background-color:#EEE; height:350px; width:500px"></iframe>
+        </MatDialogContent>
+    </MatDialog>
+}
 @code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    private ContenidoSolicitudExpedienteNotario documento { get; set; }
+    private Notario notario;
+    private bool generado = false;
+    private bool faltaCargar = true;
 
+    private async Task GenerarPDF()
+    {
+        generado = true;
+        await js.InvokeVoidAsync("gPDF");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        documento = JsonConvert.DeserializeObject<ContenidoSolicitudExpedienteNotario>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        notario = new Notario();
+        await getNotario();
+        faltaCargar = false;
+    }
+
+    private async Task getNotario()
+    {
+        var responseHttp = await repositorio.Get<Notario>($"api/notarios/id?id={documento.idnotario}");
+        notario = responseHttp.Response;
+    }
 }

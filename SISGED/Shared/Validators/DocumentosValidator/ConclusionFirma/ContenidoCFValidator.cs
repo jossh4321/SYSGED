@@ -13,6 +13,10 @@ namespace SISGED.Shared.Validators.DocumentosValidator.ConclusionFirma
         {
             RuleFor(x => x.idescriturapublica).Must(escritura => escritura != null && escritura != new EscrituraPublica())
                 .WithMessage("Debe seleccionar una escritura pública obligatoriamente");
+            RuleFor(x => x.idnotario).Must(notario => notario != null && notario != new Notario())
+                .WithMessage("Debe seleccionar un notario obligatoriamente");
+            RuleFor(x => x.idcliente).Must(cliente => cliente != null && cliente != new Usuario())
+                .WithMessage("Debe seleccionar un usuario obligatoriamente");
         }
     }
 }

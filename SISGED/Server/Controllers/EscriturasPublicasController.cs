@@ -24,6 +24,16 @@ namespace SISGED.Server.Controllers
             this.escriturasPublicasService = escriturasPublicasService;
         }
 
+        [HttpGet]
+        public async Task<List<EscrituraPublicaRDTO>> Get()
+        {
+            ParametrosBusquedaEscrituraPublica parametrosbusqueda = new ParametrosBusquedaEscrituraPublica();
+            List<EscrituraPublicaRDTO> listaEscriturasPublicas =await escriturasPublicasService.obtenerEscriturasPublicas();
+            await HttpContext.InsertPagedParameterOnResponse(listaEscriturasPublicas.AsQueryable(), parametrosbusqueda.cantidadregistros);
+            List<EscrituraPublicaRDTO> listaEscriturasPublicasPaginado = listaEscriturasPublicas.AsQueryable().Paginate(parametrosbusqueda.Paginacion).ToList();
+            return listaEscriturasPublicasPaginado;
+        }
+
         [HttpGet("filter")]
         public ActionResult<List<EscrituraPublica>> autocompletefilter([FromQuery] string term)
         {
@@ -40,6 +50,13 @@ namespace SISGED.Server.Controllers
             List<EscrituraPublicaRDTO> listaescriturasPublicasFiltradoPaginado =
                 listaescriturasPublicasFiltrado.AsQueryable().Paginate(parametrosbusqueda.Paginacion).ToList();
             return listaescriturasPublicasFiltradoPaginado;
+        }
+        [HttpGet("id")]
+        public ActionResult<EscrituraPublica> GetById([FromQuery] string id)
+        {
+            EscrituraPublica escrituraPublica = new EscrituraPublica();
+            escrituraPublica = escriturasPublicasService.GetById(id);
+            return escrituraPublica;
         }
     }
 }

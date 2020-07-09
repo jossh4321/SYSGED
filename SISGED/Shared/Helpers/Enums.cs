@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SISGED.Shared.Helpers
+﻿namespace SISGED.Shared.Helpers
 {
     public class DocumentoEstado
     {
-        private DocumentoEstado(string value) { Value = value; }
+        private DocumentoEstado(string value)
+        {
+            Value = value;
+        }
 
         public string Value { get; set; }
 
@@ -19,7 +18,10 @@ namespace SISGED.Shared.Helpers
 
     public class SolicitudEstado
     {
-        private SolicitudEstado(string value) { Value = value; }
+        private SolicitudEstado(string value)
+        {
+            Value = value;
+        }
 
         public string Value { get; set; }
 

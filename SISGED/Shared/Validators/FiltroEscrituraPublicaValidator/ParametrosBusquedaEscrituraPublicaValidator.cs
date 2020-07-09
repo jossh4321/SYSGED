@@ -11,9 +11,9 @@ namespace SISGED.Shared.Validators.FiltroEscrituraPublicaValidator
     {
         public ParametrosBusquedaEscrituraPublicaValidator()
         {
-            RuleFor(x => x.direccionoficionotarial).Matches(@"^[A-aZ-z0-9áéíóú ]*[A-aZ-z0-9áéíóú]$").WithMessage("Debe ingresar una dirección válida").When(x => x.direccionoficionotarial != null && x.direccionoficionotarial !="");
-            RuleFor(x => x.nombrenotario).Matches(@"^[A-aZ-z0-9áéíóú ]*[A-aZ-z0-9áéíóú]$").WithMessage("Debe ingresar un nombre válido").When(x => x.nombrenotario != null && x.nombrenotario != "");
-            RuleFor(x => x.actojuridico).Matches(@"^[A-aZ-z0-9áéíóú ]*[A-aZ-z0-9áéíóú]$").WithMessage("Debe ingresar un acto jurídico válido").When(x => x.actojuridico !=null && x.actojuridico !="");
+            RuleFor(x => x.direccionoficionotarial).NotEmpty().WithMessage("Debe ingresar una dirección");
+            RuleFor(x => x.nombrenotario).NotEmpty().WithMessage("Debe ingresar un nombre");
+            RuleFor(x => x.actojuridico).NotEmpty().WithMessage("Debe ingresar un acto jurídico");
             RuleForEach(x => x.nombreotorgantes).SetValidator(new OtorgantesValidator());
         }
         
@@ -22,7 +22,7 @@ namespace SISGED.Shared.Validators.FiltroEscrituraPublicaValidator
     {
         public OtorgantesValidator()
         {
-            RuleFor(x => x.nombre).Matches(@"^[A-aZ-z0-9áéíóú ]*[A-aZ-z0-9áéíóú]$").WithMessage("Debe ingresar un nombre válido").When(x => x.nombre != null);
+            RuleFor(x => x.nombre).NotEmpty().WithMessage("Debe ingresar un nombre");
         }
     }
 }

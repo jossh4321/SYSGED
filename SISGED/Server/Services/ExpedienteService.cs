@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
+using SISGED.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,5 +109,88 @@ namespace SISGED.Server.Services
 
             return expediente;
         }
+
+        public ExpedienteDTO getbynestediddoc(string iddoc)
+        {
+            Expediente expediente = _expedientes.Find(exp => exp.documentos.Any(doc=>doc.iddocumento == iddoc)).FirstOrDefault();
+            ExpedienteDTO dTO = new ExpedienteDTO
+            {
+                cliente = expediente.cliente,
+                derivaciones = expediente.derivaciones,
+                documentos = expediente.documentos,
+                estado = expediente.estado,
+                fechafin = expediente.fechafin,
+                fechainicio = expediente.fechainicio,
+                id = expediente.id,
+                tipo = expediente.tipo
+            };
+            return dTO;
+        }
+
+        public async Task<List<ExpedienteDTO>> filtrado(ParametrosBusquedaExpediente parametrosbusqueda)
+        {
+            BsonArray embebedpipeline = new BsonArray();
+            embebedpipeline.Add(
+                    new BsonDocument("$match", new BsonDocument(
+                        "$expr", new BsonDocument(
+                            "$eq", new BsonArray{ "$_id", new BsonDocument(
+                                "$toObjectId", "$$iddoc")}
+                            ))));
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument("from", "documentos").
+                Add("let", new BsonDocument("iddoc", "$documentos.iddocumento")).
+                Add("pipeline", embebedpipeline).
+                Add("as", "documentoobj"));
+
+            var filtroDocumento = new BsonDocument();
+            if (parametrosbusqueda.estado != null & parametrosbusqueda.estado != "")
+            {
+                filtroDocumento.Add("estado",
+                                   new BsonDocument("$regex", parametrosbusqueda.estado + ".*")
+                                   .Add("$options", "i"));
+            }
+
+            if (parametrosbusqueda.tipo != null & parametrosbusqueda.tipo != "")
+            {
+                filtroDocumento.Add("tipo",
+                                   new BsonDocument("$regex", parametrosbusqueda.tipo + ".*")
+                                   .Add("$options", "i"));
+            }
+
+            if (parametrosbusqueda.nombrecliente != null & parametrosbusqueda.nombrecliente != "")
+            {
+                filtroDocumento.Add("cliente.nombre",
+                                    new BsonDocument("$regex", parametrosbusqueda.nombrecliente + ".*")
+                                    .Add("$options", "i"));
+            }
+
+
+            List<ExpedienteDTO> expedientes = new List<ExpedienteDTO>();
+            expedientes = await _expedientes.Aggregate()
+                .Unwind<Expediente, ExpedienteDTO_ur1>(e => e.documentos)
+                .AppendStage<ExpedienteDTO_look_up>(lookup)
+                .Unwind<ExpedienteDTO_look_up, ExpedienteDTO_ur2>(p => p.documentoobj)
+                .Group<ExpedienteDTO>(new BsonDocument
+                {
+                    { "_id", "$_id"},
+                    {
+                        "tipo", new BsonDocument
+                        {
+                            {"$first", "$tipo"}
+                        }
+                    },
+                    { "cliente", new BsonDocument{ { "$first", "$cliente" } } },
+                    { "fechainicio", new BsonDocument{ { "$first", "$fechainicio" } } },
+                    { "fechafin", new BsonDocument{ { "$first", "$fechafin" } } },
+                    {"documentos", new BsonDocument{ { "$push", "$documentos" } } },
+                    {"documentosobj", new BsonDocument{ { "$push", "$documentoobj" } } },
+                    { "derivaciones", new BsonDocument{ { "$first", "$derivaciones" } } },
+                    { "estado", new BsonDocument{ { "$first", "$estado" } } }
+                })
+                .Match(filtroDocumento)
+                .ToListAsync();
+            return expedientes;            
+        }
+
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SISGED.Server.Helpers;
 using SISGED.Server.Services;
 using SISGED.Shared.DTOs;
 using SISGED.Shared.Entities;
+using SISGED.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +35,23 @@ namespace SISGED.Server.Controllers
         {
             return _expedienteService.getAllExpediente();
         }
+        
+        [HttpGet("filter")]
+        public async Task<List<ExpedienteDTO>> autocompleteFilterCompleto([FromQuery] ParametrosBusquedaExpediente parametrosbusqueda)
+        {
+            List<ExpedienteDTO> listaExpedientesFiltrado = await _expedienteService.filtrado(parametrosbusqueda);
+            await HttpContext.InsertPagedParameterOnResponse(listaExpedientesFiltrado.AsQueryable(), parametrosbusqueda.cantidadregistros);
+            List<ExpedienteDTO> listaExpedientesFiltradoPaginado =
+                listaExpedientesFiltrado.AsQueryable().Paginate(parametrosbusqueda.Paginacion).ToList();
+            return listaExpedientesFiltradoPaginado;
+        }
+
+        [HttpGet("getbynested")]
+        public async Task<ActionResult<ExpedienteDTO>> getbynestediddoc([FromQuery] string iddoc)
+        {
+            return _expedienteService.getbynestediddoc(iddoc);
+        }
+
         [HttpPost("derivacion")]
         public ActionResult<Expediente> registrarDerivacion(Expediente expediente, [FromQuery] string userId)
         {

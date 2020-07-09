@@ -101,16 +101,28 @@ namespace SISGED.Server.Services
                 .Add("pipeline", subpipeline)
                 .Add("as", "rolobj"));
 
-            var filter = new BsonDocument("$match",
+            var filter2 = new BsonDocument("$match",
                 new BsonDocument("rolobj.label","Fiscal"));
+            var filter1 = new BsonDocument("$match",
+                new BsonDocument("tipo", "administracion"));
 
             List<UsuarioRDTO> fiscales = new List<UsuarioRDTO>();
             fiscales = await _usuarios.Aggregate()
+                .AppendStage<Usuario>(filter1)
                 .AppendStage<Usuario_LK>(lookup)
                 .Unwind<Usuario_LK, UsuarioRDTO>(p => p.rolobj)
-                .AppendStage<UsuarioRDTO>(filter)
+                .AppendStage<UsuarioRDTO>(filter2)
                 .ToListAsync();
             return fiscales;
         }
+
+        public List<Usuario> filter(string term)
+        {
+            string regex = "\\b" + term.ToLower() + ".*";
+            var filter = Builders<Usuario>.Filter.Regex("datos.nombre", new BsonRegularExpression(regex, "i"));
+            var filter2 = Builders<Usuario>.Filter.Eq("tipo", "cliente");
+            return _usuarios.Find(filter & filter2).ToList();
+        }
+
     }
 }

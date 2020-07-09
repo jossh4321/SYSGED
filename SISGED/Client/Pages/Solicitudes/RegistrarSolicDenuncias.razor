@@ -1,12 +1,12 @@
-﻿@using System.IO
-@inject IRepository repository
+﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
         background-color: #a6a6a6;
         flex-basis: 100%;
-        border-radius: 15px 15px 15px 15px;
+        border-radius: 5px 5px 0px 0px;
         width: 100%;
     }
 
@@ -60,27 +60,28 @@
         color: red !important;
     }
 </style>
+
 <div class="div-form">
     <EditForm EditContext="@_editContext" Context="CurrentEditContext"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
         <MatTabGroup>
             <MatTab Label="Datos Generales">
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.nombrecliente)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.nombrecliente" Class="text-field-style"
-                                  Label="Nombre del cliente" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudexpedicionfirma))'></MatTextField>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.nombrecliente)">
+                    <MatTextField @bind-Value="@solicitudDenuncia.nombrecliente" Class="text-field-style"
+                                  Label="Nombre del cliente" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudDenuncia))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.nombrecliente)" />
+                        <ValidationMessage For="@(() => solicitudDenuncia.nombrecliente)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.tipodocumento)">
-                    <InputSelect @bind-Value="@solicitudexpedicionfirma.tipodocumento" class="text-field-style  custom-select">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.tipodocumento)">
+                    <InputSelect @bind-Value="@solicitudDenuncia.tipodocumento" class="text-field-style custom-select">
                         <option value="nulo">--Seleccione el Tipo de Documento--</option>
                         <option value="CE">Carnet de Extranjeria</option>
                         <option value="DNI">D.N.I.</option>
@@ -88,70 +89,64 @@
                     </InputSelect>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.tipodocumento)" />
+                        <ValidationMessage For="@(() => solicitudDenuncia.tipodocumento)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.numerodocumento)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.numerodocumento" Class="text-field-style"
-                                  Label="N° de documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudexpedicionfirma))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.numerodocumento)">
+                    <MatTextField @bind-Value="@solicitudDenuncia.numerodocumento" Class="text-field-style"
+                                  Label="Numero de Documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudDenuncia))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.numerodocumento)" />
+                        <ValidationMessage For="@(() => solicitudDenuncia.numerodocumento)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitud"
-                                  @oninput='@(e => KeyUp(e,"codigo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
-
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.codigo)">
+                    <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.codigo" Class="text-field-style"
+                                  Label="Codigo" @oninput='@(e => KeyUp(e,"codigo",solicitudDenuncia.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.codigo)" />
+                        <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.codigo)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.titulo" Class="text-field-style" Label="Título del solicitud"
-                                  @oninput='@(e => KeyUp(e,"titulo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
-
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.titulo" Class="text-field-style"
+                                  Label="Titulo de la Solicitud" @oninput='@(e => KeyUp(e,"titulo",solicitudDenuncia.contenidoDTO))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.titulo)" />
+                        <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.titulo)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.descripcion)">
-                    <textarea class="form-control text-field-style txt-area" @bind="@solicitudexpedicionfirma.contenidoDTO.descripcion"
-                              @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedicionfirma.contenidoDTO))' placeholder="Descripcion de la Solicitud"></textarea>
-
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.descripcion)">
+                    <textarea class="form-control text-field-style txt-area" @bind="@solicitudDenuncia.contenidoDTO.descripcion"
+                              @oninput='@(e => KeyUp(e,"descripcion",solicitudDenuncia.contenidoDTO))' placeholder="Descripcion de la Solicitud"></textarea>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.descripcion)" />
+                        <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.descripcion)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
-
+                <div class="field-container">
+                    <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+                </div>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -164,7 +159,7 @@
 </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
-    private SolicitudExpedicionFirmaDTO solicitudexpedicionfirma = new SolicitudExpedicionFirmaDTO();
+    private SolicitudDenunciaDTO solicitudDenuncia = new SolicitudDenunciaDTO();
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private EditContext _editContext;
     private string documentoTemporal { get; set; } = null;
@@ -172,17 +167,12 @@
     private bool loadprocess = false;
     protected override void OnInitialized()
     {
-        _editContext = new EditContext(solicitudexpedicionfirma);
-        if (!string.IsNullOrEmpty(solicitudexpedicionfirma.contenidoDTO.data))
+        _editContext = new EditContext(solicitudDenuncia);
+        if (!string.IsNullOrEmpty(solicitudDenuncia.contenidoDTO.urldata))
         {
-            imagenTemporal = solicitudexpedicionfirma.contenidoDTO.data;
-            solicitudexpedicionfirma.contenidoDTO.data = null;
+            imagenTemporal = solicitudDenuncia.contenidoDTO.urldata;
+            solicitudDenuncia.contenidoDTO.urldata = null;
         }
-    }
-
-    private void ImagenSeleccionada(string imagenbase64)
-    {
-        solicitudexpedicionfirma.contenidoDTO.data = imagenbase64;
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -193,25 +183,31 @@
         _editContext.NotifyFieldChanged(fi);
     }
 
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        solicitudDenuncia.contenidoDTO.urldata = imagenbase64;
+    }
+
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
-        {
+        //if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
+        //{
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-            solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
-            expedienteWrapper.documento = solicitudexpedicionfirma;
+            //solicitudDenuncia.contenidoDTO.nombrecliente = solicitudDenuncia.nombrecliente;
+            expedienteWrapper.documento = solicitudDenuncia;
+            expedienteWrapper.idusuarioactual = "GAAAADenuncia";
 
-            expedienteWrapper.idusuarioactual = sesion.usuario.id;
-
-            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosef", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudDenunciaDTO>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)
             {
-                await swalfire.errorMessage("Error en el servidor 505, intentelo de nuevo");
+                await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
             }
             else
             {
+                /*
                 ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+
                 expedientebandeja = httpResponse.Response;
                 Item itemSalida = new Item()
                 {
@@ -223,14 +219,14 @@
                     originPlace = "outputs",
                     cliente = expedientebandeja.cliente
                 };
-                workspace.UpdateComponentBandeja(itemSalida);
-                await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
+                workspace.UpdateComponentBandeja(itemSalida);*/
+                await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
             }
-        }
-        else
+        //}
+        /*else
         {
             await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
-        }
+        }*/
         loadprocess = false;
     }
 

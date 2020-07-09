@@ -17,7 +17,7 @@ namespace SISGED.Shared.DTOs
     public class DocumentoEvaluadoDTO
     {
         public string id { get; set; } = null;
-        public Estado estado { get; set; } = new Estado()
+        public Evaluacion evaluacion { get; set; } = new Evaluacion()
         {
             status = "",
             observacion = null,
@@ -36,6 +36,7 @@ namespace SISGED.Shared.DTOs
         public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
         public Object contenido { get; set; }
         public Object estado { get; set; }
+        public Object evaluacion { get; set; }
         public List<string> urlanexo { get; set; } = new List<string>();
     }
 }

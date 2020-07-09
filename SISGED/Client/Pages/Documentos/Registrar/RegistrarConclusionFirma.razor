@@ -70,8 +70,8 @@
             <MatTab Label="Datos para conclusion de firma">
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idescriturapublica)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica" 
-                                       Placeholder ="Ingrese el titulo del Acto Juridico">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica"
+                                       Placeholder="Ingrese el titulo del Acto Juridico">
                         <SelectedTemplate>
                             <strong>@context.titulo</strong>
                         </SelectedTemplate>
@@ -88,6 +88,92 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idnotario)">
+                    <BlazoredTypeahead SearchMethod="matchNotario" @bind-Value="@conclusionFirma.contenidoDTO.idnotario"
+                                       Placeholder="Ingrese el Nombre del Notario">
+                        <SelectedTemplate>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                        </ResultTemplate>
+                        <NotFoundTemplate>
+                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                        </NotFoundTemplate>
+                    </BlazoredTypeahead>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.idnotario)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idcliente)">
+                    <BlazoredTypeahead SearchMethod="matchCliente" @bind-Value="@conclusionFirma.contenidoDTO.idcliente"
+                                       Placeholder="Ingrese el Nombre del Notario">
+                        <SelectedTemplate>
+                            <strong>Notario: @context.datos.nombre  -  N° DNI: @context.datos.numerodocumento</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            <strong>Notario: @context.datos.nombre  -  N° DNI: @context.datos.numerodocumento</strong>
+                        </ResultTemplate>
+                        <NotFoundTemplate>
+                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                        </NotFoundTemplate>
+                    </BlazoredTypeahead>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.idcliente)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <!---------------------------------------------------------------------------------------------------------------->
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => conclusionFirma.contenidoDTO.cantidadfoja)">
+                    
+                    
+                    <MatNumericUpDownField Label="Cantidad de Fojas"  Class="text-field-style"
+                                           @bind-Value=@conclusionFirma.contenidoDTO.cantidadfoja
+                                           FieldType="MatNumericUpDownFieldType.Numeric"
+                                           DecimalPlaces=0
+                                           Minimum=2 Maximum=50 
+                                           AllowInput="false"
+                                           @oninput='@(e => KeyUp(e,"cantidadfoja",conclusionFirma.contenidoDTO))'></MatNumericUpDownField>
+
+
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.cantidadfoja)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+</div>
+
+                <div>
+                    Precio Total: 
+                    @if(conclusionFirma.contenidoDTO.cantidadfoja > 0)
+                    {
+                        @(conclusionFirma.contenidoDTO.cantidadfoja * 30)
+
+                    }
+                    else
+                    {
+                        <label>0</label>
+                    }
+                </div>
+
+                <!---------------------------------------------------------------------------------------------------------------->
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -114,6 +200,32 @@
         if (httpResponse.Error)
         {
             return new List<EscrituraPublica>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+
+    private async Task<IEnumerable<Notario>> matchNotario(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<Notario>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+
+    private async Task<IEnumerable<Usuario>> matchCliente(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<Usuario>>($"api/usuarios/clientes?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<Usuario>();
         }
         else
         {
@@ -167,11 +279,26 @@
                 valor = expedientebandeja,
                 icono = "alarm_add",
                 descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
             };
-            workspace.UpdateComponentBandeja(itemSalida);
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = oficioconclusionfirma.id;
+            documentoDTO.tipo = oficioconclusionfirma.tipo;
+            documentoDTO.estado = oficioconclusionfirma.estado;
+            documentoDTO.contenido = oficioconclusionfirma.contenido;
+            documentoDTO.historialcontenido = oficioconclusionfirma.historialcontenido;
+            documentoDTO.historialproceso = oficioconclusionfirma.historialproceso;
+            documentoDTO.urlanexo = oficioconclusionfirma.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
+            //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Conclusión de Firma registrada Correctamente");
         }
         loadprocess = false;
