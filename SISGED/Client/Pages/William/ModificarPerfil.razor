@@ -111,14 +111,14 @@
 
 
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Nombres"
-                                  @oninput='@(e => KeyUp(e, "Nombres", documento.contenidoDTO))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.nombre)">
+                    <MatTextField @bind-Value="@usuario.datos.nombre" Class="text-field-style" Label="Nombres"
+                                  @oninput='@(e => KeyUp(e, "Nombres", usuario.datos))'></MatTextField>
 
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenidoDTO.titulo)" />
+                        <ValidationMessage For="@(() => usuario.datos.nombre)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -158,13 +158,13 @@
                 </div>
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@documento.contenidoDTO.actojuridico" Class="text-field-style" Label="Tipo de documento"
+                    <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Tipo de documento"
                                   @oninput='@(e => KeyUp(e, "Tipo de Documento ", documento.contenidoDTO))'></MatTextField>
 
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenidoDTO.actojuridico)" />
+                        <ValidationMessage For="@(() => documento.contenidoDTO.titulo)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -187,7 +187,7 @@
                 </div>
 
                 @*///////////////////////////////////////////////////*@
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.direccionoficio)">
                     <MatTextField @bind-Value="@documento.contenidoDTO.direccionoficio" Class="text-field-style" Label="Direccion"
                                   @oninput='@(e => KeyUp(e, "Direccion", documento.contenidoDTO))'></MatTextField>
 
@@ -328,174 +328,174 @@
 
 </div>
 @code {
-    [CascadingParameter] WorkEnvironment workspace { get; set; }
-    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+            [CascadingParameter] WorkEnvironment workspace { get; set; }
+            [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
-    public bool abrirDialogo = false;
-    public void openDialog() { abrirDialogo = true; }
-    public void closeDialog() { abrirDialogo = false; }
-    /// //////////////////////
+        public bool abrirDialogo = false;
+        public void openDialog() { abrirDialogo = true; }
+        public void closeDialog() { abrirDialogo = false; }
+        /// //////////////////////
 
 
 
-    public SolicitudBPNDTO docSolicitudBPNDTO = new SolicitudBPNDTO()
-    {
-        tipo = "SolicitudBPN",
-        estado = "Pendiente",
-        historialcontenido = new List<ContenidoVersion>()
+        public SolicitudBPNDTO docSolicitudBPNDTO = new SolicitudBPNDTO()
+        {
+            tipo = "SolicitudBPN",
+            estado = "Pendiente",
+            historialcontenido = new List<ContenidoVersion>()
 {
             new ContenidoVersion() { version = 1, url = "www.cnl/solicitud_BPN/1", fechamodificacion = new DateTime() }
         },
-        historialproceso = new List<Proceso>(),
-        contenidoDTO = new ContenidoSolicitudBPNDTO()
-        {
-            idcliente = new Usuario()
+            historialproceso = new List<Proceso>(),
+            contenidoDTO = new ContenidoSolicitudBPNDTO()
             {
-                id = "5eaba912d1768c4570dc1a80",
-                tipo = "Cliente",
-                usuario = "user1",
-                clave = "pass1",
-                datos = new Datos()
+                idcliente = new Usuario()
                 {
-                    nombre = "Juan Carlos",
-                    apellido = "Pillaca",
-                    tipodocumento = "D.N.I.",
-                    numerodocumento = "12345678",
-                    email = "jcPillaca@urp.edu.pe"
-                }
-            },
-            direccionoficio = "av. surco 123",
-            idnotario = new Notario()
+                    id = "5eaba912d1768c4570dc1a80",
+                    tipo = "Cliente",
+                    usuario = "user1",
+                    clave = "pass1",
+                    datos = new Datos()
+                    {
+                        nombre = "Juan Carlos",
+                        apellido = "Pillaca",
+                        tipodocumento = "D.N.I.",
+                        numerodocumento = "12345678",
+                        email = "jcPillaca@urp.edu.pe"
+                    }
+                },
+                direccionoficio = "av. surco 123",
+                idnotario = new Notario()
+                {
+                    id = "5ecb15b38e511a1d5cca29c4",
+                    nombre = "Fernando Jose",
+                    apellido = "Ezzpinoza Paredes",
+                    dni = "4321",
+                    colegiatura = "4H5H4K6K6V5J233O6HU6U676",
+                    email = "fernandoparedes@cnl.gob.pe"
+                },
+                actojuridico = "Mancomunacion de vienes por casamiento civil",
+                tipoprotocolo = "minuta",
+                otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo" },
+                fecharealizacion = DateTime.Now
+            }
+        };
+
+        private OficioBPNDTO documento = new OficioBPNDTO();
+        private EditContext _editContext;
+
+        /// /////////////////////////////////
+        private UsuarioDTO usuario = new UsuarioDTO();
+
+        //////////////////////////////////////
+        protected override void OnInitialized()
+        {
+            _editContext = new EditContext(documento);
+        }
+
+        void KeyUp(ChangeEventArgs e, string memberName, object val)
+        {
+            var property = val.GetType().GetProperty(memberName);
+            property.SetValue(val, e.Value.ToString());
+            var fi = new FieldIdentifier(val, memberName);
+            _editContext.NotifyFieldChanged(fi);
+        }
+
+        public async Task handleValidSubmit()
+        {
+            loadprocess = true;
+            documento.contenidoDTO.idcliente = docSolicitudBPNDTO.contenidoDTO.idcliente;
+            documento.contenidoDTO.direccionoficio = docSolicitudBPNDTO.contenidoDTO.direccionoficio;
+            documento.contenidoDTO.idnotario = docSolicitudBPNDTO.contenidoDTO.idnotario;
+            documento.contenidoDTO.actojuridico = docSolicitudBPNDTO.contenidoDTO.actojuridico;
+            documento.contenidoDTO.tipoprotocolo = docSolicitudBPNDTO.contenidoDTO.tipoprotocolo;
+            documento.contenidoDTO.otorgantes = docSolicitudBPNDTO.contenidoDTO.otorgantes;
+            documento.contenidoDTO.fecharealizacion = DateTime.Now;
+
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            expedienteWrapper.documento = documento;
+            expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+            expedienteWrapper.idusuarioactual = sesion.usuario.id;
+            expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+            var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>($"api/documentos/documentosbpn", expedienteWrapper);
+            if (!httpResponse.Error)
             {
-                id = "5ecb15b38e511a1d5cca29c4",
-                nombre = "Fernando Jose",
-                apellido = "Ezzpinoza Paredes",
-                dni = "4321",
-                colegiatura = "4H5H4K6K6V5J233O6HU6U676",
-                email = "fernandoparedes@cnl.gob.pe"
-            },
-            actojuridico = "Mancomunacion de vienes por casamiento civil",
-            tipoprotocolo = "minuta",
-            otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo" },
-            fecharealizacion = DateTime.Now
-        }
-    };
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja = workspace.expedienteseleccionado;
+                OficioBPN oficiobpn = new OficioBPN();
+                oficiobpn = httpResponse.Response;
+                expedientebandeja.documento.id = oficiobpn.id;
+                expedientebandeja.documento.tipo = oficiobpn.tipo;
+                expedientebandeja.documento.historialcontenido = oficiobpn.historialcontenido;
+                expedientebandeja.documento.historialproceso = oficiobpn.historialproceso;
+                expedientebandeja.documento.contenido = oficiobpn.contenido;
+                expedientebandeja.documento.estado = oficiobpn.estado;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                Item itemSalida = new Item()
 
-    private OficioBPNDTO documento = new OficioBPNDTO();
-    private EditContext _editContext;
+                {
+                    nombre = expedientebandeja.tipo,
+                    valor = expedientebandeja,
+                    icono = "alarm_add",
+                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                    currentPlace = "outputs",
+                    originPlace = "outputs",
+                    cliente = expedientebandeja.cliente
+                };
+                workspace.UpdateComponentBandeja(itemSalida);
+                await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
 
-  /// /////////////////////////////////
-    //private ModificarPerfil 
-  
-    //////////////////////////////////////
-    protected override void OnInitialized()
-    {
-        _editContext = new EditContext(documento);
-    }
-
-    void KeyUp(ChangeEventArgs e, string memberName, object val)
-    {
-        var property = val.GetType().GetProperty(memberName);
-        property.SetValue(val, e.Value.ToString());
-        var fi = new FieldIdentifier(val, memberName);
-        _editContext.NotifyFieldChanged(fi);
-    }
-
-    public async Task handleValidSubmit()
-    {
-        loadprocess = true;
-        documento.contenidoDTO.idcliente = docSolicitudBPNDTO.contenidoDTO.idcliente;
-        documento.contenidoDTO.direccionoficio = docSolicitudBPNDTO.contenidoDTO.direccionoficio;
-        documento.contenidoDTO.idnotario = docSolicitudBPNDTO.contenidoDTO.idnotario;
-        documento.contenidoDTO.actojuridico = docSolicitudBPNDTO.contenidoDTO.actojuridico;
-        documento.contenidoDTO.tipoprotocolo = docSolicitudBPNDTO.contenidoDTO.tipoprotocolo;
-        documento.contenidoDTO.otorgantes = docSolicitudBPNDTO.contenidoDTO.otorgantes;
-        documento.contenidoDTO.fecharealizacion = DateTime.Now;
-
-        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-        expedienteWrapper.documento = documento;
-        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        expedienteWrapper.idusuarioactual = sesion.usuario.id;
-        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-
-        var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>($"api/documentos/documentosbpn", expedienteWrapper);
-        if (!httpResponse.Error)
-        {
-            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-            expedientebandeja = workspace.expedienteseleccionado;
-            OficioBPN oficiobpn = new OficioBPN();
-            oficiobpn = httpResponse.Response;
-            expedientebandeja.documento.id = oficiobpn.id;
-            expedientebandeja.documento.tipo = oficiobpn.tipo;
-            expedientebandeja.documento.historialcontenido = oficiobpn.historialcontenido;
-            expedientebandeja.documento.historialproceso = oficiobpn.historialproceso;
-            expedientebandeja.documento.contenido = oficiobpn.contenido;
-            expedientebandeja.documento.estado = oficiobpn.estado;
-            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-            Item itemSalida = new Item()
-
+            }
+            else
             {
-                nombre = expedientebandeja.tipo,
-                valor = expedientebandeja,
-                icono = "alarm_add",
-                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
-            };
-            workspace.UpdateComponentBandeja(itemSalida);
-            await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
-
+                await swalfire.errorMessage("Error en el servidor");
+            }
+            loadprocess = false;
         }
-        else
+
+        public void handleInvalidSubmit()
         {
-            await swalfire.errorMessage("Error en el servidor");
+            loadprocess = false;
+            swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
         }
-        loadprocess = false;
+
+        /// //////////////////////////////////////////////////////////////////////
+        // public class Usuarios
+        //{
+        //     public string Id { get; set; }
+        //    public string Nombre_usuario { get; set; }
+        //    public string Nombres { get; set; }
+        ///   public string Apellidos { get; set; }
+        //   public string Tipo_documento { get; set; }
+        //   public int Ndocumento { get; set; }
+        //  public string Direccion { get; set; }
+        ///  public string Email { get; set; }
+        //  public string Sexo { get; set; }
+
+
+        // public Usuarios(string id, string nombre_usuario, string nombres, string apellidos, string tipo_documento, int ndocumento, string direccion, string email, string sexo)
+        // {
+        //        Id = id;
+        //        Nombre_usuario = nombre_usuario;
+        //        Nombres = nombres;
+        ///       Apellidos = apellidos;
+        //       Tipo_documento = tipo_documento;
+        ///Ndocumento = ndocumento;
+        // Direccion = direccion;
+        //       Email = email;
+        //     Sexo = sexo;
+        //
+        //  }
+        // }
+
+
+        //  Usuarios[] usuario = new[]
+        //  {
+        //               new Usuarios("usu001","FEDEPRO","Jose luis","torres alvares","dni",72369985,"av.bolognesi","jose123@gmail.com","M"),
+        ///};
+
+
     }
-
-    public void handleInvalidSubmit()
-    {
-        loadprocess = false;
-        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
-    }
-
-    /// //////////////////////////////////////////////////////////////////////
-    public class Usuarios
-    {
-        public string Id { get; set; }
-        public string Nombre_usuario { get; set; }
-        public string Nombres { get; set; }
-        public string Apellidos { get; set; }
-        public string Tipo_documento { get; set; }
-        public int Ndocumento { get; set; }
-        public string Direccion { get; set; }
-        public string Email { get; set; }
-        public string Sexo { get; set; }
-
-
-        public Usuarios(string id, string nombre_usuario, string nombres, string apellidos, string tipo_documento, int ndocumento, string direccion, string email, string sexo)
-        {
-            Id = id;
-            Nombre_usuario = nombre_usuario;
-            Nombres = nombres;
-            Apellidos = apellidos;
-            Tipo_documento = tipo_documento;
-            Ndocumento = ndocumento;
-            Direccion = direccion;
-            Email = email;
-            Sexo = sexo;
-
-        }
-    }
-
-
-    Usuarios[] usuario = new[]
-    {
-                new Usuarios("usu001","FEDEPRO","Jose luis","torres alvares","dni",72369985,"av.bolognesi","jose123@gmail.com","M"),
-};
-
-
-}
 
 
