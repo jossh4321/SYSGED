@@ -1,0 +1,39 @@
+﻿@inject IRepository repository
+<style>
+    .card-derivaciones {
+        margin: 5px;
+        /*border: 1px solid;*/
+        transition: all 0.3s ease-out;
+        padding: 10px;
+        border - radius: 10px;
+        box - shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+</style>
+
+<hr />
+<div class="card-derivaciones">
+    <p>@derivacion.tipo</p>
+    <p>Usuario: @derivacion.usuarioemisor</p>
+    <p>Área destino: @derivacion.areadestino</p>
+    <p>Área procedencia: @derivacion.areaprocedencia</p>
+    <p>Fecha derivación: @derivacion.fechaderivacion</p>
+</div>
+@code {
+    [Parameter] public Derivacion derivacion { get; set; }
+
+
+    private Usuario usuario;
+    private string usuarioEmisorId;
+
+    //protected async override Task OnInitializedAsync()
+    //{
+    //    usuarioEmisorId = derivacion.usuarioemisor;
+    //   // await getUsuario();
+    //}
+    public async Task getUsuario()
+    {
+        var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={usuarioEmisorId}");
+        usuario = responseHttp.Response;
+    }
+}
