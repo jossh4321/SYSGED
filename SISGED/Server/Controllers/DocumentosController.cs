@@ -49,6 +49,15 @@ namespace SISGED.Server.Controllers
             return documentoOficioBPN;
         }
 
+        [HttpPost("documentosolicbpn")]
+        public ActionResult<SolicitudBPN> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expediente)
+        {
+
+            SolicitudBPN documentoSolicBPN = new SolicitudBPN();
+            documentoSolicBPN = _documentoservice.registrarSolicitudBPN(expediente);
+            return documentoSolicBPN;
+        }
+
         [HttpPost("documentosd")]
         //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         public async Task<ActionResult<SolicitudDenunciaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
@@ -65,7 +74,8 @@ namespace SISGED.Server.Controllers
                 var solicitudBytes = Convert.FromBase64String(documento.contenidoDTO.urldata);
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicituddenuncia");
             }
-            //Creacionde Obj SolicitudDenuncia y almacenamiento en la coleccion documento
+
+            //Creacionde Obj ContenidoSolicitudDenuncia y almacenamiento en la coleccion documento
             ContenidoSolicitudDenuncia contenidoSolicitudDenuncia = new ContenidoSolicitudDenuncia()
             {
                 codigo = documento.contenidoDTO.codigo,
@@ -75,6 +85,7 @@ namespace SISGED.Server.Controllers
                 fechaentrega = DateTime.Now,
                 url = urlData
             };
+            
             SolicitudDenuncia solicitudDenuncia = new SolicitudDenuncia()
             {
                 tipo = "SolicitudDenuncia",

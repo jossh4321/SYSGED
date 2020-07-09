@@ -14,6 +14,16 @@
         width: 500px;
         background-color: #808080;
     }
+    .text-field-style {
+        display: block !important;
+    }
+    .mat-info-c {
+        color: #3333ff !important;
+        border: 1px solid #3333ff !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
 </style>
 <div class="div-form">
     @if (firstLoad == true)
@@ -34,10 +44,10 @@
             <MatTabGroup>
                 <MatTab Label="Solicitud">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@odn.contenidoDTO.titulo" ReadOnly="true" Class="text-field-style" Label="Titulo"></MatTextField>
+                        <MatTextField  @bind-Value="@odn.contenidoDTO.titulo" ReadOnly="true" Class="text-field-style" Label="Titulo"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@odn.contenidoDTO.descripcion" ReadOnly="true" Class="text-field-style" Label="Descripcion"></MatTextField>
+                        <MatTextField  @bind-Value="@odn.contenidoDTO.descripcion" ReadOnly="true" Class="text-field-style" Label="Descripcion"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
                         <MatDatePicker @bind-Value="@odn.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
@@ -111,6 +121,7 @@
         if (!httpResponse.Error)
         {
             odn = (OficioDesignacionNotarioDTO)httpResponse.Response;
+            Console.WriteLine("fecha: "+ odn.contenidoDTO.fecharealizacion.ToString());
             StateHasChanged();
         }
         else
