@@ -795,15 +795,49 @@ namespace SISGED.Server.Services
                 .Add("pipeline", pipeline)
                 .Add("as", "escriturapublica"));
 
+
+
+            BsonArray pipeline2 = new BsonArray();
+            pipeline2.Add(new BsonDocument("$match",
+               new BsonDocument("$expr",
+                   new BsonDocument("$eq",
+                       new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idnotario") }))));
+            var lookup2 = new BsonDocument("$lookup",
+                new BsonDocument("from", "notarios")
+                .Add("let", new BsonDocument("idnotario", "$contenido.idnotario"))
+                .Add("pipeline", pipeline2)
+                .Add("as", "notario"));
+
+
+            BsonArray pipeline3 = new BsonArray();
+            pipeline3.Add(new BsonDocument("$match",
+               new BsonDocument("$expr",
+                   new BsonDocument("$eq",
+                       new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idcliente") }))));
+            var lookup3 = new BsonDocument("$lookup",
+                new BsonDocument("from", "usuarios")
+                .Add("let", new BsonDocument("idcliente", "$contenido.idcliente"))
+                .Add("pipeline", pipeline3)
+                .Add("as", "cliente"));
+
+
             var project = new BsonDocument("$project",
                 new BsonDocument {
                     { "_id","$_id" },
                     { "tipo","$tipo"},
-                    { "contenidoDTO",new BsonDocument(
-                        new BsonDocument("idescriturapublica",
+                    { "contenidoDTO",new BsonDocument{
+                        {
+                            "idescriturapublica",
                             new BsonDocument("$arrayElemAt",
-                                new BsonArray{ "$escriturapublica",0 }))
-                        )
+                                new BsonArray{ "$escriturapublica",0 })
+                        },
+                        { "idnotario",new BsonDocument("$arrayElemAt",
+                                new BsonArray{ "$notario", 0 })},
+                        { "idcliente",new BsonDocument("$arrayElemAt",
+                                new BsonArray{ "$cliente", 0 })},
+                        {"cantidadfoja","$contenido.cantidadfoja" },
+                        {"precio","$contenido.precio" }
+                    }
                     },
                     { "estado","$estado"},
                     { "historialcontenido", "$historialcontenido" },
@@ -816,6 +850,8 @@ namespace SISGED.Server.Services
             docConclusionFirma = _documentos.Aggregate().
               AppendStage<ConclusionFirma>(match)
               .AppendStage<ConclusionFirma_lookup>(lookup)
+              .AppendStage<ConclusionFirma_lookup2>(lookup2)
+              .AppendStage<ConclusionFirma_lookup3>(lookup3)
               .AppendStage<ConclusionFirmaDTO>(project).First();
 
 

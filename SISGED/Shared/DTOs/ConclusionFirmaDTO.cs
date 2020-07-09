@@ -33,4 +33,35 @@ namespace SISGED.Shared.DTOs
         public List<EscrituraPublica> escriturapublica = new List<EscrituraPublica>();
     }
 
+    public class ConclusionFirma_lookup2
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
+        public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
+        public string estado { get; set; }
+        public ContenidoConclusionFirma contenido { get; set; }
+
+        public List<EscrituraPublica> escriturapublica = new List<EscrituraPublica>();
+
+        public List<Notario> notario = new List<Notario>();
+    }
+
+    public class ConclusionFirma_lookup3
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
+        public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
+        public string estado { get; set; }
+        public ContenidoConclusionFirma contenido { get; set; }
+
+        public List<EscrituraPublica> escriturapublica = new List<EscrituraPublica>();
+
+        public List<Notario> notario = new List<Notario>();
+        public List<Usuario> cliente = new List<Usuario>();
+    }
+
 }
