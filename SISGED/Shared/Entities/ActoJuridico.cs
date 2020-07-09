@@ -9,8 +9,8 @@ namespace SISGED.Shared.Entities
     {
         public string titulo { get; set; }
         public string descripcion { get; set; }
-        public List<Contrato> contratos { get; set; }
-        public List<Otorgante> otorgantes { get; set; }
+        public List<Contrato> contratos { get; set; } = new List<Contrato>();
+        public List<Otorgante> otorgantes { get; set; } = new  List<Otorgante>();
         //Mi primer commit
         //Mi primer commit
         //Mi primer commit

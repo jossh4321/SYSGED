@@ -53,7 +53,9 @@
                     {
                         <div class="field-container">
                             <CascadingValue Value="@imagen" Name="imagen">
-                                @ChildContent
+                                <CascadingValue Value="@codigo" Name="codigo">
+                                    @ChildContent
+                                </CascadingValue>
                             </CascadingValue>
                         </div>
                     }
@@ -108,7 +110,7 @@
         int serie=1;
         foreach(DocumentoDTO i in workspace.expedienteseleccionado.documentosobj)
         {
-            if(i.id == workspace.expedienteseleccionado.documento.id)
+            if (i.id == workspace.expedienteseleccionado.documento.id)
             {
                 break;
             }

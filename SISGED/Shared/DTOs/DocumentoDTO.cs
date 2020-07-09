@@ -39,4 +39,10 @@ namespace SISGED.Shared.DTOs
         public Object evaluacion { get; set; }
         public List<string> urlanexo { get; set; } = new List<string>();
     }
+    public class DocumentoGenerarDTO
+    {
+        public string iddocumento { get; set; } = null;
+        public string idexpediente { get; set; } = null;
+        public string idusuario { get; set; } = null;
+    }
 }
