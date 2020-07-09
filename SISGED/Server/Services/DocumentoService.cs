@@ -15,7 +15,8 @@ namespace SISGED.Server.Services
         private readonly IMongoCollection<Documento> _documentos;
         private readonly IMongoCollection<Expediente> _expedientes;
         private readonly IMongoCollection<Bandeja> _bandejas;
-
+        private readonly ExpedienteService _expedienteservice;
+        private readonly DocumentoService _documentoservice;
         public DocumentoService(ISysgedDatabaseSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
@@ -91,6 +92,83 @@ namespace SISGED.Server.Services
                 .Set("estado", "revisado");
             _documentos.UpdateOne(filter, update);
             return documentoODN;
+        }
+
+        public SolicitudBPN registrarSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        {
+            /*FALTA CONVERTIR otorgantelista(clase) a otorgante(string) */ 
+
+            //Obtenemos los datos del expedientewrapper
+            SolicitudBPNDTO documento = new SolicitudBPNDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            documento = JsonConvert.DeserializeObject<SolicitudBPNDTO>(json);
+
+            //Creacionde Obj ContenidoSolicitudBPN y almacenamiento en la coleccion documento
+            ContenidoSolicitudBPN contenidoSolicitudBPN = new ContenidoSolicitudBPN()
+            {
+                idcliente = documento.contenidoDTO.idcliente.id,
+                direccionoficio = documento.contenidoDTO.direccionoficio,
+                idnotario = documento.contenidoDTO.idnotario.id,
+                actojuridico = documento.contenidoDTO.actojuridico,
+                tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
+                otorgantes = documento.contenidoDTO.otorgantes,
+                fecharealizacion = DateTime.Now,
+                //url = "ninguna"
+            };
+            
+            SolicitudBPN solicitudBPN = new SolicitudBPN()
+            {
+                tipo = "SolicitudBPN",
+                contenido = contenidoSolicitudBPN,
+                estado = "pendiente",
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+            _documentos.InsertOne(solicitudBPN);
+            //Pegar aqui lo que se cortó
+
+            //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
+            Cliente cliente = new Cliente()
+            {
+                nombre = documento.nombrecliente,
+                tipodocumento = documento.tipodocumento,
+                numerodocumento = documento.numerodocumento
+            };
+            Expediente expediente = new Expediente();
+            expediente.tipo = "SolicitudBPN";
+            expediente.cliente = cliente;
+            expediente.fechainicio = DateTime.Now;
+            expediente.fechafin = null;
+            expediente.documentos = new List<DocumentoExpediente>()
+            {
+                new DocumentoExpediente(){
+                    indice = 1,
+                    iddocumento = solicitudBPN.id,
+                    tipo="SolicitudBPN",
+                    fechacreacion = solicitudBPN.contenido.fecharealizacion,
+                    fechaexceso=solicitudBPN.contenido.fecharealizacion.AddDays(10),
+                    fechademora = null
+                }
+            };
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+            expediente = _expedienteservice.saveExpediente(expediente);
+
+            //actualizacion de bandeja de salida del usuario
+            _documentoservice.updateBandejaSalida(expediente.id, solicitudBPN.id, expedienteWrapper.idusuarioactual);
+            //Actualizacion de bandeja de salida de usuario
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = expediente.id;
+            bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
+
+            //Actualizacion de bandeja de entrada de usuario
+            UpdateDefinition<Bandeja> updateBandejaEntrada =
+               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
+                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
+            return solicitudBPN;
         }
         public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)
         {
