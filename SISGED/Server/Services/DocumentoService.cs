@@ -15,7 +15,8 @@ namespace SISGED.Server.Services
         private readonly IMongoCollection<Documento> _documentos;
         private readonly IMongoCollection<Expediente> _expedientes;
         private readonly IMongoCollection<Bandeja> _bandejas;
-
+        private readonly ExpedienteService _expedienteservice;
+        private readonly DocumentoService _documentoservice;
         public DocumentoService(ISysgedDatabaseSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
@@ -40,7 +41,7 @@ namespace SISGED.Server.Services
             {
                 titulo = oficioDesignacionNotarioDTO.contenidoDTO.titulo,
                 descripcion = oficioDesignacionNotarioDTO.contenidoDTO.descripcion,
-                fecharealizacion = new DateTime(),
+                fecharealizacion = DateTime.Now,
                 lugaroficionotarial = oficioDesignacionNotarioDTO.contenidoDTO.lugaroficionotarial,
                 idusuario = oficioDesignacionNotarioDTO.contenidoDTO.idusuario,
                 idnotario = oficioDesignacionNotarioDTO.contenidoDTO.idnotario.id,
@@ -73,17 +74,17 @@ namespace SISGED.Server.Services
 
 
             //actualizacion bandeja salida del usuario
-            BandejaDocumento bandejaSalidaDocumento = new BandejaDocumento();
+            /*BandejaDocumento bandejaSalidaDocumento = new BandejaDocumento();
             bandejaSalidaDocumento.idexpediente = expediente.id;
             bandejaSalidaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandejaSalida = Builders<Bandeja>.Update.Push("bandejasalida", bandejaSalidaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaSalida);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaSalida);*/
 
             //actualizacion bandeja de entrada del usuario
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
+            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
                 Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                   Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", expedienteWrapper.documentoentrada);
@@ -91,6 +92,84 @@ namespace SISGED.Server.Services
                 .Set("estado", "revisado");
             _documentos.UpdateOne(filter, update);
             return documentoODN;
+        }
+
+        public SolicitudBPN registrarSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        {
+            /*FALTA CONVERTIR otorgantelista(clase) a otorgante(string) */ 
+
+            //Obtenemos los datos del expedientewrapper
+            SolicitudBPNDTO documento = new SolicitudBPNDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            documento = JsonConvert.DeserializeObject<SolicitudBPNDTO>(json);
+
+            //Creacionde Obj ContenidoSolicitudBPN y almacenamiento en la coleccion documento
+            ContenidoSolicitudBPN contenidoSolicitudBPN = new ContenidoSolicitudBPN()
+            {
+                idcliente = documento.contenidoDTO.idcliente.id,
+                direccionoficio = documento.contenidoDTO.direccionoficio,
+                idnotario = documento.contenidoDTO.idnotario.id,
+                actojuridico = documento.contenidoDTO.actojuridico,
+                tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
+                otorgantes = documento.contenidoDTO.otorgantes,
+                fecharealizacion = DateTime.Now,
+                //url = "ninguna"
+            };
+            
+            SolicitudBPN solicitudBPN = new SolicitudBPN()
+            {
+                tipo = "SolicitudBPN",
+                contenido = contenidoSolicitudBPN,
+                estado = "pendiente",
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+            _documentos.InsertOne(solicitudBPN);
+            //Pegar aqui lo que se cortó
+
+            //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
+            Cliente cliente = new Cliente()
+            {
+                nombre = documento.nombrecliente,
+                tipodocumento = documento.tipodocumento,
+                numerodocumento = documento.numerodocumento
+            };
+            Expediente expediente = new Expediente();
+            expediente.tipo = "SolicitudBPN";
+            expediente.cliente = cliente;
+            expediente.fechainicio = DateTime.Now;
+            expediente.fechafin = null;
+            expediente.documentos = new List<DocumentoExpediente>()
+            {
+                new DocumentoExpediente(){
+                    indice = 1,
+                    iddocumento = solicitudBPN.id,
+                    tipo="SolicitudBPN",
+                    fechacreacion = solicitudBPN.contenido.fecharealizacion,
+                    fechaexceso=solicitudBPN.contenido.fecharealizacion.AddDays(10),
+                    fechademora = null
+                }
+            };
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+            expediente = _expedienteservice.saveExpediente(expediente);
+
+            //actualizacion de bandeja de salida del usuario
+            _documentoservice.updateBandejaSalida(expediente.id, solicitudBPN.id, expedienteWrapper.idusuarioactual);
+            
+            //Actualizacion de bandeja de salida de usuario
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = expediente.id;
+            bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
+
+            //Actualizacion de bandeja de entrada de usuario
+            UpdateDefinition<Bandeja> updateBandejaEntrada =
+               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
+                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
+            return solicitudBPN;
         }
         public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)
         {
@@ -142,17 +221,17 @@ namespace SISGED.Server.Services
             Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5eeadf0b8ca4ff53a0b791e3", updateExpediente);
 
             //Actualizacion de bandeja de salida de usuario
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);*/
 
             //Actualizacion de bandeja de entrada de usuario
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
+            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", expedienteWrapper.documentoentrada);
@@ -221,17 +300,17 @@ namespace SISGED.Server.Services
             Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);
 
             //actualizando Bandeja salida
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);*/
 
             //actualizando Bandeja Entrada
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
+            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", expedienteWrapper.documentoentrada);
@@ -264,6 +343,21 @@ namespace SISGED.Server.Services
             //_bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
 
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
+        }
+        public Documento generarDocumento(DocumentoGenerarDTO documento)
+        {
+            Documento doc = new Documento();
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = documento.idexpediente;
+            bandejaDocumento.iddocumento = documento.iddocumento;
+
+            UpdateDefinition<Bandeja> updateBandejaD = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaD);
+
+            UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
+            _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
+
+            return doc;
         }
 
         public Documento modificarEstadoDocumento(DocumentoDTO documento)
@@ -315,17 +409,17 @@ namespace SISGED.Server.Services
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 
             //actualizando Bandeja salida
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);*/
 
             //actualizando Bandeja Entrada
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
+            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", iddocentrada));
-            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", iddocentrada);
@@ -377,17 +471,17 @@ namespace SISGED.Server.Services
             expediente = actualizarExpediente(documentoExpediente, expedientewrapper.idexpediente);
 
             //actualizando Bandeja salida
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == expedientewrapper.idusuarioactual, updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == expedientewrapper.idusuarioactual, updateBandeja);*/
 
             //actualizando Bandeja Entrada
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
+            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedientewrapper.documentoentrada));
-            _bandejas.UpdateOne(band => band.usuario == expedientewrapper.idusuarioactual, updateBandejaEntrada);
+            _bandejas.UpdateOne(band => band.usuario == expedientewrapper.idusuarioactual, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", expedientewrapper.documentoentrada);
@@ -438,17 +532,17 @@ namespace SISGED.Server.Services
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 
             //actualizando Bandeja salida
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);*/
 
             //actualizando Bandeja Entrada
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
+            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", iddocentrada));
-            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", iddocentrada);
@@ -503,17 +597,17 @@ namespace SISGED.Server.Services
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 
             //actualizando Bandeja salida
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);*/
 
             //actualizando Bandeja Entrada
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
+            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", iddocentrada));
-            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", iddocentrada);
@@ -557,17 +651,17 @@ namespace SISGED.Server.Services
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 
             //actualizando Bandeja salida
-            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = expediente.id;
             bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
             UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);*/
 
             //actualizando Bandeja Entrada
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
+            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", iddocentrada));
-            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);
+            _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", iddocentrada);
@@ -798,15 +892,49 @@ namespace SISGED.Server.Services
                 .Add("pipeline", pipeline)
                 .Add("as", "escriturapublica"));
 
+
+
+            BsonArray pipeline2 = new BsonArray();
+            pipeline2.Add(new BsonDocument("$match",
+               new BsonDocument("$expr",
+                   new BsonDocument("$eq",
+                       new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idnotario") }))));
+            var lookup2 = new BsonDocument("$lookup",
+                new BsonDocument("from", "notarios")
+                .Add("let", new BsonDocument("idnotario", "$contenido.idnotario"))
+                .Add("pipeline", pipeline2)
+                .Add("as", "notario"));
+
+
+            BsonArray pipeline3 = new BsonArray();
+            pipeline3.Add(new BsonDocument("$match",
+               new BsonDocument("$expr",
+                   new BsonDocument("$eq",
+                       new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idcliente") }))));
+            var lookup3 = new BsonDocument("$lookup",
+                new BsonDocument("from", "usuarios")
+                .Add("let", new BsonDocument("idcliente", "$contenido.idcliente"))
+                .Add("pipeline", pipeline3)
+                .Add("as", "cliente"));
+
+
             var project = new BsonDocument("$project",
                 new BsonDocument {
                     { "_id","$_id" },
                     { "tipo","$tipo"},
-                    { "contenidoDTO",new BsonDocument(
-                        new BsonDocument("idescriturapublica",
+                    { "contenidoDTO",new BsonDocument{
+                        {
+                            "idescriturapublica",
                             new BsonDocument("$arrayElemAt",
-                                new BsonArray{ "$escriturapublica",0 }))
-                        )
+                                new BsonArray{ "$escriturapublica",0 })
+                        },
+                        { "idnotario",new BsonDocument("$arrayElemAt",
+                                new BsonArray{ "$notario", 0 })},
+                        { "idcliente",new BsonDocument("$arrayElemAt",
+                                new BsonArray{ "$cliente", 0 })},
+                        {"cantidadfoja","$contenido.cantidadfoja" },
+                        {"precio","$contenido.precio" }
+                    }
                     },
                     { "estado","$estado"},
                     { "historialcontenido", "$historialcontenido" },
@@ -819,6 +947,8 @@ namespace SISGED.Server.Services
             docConclusionFirma = _documentos.Aggregate().
               AppendStage<ConclusionFirma>(match)
               .AppendStage<ConclusionFirma_lookup>(lookup)
+              .AppendStage<ConclusionFirma_lookup2>(lookup2)
+              .AppendStage<ConclusionFirma_lookup3>(lookup3)
               .AppendStage<ConclusionFirmaDTO>(project).First();
 
 

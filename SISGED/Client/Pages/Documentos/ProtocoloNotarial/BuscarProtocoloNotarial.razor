@@ -184,7 +184,7 @@ else
                 {
                     @foreach (var contrato in listacontratos)
                     {
-                        <ContratoC contrato="contrato"></ContratoC>
+                        <ContratoC contrato="contrato" elegirContrato="CargarPdfContrato"></ContratoC>
                     }
                 }
             </div>
@@ -215,6 +215,14 @@ else
             <MatButton OnClick="@((e) => { dialogootorgantes = false; })" Icon="@MatIconNames.Arrow_left">Regresar</MatButton>
         </MatDialogActions>
     </MatDialog>
+
+    <MatDialog @bind-IsOpen="previsualizarpdf" Class="mat-previsualizador-pdf">
+        <MatDialogTitle>Previsualización del Contrato</MatDialogTitle>
+        <MatDialogContent>
+            <iframe src="https://sysgedstorage01.blob.core.windows.net/resolucion/30f83c8d-2f7b-4940-9117-6110c501f520.pdf"
+                    width="100%" height="500px"></iframe>
+        </MatDialogContent>
+    </MatDialog>
 }
 @code {
     [CascadingParameter]
@@ -225,6 +233,7 @@ else
     public bool dialogoabierto = false;
     public EscrituraPublicaRDTO escrituraPublica { get; set; }
     public bool dialogocontrato = false;
+    public bool previsualizarpdf = false;
     public bool dialogootorgantes = false;
     public List<Contrato> listacontratos { get; set; }
     public List<Otorgante> listaotorgantes { get; set; }
@@ -234,6 +243,7 @@ else
     private EditContext _editContext;
     public int paginaactual = 1;
     public int paginastotales;
+    public Contrato contratoelegido;
     protected async override Task OnInitializedAsync()
     {
         listaEscriturasPublicas = new List<EscrituraPublicaRDTO>();
@@ -275,6 +285,7 @@ else
             itemstatus = "escogido",
             escriturapublica = escrituraPublica
         };
+        workspace.escrituraPublicaseleccionada = escrituraPublica;
         workspace.UpdateDocRegistrado(itemEscogido);
         workspace.UpdateTools("Buscar protocolo notarial");
         await Task.FromResult(0);
@@ -338,6 +349,11 @@ else
         _editContext.NotifyFieldChanged(fi);
     }
 
+    public void CargarPdfContrato(Contrato contrato)
+    {
+        contratoelegido = contrato;
+        previsualizarpdf = true;
+    }
 
 
 }
