@@ -291,7 +291,21 @@ namespace SISGED.Server.Controllers
         [HttpPost("documentod")]
         public async Task<ActionResult<Dictamen>> RegistrarDocumentoDictamen(ExpedienteWrapper expedientewrapper)
         {
-            return _documentoservice.RegistrarDictamen(expedientewrapper);
+            DictamenDTO dictamenDTO = new DictamenDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            dictamenDTO = JsonConvert.DeserializeObject<DictamenDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in dictamenDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.RegistrarDictamen(dictamenDTO, expedientewrapper, url2);
         }
 
         [HttpPost("documentor")]

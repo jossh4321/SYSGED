@@ -335,10 +335,10 @@ namespace SISGED.Server.Services
             return aperturamientodisciplinario;
         }
 
-        public Dictamen RegistrarDictamen(ExpedienteWrapper expedientewrapper)
+        public Dictamen RegistrarDictamen(DictamenDTO dictamenDTO, ExpedienteWrapper expedientewrapper, List<string> url2)
         {
             //Obtenemos los datos del expedientewrapper
-            DictamenDTO dictamenDTO = new DictamenDTO();
+            
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             dictamenDTO = JsonConvert.DeserializeObject<DictamenDTO>(json);
 
@@ -351,6 +351,7 @@ namespace SISGED.Server.Services
                 conclusion = dictamenDTO.contenidoDTO.conclusion,
                 observaciones = dictamenDTO.contenidoDTO.observaciones.Select(x => x.descripcion).ToList(),
                 recomendaciones = dictamenDTO.contenidoDTO.recomendaciones.Select(x => x.descripcion).ToList(),
+                
                 //fecha           
             };
             Dictamen dictamen = new Dictamen()
@@ -359,7 +360,8 @@ namespace SISGED.Server.Services
                 contenido = contenidodictamen,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
-                estado = "creado"
+                estado = "creado",
+                urlanexo = url2
             };
             _documentos.InsertOne(dictamen);
 
