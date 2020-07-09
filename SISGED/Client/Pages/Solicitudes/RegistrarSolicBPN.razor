@@ -5,7 +5,7 @@
     .div-form {
         background-color: #a6a6a6;
         flex-basis: 100%;
-        border-radius: 5px 5px 0px 0px;
+        border-radius: 15px 15px 15px 15px;
         width: 100%;
     }
 
@@ -63,8 +63,9 @@
         display: flex;
         flex-direction: column;
         /*height: 700px;*/
-        width: 500px;
+        width: 100%;
         background-color: #808080;
+        border-radius: 15px 15px 15px 15px;
     }
 
     .div-form.mat-tab-group {
@@ -80,6 +81,7 @@
         flex-direction: column;
         border-radius: 5px 5px 0px 0px;
         border-bottom: 1px solid black;
+        
     }
 
     .title-ot {
@@ -93,54 +95,6 @@
     <EditForm EditContext="@_editContext" Context="CurrentEditContext"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
-        <MatTabGroup>
-            <MatTab Label="Informacion Descriptiva">
-
-                <div class="field-container">
-                    <MatButton type="button" Icon="@MatBlazor.MatIconNames.Info"
-                               @onclick="@openDialog"
-                               Class="button-input-style mat-info-c sub-but">Informacion de Solicitud</MatButton>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@documento.contenidoDTO.titulo" Class="text-field-style" Label="Titulo de documento"
-                                  @oninput='@(e => KeyUp(e, "titulo", documento.contenidoDTO))'></MatTextField>
-
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenidoDTO.titulo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documento.contenidoDTO.descripcion)">
-                    <MatTextField @bind-Value="@documento.contenidoDTO.descripcion" Class="text-field-style" Label="Descripcion del documento"
-                                  @oninput='@(e => KeyUp(e, "descripcion", documento.contenidoDTO))'></MatTextField>
-
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => documento.contenidoDTO.descripcion)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
-                </div>
-            </MatTab>
-        </MatTabGroup>
-    </EditForm>
-
-    <MatDialog @bind-IsOpen="@abrirDialogo">
         <div class="modal-info-solicitudBPN">
             <MatTabGroup>
                 <MatTab Label="Solicitud">
@@ -156,17 +110,7 @@
                     <div class="field-container input-group-2">
                         <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
                     </div>
-                    <div class="otorgantes">
-                        <p class="title-ot">OTORGANTES REGISTRADOS</p>
-
-                        <MatChipSet>
-                            @foreach (string otorgante in docSolicitudBPNDTO.contenidoDTO.otorgantes)
-                            {
-                                <MatChip Label="@otorgante" LeadingIcon="@MatIconNames.Supervised_user_circle"></MatChip>
-                            }
-                        </MatChipSet>
-
-                    </div>
+                    <!--Copiar y pegar codigo del div para el for de Otorgantes-->
                     <div class="field-container input-group-2">
                         <MatDatePicker @bind-Value="@docSolicitudBPNDTO.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
                     </div>
@@ -193,45 +137,32 @@
                         </MatTextField>
                     </div>
                 </MatTab>
-                <MatTab Label="Notario">
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del Notario">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del Notario">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.dni" ReadOnly="true" Class="text-field-style" Label="DNI">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.colegiatura" ReadOnly="true" Class="text-field-style" Label="Codigo de Colegiatura">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.idnotario.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
-                        </MatTextField>
-                    </div>
-                </MatTab>
+                
             </MatTabGroup>
         </div>
-        <div class="field-container">
-            <MatButton type="button" Icon="@MatBlazor.MatIconNames.Info"
-                       @onclick="@closeDialog"
-                       Class="button-input-style mat-info-c sub-but">Cerrar</MatButton>
-        </div>
-    </MatDialog>
+        
 
+
+    </EditForm>
 </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
-    public bool abrirDialogo = false;
-    public void openDialog() { abrirDialogo = true; }
-    public void closeDialog() { abrirDialogo = false; }
+
+
+    private void addparticipante()
+    {
+        //Corregir
+        //docSolicitudBPNDTO.contenidoDTO.otorgantes.Add(new OtorganteDTO() { index = (docSolicitudBPNDTO.contenidoDTO.otorgantes.Count) });
+        StateHasChanged();
+    }
+
+    private void removeparticipante(int index)
+    {
+        docSolicitudBPNDTO.contenidoDTO.otorgantes.RemoveAt(index);
+        StateHasChanged();
+    }
 
     public SolicitudBPNDTO docSolicitudBPNDTO = new SolicitudBPNDTO()
     {
@@ -271,7 +202,8 @@
             },
             actojuridico = "Mancomunacion de vienes por casamiento civil",
             tipoprotocolo = "minuta",
-            otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo" },
+            //Corregir
+            //otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo" },
             fecharealizacion = DateTime.Now
         }
     };
@@ -280,6 +212,7 @@
     private EditContext _editContext;
     protected override void OnInitialized()
     {
+
         _editContext = new EditContext(documento);
     }
 

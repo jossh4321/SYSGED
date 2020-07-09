@@ -191,20 +191,21 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
-        {
+        //if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
+        //{
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-            solicitudDenuncia.contenidoDTO.nombrecliente = solicitudDenuncia.nombrecliente;
+            //solicitudDenuncia.contenidoDTO.nombrecliente = solicitudDenuncia.nombrecliente;
             expedienteWrapper.documento = solicitudDenuncia;
-            expedienteWrapper.idusuarioactual = sesion.usuario.id;
+            expedienteWrapper.idusuarioactual = "GAAAADenuncia";
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosd", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudDenunciaDTO>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)
             {
                 await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
             }
             else
             {
+                /*
                 ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
 
                 expedientebandeja = httpResponse.Response;
@@ -218,14 +219,14 @@
                     originPlace = "outputs",
                     cliente = expedientebandeja.cliente
                 };
-                workspace.UpdateComponentBandeja(itemSalida);
+                workspace.UpdateComponentBandeja(itemSalida);*/
                 await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
             }
-        }
-        else
+        //}
+        /*else
         {
             await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
-        }
+        }*/
         loadprocess = false;
     }
 

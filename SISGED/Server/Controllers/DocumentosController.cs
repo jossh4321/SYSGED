@@ -50,7 +50,8 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("documentosd")]
-        public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
+        //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<SolicitudDenunciaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
             //conversion de Object a Tipo especifico
             SolicitudDenunciaDTO documento = new SolicitudDenunciaDTO();
@@ -116,7 +117,7 @@ namespace SISGED.Server.Controllers
             _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
 
             //creacion de obj ExpedienteBandejaDTO
-            DocumentoDTO doc = new DocumentoDTO();
+            /*DocumentoDTO doc = new DocumentoDTO();
             doc.id = solicitudDenuncia.id;
             doc.id = solicitudDenuncia.tipo;
             doc.historialcontenido = new List<ContenidoVersion>();
@@ -131,7 +132,8 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
             bandejaexpdto.tipo = expediente.tipo;
 
-            return bandejaexpdto;
+            return bandejaexpdto;*/
+            return documento;
         }
 
         [HttpPost("documentosef")]
@@ -143,7 +145,7 @@ namespace SISGED.Server.Controllers
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             solicitudExpedicionFirmasDTO = JsonConvert.DeserializeObject<SolicitudExpedicionFirmaDTO>(json);
 
-            //Almacenamiento de archivo en repositorio y obtnecion de url *por ahora no
+            //Almacenamiento de archivo en repositorio y obtnecion de url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(solicitudExpedicionFirmasDTO.contenidoDTO.data))
             {
