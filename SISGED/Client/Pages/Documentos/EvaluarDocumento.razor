@@ -135,7 +135,7 @@ else
         string tipo = workspace.expedienteseleccionado.documento.tipo;
         if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
         {
-            Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.estado.ToString());
+            Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
             Console.WriteLine(evaluacion.status);
             if (evaluacion.status == "pendiente")
             {

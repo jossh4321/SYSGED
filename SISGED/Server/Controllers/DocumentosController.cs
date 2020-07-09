@@ -79,7 +79,7 @@ namespace SISGED.Server.Controllers
             {
                 tipo = "SolicitudDenuncia",
                 contenido = contenidoSolicitudDenuncia,
-                estado = "pendiente",
+                estado = "creado",
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
 

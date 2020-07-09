@@ -9,10 +9,8 @@ namespace SISGED.Shared.DTOs
 {
     public class SolicitudExpedienteNotarioDTO : Documento
     {
-        public string estado { get; set; }
         public ContenidoSolicitudExpedienteNotarioDTO contenidoDTO { get; set; } = new ContenidoSolicitudExpedienteNotarioDTO();
     }
-
 
     public class ContenidoSolicitudExpedienteNotarioDTO
     {

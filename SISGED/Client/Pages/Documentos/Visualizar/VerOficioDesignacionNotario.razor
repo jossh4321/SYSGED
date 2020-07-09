@@ -1,0 +1,122 @@
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .modal-info-designacion-notario {
+        display: flex;
+        flex-direction: column;
+        /*height: 700px;*/
+        width: 500px;
+        background-color: #808080;
+    }
+</style>
+<div class="div-form">
+    @if (firstLoad == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+
+            <span style="color:white">CARGANDO...</span>
+        </div>
+    }
+    else
+    {
+        <div class=".modal-info-designacion-notario">
+            <MatTabGroup>
+                <MatTab Label="Solicitud">
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.titulo" ReadOnly="true" Class="text-field-style" Label="Titulo"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.descripcion" ReadOnly="true" Class="text-field-style" Label="Descripcion"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatDatePicker @bind-Value="@odn.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.lugaroficionotarial" ReadOnly="true" Class="text-field-style" Label="Lugar de Oficio Notarial"></MatTextField>
+                    </div>
+                </MatTab>
+                <MatTab Label="Notario">
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del Notario">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del Notario">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.dni" ReadOnly="true" Class="text-field-style" Label="N° D.N.I.">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.direccion" ReadOnly="true" Class="text-field-style" Label="Direccion actual">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.colegiatura" ReadOnly="true" Class="text-field-style" Label="Codigo de Colegiatura">
+                        </MatTextField>
+                    </div>
+                </MatTab>
+                <MatTab Label="Oficio Notarial">
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.oficionotarial.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre de Oficio">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.oficionotarial.provincia" ReadOnly="true" Class="text-field-style" Label="Provincia">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.oficionotarial.distrito" ReadOnly="true" Class="text-field-style" Label="Distrito">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.oficionotarial.ubicacion" ReadOnly="true" Class="text-field-style" Label="Direccion de la Notaria">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@odn.contenidoDTO.idnotario.oficionotarial.ruc" ReadOnly="true" Class="text-field-style" Label="Numero de R.U.C.">
+                        </MatTextField>
+                    </div>
+                </MatTab>
+            </MatTabGroup>
+        </div>
+    }
+</div>
+
+@code {
+    OficioDesignacionNotarioDTO odn = new OficioDesignacionNotarioDTO();
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [Parameter] public string iddocumento { get; set; }
+    private bool firstLoad = true;
+    protected override async Task OnInitializedAsync()
+    {
+        firstLoad = true;
+        var httpResponse = await repository.Get<OficioDesignacionNotarioDTO>($"api/documentos/documentoodn?iddoc={iddocumento}");
+        if (!httpResponse.Error)
+        {
+            odn = (OficioDesignacionNotarioDTO)httpResponse.Response;
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un Error");
+        }
+        firstLoad = false;
+    }
+}

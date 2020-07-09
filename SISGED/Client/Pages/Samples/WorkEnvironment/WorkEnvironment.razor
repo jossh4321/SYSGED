@@ -227,14 +227,12 @@
             </div>
         </div>
     </CascadingValue>
+    
 </div>
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Item> listaherramientas = new List<Item>();
-    //List<ExpedienteDTO> listaentradas = new List<ExpedienteDTO>();
-
-    //public String expedienteseleccionado = null;
-    //public String idexpedienteSalida = null;
+    public bool modal = false;
     public ExpedienteBandejaDTO expedienteseleccionado = null;
     public Item currentItemDragged;
     public Bandeja bandejaUsuario = new Bandeja();

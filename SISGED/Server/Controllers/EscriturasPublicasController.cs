@@ -24,16 +24,6 @@ namespace SISGED.Server.Controllers
             this.escriturasPublicasService = escriturasPublicasService;
         }
 
-        [HttpGet]
-        public async Task<List<EscrituraPublicaRDTO>> Get()
-        {
-            ParametrosBusquedaEscrituraPublica parametrosbusqueda = new ParametrosBusquedaEscrituraPublica();
-            List<EscrituraPublicaRDTO> listaEscriturasPublicas =await escriturasPublicasService.obtenerEscriturasPublicas();
-            await HttpContext.InsertPagedParameterOnResponse(listaEscriturasPublicas.AsQueryable(), parametrosbusqueda.cantidadregistros);
-            List<EscrituraPublicaRDTO> listaEscriturasPublicasPaginado = listaEscriturasPublicas.AsQueryable().Paginate(parametrosbusqueda.Paginacion).ToList();
-            return listaEscriturasPublicasPaginado;
-        }
-
         [HttpGet("filter")]
         public ActionResult<List<EscrituraPublica>> autocompletefilter([FromQuery] string term)
         {
@@ -46,7 +36,7 @@ namespace SISGED.Server.Controllers
         public async Task<List<EscrituraPublicaRDTO>> autocompleteFilterCompleto([FromQuery] ParametrosBusquedaEscrituraPublica parametrosbusqueda)
         {
             List<EscrituraPublicaRDTO> listaescriturasPublicasFiltrado = await escriturasPublicasService.filtradoEspecial(parametrosbusqueda);
-            await HttpContext.InsertPagedParameterOnResponse(listaescriturasPublicasFiltrado.AsQueryable(),parametrosbusqueda.cantidadregistros);
+            await HttpContext.InsertPagedParameterOnResponse(listaescriturasPublicasFiltrado.AsQueryable(), parametrosbusqueda.cantidadregistros);
             List<EscrituraPublicaRDTO> listaescriturasPublicasFiltradoPaginado =
                 listaescriturasPublicasFiltrado.AsQueryable().Paginate(parametrosbusqueda.Paginacion).ToList();
             return listaescriturasPublicasFiltradoPaginado;
