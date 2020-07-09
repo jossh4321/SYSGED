@@ -137,27 +137,37 @@ else
                 };
                 DocumentoDTO solicitud = new DocumentoDTO
                 {
-                    id = mercadoPago.referencia
+                    id = mercadoPago.referencia.Split("-")[0]
                 };
-                //Paso4: Obtener el documento
+                //Paso4: Obtener el documento solicitud
                 var httpResponse = await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={solicitud.id}");
                 if (!httpResponse.Error)
                 {
                     solicitud = (DocumentoDTO)httpResponse.Response;
-                    switch (solicitud.tipo)
-                    {
-                        case "SolicitudBPN":
-                            solicitud.estado = SolicitudEstado.Finalizado.Value;
-                            break;
-                        case "SolicitudExpedicionFirma":
-                            solicitud.estado = SolicitudEstado.Finalizado.Value;
-                            break;
-                        default:
-                            break;
-                    }
-                    //UltimoPaso: Actualizar Estado
+                    solicitud.estado = SolicitudEstado.Finalizado.Value;
+
+                    //UltimoPaso: Actualizar Estado Solicitud
                     var httpResponse2 = await repository.Put<DocumentoDTO, DocumentoDTO>("api/documentos/cambiarestadodocumento", solicitud);
                     documento = (DocumentoDTO)httpResponse2.Response;
+                }
+                else
+                {
+                    Console.WriteLine("Algo Mal");
+                }
+
+                DocumentoDTO resultado = new DocumentoDTO
+                {
+                    id = mercadoPago.referencia.Split("-")[1]
+                };
+                //Paso5: Obtener el documento resultado
+                var httpResponse1 = await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={resultado.id}");
+                if (!httpResponse.Error)
+                {
+                    resultado = (DocumentoDTO)httpResponse.Response;
+                    resultado.estado = SolicitudEstado.Finalizado.Value;
+
+                    //UltimoPaso: Actualizar Estado Resultado
+                    var httpResponse2 = await repository.Put<DocumentoDTO, DocumentoDTO>("api/documentos/cambiarestadodocumento", resultado);
                 }
                 else
                 {
