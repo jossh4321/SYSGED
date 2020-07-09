@@ -117,17 +117,17 @@
                                 <MatIcon Icon="add_circle_outline"></MatIcon>
                             </div>
                         </div>
-                        @for (int i = 0; i < aperturamientodisciplinario.contenidoDTO.participantes.Count; i++)
+                        @for (int i = 0; i < docSolicitudBPNDTO.contenidoDTO.otorgantes.Count; i++)
                         {
                             int index = i;
                             <div class="single-textfield-container">
-                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes[index].nombre)">
-                                    <MatTextField @bind-Value="@aperturamientodisciplinario.contenidoDTO.participantes[index].nombre" Class="text-field-style"
+                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => docSolicitudBPNDTO.contenidoDTO.otorgantes[index])">
+                                    <MatTextField @bind-Value="@docSolicitudBPNDTO.contenidoDTO.otorgantes[index]" Class="text-field-style"
                                                   Label="Nombre del participante"
-                                                  @oninput='@(e => KeyUp(e, "nombre", aperturamientodisciplinario.contenidoDTO.participantes[index]))'></MatTextField>
+                                                  @oninput='@(e => KeyUp(e, "nombre", docSolicitudBPNDTO.contenidoDTO.otorgantes[index]))'></MatTextField>
                                     <div class="incorrecto">
                                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                        <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes[index].nombre)" />
+                                        <ValidationMessage For="@(() => docSolicitudBPNDTO.contenidoDTO.otorgantes[index])" />
                                     </div>
                                     <div class="correcto">
                                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -139,10 +139,10 @@
                                 </div>
                             </div>
                         }
-                        <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => aperturamientodisciplinario.contenidoDTO.participantes)">
+                        <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => docSolicitudBPNDTO.contenidoDTO.otorgantes)">
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                <ValidationMessage For="@(() => aperturamientodisciplinario.contenidoDTO.participantes)" />
+                                <ValidationMessage For="@(() => docSolicitudBPNDTO.contenidoDTO.otorgantes)" />
                             </div>
                             <div class="correcto">
                                 <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -150,6 +150,9 @@
                             </div>
                         </div>
                     </div>
+
+
+
                     <div class="field-container input-group-2">
                         <MatDatePicker @bind-Value="@docSolicitudBPNDTO.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
                     </div>
@@ -179,9 +182,6 @@
                 
             </MatTabGroup>
         </div>
-        
-
-
     </EditForm>
 </div>
 @code {
@@ -191,13 +191,13 @@
 
     private void addparticipante()
     {
-        aperturamientodisciplinario.contenidoDTO.participantes.Add(new Participante() { index = (aperturamientodisciplinario.contenidoDTO.participantes.Count) });
+        //docSolicitudBPNDTO.contenidoDTO.otorgantes.Add(new Otorgante() { index = docSolicitudBPNDTO.contenidoDTO.otorgantes.Count() });
         StateHasChanged();
     }
 
     private void removeparticipante(int index)
     {
-        aperturamientodisciplinario.contenidoDTO.participantes.RemoveAt(index);
+        docSolicitudBPNDTO.contenidoDTO.otorgantes.RemoveAt(index);
         StateHasChanged();
     }
 
