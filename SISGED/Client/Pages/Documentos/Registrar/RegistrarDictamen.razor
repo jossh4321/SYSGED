@@ -265,6 +265,10 @@
                         </div>
                     </div>
                 </div>
+                
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -284,6 +288,7 @@
     //Datos del formulario
     [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
     private DictamenDTO dictamen = new DictamenDTO();
+    private string imagenTemporal2;
     private EditContext _editContext;
     private string imagenTemporal;
     private bool loadprocess = false;
@@ -292,7 +297,16 @@
     {
         dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0, descripcion = "" } };
         dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
+        dictamen.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(dictamen);
+        foreach (string u in dictamen.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                dictamen.contenidoDTO.Urlanexo = null;
+            }
+        }
     }
     private void addObservaciones()
     {
@@ -313,6 +327,10 @@
     {
         dictamen.contenidoDTO.recomendaciones.RemoveAt(index);
         StateHasChanged();
+    }
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        dictamen.contenidoDTO.Urlanexo.Add(imagenbase64);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
