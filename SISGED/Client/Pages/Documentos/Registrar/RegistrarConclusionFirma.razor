@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 
 <style>
     .div-form {
@@ -139,30 +140,30 @@
                 <!---------------------------------------------------------------------------------------------------------------->
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => conclusionFirma.contenidoDTO.cantidadfoja)">
-                    
-                    
-                    <MatNumericUpDownField Label="Cantidad de Fojas"  Class="text-field-style"
+
+
+                    <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
                                            @bind-Value=@conclusionFirma.contenidoDTO.cantidadfoja
                                            FieldType="MatNumericUpDownFieldType.Numeric"
                                            DecimalPlaces=0
-                                           Minimum=2 Maximum=50 
+                                           Minimum=2 Maximum=50
                                            AllowInput="false"
                                            @oninput='@(e => KeyUp(e,"cantidadfoja",conclusionFirma.contenidoDTO))'></MatNumericUpDownField>
 
 
-                        <div class="incorrecto">
-                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.cantidadfoja)" />
-                        </div>
-                        <div class="correcto">
-                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                            <span class="good-msg">Correcto</span>
-                        </div>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.cantidadfoja)" />
                     </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
 
                 <div>
-                    Precio Total: 
-                    @if(conclusionFirma.contenidoDTO.cantidadfoja > 0)
+                    Precio Total:
+                    @if (conclusionFirma.contenidoDTO.cantidadfoja > 0)
                     {
                         @(conclusionFirma.contenidoDTO.cantidadfoja * 30)
 
@@ -287,7 +288,7 @@
             expedientebandeja.documento.tipo = oficioconclusionfirma.tipo;
             expedientebandeja.documento.historialcontenido = oficioconclusionfirma.historialcontenido;
             expedientebandeja.documento.historialproceso = oficioconclusionfirma.historialproceso;
-            expedientebandeja.documento.contenido = oficioconclusionfirma.contenido;
+            expedientebandeja.documento.contenido = JsonConvert.SerializeObject(oficioconclusionfirma.contenido);
             expedientebandeja.documento.estado = oficioconclusionfirma.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()

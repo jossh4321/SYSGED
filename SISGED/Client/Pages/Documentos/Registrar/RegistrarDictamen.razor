@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -292,9 +293,9 @@
     private string imagenTemporal;
     private bool loadprocess = false;
 
-    protected override void  OnInitialized()
+    protected override void OnInitialized()
     {
-        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0 , descripcion = "" } };
+        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0, descripcion = "" } };
         dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
         dictamen.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(dictamen);
@@ -358,7 +359,7 @@
             expedientebandeja.documento.tipo = dictamen.tipo;
             expedientebandeja.documento.historialcontenido = dictamen.historialcontenido;
             expedientebandeja.documento.historialproceso = dictamen.historialproceso;
-            expedientebandeja.documento.contenido = dictamen.contenido;
+            expedientebandeja.documento.contenido = JsonConvert.SerializeObject(dictamen.contenido);
             expedientebandeja.documento.estado = dictamen.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()

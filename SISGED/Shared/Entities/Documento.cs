@@ -164,11 +164,11 @@ namespace SISGED.Shared.Entities
         public string nombredenunciante { get; set; }
         public string titulo { get; set; }
         public string descripcion { get; set; }
-        public DateTime fechainicioaudiencia { get; set; }
-        public DateTime fechafinaudiencia { get; set; }
-        public List<string> participantes { get; set; }
+        public DateTime fechainicioaudiencia { get; set; } = DateTime.Now;
+        public DateTime fechafinaudiencia { get; set; } = DateTime.Now;
+        public List<string> participantes { get; set; } = new List<string>();
         public string lugaraudiencia { get; set; }
-        public List<string> hechosimputados { get; set; }
+        public List<string> hechosimputados { get; set; } = new List<string>();
         //public string estado { get; set; }
         public string url { get; set; }
 

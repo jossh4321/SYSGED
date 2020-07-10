@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -235,11 +236,11 @@
                     </div>
                 </div>
                 @*<div class="field-container">
-                <MatButton type="submit"
-                           Disabled="@loadprocess"
-                           Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                           Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-            </div>*@
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>*@
             </MatTab>
             <MatTab Label="Subir Anexo">
                 <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
@@ -269,7 +270,7 @@
 
     protected override void OnInitialized()
     {
-        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0,nombre="" } };
+        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0, nombre = "" } };
         resolucion.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(resolucion);
         foreach (string u in resolucion.contenidoDTO.Urlanexo)
@@ -300,7 +301,7 @@
     private async Task addParticipante()
     {
         Console.WriteLine("INDEX ADD ==> " + resolucion.contenidoDTO.participantes.Count);
-        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count),nombre="" });
+        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count), nombre = "" });
         StateHasChanged();
     }
     private async Task removeParticipante(int index)
@@ -361,7 +362,7 @@
                 documentoDTO.id = documentoResolucion.id;
                 documentoDTO.tipo = documentoResolucion.tipo;
                 documentoDTO.estado = documentoResolucion.estado;
-                documentoDTO.contenido = documentoResolucion.contenido;
+                documentoDTO.contenido = JsonConvert.SerializeObject(documentoResolucion.contenido);
                 documentoDTO.historialcontenido = documentoResolucion.historialcontenido;
                 documentoDTO.historialproceso = documentoResolucion.historialproceso;
                 documentoDTO.urlanexo = documentoResolucion.urlanexo;
