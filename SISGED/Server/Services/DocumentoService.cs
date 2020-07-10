@@ -96,12 +96,20 @@ namespace SISGED.Server.Services
 
         public SolicitudBPN registrarSolicitudBPN(ExpedienteWrapper expedienteWrapper)
         {
-            /*FALTA CONVERTIR otorgantelista(clase) a otorgante(string) */ 
-
+            
             //Obtenemos los datos del expedientewrapper
             SolicitudBPNDTO documento = new SolicitudBPNDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             documento = JsonConvert.DeserializeObject<SolicitudBPNDTO>(json);
+            //Listas de participantes a string
+            List<String> listaotorgantes = new List<string>();
+            foreach (Otorgantelista oto in documento.contenidoDTO.otorganteslista)
+            {
+                listaotorgantes.Add(oto.nombre);
+                listaotorgantes.Add(oto.apellido);
+                listaotorgantes.Add(oto.dni);
+            }
+
 
             //Creacionde Obj ContenidoSolicitudBPN y almacenamiento en la coleccion documento
             ContenidoSolicitudBPN contenidoSolicitudBPN = new ContenidoSolicitudBPN()
@@ -111,7 +119,7 @@ namespace SISGED.Server.Services
                 idnotario = documento.contenidoDTO.idnotario.id,
                 actojuridico = documento.contenidoDTO.actojuridico,
                 tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
-                otorgantes = documento.contenidoDTO.otorgantes,
+                otorgantes = listaotorgantes,
                 fecharealizacion = DateTime.Now,
                 //url = "ninguna"
             };
@@ -1243,6 +1251,7 @@ namespace SISGED.Server.Services
                 .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica);
              _documentos.UpdateOne(filter, update);
         }
+
 
         public void actualizarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
         {

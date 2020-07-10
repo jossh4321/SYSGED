@@ -153,14 +153,14 @@
                                 <MatIcon Icon="add_circle_outline"></MatIcon>
                             </div>
                         </div>
-                        @for (int i = 0; i < solicitudbpn.contenidoDTO.otorgantes.Count; i++)
+                        @for (int i = 0; i < solicitudbpn.contenidoDTO.otorganteslista.Count; i++)
                         {
 
                             int index = i;
                             <div class="single-textfield-container">
                                 <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].nombre)">
                                     <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.otorganteslista[index].nombre" Class="text-field-style"
-                                                  Label="Nombre del participante"
+                                                  Label="Nombres"
                                                   @oninput='@(e => KeyUp(e, "nombre", solicitudbpn.contenidoDTO.otorganteslista[index]))'></MatTextField>
                                     <div class="incorrecto">
                                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -175,7 +175,7 @@
                             <div class="single-textfield-container">
                                 <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].apellido)">
                                     <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.otorganteslista[index].apellido" Class="text-field-style"
-                                                  Label="Nombre del participante"
+                                                  Label="Apellidos"
                                                   @oninput='@(e => KeyUp(e, "apellido", solicitudbpn.contenidoDTO.otorganteslista[index]))'></MatTextField>
                                     <div class="incorrecto">
                                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -191,7 +191,7 @@
                             <div class="single-textfield-container">
                                 <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].dni)">
                                     <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.otorganteslista[index].dni" Class="text-field-style"
-                                                  Label="Nombre del participante"
+                                                  Label="D.N.I."
                                                   @oninput='@(e => KeyUp(e, "dni", solicitudbpn.contenidoDTO.otorganteslista[index]))'></MatTextField>
                                     <div class="incorrecto">
                                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -355,13 +355,13 @@
     private void addparticipante()
     {
         //Corregir
-        solicitudbpn.contenidoDTO.otorganteslista.Add(new Otorgantelista() { index = (solicitudbpn.contenidoDTO.otorgantes.Count) });
+        solicitudbpn.contenidoDTO.otorganteslista.Add(new Otorgantelista() { index = (solicitudbpn.contenidoDTO.otorganteslista.Count) });
         StateHasChanged();
     }
 
     private void removeparticipante(int index)
     {
-        solicitudbpn.contenidoDTO.otorgantes.RemoveAt(index);
+        solicitudbpn.contenidoDTO.otorganteslista.RemoveAt(index);
         StateHasChanged();
     }
     /*
