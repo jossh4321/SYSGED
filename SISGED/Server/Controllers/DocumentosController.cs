@@ -346,6 +346,22 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerOficioBusquedaProtocoloNotarial(iddoc);
         }
+        [HttpGet("documentosolbpn")]
+        public async Task<ActionResult<SolicitudBPNDTO>> obtenerSolicitudBpn([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerSolicitudBusquedaProtocoloNotarial(iddoc);
+        }
+        /*
+        [HttpGet("documentosold")]
+        public async Task<ActionResult<OficioBPNDTO>> obtenerSolicitudDenuncia([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerOficioBusquedaProtocoloNotarial(iddoc);
+        }
+        [HttpGet("documentosolef")]
+        public async Task<ActionResult<OficioBPNDTO>> obtenerSolicitudExpedicionFirmas([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerOficioBusquedaProtocoloNotarial(iddoc);
+        }*/
         [HttpGet("documentod")]
         public async Task<ActionResult<DictamenDTO>> obtenerDictamen([FromQuery] string iddoc)
         {

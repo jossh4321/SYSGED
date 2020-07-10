@@ -699,6 +699,37 @@ namespace SISGED.Server.Services
             return oficioDesignacionNotario;
 
         }
+
+        public SolicitudBPNDTO obtenerSolicitudBusquedaProtocoloNotarial(string id)
+        {
+            SolicitudBPN docSolicitudBPN = new SolicitudBPN();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docSolicitudBPN = _documentos.Aggregate().
+              AppendStage<SolicitudBPN>(match).First();
+
+            SolicitudBPNDTO solicitudbpnDTO = new SolicitudBPNDTO();
+            solicitudbpnDTO.id = docSolicitudBPN.id;
+            solicitudbpnDTO.tipo = docSolicitudBPN.tipo;
+            //solicitudbpnDTO.historialcontenido = docSolicitudBPN.historialcontenido;
+            //solicitudbpnDTO.historialproceso = docSolicitudBPN.historialproceso;
+            solicitudbpnDTO.estado = docSolicitudBPN.estado;
+            solicitudbpnDTO.contenidoDTO = new ContenidoSolicitudBPNDTO()
+            {
+                
+                actojuridico = docSolicitudBPN.contenido.actojuridico,
+                tipoprotocolo = docSolicitudBPN.contenido.tipoprotocolo,
+
+                fecharealizacion = docSolicitudBPN.contenido.fecharealizacion,
+               // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
+               
+                
+            };
+            return solicitudbpnDTO;
+        }
+
+
+
         public OficioBPNDTO  obtenerOficioBusquedaProtocoloNotarial(string id)
         {
             var match = new BsonDocument("$match", new BsonDocument("_id",
