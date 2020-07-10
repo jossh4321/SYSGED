@@ -12,28 +12,58 @@
 </style>
 
 <hr />
-<div class="card-derivaciones">
+<div class="card-derivaciones">                  
     <p>@derivacion.tipo</p>
     <p>Usuario: @derivacion.usuarioemisor</p>
-    <p>Área destino: @derivacion.areadestino</p>
+    <p>Área destino: @derivacion.areadestino</p>    
     <p>Área procedencia: @derivacion.areaprocedencia</p>
     <p>Fecha derivación: @derivacion.fechaderivacion</p>
 </div>
+
 @code {
-    [Parameter] public Derivacion derivacion { get; set; }
+    [Parameter]
+    public Derivacion derivacion { get; set; }
 
 
-    private Usuario usuario;
+    private Usuario usuario = new Usuario();
+    public Rol rol = new Rol();
     private string usuarioEmisorId;
 
-    //protected async override Task OnInitializedAsync()
-    //{
-    //    usuarioEmisorId = derivacion.usuarioemisor;
-    //   // await getUsuario();
-    //}
-    public async Task getUsuario()
+    protected async override Task OnInitializedAsync()
     {
-        var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={usuarioEmisorId}");
-        usuario = responseHttp.Response;
+        usuarioEmisorId = derivacion.usuarioemisor;
+        Console.WriteLine(usuarioEmisorId);
+       // await getUsuario();
+        //await getRol();
     }
+    //public async Task getUsuario()
+    //{
+    //    var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id=5ed460cd9695cd5e20d952e3");
+    //    if (responseHttp.Error)
+    //    {
+    //        //carga = false;
+    //        Console.WriteLine("Ha ocurrido un error al traer usuario");
+    //    }
+    //    else
+    //    {
+
+    //        usuario = responseHttp.Response;
+    //        Console.WriteLine(usuario.id + "holaaaaaaaaaaaaa");
+    //    }
+    //}
+
+    //public async Task getRol()
+    //{
+    //    var responseHttp = await repository.Get<Rol>($"api/roles/id?id=5ecb24d749e62f2c6cf65cd9");
+    //    if (responseHttp.Error)
+    //    {            
+    //        Console.WriteLine("Ha ocurrido un error al traer role.s");
+    //    }
+    //    else
+    //    {
+
+    //        rol = responseHttp.Response;
+    //        Console.WriteLine(rol.descripcion + " holaaaaaaaaaaaaa");
+    //    }
+    //}
 }
