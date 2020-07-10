@@ -21,5 +21,6 @@ namespace SISGED.Shared.DTOs
         public List<Participante> participantes { get; set; } = new List<Participante>();
         public string sancion { get; set; }
         public string data { get; set; }
+        public List<string> Urlanexo { get; set; } = new List<string>();
     }
 }

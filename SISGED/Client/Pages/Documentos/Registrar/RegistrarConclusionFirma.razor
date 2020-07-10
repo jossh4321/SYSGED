@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 
 <style>
     .div-form {
@@ -139,30 +140,30 @@
                 <!---------------------------------------------------------------------------------------------------------------->
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => conclusionFirma.contenidoDTO.cantidadfoja)">
-                    
-                    
-                    <MatNumericUpDownField Label="Cantidad de Fojas"  Class="text-field-style"
+
+
+                    <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
                                            @bind-Value=@conclusionFirma.contenidoDTO.cantidadfoja
                                            FieldType="MatNumericUpDownFieldType.Numeric"
                                            DecimalPlaces=0
-                                           Minimum=2 Maximum=50 
+                                           Minimum=2 Maximum=50
                                            AllowInput="false"
                                            @oninput='@(e => KeyUp(e,"cantidadfoja",conclusionFirma.contenidoDTO))'></MatNumericUpDownField>
 
 
-                        <div class="incorrecto">
-                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.cantidadfoja)" />
-                        </div>
-                        <div class="correcto">
-                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                            <span class="good-msg">Correcto</span>
-                        </div>
-</div>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => conclusionFirma.contenidoDTO.cantidadfoja)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
 
                 <div>
-                    Precio Total: 
-                    @if(conclusionFirma.contenidoDTO.cantidadfoja > 0)
+                    Precio Total:
+                    @if (conclusionFirma.contenidoDTO.cantidadfoja > 0)
                     {
                         @(conclusionFirma.contenidoDTO.cantidadfoja * 30)
 
@@ -197,6 +198,7 @@
     private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
     {
         var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
+
         if (httpResponse.Error)
         {
             return new List<EscrituraPublica>();
@@ -235,9 +237,23 @@
 
     protected override void OnInitialized()
     {
+        _editContext = new EditContext(conclusionFirma);
+        EscrituraPublicaRDTO epdto = new EscrituraPublicaRDTO();
+        epdto = workspace.escrituraPublicaseleccionada;
+        EscrituraPublica ep = new EscrituraPublica();
+        Console.WriteLine(epdto.id);
+        ep.id = epdto.id;
+        ep.direccionoficio = epdto.direccionoficio;
+        ep.direccionoficio = epdto.idnotario;
+        ep.actosjuridicos = epdto.actosjuridicos;
+        ep.fechaescriturapublica = epdto.fechaescriturapublica;
+        ep.estado = epdto.estado;
+        ep.titulo = epdto.titulo;
+        ep.url = epdto.url;
+        conclusionFirma.contenidoDTO.idescriturapublica = ep;
+        _editContext = new EditContext(conclusionFirma);
+        StateHasChanged();
 
-        //workspace.expedienteseleccionado.
-        //_editContext = new EditContext(conclusionFirma);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -272,7 +288,7 @@
             expedientebandeja.documento.tipo = oficioconclusionfirma.tipo;
             expedientebandeja.documento.historialcontenido = oficioconclusionfirma.historialcontenido;
             expedientebandeja.documento.historialproceso = oficioconclusionfirma.historialproceso;
-            expedientebandeja.documento.contenido = oficioconclusionfirma.contenido;
+            expedientebandeja.documento.contenido = JsonConvert.SerializeObject(oficioconclusionfirma.contenido);
             expedientebandeja.documento.estado = oficioconclusionfirma.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()

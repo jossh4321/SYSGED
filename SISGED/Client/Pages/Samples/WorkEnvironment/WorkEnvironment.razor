@@ -241,7 +241,18 @@
         <div class="modal-info-solicitudBPN">
             @if (expedienteseleccionado.documento.tipo.Equals("OficioDesignacionNotario"))
             {
-                <VerOficioDesignacionNotario iddocumento="@expedienteseleccionado.documento.id"></VerOficioDesignacionNotario>
+                <!--VerOficioDesignacionNotario iddocumento="expedienteseleccionado.documento.id"></!--VerOficioDesignacionNotario-->
+                <div>En construccion...</div>
+            }
+            else if (expedienteseleccionado.documento.tipo.Equals("ConclusionFirma"))
+            {
+                <!--VerConclusionFirma iddocumento="expedienteseleccionado.documento.id"> </!--VerConclusionFirma-->
+                <div>En construccion...</div>
+            }
+            else
+            {
+
+                <div>En construccion...</div>
             }
 
         </div>
@@ -298,7 +309,6 @@
             {
                 if (newCurrentPlace == "workspace") {
                     expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor;
-                    escrituraPublicaseleccionada = tool.escriturapublica;
                 }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
                 if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }

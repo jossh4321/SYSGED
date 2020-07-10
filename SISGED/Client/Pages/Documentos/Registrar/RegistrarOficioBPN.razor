@@ -1,6 +1,7 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -233,7 +234,7 @@
         tipo = "SolicitudBPN",
         estado = "Pendiente",
         historialcontenido = new List<ContenidoVersion>()
-    {
+{
             new ContenidoVersion() { version = 1, url = "www.cnl/solicitud_BPN/1", fechamodificacion = new DateTime() }
         },
         historialproceso = new List<Proceso>(),
@@ -314,7 +315,7 @@
             expedientebandeja.documento.tipo = oficiobpn.tipo;
             expedientebandeja.documento.historialcontenido = oficiobpn.historialcontenido;
             expedientebandeja.documento.historialproceso = oficiobpn.historialproceso;
-            expedientebandeja.documento.contenido = oficiobpn.contenido;
+            expedientebandeja.documento.contenido =JsonConvert.SerializeObject(oficiobpn.contenido);
             expedientebandeja.documento.estado = oficiobpn.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()

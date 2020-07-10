@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -183,7 +184,7 @@
             documentoDTO.id = apelacionact.id;
             documentoDTO.tipo = apelacionact.tipo;
             documentoDTO.estado = apelacionact.estado;
-            documentoDTO.contenido = apelacionact.contenido;
+            documentoDTO.contenido = JsonConvert.SerializeObject(apelacionact.contenido);
             documentoDTO.historialcontenido = apelacionact.historialcontenido;
             documentoDTO.historialproceso = apelacionact.historialproceso;
             documentoDTO.urlanexo = apelacionact.urlanexo;

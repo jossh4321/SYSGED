@@ -20,6 +20,7 @@ namespace SISGED.Shared.DTOs
         public List<Observaciones> observaciones { get; set; } = new List<Observaciones>();
         public string conclusion { get; set; }
         public List<Recomendaciones> recomendaciones { get; set; } = new List<Recomendaciones>();
+        public List<string> Urlanexo { get; set; } = new List<string>();
         //public DateTime fechaemision { get; set; } 
     }
     public class Observaciones
