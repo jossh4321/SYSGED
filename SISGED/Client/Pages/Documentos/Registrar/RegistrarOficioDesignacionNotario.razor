@@ -1,7 +1,8 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
-@using SISGED.Client.Pages.Samples.WorkEnvironment 
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -9,10 +10,12 @@
         border-radius: 5px 5px 0px 0px;
         width: 100%;
     }
+
     .field-container {
         display: block;
         padding: 10px;
     }
+
     .text-field-style {
         display: block !important;
     }
@@ -29,6 +32,7 @@
     div.valid:not(.modified) .correcto {
         display: none;
     }
+
     .correcto {
         color: green !important;
         font-family: sans-serif;
@@ -48,11 +52,13 @@
     i.val-icon {
         font-size: 20px;
     }
+
     .good-msg, div.correcto i.good-icon {
         color: green !important;
     }
-    div.incorrecto i.bad-icon{
-        color:red !important;
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
     }
 </style>
 
@@ -123,7 +129,7 @@
                 </div>
                 <div class="field-container">
                     <MatButton type="submit"
-                                Disabled="@loadprocess"
+                               Disabled="@loadprocess"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
                 </div>
@@ -137,7 +143,7 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Notario> notariosseleccionados = new List<Notario>();
     public Notario notarioselect;
-    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set;  }
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
     private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
     private EditContext _editContext;
     private bool loadprocess = false;
@@ -176,7 +182,7 @@
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse =  await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/documentoodn", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, OficioDesignacionNotario>($"api/documentos/documentoodn", expedienteWrapper);
         if (!httpResponse.Error)
         {
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
@@ -202,14 +208,14 @@
                 cliente = expedientebandeja.cliente,
                 itemstatus = "registrado"
             };
-            
+
             workspace.UpdateDocRegistrado(itemSalida);
             workspace.UpdateTools("Registrar Documento");
             DocumentoDTO documentoDTO = new DocumentoDTO();
             documentoDTO.id = oficiodesignacionnotario.id;
             documentoDTO.tipo = oficiodesignacionnotario.tipo;
             documentoDTO.estado = oficiodesignacionnotario.estado;
-            documentoDTO.contenido = oficiodesignacionnotario.contenido;
+            documentoDTO.contenido = JsonConvert.SerializeObject(oficiodesignacionnotario.contenido);
             documentoDTO.historialcontenido = oficiodesignacionnotario.historialcontenido;
             documentoDTO.historialproceso = oficiodesignacionnotario.historialproceso;
             documentoDTO.urlanexo = oficiodesignacionnotario.urlanexo;

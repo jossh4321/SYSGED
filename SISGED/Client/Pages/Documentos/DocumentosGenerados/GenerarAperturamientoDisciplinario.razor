@@ -109,11 +109,13 @@
 
     protected async override Task OnInitializedAsync()
     {
+        Console.WriteLine(workspace.expedienteseleccionado.documento.contenido.ToString());
         documento = JsonConvert.DeserializeObject<ContenidoAperturamientoDisciplinario>(workspace.expedienteseleccionado.documento.contenido.ToString());
         usuario = new Usuario();
         notario = new Notario();
         await getUsuario();
         faltaCargar = false;
+
     }
 
     private async Task getUsuario()

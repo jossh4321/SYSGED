@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -124,7 +125,7 @@
         <MatTabGroup>
             <MatTab Label="General">
 
-               
+
 
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => dictamen.contenidoDTO.titulo)">
@@ -189,7 +190,7 @@
                             <MatIcon Icon="add_circle_outline"></MatIcon>
                         </div>
                     </div>
-                    @for(int i = 0;i < dictamen.contenidoDTO.observaciones.Count;i++)
+                    @for (int i = 0; i < dictamen.contenidoDTO.observaciones.Count; i++)
                     {
                         int index = i;
                         <div class="single-textfield-container">
@@ -230,7 +231,7 @@
                             <MatIcon Icon="add_circle_outline"></MatIcon>
                         </div>
                     </div>
-                    @for(int i = 0; i < dictamen.contenidoDTO.recomendaciones.Count;i++)
+                    @for (int i = 0; i < dictamen.contenidoDTO.recomendaciones.Count; i++)
                     {
                         int index = i;
                         <div class="single-textfield-container">
@@ -287,9 +288,9 @@
     private string imagenTemporal;
     private bool loadprocess = false;
 
-    protected override void  OnInitialized()
+    protected override void OnInitialized()
     {
-        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0 , descripcion = "" } };
+        dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0, descripcion = "" } };
         dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
         _editContext = new EditContext(dictamen);
     }
@@ -340,7 +341,7 @@
             expedientebandeja.documento.tipo = dictamen.tipo;
             expedientebandeja.documento.historialcontenido = dictamen.historialcontenido;
             expedientebandeja.documento.historialproceso = dictamen.historialproceso;
-            expedientebandeja.documento.contenido = dictamen.contenido;
+            expedientebandeja.documento.contenido = JsonConvert.SerializeObject(dictamen.contenido);
             expedientebandeja.documento.estado = dictamen.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()

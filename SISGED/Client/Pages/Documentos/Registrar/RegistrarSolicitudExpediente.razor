@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -193,7 +194,7 @@
             DocumentoDTO documentoDTO = new DocumentoDTO();
             documentoDTO.id = solicitudExpedienteNotarioAct.id;
             documentoDTO.tipo = solicitudExpedienteNotarioAct.tipo;
-            documentoDTO.estado = solicitudExpedienteNotarioAct.estado;
+            documentoDTO.estado = JsonConvert.SerializeObject(solicitudExpedienteNotarioAct.contenido);
             documentoDTO.contenido = solicitudExpedienteNotarioAct.contenido;
             documentoDTO.historialcontenido = solicitudExpedienteNotarioAct.historialcontenido;
             documentoDTO.historialproceso = solicitudExpedienteNotarioAct.historialproceso;

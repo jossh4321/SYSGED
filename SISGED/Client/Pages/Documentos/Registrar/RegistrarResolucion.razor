@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -258,7 +259,7 @@
 
     protected override void OnInitialized()
     {
-        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0,nombre="" } };
+        resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0, nombre = "" } };
         _editContext = new EditContext(resolucion);
         if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
         {
@@ -275,7 +276,7 @@
     private async Task addParticipante()
     {
         Console.WriteLine("INDEX ADD ==> " + resolucion.contenidoDTO.participantes.Count);
-        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count),nombre="" });
+        resolucion.contenidoDTO.participantes.Add(new Participante() { index = (resolucion.contenidoDTO.participantes.Count), nombre = "" });
         StateHasChanged();
     }
     private async Task removeParticipante(int index)
@@ -336,7 +337,7 @@
                 documentoDTO.id = documentoResolucion.id;
                 documentoDTO.tipo = documentoResolucion.tipo;
                 documentoDTO.estado = documentoResolucion.estado;
-                documentoDTO.contenido = documentoResolucion.contenido;
+                documentoDTO.contenido =JsonConvert.SerializeObject(documentoResolucion.contenido);
                 documentoDTO.historialcontenido = documentoResolucion.historialcontenido;
                 documentoDTO.historialproceso = documentoResolucion.historialproceso;
                 documentoDTO.urlanexo = documentoResolucion.urlanexo;
