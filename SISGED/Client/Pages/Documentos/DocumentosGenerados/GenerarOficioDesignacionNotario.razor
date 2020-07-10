@@ -4,66 +4,66 @@
 @using Newtonsoft.Json
 @inject IRepository repositorio
 
-    <style>
-        * {
-            color: black;
-        }
+<style>
+    * {
+        color: black;
+    }
 
-        .contenedor-PDF {
-            height: 400px;
-            width: 600px;
-        }
+    .contenedor-PDF {
+        height: 400px;
+        width: 600px;
+    }
 
-        .mat-success-c {
-            color: green !important;
-            border: 1px solid green !important;
-            border-radius: 15px !important;
-            font-size: 13px !important;
-            transition: all 300ms !important;
-            width: 100%;
-        }
+    .mat-success-c {
+        color: green !important;
+        border: 1px solid green !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+        width: 100%;
+    }
 
-        .dialogo .mdc-dialog__surface {
-            max-width: none !important;
-            height: 800px !important;
-        }
-    </style>
-    <MatButton Disabled="@faltaCargar" OnClick="@GenerarPDF" Class="mat-success-c"> Generar Documento</MatButton>
-    <MatDialog @bind-IsOpen="@generado" Class="dialogo">
-        <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
-        <MatDialogContent Class="contenedor-PDF">
-            <iframe id="docpdf" style="background-color:#EEE; height:650px; width:500px"></iframe>
-        </MatDialogContent>
-        <MatDialogActions>
-            <MatButton @onclick="@ConfirmacionGenerar">Generar</MatButton>
-            <MatButton @onclick="@((e) => { generado = false; })">Volver</MatButton>
-        </MatDialogActions>
-    </MatDialog>
-    <div style="display: none">
-        <table id="convertirPDF">
-            <tbody>
-                <tr>
-                    <th colspan="7">@documento.titulo</th>
-                </tr>
-                <tr><td colspan="7"> </td></tr>
-                <tr><td colspan="7">Código de generación: @codigo</td></tr>
-                <tr><td colspan="7">Descripción: </td></tr>
-                <tr><td colspan="7">@documento.descripcion</td></tr>
-                <tr><td colspan="7">Fecha de realización: @documento.fecharealizacion.ToString("dd-MM-yy")</td></tr>
-                <tr><td colspan="7">Lugar de oficio notarial: </td></tr>
-                <tr><td colspan="7">@documento.lugaroficionotarial</td></tr>
-                <tr><td colspan="7">Designador: </td></tr>
-                <tr><td></td><td>- Nombre: @usuario.datos.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td>- Apellidos: @usuario.datos.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td>- Tipo de documento: @usuario.datos.tipodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td>- Número de documento: @usuario.datos.numerodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td colspan="7"> Datos del notario: </td></tr>
-                <tr><td></td><td>- Nombre: @notario.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td>- Apellidos: @notario.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td>- DNI: @notario.dni</td><td></td><td></td><td></td><td></td><td></td></tr>
-            </tbody>
-        </table>
-    </div>
+    .dialogo .mdc-dialog__surface {
+        max-width: none !important;
+        height: 800px !important;
+    }
+</style>
+<MatButton Disabled="@faltaCargar" OnClick="@GenerarPDF" Class="mat-success-c"> Generar Documento</MatButton>
+<MatDialog @bind-IsOpen="@generado" Class="dialogo">
+    <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
+    <MatDialogContent Class="contenedor-PDF">
+        <iframe id="docpdf" style="background-color:#EEE; height:650px; width:500px"></iframe>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton @onclick="@(()=>ConfirmacionGenerar())">Generar</MatButton>
+        <MatButton @onclick="@((e) => { generado = false; })">Volver</MatButton>
+    </MatDialogActions>
+</MatDialog>
+<div style="display: none">
+    <table id="convertirPDF">
+        <tbody>
+            <tr>
+                <th colspan="7">@documento.titulo</th>
+            </tr>
+            <tr><td colspan="7"> </td></tr>
+            <tr><td colspan="7">Código de generación: @codigo</td></tr>
+            <tr><td colspan="7">Descripción: </td></tr>
+            <tr><td colspan="7">@documento.descripcion</td></tr>
+            <tr><td colspan="7">Fecha de realización: @documento.fecharealizacion.ToString("dd-MM-yy")</td></tr>
+            <tr><td colspan="7">Lugar de oficio notarial: </td></tr>
+            <tr><td colspan="7">@documento.lugaroficionotarial</td></tr>
+            <tr><td colspan="7">Designador: </td></tr>
+            <tr><td></td><td>- Nombre: @usuario.datos.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td>- Apellidos: @usuario.datos.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td>- Tipo de documento: @usuario.datos.tipodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td>- Número de documento: @usuario.datos.numerodocumento</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td colspan="7"> Datos del notario: </td></tr>
+            <tr><td></td><td>- Nombre: @notario.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td>- Apellidos: @notario.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td>- DNI: @notario.dni</td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+</div>
 
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
@@ -125,7 +125,11 @@
     }
     private async Task ConfirmacionG()
     {
-        var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", generarD);
+        DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
+        docs.iddocumento = workspace.expedienteseleccionado.documento.id;
+        docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        docs.idusuario = sesion.usuario.id;
+        var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);
         if (responseHttp.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");

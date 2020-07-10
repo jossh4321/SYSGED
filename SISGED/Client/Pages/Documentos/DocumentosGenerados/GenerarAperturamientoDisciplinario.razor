@@ -35,7 +35,7 @@
             <iframe id="docpdf" style="background-color:#EEE; height:650px; width:500px"></iframe>
         </MatDialogContent>
         <MatDialogActions>
-            <MatButton @onclick="@ConfirmacionGenerar">Generar</MatButton>
+            <MatButton @onclick="@(()=>ConfirmacionGenerar())" Raised="true">Generar</MatButton>
             <MatButton @onclick="@((e) => { generado = false; })">Volver</MatButton>
         </MatDialogActions>
     </MatDialog>
@@ -131,15 +131,25 @@
 
     private async Task ConfirmacionGenerar()
     {
-        generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
+        Console.WriteLine("estoy en el metodo ConfirmacionGenerar");
+        /*generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
         generarD.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        generarD.idusuario = sesion.usuario.id;
+        generarD.idusuario = sesion.usuario.id;*/
+
         await ConfirmacionG();
 
     }
     private async Task ConfirmacionG()
     {
-        var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", generarD);
+        DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
+        docs.iddocumento = workspace.expedienteseleccionado.documento.id;
+        docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        docs.idusuario = sesion.usuario.id;
+
+        Console.WriteLine(docs.ToString());
+
+        Console.WriteLine("Estoy el el API");
+        var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);
         if (responseHttp.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
