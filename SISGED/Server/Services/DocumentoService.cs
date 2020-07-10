@@ -96,12 +96,20 @@ namespace SISGED.Server.Services
 
         public SolicitudBPN registrarSolicitudBPN(ExpedienteWrapper expedienteWrapper)
         {
-            /*FALTA CONVERTIR otorgantelista(clase) a otorgante(string) */ 
-
+            
             //Obtenemos los datos del expedientewrapper
             SolicitudBPNDTO documento = new SolicitudBPNDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             documento = JsonConvert.DeserializeObject<SolicitudBPNDTO>(json);
+            //Listas de participantes a string
+            List<String> listaotorgantes = new List<string>();
+            foreach (Otorgantelista oto in documento.contenidoDTO.otorganteslista)
+            {
+                listaotorgantes.Add(oto.nombre);
+                listaotorgantes.Add(oto.apellido);
+                listaotorgantes.Add(oto.dni);
+            }
+
 
             //Creacionde Obj ContenidoSolicitudBPN y almacenamiento en la coleccion documento
             ContenidoSolicitudBPN contenidoSolicitudBPN = new ContenidoSolicitudBPN()
@@ -111,7 +119,7 @@ namespace SISGED.Server.Services
                 idnotario = documento.contenidoDTO.idnotario.id,
                 actojuridico = documento.contenidoDTO.actojuridico,
                 tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
-                otorgantes = documento.contenidoDTO.otorgantes,
+                otorgantes = listaotorgantes,
                 fecharealizacion = DateTime.Now,
                 //url = "ninguna"
             };
@@ -718,6 +726,37 @@ namespace SISGED.Server.Services
             return oficioDesignacionNotario;
 
         }
+
+        public SolicitudBPNDTO obtenerSolicitudBusquedaProtocoloNotarial(string id)
+        {
+            SolicitudBPN docSolicitudBPN = new SolicitudBPN();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docSolicitudBPN = _documentos.Aggregate().
+              AppendStage<SolicitudBPN>(match).First();
+
+            SolicitudBPNDTO solicitudbpnDTO = new SolicitudBPNDTO();
+            solicitudbpnDTO.id = docSolicitudBPN.id;
+            solicitudbpnDTO.tipo = docSolicitudBPN.tipo;
+            //solicitudbpnDTO.historialcontenido = docSolicitudBPN.historialcontenido;
+            //solicitudbpnDTO.historialproceso = docSolicitudBPN.historialproceso;
+            solicitudbpnDTO.estado = docSolicitudBPN.estado;
+            solicitudbpnDTO.contenidoDTO = new ContenidoSolicitudBPNDTO()
+            {
+                
+                actojuridico = docSolicitudBPN.contenido.actojuridico,
+                tipoprotocolo = docSolicitudBPN.contenido.tipoprotocolo,
+
+                fecharealizacion = docSolicitudBPN.contenido.fecharealizacion,
+               // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
+               
+                
+            };
+            return solicitudbpnDTO;
+        }
+
+
+
         public OficioBPNDTO  obtenerOficioBusquedaProtocoloNotarial(string id)
         {
             var match = new BsonDocument("$match", new BsonDocument("_id",
@@ -1212,6 +1251,7 @@ namespace SISGED.Server.Services
                 .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica);
              _documentos.UpdateOne(filter, update);
         }
+
 
         public void actualizarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
         {

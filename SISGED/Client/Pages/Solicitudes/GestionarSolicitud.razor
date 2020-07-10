@@ -1,4 +1,5 @@
 ﻿@page "/gestionarsolicitud"
+@layout MainLayout
 @inject NavigationManager navigationManager
 
 <style>
@@ -21,7 +22,6 @@
 </style>
 
 <div style="width:1050px;position:fixed;">
-    <MainLayout />
     <MatButton OnClick="@OpenDialogRegistrar" Unelevated="true">Registrar Solicitud</MatButton>
     <MatTable style="background-color:aliceblue;color:darkslateblue;border-radius:40px;text-align:center" Items="@cars" class="mat-elevation-z5">
         <MatTableHeader>
@@ -52,7 +52,7 @@
 <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
     @if (TipoSolicitud == "Solic_ExpedicionFirma")
     {
-    <MatDialogTitle>Registrar Solicitud de Expedicion de Firma</MatDialogTitle>
+        <MatDialogTitle>Registrar Solicitud de Expedicion de Firma</MatDialogTitle>
         <MatDialogContent>
             <RegistrarSolicExpedicionF />
         </MatDialogContent>
@@ -92,7 +92,7 @@
         @if (TipoSolicitud == "Solic_Denuncia")
         {<RegistrarSolicDenuncias />}
         @if (TipoSolicitud == "Solic_BPN")
-        {<RegistrarSolicBPN/> }
+        {<RegistrarSolicBPN />}
     </MatDialogContent>
     <MatDialogActions>
         <MatButton OnClick="@OkClick">Cancelar</MatButton>
