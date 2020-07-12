@@ -359,7 +359,7 @@
             expedientebandeja.documento.tipo = dictamen.tipo;
             expedientebandeja.documento.historialcontenido = dictamen.historialcontenido;
             expedientebandeja.documento.historialproceso = dictamen.historialproceso;
-            expedientebandeja.documento.contenido = JsonConvert.SerializeObject(dictamen.contenido);
+            expedientebandeja.documento.contenido = dictamen.contenido;
             expedientebandeja.documento.estado = dictamen.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
@@ -379,7 +379,7 @@
             documentoDTO.id = dictamen.id;
             documentoDTO.tipo = dictamen.tipo;
             documentoDTO.estado = dictamen.estado;
-            documentoDTO.contenido = dictamen.contenido;
+            documentoDTO.contenido = JsonConvert.SerializeObject(dictamen.contenido);
             documentoDTO.historialcontenido = dictamen.historialcontenido;
             documentoDTO.historialproceso = dictamen.historialproceso;
             documentoDTO.urlanexo = dictamen.urlanexo;

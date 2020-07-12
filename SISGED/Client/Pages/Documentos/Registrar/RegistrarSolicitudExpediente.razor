@@ -194,8 +194,8 @@
             DocumentoDTO documentoDTO = new DocumentoDTO();
             documentoDTO.id = solicitudExpedienteNotarioAct.id;
             documentoDTO.tipo = solicitudExpedienteNotarioAct.tipo;
-            documentoDTO.estado = JsonConvert.SerializeObject(solicitudExpedienteNotarioAct.contenido);
-            documentoDTO.contenido = solicitudExpedienteNotarioAct.contenido;
+            documentoDTO.estado = solicitudExpedienteNotarioAct.estado;
+            documentoDTO.contenido = JsonConvert.SerializeObject(solicitudExpedienteNotarioAct.contenido);
             documentoDTO.historialcontenido = solicitudExpedienteNotarioAct.historialcontenido;
             documentoDTO.historialproceso = solicitudExpedienteNotarioAct.historialproceso;
             documentoDTO.urlanexo = solicitudExpedienteNotarioAct.urlanexo;

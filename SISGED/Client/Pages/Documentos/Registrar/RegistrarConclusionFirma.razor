@@ -288,7 +288,7 @@
             expedientebandeja.documento.tipo = oficioconclusionfirma.tipo;
             expedientebandeja.documento.historialcontenido = oficioconclusionfirma.historialcontenido;
             expedientebandeja.documento.historialproceso = oficioconclusionfirma.historialproceso;
-            expedientebandeja.documento.contenido = JsonConvert.SerializeObject(oficioconclusionfirma.contenido);
+            expedientebandeja.documento.contenido = oficioconclusionfirma.contenido;
             expedientebandeja.documento.estado = oficioconclusionfirma.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
@@ -308,7 +308,7 @@
             documentoDTO.id = oficioconclusionfirma.id;
             documentoDTO.tipo = oficioconclusionfirma.tipo;
             documentoDTO.estado = oficioconclusionfirma.estado;
-            documentoDTO.contenido = oficioconclusionfirma.contenido;
+            documentoDTO.contenido = JsonConvert.SerializeObject(oficioconclusionfirma.contenido);
             documentoDTO.historialcontenido = oficioconclusionfirma.historialcontenido;
             documentoDTO.historialproceso = oficioconclusionfirma.historialproceso;
             documentoDTO.urlanexo = oficioconclusionfirma.urlanexo;
