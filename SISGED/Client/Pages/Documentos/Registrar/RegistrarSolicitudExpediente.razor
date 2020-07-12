@@ -119,6 +119,15 @@
                 </div>
 
 
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -139,11 +148,25 @@
     [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
     private SolicitudExpedienteNotarioDTO solicitudexpedientenotario = new SolicitudExpedienteNotarioDTO();
     private EditContext _editContext;
+    private string imagenTemporal;
     private bool loadprocess = false;
 
     protected override void OnInitialized()
     {
+        solicitudexpedientenotario.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(solicitudexpedientenotario);
+        foreach (string u in solicitudexpedientenotario.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal = u;
+                solicitudexpedientenotario.contenidoDTO.Urlanexo = null;
+            }
+        }
+    }
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        solicitudexpedientenotario.contenidoDTO.Urlanexo.Add(imagenbase64);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)

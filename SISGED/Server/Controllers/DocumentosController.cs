@@ -304,8 +304,18 @@ namespace SISGED.Server.Controllers
             SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO = new SolicitudExpedienteNotarioDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             solicitudExpedienteNotarioDTO = JsonConvert.DeserializeObject<SolicitudExpedienteNotarioDTO>(json);
-
-            return _documentoservice.registrarSolicitudExpedienteNotario(solicitudExpedienteNotarioDTO, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in solicitudExpedienteNotarioDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.registrarSolicitudExpedienteNotario(solicitudExpedienteNotarioDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
 
 

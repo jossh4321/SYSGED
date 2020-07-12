@@ -627,7 +627,7 @@ namespace SISGED.Server.Services
         }
 
         //registrarSolicitudExpedienteNotario
-        public SolicitudExpedienteNotario registrarSolicitudExpedienteNotario(SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO,
+        public SolicitudExpedienteNotario registrarSolicitudExpedienteNotario(SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO, List<string> url2,
             string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacion de la Apelacion y registro en la coleccion documentos
@@ -644,6 +644,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoSEN,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo = url2,
                 estado = "pendiente"
             };
             _documentos.InsertOne(solicitudExpedienteNotarioAct);
