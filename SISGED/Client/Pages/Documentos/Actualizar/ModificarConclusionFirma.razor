@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 
 <style>
     .div-form {
@@ -291,6 +292,43 @@
         }
         else
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+
+            expedientebandeja.documento.id = conclusionFirma.id;
+            expedientebandeja.documento.tipo = conclusionFirma.tipo;
+            expedientebandeja.documento.historialcontenido = conclusionFirma.historialcontenido;
+            expedientebandeja.documento.historialproceso = conclusionFirma.historialproceso;
+            expedientebandeja.documento.contenido = conclusionFirma.contenidoDTO;
+            expedientebandeja.documento.estado = conclusionFirma.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Modificar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = conclusionFirma.id;
+            documentoDTO.tipo = conclusionFirma.tipo;
+            documentoDTO.estado = conclusionFirma.estado;
+            documentoDTO.contenido = JsonConvert.SerializeObject(conclusionFirma.contenidoDTO);
+            documentoDTO.historialcontenido = conclusionFirma.historialcontenido;
+            documentoDTO.historialproceso = conclusionFirma.historialproceso;
+            documentoDTO.urlanexo = conclusionFirma.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
             await swalfire.successMessage("Conclusión de Firma modificada Correctamente");
         }
         loadprocess = false;

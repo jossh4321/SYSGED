@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -202,14 +203,14 @@
                                    Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
                     </div>
                 </MatTab>
-                
+
             </MatTabGroup>
         </EditForm>
     }
 </div>
 
 @code {
-        //Variables de sesion
+    //Variables de sesion
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
@@ -271,6 +272,43 @@
         var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoResultadoBPN", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+
+            expedientebandeja.documento.id = resultadoBPNDTO.id;
+            expedientebandeja.documento.tipo = resultadoBPNDTO.tipo;
+            expedientebandeja.documento.historialcontenido = resultadoBPNDTO.historialcontenido;
+            expedientebandeja.documento.historialproceso = resultadoBPNDTO.historialproceso;
+            expedientebandeja.documento.contenido = resultadoBPNDTO.contenidoDTO;
+            expedientebandeja.documento.estado = resultadoBPNDTO.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Modificar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = resultadoBPNDTO.id;
+            documentoDTO.tipo = resultadoBPNDTO.tipo;
+            documentoDTO.estado = resultadoBPNDTO.estado;
+            documentoDTO.contenido = JsonConvert.SerializeObject(resultadoBPNDTO.contenidoDTO);
+            documentoDTO.historialcontenido = resultadoBPNDTO.historialcontenido;
+            documentoDTO.historialproceso = resultadoBPNDTO.historialproceso;
+            documentoDTO.urlanexo = resultadoBPNDTO.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
             await swalfire.successMessage("Resultado de búsqueda de protocolo notarial modificada correctamente");
         }
         else
