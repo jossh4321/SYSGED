@@ -5,19 +5,48 @@
         /*border: 1px solid;*/
         transition: all 0.3s ease-out;
         padding: 10px;
-        border - radius: 10px;
-        box - shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
+        border-radius: 10px;
+        box-shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
         overflow: hidden;
+        text-align: left;
+    }
+    .mdc-dialog {
+        z-index: 1000 !important;
+    }
+
+    .demo-mat-card-content {
+        /* padding: 1rem;*/
+        margin: 0px;
+        z-index: 100 !important;
+    }
+
+    .mdc-dialog__content {
+        padding: 0 !important;
+    }
+
+    p {
+        font-size: 12px;
+    }
+    b{
+       color: black;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto;
+    }
+     .mar {
+        padding: 10px;
     }
 </style>
 
 <hr />
 <div class="card-derivaciones">                  
     <p>@derivacion.tipo</p>
-    <p>Usuario: @derivacion.usuarioemisor</p>
-    <p>Área destino: @derivacion.areadestino</p>    
-    <p>Área procedencia: @derivacion.areaprocedencia</p>
-    <p>Fecha derivación: @derivacion.fechaderivacion</p>
+    <p><b>Usuario:</b> @usuario.datos.nombre @usuario.datos.apellido</p>
+    <p><b>Área destino:</b> @rol.label</p>    
+    <p><b>Área procedencia:</b> @rolPro.label</p>
+    <p><b>Fecha derivación:</b> @derivacion.fechaderivacion</p>
 </div>
 
 @code {
@@ -26,44 +55,55 @@
 
 
     private Usuario usuario = new Usuario();
-    public Rol rol = new Rol();
+    private Rol rol = new Rol();
+    private Rol rolPro = new Rol();
     private string usuarioEmisorId;
 
     protected async override Task OnInitializedAsync()
     {
         usuarioEmisorId = derivacion.usuarioemisor;
-        Console.WriteLine(usuarioEmisorId);
-       // await getUsuario();
-        //await getRol();
+        await getUsuario();
+        await getRol();
+        await getRolPro();
     }
-    //public async Task getUsuario()
-    //{
-    //    var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id=5ed460cd9695cd5e20d952e3");
-    //    if (responseHttp.Error)
-    //    {
-    //        //carga = false;
-    //        Console.WriteLine("Ha ocurrido un error al traer usuario");
-    //    }
-    //    else
-    //    {
+    public async Task getUsuario()
+    {
+        var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={usuarioEmisorId}");
+        if (responseHttp.Error)
+        {
 
-    //        usuario = responseHttp.Response;
-    //        Console.WriteLine(usuario.id + "holaaaaaaaaaaaaa");
-    //    }
-    //}
+            Console.WriteLine("Ha ocurrido un error al traer usuario");
+        }
+        else
+        {
+            usuario = responseHttp.Response;
+        }
+    }
 
-    //public async Task getRol()
-    //{
-    //    var responseHttp = await repository.Get<Rol>($"api/roles/id?id=5ecb24d749e62f2c6cf65cd9");
-    //    if (responseHttp.Error)
-    //    {            
-    //        Console.WriteLine("Ha ocurrido un error al traer role.s");
-    //    }
-    //    else
-    //    {
+    public async Task getRol()
+    {
+        var responseHttp = await repository.Get<Rol>($"api/roles/id?id={derivacion.areadestino}");
+        if (responseHttp.Error)
+        {
+            Console.WriteLine("Ha ocurrido un error al traer role.s");
+        }
+        else
+        {
 
-    //        rol = responseHttp.Response;
-    //        Console.WriteLine(rol.descripcion + " holaaaaaaaaaaaaa");
-    //    }
-    //}
+            rol = responseHttp.Response;
+        }
+    }
+
+    public async Task getRolPro()
+    {
+        var responseHttp = await repository.Get<Rol>($"api/roles/id?id={derivacion.areaprocedencia}");
+        if (responseHttp.Error)
+        {
+            Console.WriteLine("Ha ocurrido un error al traer role.s");
+        }
+        else
+        {
+            rolPro = responseHttp.Response;
+        }
+    }
 }
