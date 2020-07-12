@@ -568,7 +568,7 @@ namespace SISGED.Server.Services
         }
 
         public Apelacion registrarApelacion(ApelacionDTO apelacionDTO,
-            string urldata, string idusuario, string idexpediente, string iddocentrada)
+            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacion de la Apelacion y registro en la coleccion documentos
             ContenidoApelacion contenidoApe = new ContenidoApelacion()
@@ -584,6 +584,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoApe,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo = url2,
                 evaluacion = new Evaluacion()
                 {
                     status = "pendiente",
