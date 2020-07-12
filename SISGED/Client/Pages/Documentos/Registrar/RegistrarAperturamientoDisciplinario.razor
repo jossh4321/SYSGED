@@ -331,6 +331,15 @@
                         </div>
                     </div>
                 </div>
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -350,6 +359,7 @@
     private AperturamientoDisciplinarioDTO aperturamientodisciplinario = new AperturamientoDisciplinarioDTO();
     private EditContext _editContext;
     private string imagenTemporal;
+    private string imagenTemporal2;
     private bool loadprocess = false;
 
     List<UsuarioRDTO> fiscales { get; set; } = new List<UsuarioRDTO>();
@@ -358,7 +368,16 @@
     {
         aperturamientodisciplinario.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0, nombre = "" } };
         aperturamientodisciplinario.contenidoDTO.hechosimputados = new List<Hecho>() { new Hecho() { index = 0, descripcion = "" } };
+        aperturamientodisciplinario.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(aperturamientodisciplinario);
+        foreach (string u in aperturamientodisciplinario.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                aperturamientodisciplinario.contenidoDTO.Urlanexo = null;
+            }
+        }
         if (!string.IsNullOrEmpty(aperturamientodisciplinario.contenidoDTO.url))
         {
             imagenTemporal = aperturamientodisciplinario.contenidoDTO.url;
@@ -400,6 +419,11 @@
     private void ImagenSeleccionada(string imagenbase64)
     {
         aperturamientodisciplinario.contenidoDTO.url = imagenbase64;
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        aperturamientodisciplinario.contenidoDTO.Urlanexo.Add(imagenbase64);
     }
 
     //Consulta de notarios

@@ -378,7 +378,7 @@ namespace SISGED.Server.Services
         }
 
         public AperturamientoDisciplinario registrarAperturamientoDisciplinario(AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO,
-            string urldata, string idusuario, string idexpediente, string iddocentrada)
+            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
             ContenidoAperturamientoDisciplinario contenidoAD = new ContenidoAperturamientoDisciplinario()
@@ -401,6 +401,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoAD,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo= url2,
                 estado = "creado"
             };
             _documentos.InsertOne(aperturamientodisciplinario);
