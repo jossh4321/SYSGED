@@ -94,9 +94,11 @@ namespace SISGED.Server.Services
             return documentoODN;
         }
 
-        public SolicitudBPN registrarSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        public SolicitudBPN registrarSolicitudBPN(SolicitudBPN expedienteWrapper)
         {
-            
+            _documentos.InsertOne(expedienteWrapper);
+            return expedienteWrapper;
+            /*
             //Obtenemos los datos del expedientewrapper
             SolicitudBPNDTO documento = new SolicitudBPNDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
@@ -106,8 +108,13 @@ namespace SISGED.Server.Services
             foreach (Otorgantelista oto in documento.contenidoDTO.otorganteslista)
             {
                 listaotorgantes.Add(oto.nombre);
-                listaotorgantes.Add(oto.apellido);
-                listaotorgantes.Add(oto.dni);
+                foreach (Otorgantelista oto2 in documento.contenidoDTO.otorganteslista)
+                {
+                    listaotorgantes.Add(oto.nombre);
+                    listaotorgantes.Add(oto.apellido);
+                    listaotorgantes.Add(oto.dni);
+                }
+                    
             }
 
 
@@ -160,7 +167,7 @@ namespace SISGED.Server.Services
             };
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
-            expediente = _expedienteservice.saveExpediente(expediente);
+            expediente = _expedientes.saveExpediente(expediente);
 
             //actualizacion de bandeja de salida del usuario
             _documentoservice.updateBandejaSalida(expediente.id, solicitudBPN.id, expedienteWrapper.idusuarioactual);
@@ -176,8 +183,9 @@ namespace SISGED.Server.Services
             UpdateDefinition<Bandeja> updateBandejaEntrada =
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
+            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);
             return solicitudBPN;
+            */
         }
         public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)
         {

@@ -17,7 +17,7 @@ namespace SISGED.Shared.DTOs
         public Notario idnotario { get; set; } = new Notario();
         public Usuario idcliente { get; set; } = new Usuario();
         public Int32 cantidadfoja { get; set; } = 2;
-        public double precio { get; set; }
+        public double precio { get; set; } = 0;
     }
 
     public class ConclusionFirma_lookup
