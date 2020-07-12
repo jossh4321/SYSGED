@@ -59,6 +59,62 @@
     div.incorrecto i.bad-icon {
         color: red !important;
     }
+
+    div.mat-date-picker {
+        width: 100% !important;
+    }
+
+    .contenedor-participantes {
+        padding-top: 10px;
+        margin: 20px;
+        border: 2px solid #666666;
+        border-radius: 5px;
+    }
+
+    .titulo-paticipantes {
+        border: 1px solid black;
+        margin: 0px 5px 0px 5px;
+        border-radius: 5px 5px 0px 0px;
+        background-color: #404040;
+        color: white;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .titulo {
+        color: #d9d9d9;
+    }
+
+    .icono {
+        margin-left: 20px;
+    }
+
+        .icono i {
+            margin: 5px;
+        }
+
+    .single-textfield-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .base-field {
+        flex-basis: 90%;
+    }
+
+    .base-icon {
+        display: flex;
+        flex-basis: 8%;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 2px;
+        background: #ff1a1a;
+        border-radius: 3px;
+        border: 1px solid #800000
+    }
 </style>
 
 <div class="div-form">
@@ -80,14 +136,20 @@
                   OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
             <FluentValidator></FluentValidator>
             <MatTabGroup>
-                <MatTab Label="Datos de la solicitud de expediente de notario">
+                <MatTab Label="Datos Generales">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resultadoBPNDTO.contenidoDTO.cantidadfoja)">
+                        <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
+                                               @bind-Value=@resultadoBPNDTO.contenidoDTO.cantidadfoja
+                                               FieldType="MatNumericUpDownFieldType.Numeric"
+                                               DecimalPlaces=0
+                                               Minimum=2 Maximum=50
+                                               AllowInput="false"
+                                               @oninput='@(e => KeyUp(e,"cantidadfoja",resultadoBPNDTO.contenidoDTO))'></MatNumericUpDownField>
 
-                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedientenotario.contenidoDTO.titulo)">
-                        <MatTextField @bind-Value="@solicitudexpedientenotario.contenidoDTO.titulo" Class="text-field-style"
-                                      Label="Titulo de la solicitud" @oninput='@(e => KeyUp(e,"titulo",solicitudexpedientenotario.contenidoDTO))'></MatTextField>
+
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.titulo)" />
+                            <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.cantidadfoja)" />
                         </div>
                         <div class="correcto">
                             <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -95,12 +157,18 @@
                         </div>
                     </div>
 
-                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedientenotario.contenidoDTO.descripcion)">
-                        <MatTextField @bind-Value="@solicitudexpedientenotario.contenidoDTO.descripcion" Class="text-field-style"
-                                      Label="Descripción de la solicitud" @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedientenotario.contenidoDTO))'></MatTextField>
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resultadoBPNDTO.contenidoDTO.costo)">
+                        <MatNumericUpDownField Label="Costo" Class="text-field-style"
+                                               @bind-Value=@resultadoBPNDTO.contenidoDTO.costo
+                                               FieldType="MatNumericUpDownFieldType.Numeric"
+                                               DecimalPlaces=0
+                                               Minimum=1 Maximum=50
+                                               AllowInput="false"
+                                               @oninput='@(e => KeyUp(e,"costo",resultadoBPNDTO.contenidoDTO))'>
+                        </MatNumericUpDownField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.descripcion)" />
+                            <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.costo)" />
                         </div>
                         <div class="correcto">
                             <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -108,67 +176,78 @@
                         </div>
                     </div>
 
-                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudexpedientenotario.contenidoDTO.idnotario)">
-                        <BlazoredTypeahead SearchMethod="match" @bind-Value="@solicitudexpedientenotario.contenidoDTO.idnotario"
-                                           Placeholder="Ingrese el Nombre del Notario">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)">
+                        <BlazoredTypeahead SearchMethod="match" @bind-Value="@resultadoBPNDTO.contenidoDTO.idescriturapublica"
+                                           Placeholder="Ingrese el titulo de la escritura pública">
                             <SelectedTemplate>
-                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                                <strong>@context.titulo</strong>
                             </SelectedTemplate>
                             <ResultTemplate>
-                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                                <strong>@context.titulo</strong>
                             </ResultTemplate>
-                            <NotFoundTemplate>
-                                <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
-                            </NotFoundTemplate>
                         </BlazoredTypeahead>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => solicitudexpedientenotario.contenidoDTO.idnotario)" />
+                            <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)" />
                         </div>
                         <div class="correcto">
                             <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                             <span class="good-msg">Correcto</span>
                         </div>
                     </div>
-
                     <div class="field-container">
                         <MatButton type="submit"
                                    Disabled="@loadprocess"
                                    Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
                     </div>
                 </MatTab>
+                
             </MatTabGroup>
         </EditForm>
     }
 </div>
 
 @code {
-    //Variables de sesion
+        //Variables de sesion
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
     //Datos del formulario
     [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
-    private SolicitudExpedienteNotarioDTO solicitudexpedientenotario = new SolicitudExpedienteNotarioDTO();
+    private ResultadoBPNDTO resultadoBPNDTO = new ResultadoBPNDTO();
     private EditContext _editContext;
     private bool loadprocess = false;
     private bool firstLoad = true;
 
+    private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
+
+        if (httpResponse.Error)
+        {
+            return new List<EscrituraPublica>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         firstLoad = true;
-        _editContext = new EditContext(solicitudexpedientenotario);
-        var httpResponse = await repository.Get<SolicitudExpedienteNotarioDTO>($"api/documentos/documentosen?iddoc={workspace.expedienteseleccionado.documento.id}");
+        _editContext = new EditContext(resultadoBPNDTO);
+        var httpResponse = await repository.Get<ResultadoBPNDTO>($"api/documentos/documentorbpn?iddoc={workspace.expedienteseleccionado.documento.id}");
         if (!httpResponse.Error)
         {
-            solicitudexpedientenotario = (SolicitudExpedienteNotarioDTO)httpResponse.Response;
-            _editContext = new EditContext(solicitudexpedientenotario);
+            resultadoBPNDTO = (ResultadoBPNDTO)httpResponse.Response;
+            _editContext = new EditContext(resultadoBPNDTO);
             StateHasChanged();
         }
         else
         {
-            Console.WriteLine("Algo Mal");
+
         }
         firstLoad = false;
     }
@@ -184,36 +263,21 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        //aperturamientodisciplinario.contenidoDTO.idusuario = sesion.usuario.id;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-        expedienteWrapper.documento = solicitudexpedientenotario;
+        expedienteWrapper.documento = resultadoBPNDTO;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-
-        var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoSEN", expedienteWrapper);
+        var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoResultadoBPN", expedienteWrapper);
         if (!httpResponse.Error)
         {
-            await swalfire.successMessage("Solicitud de expediente de notario modificado correctamente");
+            await swalfire.successMessage("Resultado de búsqueda de protocolo notarial modificada correctamente");
         }
         else
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
         }
         loadprocess = false;
-    }
-
-    private async Task<IEnumerable<Notario>> match(string searchtext)
-    {
-        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
-        if (httpResponse.Error)
-        {
-            return new List<Notario>();
-        }
-        else
-        {
-            return httpResponse.Response;
-        }
     }
 
     public void handleInvalidSubmit()
