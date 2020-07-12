@@ -12,7 +12,6 @@ namespace SISGED.Shared.DTOs
         public Notario idnotario { get; set; } = new Notario();
         public string actojuridico { get; set; }
         public string tipoprotocolo { get; set; }
-        //Lista de string a OtorganteDTO
         public List<string> otorgantes { get; set; } = new List<String>();
         public DateTime fecharealizacion { get; set; }
         public List<Otorgantelista> otorganteslista { get; set; } = new List<Otorgantelista>();
@@ -30,7 +29,7 @@ namespace SISGED.Shared.DTOs
     {
         public string nombre { get; set; }
         public string apellido { get; set; }
-        public string dni { get; set; }
+        public int dni { get; set; }
         public Int32 index { get; set; } = 0;
     }
 }

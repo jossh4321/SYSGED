@@ -1,6 +1,7 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -88,20 +89,19 @@
         margin-top: 5px;
         color: #595959;
     }
-    
 </style>
 <div class="div-form">
     @if (firstLoad == true)
     {
-    <div class="loader-block">
-        <div class="spinner-border spin" style="        width: 7rem;
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
         height: 7rem;
         color: #ccc" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
+                <span class="sr-only">Loading...</span>
+            </div>
 
-        <span style="color:white">CARGANDO...</span>
-    </div>
+            <span style="color:white">CARGANDO...</span>
+        </div>
     }
     else
     {
@@ -290,7 +290,7 @@
 
     private OficioBPNDTO documento = new OficioBPNDTO();
     private EditContext _editContext;
-    protected override async Task  OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         firstLoad = true;
         _editContext = new EditContext(documento);
@@ -334,9 +334,46 @@
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoOficioBPN", expedienteWrapper);
+        var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoOficioBPN", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+
+            expedientebandeja.documento.id = docSolicitudBPNDTO.id;
+            expedientebandeja.documento.tipo = docSolicitudBPNDTO.tipo;
+            expedientebandeja.documento.historialcontenido = docSolicitudBPNDTO.historialcontenido;
+            expedientebandeja.documento.historialproceso = docSolicitudBPNDTO.historialproceso;
+            expedientebandeja.documento.contenido = docSolicitudBPNDTO.contenidoDTO;
+            expedientebandeja.documento.estado = docSolicitudBPNDTO.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Modificar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = docSolicitudBPNDTO.id;
+            documentoDTO.tipo = docSolicitudBPNDTO.tipo;
+            documentoDTO.estado = docSolicitudBPNDTO.estado;
+            documentoDTO.contenido = JsonConvert.SerializeObject(docSolicitudBPNDTO.contenidoDTO);
+            documentoDTO.historialcontenido = docSolicitudBPNDTO.historialcontenido;
+            documentoDTO.historialproceso = docSolicitudBPNDTO.historialproceso;
+            documentoDTO.urlanexo = docSolicitudBPNDTO.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial modificada Correctamente");
         }
         else

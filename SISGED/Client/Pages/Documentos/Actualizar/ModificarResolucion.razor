@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -120,141 +121,142 @@
 <div class="div-form">
     @if (firstLoad == true)
     {
-    <div class="loader-block">
-        <div class="spinner-border spin" style="        width: 7rem;
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
         height: 7rem;
         color: #ccc" role="status">
-            <span class="sr-only">Loading...</span>
+                <span class="sr-only">Loading...</span>
+            </div>
+
+            <span style="color:white">CARGANDO...</span>
         </div>
-
-        <span style="color:white">CARGANDO...</span>
-    </div>
     }
-    else { 
-    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
-              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
-        <FluentValidator></FluentValidator>
-        <MatTabGroup>
-            <MatTab Label="General">
+    else
+    {
+        <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                  OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+            <FluentValidator></FluentValidator>
+            <MatTabGroup>
+                <MatTab Label="General">
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.titulo)">
-                    <MatTextField @bind-Value="@resolucion.contenidoDTO.titulo" Class="text-field-style"     
-                                  Label="Titulo de la resolución" @oninput='@(e => KeyUp(e,"titulo",resolucion.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => resolucion.contenidoDTO.titulo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.descripcion)">
-                    <MatTextField @bind-Value="@resolucion.contenidoDTO.descripcion" Class="text-field-style"
-                                  Label="Descripcion" @oninput='@(e => KeyUp(e,"descripcion",resolucion.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => resolucion.contenidoDTO.descripcion)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.sancion)">
-                    <MatTextField @bind-Value="@resolucion.contenidoDTO.sancion" Class="text-field-style"
-                                  Label="Sancion" @oninput='@(e => KeyUp(e,"sancion",resolucion.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => resolucion.contenidoDTO.sancion)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.fechainicioaudiencia)">
-
-                    <MatDatePicker Label="Fecha de Inicio" @bind-Value="@resolucion.contenidoDTO.fechainicioaudiencia"></MatDatePicker>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => resolucion.contenidoDTO.fechainicioaudiencia)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.fechafinaudiencia)">
-
-                    <MatDatePicker AllowInput="false" Label="Fecha de Fin" @bind-Value="@resolucion.contenidoDTO.fechafinaudiencia"></MatDatePicker>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => resolucion.contenidoDTO.fechafinaudiencia)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
-
-            </MatTab>
-            <MatTab Label="Participantes">
-
-                <div class="contenedor-participantes">
-                    <div class="titulo-paticipantes">
-                        <div><span class="titulo">Participantes de la resolucion</span></div>
-                        <div class="icono" @onclick="@(addParticipante)">
-                            <MatIcon Icon="add_circle_outline"></MatIcon>
-                        </div>
-                    </div>
-                    @for(int i = 0; i < resolucion.contenidoDTO.participantes.Count;i++)
-                    {
-                        int index = i;
-                        <div class="single-textfield-container">
-                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes[index].nombre)">
-                                <MatTextField @bind-Value="@resolucion.contenidoDTO.participantes[index].nombre" Class="text-field-style"
-                                              Label="Ingrese una observación"
-                                              @oninput='@(e => KeyUp(e, "nombre", resolucion.contenidoDTO.participantes[index]))'></MatTextField>
-                                <div class="incorrecto">
-                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes[index].nombre)" />
-                                </div>
-                                <div class="correcto">
-                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                                    <span class="good-msg">Correcto</span>
-                                </div>
-                            </div>
-                            <div class="base-icon" @onclick="@(() => removeParticipante(index))">
-                                <MatIcon Icon="remove_circle_outline"></MatIcon>
-                            </div>
-                        </div>
-                    }
-                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes)">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.titulo)">
+                        <MatTextField @bind-Value="@resolucion.contenidoDTO.titulo" Class="text-field-style"
+                                      Label="Titulo de la resolución" @oninput='@(e => KeyUp(e,"titulo",resolucion.contenidoDTO))'></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes)" />
+                            <ValidationMessage For="@(() => resolucion.contenidoDTO.titulo)" />
                         </div>
                         <div class="correcto">
                             <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                             <span class="good-msg">Correcto</span>
                         </div>
                     </div>
-                </div>
-                <div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Edit"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>
-            </MatTab>
-        </MatTabGroup>
-    </EditForm>
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.descripcion)">
+                        <MatTextField @bind-Value="@resolucion.contenidoDTO.descripcion" Class="text-field-style"
+                                      Label="Descripcion" @oninput='@(e => KeyUp(e,"descripcion",resolucion.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => resolucion.contenidoDTO.descripcion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resolucion.contenidoDTO.sancion)">
+                        <MatTextField @bind-Value="@resolucion.contenidoDTO.sancion" Class="text-field-style"
+                                      Label="Sancion" @oninput='@(e => KeyUp(e,"sancion",resolucion.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => resolucion.contenidoDTO.sancion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.fechainicioaudiencia)">
+
+                        <MatDatePicker Label="Fecha de Inicio" @bind-Value="@resolucion.contenidoDTO.fechainicioaudiencia"></MatDatePicker>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => resolucion.contenidoDTO.fechainicioaudiencia)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.fechafinaudiencia)">
+
+                        <MatDatePicker AllowInput="false" Label="Fecha de Fin" @bind-Value="@resolucion.contenidoDTO.fechafinaudiencia"></MatDatePicker>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => resolucion.contenidoDTO.fechafinaudiencia)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+
+                    <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+
+                </MatTab>
+                <MatTab Label="Participantes">
+
+                    <div class="contenedor-participantes">
+                        <div class="titulo-paticipantes">
+                            <div><span class="titulo">Participantes de la resolucion</span></div>
+                            <div class="icono" @onclick="@(addParticipante)">
+                                <MatIcon Icon="add_circle_outline"></MatIcon>
+                            </div>
+                        </div>
+                        @for (int i = 0; i < resolucion.contenidoDTO.participantes.Count; i++)
+                        {
+                            int index = i;
+                            <div class="single-textfield-container">
+                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes[index].nombre)">
+                                    <MatTextField @bind-Value="@resolucion.contenidoDTO.participantes[index].nombre" Class="text-field-style"
+                                                  Label="Ingrese una observación"
+                                                  @oninput='@(e => KeyUp(e, "nombre", resolucion.contenidoDTO.participantes[index]))'></MatTextField>
+                                    <div class="incorrecto">
+                                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                        <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes[index].nombre)" />
+                                    </div>
+                                    <div class="correcto">
+                                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                        <span class="good-msg">Correcto</span>
+                                    </div>
+                                </div>
+                                <div class="base-icon" @onclick="@(() => removeParticipante(index))">
+                                    <MatIcon Icon="remove_circle_outline"></MatIcon>
+                                </div>
+                            </div>
+                        }
+                        <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => resolucion.contenidoDTO.participantes)">
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                <ValidationMessage For="@(() => resolucion.contenidoDTO.participantes)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                <span class="good-msg">Correcto</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Edit"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>
+                </MatTab>
+            </MatTabGroup>
+        </EditForm>
     }
 </div>
 
@@ -330,9 +332,46 @@
             expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
             expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
-            var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoR", expedienteWrapper);
+            var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoR", expedienteWrapper);
             if (!httpResponse.Error)
             {
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja = workspace.expedienteseleccionado;
+
+                expedientebandeja.documento.id = resolucion.id;
+                expedientebandeja.documento.tipo = resolucion.tipo;
+                expedientebandeja.documento.historialcontenido = resolucion.historialcontenido;
+                expedientebandeja.documento.historialproceso = resolucion.historialproceso;
+                expedientebandeja.documento.contenido = resolucion.contenidoDTO;
+                expedientebandeja.documento.estado = resolucion.estado;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                Item itemSalida = new Item()
+
+                {
+                    nombre = expedientebandeja.tipo,
+                    valor = expedientebandeja,
+                    icono = "alarm_add",
+                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                    currentPlace = "workspace",
+                    originPlace = "inputs",
+                    cliente = expedientebandeja.cliente,
+                    itemstatus = "registrado"
+                };
+
+                workspace.UpdateDocRegistrado(itemSalida);
+                workspace.UpdateTools("Modificar Documento");
+                DocumentoDTO documentoDTO = new DocumentoDTO();
+                documentoDTO.id = resolucion.id;
+                documentoDTO.tipo = resolucion.tipo;
+                documentoDTO.estado = resolucion.estado;
+                documentoDTO.contenido = JsonConvert.SerializeObject(resolucion.contenidoDTO);
+                documentoDTO.historialcontenido = resolucion.historialcontenido;
+                documentoDTO.historialproceso = resolucion.historialproceso;
+                documentoDTO.urlanexo = resolucion.urlanexo;
+                workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+                workspace.expedienteseleccionado.documento = documentoDTO;
+
+                StateHasChanged();
                 await swalfire.successMessage("Resolución modificada correctamente");
             }
             else

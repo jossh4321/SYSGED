@@ -127,19 +127,25 @@
         {
             <ModificarOficioDesignacionNotario></ModificarOficioDesignacionNotario>
         }
-        else if(workspace.expedienteseleccionado.documento.tipo == "Resolucion")
+        else if (workspace.expedienteseleccionado.documento.tipo == "Resolucion")
         {
             <ModificarResolucion></ModificarResolucion>
         }
-        else if(workspace.expedienteseleccionado.documento.tipo == "SolicitudDenuncia")
+        else if (workspace.expedienteseleccionado.documento.tipo == "SolicitudDenuncia")
         {
             <ModificarSolicitudDenuncia></ModificarSolicitudDenuncia>
-        }else if(workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedicionFirma")
+        }
+        else if (workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedicionFirma")
         {
             <ModificarSolicitudExpedicionFirma></ModificarSolicitudExpedicionFirma>
-        }else if(workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario")
+        }
+        else if (workspace.expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario")
         {
             <ModificarSolicitudExpedienteNotario></ModificarSolicitudExpedienteNotario>
+        }
+        else if (workspace.expedienteseleccionado.documento.tipo == "ResultadoBPN")
+        {
+            <ModificarResultadoBPN></ModificarResultadoBPN>
         }
         else
         {

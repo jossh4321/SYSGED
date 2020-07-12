@@ -3,6 +3,7 @@ using SISGED.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SISGED.Shared.Models
 {
@@ -15,5 +16,6 @@ namespace SISGED.Shared.Models
         public List<Item> listasalidas { get; set; } = new List<Item>();
         public string rol { get; set; }
         public Usuario usuario { get; set; } = new Usuario();
+
     }
 }
