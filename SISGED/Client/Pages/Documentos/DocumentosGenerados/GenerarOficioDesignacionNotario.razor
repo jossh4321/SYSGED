@@ -117,14 +117,16 @@
 
     private async Task ConfirmacionGenerar()
     {
-        generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
+        /*generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
         generarD.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        generarD.idusuario = sesion.usuario.id;
+        generarD.idusuario = sesion.usuario.id;*/
+        Console.WriteLine("ConfirmacionGenerar");
         await ConfirmacionG();
 
     }
     private async Task ConfirmacionG()
     {
+        Console.WriteLine("ConfirmacionG");
         DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
