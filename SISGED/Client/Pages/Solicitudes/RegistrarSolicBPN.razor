@@ -128,21 +128,21 @@
             <MatTabGroup>
                 <MatTab Label="Solicitud">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.actojuridico" ReadOnly="true" Class="text-field-style" Label="Acto Juridico"></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.actojuridico" ReadOnly="false" Class="text-field-style" Label="Acto Juridico"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio" ReadOnly="false" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.tipoprotocolo" ReadOnly="true" Class="text-field-style" Label="Tipo de Protocolo"></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.tipoprotocolo" ReadOnly="false" Class="text-field-style" Label="Tipo de Protocolo"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio" ReadOnly="false" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
                     </div>
                     <!--Copiar y pegar codigo del div para el for de Otorgantes-->
 
                     <div class="field-container input-group-2">
-                        <MatDatePicker @bind-Value="@solicitudbpn.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
+                        <MatDatePicker @bind-Value="@solicitudbpn.contenidoDTO.fecharealizacion" Format="MM/dd/yy" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="false"></MatDatePicker>
                     </div>
                 </MatTab>
                 <MatTab Label="Otorgantes">
@@ -223,23 +223,23 @@
                 </MatTab>
                 <MatTab Label="Solicitante">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del solicitante">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.nombre" ReadOnly="false" Class="text-field-style" Label="Nombre del solicitante">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del solicitante">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.apellido" ReadOnly="false" Class="text-field-style" Label="Apellido del solicitante">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.tipodocumento" ReadOnly="true" Class="text-field-style" Label="Tipo de Documento">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.tipodocumento" ReadOnly="false" Class="text-field-style" Label="Tipo de Documento">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.numerodocumento" ReadOnly="true" Class="text-field-style" Label="Numero de Documento">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.numerodocumento" ReadOnly="false" Class="text-field-style" Label="Numero de Documento">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.email" ReadOnly="false" Class="text-field-style" Label="Correo Electronico">
                         </MatTextField>
                     </div>
                 </MatTab>    
