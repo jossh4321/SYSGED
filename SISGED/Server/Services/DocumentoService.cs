@@ -386,7 +386,7 @@ namespace SISGED.Server.Services
         }
 
         public AperturamientoDisciplinario registrarAperturamientoDisciplinario(AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO,
-            string urldata, string idusuario, string idexpediente, string iddocentrada)
+            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
             ContenidoAperturamientoDisciplinario contenidoAD = new ContenidoAperturamientoDisciplinario()
@@ -409,6 +409,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoAD,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo= url2,
                 estado = "creado"
             };
             _documentos.InsertOne(aperturamientodisciplinario);
@@ -568,6 +569,48 @@ namespace SISGED.Server.Services
             return resolucion;
         }
 
+        public ResultadoBPN registrarResultadoBPN(ResultadoBPNDTO resultadoBPNDTO, List<string> url2,
+            string idusuario, string idexpediente, string iddocentrada)
+        {
+            //Creacionde le objeto y registro en la coleccion documentos
+            ContenidoResultadoBPN contenidoResultadoBPN = new ContenidoResultadoBPN()
+            {
+                cantidadfoja = resultadoBPNDTO.contenidoDTO.cantidadfoja,
+                costo = resultadoBPNDTO.contenidoDTO.costo,
+                idescriturapublica = resultadoBPNDTO.contenidoDTO.idescriturapublica.id,
+                estado = "pendiente",
+            };
+            ResultadoBPN resultadoBPN = new ResultadoBPN()
+            {
+                tipo = "ResultadoBPN",
+                contenido = contenidoResultadoBPN,
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>(),
+                urlanexo = url2,
+                estado = "creado"
+            };
+            _documentos.InsertOne(resultadoBPN);
+
+            //Actualizacion del expediente
+            Expediente expediente = new Expediente();
+            DocumentoExpediente documentoExpediente = new DocumentoExpediente();
+            documentoExpediente.indice = 8;
+            documentoExpediente.iddocumento = resultadoBPNDTO.id;
+            documentoExpediente.tipo = "ResultadoBPN";
+            documentoExpediente.fechacreacion = DateTime.Now;
+            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechademora = null;
+            expediente = actualizarExpediente(documentoExpediente, idexpediente);
+
+            //Actulizar el documento anterior a revisado
+            var filter = Builders<Documento>.Filter.Eq("id", iddocentrada);
+            var update = Builders<Documento>.Update
+                .Set("estado", "revisado");
+            _documentos.UpdateOne(filter, update);
+
+            return resultadoBPN;
+        }
+
         public Expediente actualizarExpediente(DocumentoExpediente documentoExpediente, string idexpediente)
         {
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
@@ -576,7 +619,7 @@ namespace SISGED.Server.Services
         }
 
         public Apelacion registrarApelacion(ApelacionDTO apelacionDTO,
-            string urldata, string idusuario, string idexpediente, string iddocentrada)
+            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacion de la Apelacion y registro en la coleccion documentos
             ContenidoApelacion contenidoApe = new ContenidoApelacion()
@@ -592,6 +635,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoApe,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo = url2,
                 evaluacion = new Evaluacion()
                 {
                     status = "pendiente",
@@ -634,7 +678,7 @@ namespace SISGED.Server.Services
         }
 
         //registrarSolicitudExpedienteNotario
-        public SolicitudExpedienteNotario registrarSolicitudExpedienteNotario(SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO,
+        public SolicitudExpedienteNotario registrarSolicitudExpedienteNotario(SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO, List<string> url2,
             string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacion de la Apelacion y registro en la coleccion documentos
@@ -651,6 +695,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoSEN,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo = url2,
                 estado = "pendiente"
             };
             _documentos.InsertOne(solicitudExpedienteNotarioAct);
@@ -900,6 +945,51 @@ namespace SISGED.Server.Services
                 data = docResolucion.contenido.url
             };
             return resolucionDTO;
+        }
+
+        public ResultadoBPNDTO obtenerResultadoBPNDTO(string id)
+        {
+            BsonArray pipeline = new BsonArray();
+            pipeline.Add(new BsonDocument("$match",
+                new BsonDocument("$expr",
+                    new BsonDocument("$eq",
+                        new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idescritura") }))));
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument("from", "escrituraspublicas")
+                .Add("let", new BsonDocument("idescritura", "$contenido.idescriturapublica"))
+                .Add("pipeline", pipeline)
+                .Add("as", "escriturapublica"));
+
+            var project = new BsonDocument("$project",
+                new BsonDocument {
+                    { "_id","$_id" },
+                    { "tipo","$tipo"},
+                    { "contenidoDTO",new BsonDocument{
+                        {
+                            "idescriturapublica",
+                            new BsonDocument("$arrayElemAt",
+                                new BsonArray{ "$escriturapublica",0 })
+                        },
+                        {"cantidadfoja","$contenido.cantidadfoja" },
+                        {"costo","$contenido.costo" },
+                        {"estado","$estado"}
+                    }
+                    },
+                    { "estado","$estado"},
+                    { "historialcontenido", "$historialcontenido" },
+                    { "historialproceso", "$historialproceso" }
+                });
+
+            ResultadoBPNDTO docResultadoBPN = new ResultadoBPNDTO();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docResultadoBPN = _documentos.Aggregate().
+              AppendStage<ResultadoBPN>(match)
+              .AppendStage<ResultadoBPN_lookup>(lookup)
+              .AppendStage<ResultadoBPNDTO>(project).First();
+
+
+            return docResultadoBPN;
         }
 
         public ApelacionDTO ObtenerDocumentoApelacion(string id)
@@ -1251,12 +1341,20 @@ namespace SISGED.Server.Services
             //Creacion de Obj y registro en coleccion de documentos 
             ContenidoConclusionFirma contenidoCF = new ContenidoConclusionFirma()
             {
-                idescriturapublica = conclusionFirmaDTO.contenidoDTO.idescriturapublica.id
+                idescriturapublica = conclusionFirmaDTO.contenidoDTO.idescriturapublica.id,
+                 idnotario = conclusionFirmaDTO.contenidoDTO.idnotario.id,
+                  idcliente = conclusionFirmaDTO.contenidoDTO.idcliente.id,
+                  cantidadfoja = conclusionFirmaDTO.contenidoDTO.cantidadfoja,
+                  precio = conclusionFirmaDTO.contenidoDTO.cantidadfoja*30
             };
 
             var filter = Builders<Documento>.Filter.Eq("id", conclusionFirmaDTO.id);
             var update = Builders<Documento>.Update
-                .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica);
+                .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica)
+                .Set("contenido.idnotario", contenidoCF.idnotario)
+                .Set("contenido.idcliente", contenidoCF.idcliente)
+                .Set("contenido.cantidadfoja",contenidoCF.cantidadfoja)
+                .Set("contenido.precio", contenidoCF.precio);
              _documentos.UpdateOne(filter, update);
         }
 
@@ -1399,6 +1497,29 @@ namespace SISGED.Server.Services
                 .Set("contenido.titulo", contenidoSolicitudExpedienteNotario.titulo)
                 .Set("contenido.descripcion", contenidoSolicitudExpedienteNotario.descripcion)
                 .Set("contenido.idnotario", contenidoSolicitudExpedienteNotario.idnotario);
+            _documentos.UpdateOne(filter, update);
+        }
+
+        public void actualizarDocumentoResultadoBPN(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            ResultadoBPNDTO resultadoBPNDTO = new ResultadoBPNDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            resultadoBPNDTO = JsonConvert.DeserializeObject<ResultadoBPNDTO>(json);
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoResultadoBPN contenidoResultadoBPN = new ContenidoResultadoBPN()
+            {
+                cantidadfoja = resultadoBPNDTO.contenidoDTO.cantidadfoja,
+                costo = resultadoBPNDTO.contenidoDTO.costo,
+                idescriturapublica = resultadoBPNDTO.contenidoDTO.idescriturapublica.id
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", resultadoBPNDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.cantidadfoja", contenidoResultadoBPN.cantidadfoja)
+                .Set("contenido.costo", contenidoResultadoBPN.costo)
+                .Set("contenido.idescriturapublica", contenidoResultadoBPN.idescriturapublica);
             _documentos.UpdateOne(filter, update);
         }
     }

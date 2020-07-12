@@ -334,7 +334,17 @@ namespace SISGED.Server.Controllers
             AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO = new AperturamientoDisciplinarioDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             aperturamientoDisciplinarioDTO = JsonConvert.DeserializeObject<AperturamientoDisciplinarioDTO>(json);
-
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in aperturamientoDisciplinarioDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    url2.Add(urlData2);
+                }
+            }
             //Almacenando el pdf en el servidor de archivos y obtencion de la url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(aperturamientoDisciplinarioDTO.contenidoDTO.url))
@@ -343,7 +353,7 @@ namespace SISGED.Server.Controllers
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "aperturamientodisciplinario");
             }
 
-            return _documentoservice.registrarAperturamientoDisciplinario(aperturamientoDisciplinarioDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+            return _documentoservice.registrarAperturamientoDisciplinario(aperturamientoDisciplinarioDTO, urlData, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
 
 
@@ -354,7 +364,17 @@ namespace SISGED.Server.Controllers
             ApelacionDTO apelacionDTO = new ApelacionDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             apelacionDTO = JsonConvert.DeserializeObject<ApelacionDTO>(json);
-
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in apelacionDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    url2.Add(urlData2);
+                }
+            }
             //Almacenando el pdf en el servidor de archivos y obtencion de la url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(apelacionDTO.contenidoDTO.data))
@@ -363,7 +383,7 @@ namespace SISGED.Server.Controllers
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "apelaciones");
             }
 
-            return _documentoservice.registrarApelacion(apelacionDTO, urlData, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+            return _documentoservice.registrarApelacion(apelacionDTO, urlData, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
 
 
@@ -374,8 +394,18 @@ namespace SISGED.Server.Controllers
             SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO = new SolicitudExpedienteNotarioDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             solicitudExpedienteNotarioDTO = JsonConvert.DeserializeObject<SolicitudExpedienteNotarioDTO>(json);
-
-            return _documentoservice.registrarSolicitudExpedienteNotario(solicitudExpedienteNotarioDTO, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in solicitudExpedienteNotarioDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.registrarSolicitudExpedienteNotario(solicitudExpedienteNotarioDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
 
 
@@ -424,6 +454,28 @@ namespace SISGED.Server.Controllers
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "resolucion");
             }
             return _documentoservice.registrarResolucion(resolucionDTO, urlData, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+        }
+
+        [HttpPost("documentoResultadoBPN")]
+        public async Task<ActionResult<ResultadoBPN>> RegistrarDocumentoResultadoBPN(ExpedienteWrapper expedientewrapper)
+        {
+            ResultadoBPNDTO resultadoBPNDTO = new ResultadoBPNDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            resultadoBPNDTO = JsonConvert.DeserializeObject<ResultadoBPNDTO>(json);
+
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in resultadoBPNDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resultadobpn");
+                    url2.Add(urlData2);
+                }
+            }
+
+            return _documentoservice.registrarResultadoBPN(resultadoBPNDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
         }
         #endregion
 
@@ -481,6 +533,11 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerResolucionDTO(iddoc);
         }
+        [HttpGet("documentorbpn")]
+        public async Task<ActionResult<ResultadoBPNDTO>> obtenerResultadoBPN([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerResultadoBPNDTO(iddoc);
+        }
         [HttpGet("documentoape")]
         public async Task<ActionResult<ApelacionDTO>> obtenerApelacionDTO([FromQuery] string iddoc)
         {
@@ -510,45 +567,50 @@ namespace SISGED.Server.Controllers
         }
 
         //Actualizaciones
-        [HttpPost("actualizarDocumentoODN")]
+        [HttpPut("actualizarDocumentoODN")]
         public void modificarDocumentoODN(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoODN(expedienteWrapper);
         }
-        [HttpPost("actualizarDocumentoAPE")]
+        [HttpPut("actualizarDocumentoAPE")]
         public void modificarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoApelacion(expedienteWrapper);
         }
-        [HttpPost("actualizarDocumentoAD")]
+        [HttpPut("actualizarDocumentoAD")]
         public void modificarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoAperturamientoDisciplinario(expedienteWrapper);
         }
-        [HttpPost("actualizarDocumentoCF")]
+        [HttpPut("actualizarDocumentoCF")]
         public void modificarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoConclusionFirma(expedienteWrapper);
         }
-        [HttpPost("actualizarDocumentoD")]
+        [HttpPut("actualizarDocumentoD")]
         public void modificarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoDictamen(expedienteWrapper);
         }
-        [HttpPost("actualizarDocumentoOficioBPN")]
+        [HttpPut("actualizarDocumentoOficioBPN")]
         public void modificarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoOficioBPN(expedienteWrapper);
         }
-        [HttpPost("actualizarDocumentoR")]
+        [HttpPut("actualizarDocumentoR")]
         public void modificarDocumentoResolucion(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoResolucion(expedienteWrapper);
         }
-        [HttpPost("actualizarDocumentoSEN")]
+        [HttpPut("actualizarDocumentoSEN")]
         public void modificarDocumentoSEN(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoSEN(expedienteWrapper);
+        }
+        [HttpPut("actualizarDocumentoResultadoBPN")]
+        public void modificarrDocumentoResultadoBPN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoResultadoBPN(expedienteWrapper);
         }
     }
 }

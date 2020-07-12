@@ -97,6 +97,15 @@
 
                 <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -118,11 +127,21 @@
     private ApelacionDTO apelacion = new ApelacionDTO();
     private EditContext _editContext;
     private string imagenTemporal;
+    private string imagenTemporal2;
     private bool loadprocess = false;
 
     protected override void OnInitialized()
     {
+        apelacion.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(apelacion);
+        foreach (string u in apelacion.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                apelacion.contenidoDTO.Urlanexo = null;
+            }
+        }
         if (!string.IsNullOrEmpty(apelacion.contenidoDTO.data))
         {
             imagenTemporal = apelacion.contenidoDTO.data;
@@ -133,6 +152,11 @@
     private void ImagenSeleccionada(string imagenbase64)
     {
         apelacion.contenidoDTO.data = imagenbase64;
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        apelacion.contenidoDTO.Urlanexo.Add(imagenbase64);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
