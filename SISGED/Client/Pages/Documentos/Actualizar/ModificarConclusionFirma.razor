@@ -252,6 +252,7 @@
     {
         firstLoad = true;
         _editContext = new EditContext(conclusionFirma);
+        Console.WriteLine(workspace.expedienteseleccionado.documento.id);
         var httpResponse = await repository.Get<ConclusionFirmaDTO>($"api/documentos/documentocf?iddoc={workspace.expedienteseleccionado.documento.id}");
         if (!httpResponse.Error)
         {
