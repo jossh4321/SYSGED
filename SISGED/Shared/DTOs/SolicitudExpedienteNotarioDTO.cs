@@ -18,6 +18,7 @@ namespace SISGED.Shared.DTOs
         public string descripcion { get; set; }
         public DateTime fechaemision { get; set; }
         public Notario idnotario { get; set; }
+        public List<string> Urlanexo { get; set; } = new List<string>();
     }
 
     public class SolicitudExpedienteNotario_lookup 
