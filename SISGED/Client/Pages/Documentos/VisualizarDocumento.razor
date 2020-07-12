@@ -1,0 +1,72 @@
+﻿@inject IDocumentRepository documentRepository
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using SISGED.Client.Pages.Documentos.DocumentosGenerados
+@using Newtonsoft.Json;
+
+<style>
+	div.tool-content-style {
+		width: 100%;
+		flex-basis: 100%;
+		display: flex;
+		flex-direction: column;
+		background-color: #a6a6a6;
+		border-radius: 5px 5px 0px 0px;
+	}
+	.caja-vista-doc {
+		display: flex;
+		flex-direction: column;
+		flex-basis: 90%;
+		align-items: center;
+		justify-content: center;
+	}
+</style>
+
+<div class="tool-content-style">
+	<div class="caja-vista-doc">
+		<div class="form-inline">
+			<div class="form-group mb-2">
+				<label for="coddoc" class="sr-only">codigodocumento</label>
+				<input @bind-value="coddoc" @bind-value:event="oninput"
+					   @onkeypress="@((KeyboardEventArgs e) => DocumentoKeyPress(e))"
+					   type="text" class="form-control" id="titulo" placeholder="Código del documento" />
+			</div>
+			<div class="form-group mx-sm-3 mb-2">
+				<select class="form-control" @bind="tiposeleccionado">
+					<option value="0">--Seleccione tipo de documento--</option>
+					@foreach (OpcionDocumento opcion in tiposdocumentos)
+					{
+						<option value="@opcion.value">@opcion.label</option>
+					}
+				</select>
+			</div>
+			<button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="VerDocumento">Ver</button>
+			<button type="button" class="btn btn-danger mb-2" @onclick="CerrarDocumento">Cerrar</button>
+		</div>
+	</div>
+</div>
+
+		@code {
+			public RenderFragment ChildContent = null;
+			[CascadingParameter] WorkEnvironment workspace { get; set; }
+			string coddoc = "";
+			string tiposeleccionado = "";
+			List<OpcionDocumento> tiposdocumentos = new List<OpcionDocumento>();
+
+			private void DocumentoKeyPress(KeyboardEventArgs e)
+			{
+				if (e.Key == "Enter")
+				{
+					VerDocumento();
+				}
+			}
+
+			private void VerDocumento()
+			{
+
+			}
+
+			private void CerrarDocumento()
+			{
+
+			}
+		}
