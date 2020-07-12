@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager navigationManager
 @inject IRepository repositorio
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.SignalR.Client
 <link href="css/site.css" rel="stylesheet" />
 <MatDrawerContainer Style="width: 100%; height: 100%;" @onclick="showUserMenu2">
     <MatDrawer @bind-Opened="@Opened" Mode="@MatDrawerMode.Modal" Style="padding-top:0px; width:229px;background-color: #202020; border:none">
@@ -30,7 +32,7 @@
                         <MatIcon Icon="@MatIconNames.Dashboard" Class="bar-side-icons-style"></MatIcon>
                         <span class="bartext-color" @onclick="@(() => onclickButtonNav(interfaz.url))">
                             @interfaz.label
-                            
+
                         </span>
                     </MatNavItem>
                 }
@@ -113,9 +115,11 @@
 
                 <MatAppBarContent>
                     <CascadingValue Value="@sesion" Name="SesionUsuario">
-                        <div class="content px-4 render-fragment">
-                            @Body
-                        </div>
+                        <CascadingValue Value="this">
+                            <div class="content px-4 render-fragment">
+                                @Body
+                            </div>
+                        </CascadingValue>
                     </CascadingValue>
                 </MatAppBarContent>
             </MatAppBarContainer>
@@ -156,13 +160,17 @@
     List<BandejaEntradaDTOR> bandejaEntradas = new List<BandejaEntradaDTOR>();
     //Bandeja Unificada
     BandejaESDTOR bandejaunificada = new BandejaESDTOR();
-
+    public HubConnection _hubConnection;
     protected override async Task OnInitializedAsync()
     {
         settingInput();
         cargasesion = false;
         var authState = await authenticationState;
         var usuario = authState.User;
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chatHub"))
+            .Build();
+        Console.WriteLine("Se creo la conexión hub");
         if (usuario.Identity.IsAuthenticated)
         {
             Console.WriteLine("Usuario autenticado");
@@ -176,6 +184,7 @@
                 sesion.herramientasutilizables = obtenerListaheramientas(sesion.permisosHerram);
                 sesion.listaentradas = obtenerListaEntradas(bandejaunificada.expedienteentrada);
                 sesion.listasalidas = obtenerListaSalidas(bandejaunificada.expedientesalida);
+                await Connect();
                 StateHasChanged();
             }
         }
@@ -184,6 +193,37 @@
             Console.WriteLine("Usuario NO autenticado");
         }
     }
+
+    public async Task Connect()
+    {
+        
+        Console.WriteLine("Llegue aqui ps papu");
+        _hubConnection.On<string, ExpedienteBandejaDTO>("ReceiveMessageBandeja", (user, bandeja) =>
+        {
+            Console.WriteLine("Llegue al receive message");
+            Item item = new Item()
+            {
+                nombre = bandeja.tipo,
+                valor = bandeja,
+                icono = "alarm_add",
+                //descripcion = ((DocumentoDTO)bandeja.documento).tipo,
+                descripcion = "ejemplo",
+                currentPlace = "inputs",
+                originPlace = "inputs",
+                cliente = bandeja.cliente
+            };
+            sesion.listaentradas.Add(item);
+            StateHasChanged();
+        });
+
+        await _hubConnection.StartAsync();
+        await ConnectToRoom(sesion.usuario.usuario);
+    }
+
+    public Task DisconnectToRoom(string nombreusuario) => _hubConnection.SendAsync("DisconnectToRoom", _hubConnection.ConnectionId, nombreusuario);
+    public Task ConnectToRoom(string nombreusuario) => _hubConnection.SendAsync("ConnectToRoom", _hubConnection.ConnectionId, nombreusuario);
+    public Task Send(string nombreusuario, ExpedienteBandejaDTO mensaje) => _hubConnection.SendAsync("SendMessageBandeja", nombreusuario, mensaje);
+
     #region metodos
     public List<Item> obtenerListaheramientas(List<Permiso> listapermisos)
     {
@@ -191,7 +231,7 @@
     }
     public List<Item> obtenerListaEntradas(List<ExpedienteBandejaDTO> listaentrada)
     {
-        if(listaentrada.ElementAt(0).tipo != null)
+        if (listaentrada.ElementAt(0).tipo != null)
         {
             return listaentrada.Select(x => new Item()
             {
@@ -335,7 +375,7 @@
     public async Task setearBandejaSalida(String idusuario)
     {
         var responseHttp = await repositorio.Get<List<BandejaDTOR>>($"api/Bandejas/getBandeja/{idusuario}");
-        if(responseHttp.Error)
+        if (responseHttp.Error)
         {
             Console.WriteLine("Error en la bandeja de salida");
         }
@@ -362,7 +402,7 @@
     #endregion
     void onclickButtonNav(string url)
     {
-        
+
         navigationManager.NavigateTo(url);
         //navigationManager.NavigateTo(permiso.url);
     }
