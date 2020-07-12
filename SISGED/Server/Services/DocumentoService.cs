@@ -378,7 +378,7 @@ namespace SISGED.Server.Services
         }
 
         public AperturamientoDisciplinario registrarAperturamientoDisciplinario(AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO,
-            string urldata, string idusuario, string idexpediente, string iddocentrada)
+            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
             ContenidoAperturamientoDisciplinario contenidoAD = new ContenidoAperturamientoDisciplinario()
@@ -401,6 +401,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoAD,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo= url2,
                 estado = "creado"
             };
             _documentos.InsertOne(aperturamientodisciplinario);
@@ -610,7 +611,7 @@ namespace SISGED.Server.Services
         }
 
         public Apelacion registrarApelacion(ApelacionDTO apelacionDTO,
-            string urldata, string idusuario, string idexpediente, string iddocentrada)
+            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacion de la Apelacion y registro en la coleccion documentos
             ContenidoApelacion contenidoApe = new ContenidoApelacion()
@@ -626,6 +627,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoApe,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo = url2,
                 evaluacion = new Evaluacion()
                 {
                     status = "pendiente",
@@ -668,7 +670,7 @@ namespace SISGED.Server.Services
         }
 
         //registrarSolicitudExpedienteNotario
-        public SolicitudExpedienteNotario registrarSolicitudExpedienteNotario(SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO,
+        public SolicitudExpedienteNotario registrarSolicitudExpedienteNotario(SolicitudExpedienteNotarioDTO solicitudExpedienteNotarioDTO, List<string> url2,
             string idusuario, string idexpediente, string iddocentrada)
         {
             //Creacion de la Apelacion y registro en la coleccion documentos
@@ -685,6 +687,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoSEN,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
+                urlanexo = url2,
                 estado = "pendiente"
             };
             _documentos.InsertOne(solicitudExpedienteNotarioAct);
@@ -1330,12 +1333,20 @@ namespace SISGED.Server.Services
             //Creacion de Obj y registro en coleccion de documentos 
             ContenidoConclusionFirma contenidoCF = new ContenidoConclusionFirma()
             {
-                idescriturapublica = conclusionFirmaDTO.contenidoDTO.idescriturapublica.id
+                idescriturapublica = conclusionFirmaDTO.contenidoDTO.idescriturapublica.id,
+                 idnotario = conclusionFirmaDTO.contenidoDTO.idnotario.id,
+                  idcliente = conclusionFirmaDTO.contenidoDTO.idcliente.id,
+                  cantidadfoja = conclusionFirmaDTO.contenidoDTO.cantidadfoja,
+                  precio = conclusionFirmaDTO.contenidoDTO.cantidadfoja*30
             };
 
             var filter = Builders<Documento>.Filter.Eq("id", conclusionFirmaDTO.id);
             var update = Builders<Documento>.Update
-                .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica);
+                .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica)
+                .Set("contenido.idnotario", contenidoCF.idnotario)
+                .Set("contenido.idcliente", contenidoCF.idcliente)
+                .Set("contenido.cantidadfoja",contenidoCF.cantidadfoja)
+                .Set("contenido.precio", contenidoCF.precio);
              _documentos.UpdateOne(filter, update);
         }
 
