@@ -20,6 +20,16 @@
     .mdc-dialog__content {
         padding: 0 !important;
     }
+    .mdc-dialog {
+        z-index: 100 !important;
+    }
+
+    .demo-mat-card-content {
+        /* padding: 1rem;*/
+        margin: 0px;
+        z-index: 90 !important;
+    }
+
 
     .demo-mat-card-content {
         padding: 1rem;
@@ -84,18 +94,6 @@
         margin-bottom: 5px;
     }
 
-    /*.pbottom-5 {
-        padding-bottom: 5px;
-    }
-
-    .mtop-5 {
-        margin-top: 5px;
-    }*/
-    /*
-    .limegreen {
-        background-color: limegreen !important;
-    }*/
-
     .col-datos-12 {
         flex-basis: 100%;
     }
@@ -108,7 +106,6 @@
 
     .card-derivaciones {
         margin: 5px;
-        /*border: 1px solid;*/
         transition: all 0.3s ease-out;
         padding: 10px;
         border-radius: 10px;
@@ -128,8 +125,7 @@
     }
 
     .input-filtro {
-        flex-grow: 1;
-        /*margin-bottom: 25px;*/
+        flex-grow: 1;        
         margin-right: 5px;
         flex-basis: calc((100%/3) - 5px);
     }
@@ -221,10 +217,8 @@ else
         <MatDialogTitle>Derivaciones </MatDialogTitle>
         <MatDialogContent>
             @if (listaderivaciones.Count == 0)
-            {
-                <div class="card-derivaciones">
-                    <p>El expediente no cuenta con historial de derivaciones</p>
-                </div>
+            {                
+                 <p>El expediente no cuenta con historial de derivaciones</p>
             }
             else
             {

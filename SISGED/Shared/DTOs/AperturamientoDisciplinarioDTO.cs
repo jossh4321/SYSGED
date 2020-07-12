@@ -27,6 +27,7 @@ namespace SISGED.Shared.DTOs
         public string lugaraudiencia { get; set; }//
         public List<Hecho> hechosimputados { get; set; } = new List<Hecho>();
         public string url { get; set; }//
+        public List<string> Urlanexo { get; set; } = new List<string>();
     }
     public class Participante
     {
