@@ -43,11 +43,12 @@
 <div style="display: none">
     <table id="convertirPDF">
         <tbody>
+            <tr><td colspan="7">Código: @codigo</td></tr>
+            <tr><td colspan="7"> </td></tr>
             <tr>
                 <th colspan="7">@documento.titulo</th>
             </tr>
             <tr><td colspan="7"> </td></tr>
-            <tr><td colspan="7">Código de generación: @codigo</td></tr>
             <tr><td colspan="7">Descripción: </td></tr>
             <tr><td colspan="7">@documento.descripcion</td></tr>
             <tr><td colspan="7">Fecha de realización: @documento.fecharealizacion.ToString("dd-MM-yy")</td></tr>
@@ -88,7 +89,7 @@
     private async Task Generar()
     {
         generado = true;
-        await js.InvokeVoidAsync("gPDF", imagen);
+        await js.InvokeVoidAsync("gPDF", imagen, sesion.usuario.datos.nombre + " " + sesion.usuario.datos.apellido, sesion.usuario.datos.tipodocumento + " : " + sesion.usuario.datos.numerodocumento);
     }
     private async Task GenerarPDF()
     {

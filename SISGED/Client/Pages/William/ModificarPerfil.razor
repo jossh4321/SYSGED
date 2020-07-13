@@ -76,7 +76,7 @@
         flex-direction: column;
         /*height: 700px;*/
         width: 300px;
-        background-color: ##FFFFFF;
+        background-color: #FFFFFF;
     }
 
     .div-form.mat-tab-group {
@@ -110,7 +110,7 @@
             <MatTab Label="Informacion  de  Usuario ">
 
 
-               
+                
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.usuario)">
                     <MatTextField @bind-Value="@usuario.usuario" Class="text-field-style" Label="Usuario"
                                   @oninput='@(e => KeyUp(e, "usuario", usuario.usuario))'></MatTextField>
@@ -127,7 +127,7 @@
                 </div>
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.nombre)">
-                    <MatTextField @bind-Value="@usuario.datos.nombre" Class="text-field-style" Label="Nombres"
+                    <MatTextField @bind-Value="@usuario.datos.nombre" Class="text-field-style" Text="nombre" Label="Nombres"
                                   @oninput='@(e => KeyUp(e, "nombres", usuario.datos))'></MatTextField>
 
 
@@ -249,126 +249,124 @@
 
 </div>
 @code {
-    [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
-    public bool abrirDialogo = false;
-    public void openDialog() { abrirDialogo = true; }
-    public void closeDialog() { abrirDialogo = false; }
+
+
     /// //////////////////////
 
 
+    //protected override async Task OnInitializedAsync()
+    //{
 
-    public SolicitudBPNDTO docSolicitudBPNDTO = new SolicitudBPNDTO()
-    {
-        tipo = "SolicitudBPN",
-        estado = "Pendiente",
-        historialcontenido = new List<ContenidoVersion>()
-{
-            new ContenidoVersion() { version = 1, url = "www.cnl/solicitud_BPN/1", fechamodificacion = new DateTime() }
-        },
-        historialproceso = new List<Proceso>(),
-        contenidoDTO = new ContenidoSolicitudBPNDTO()
-        {
-            idcliente = new Usuario()
-            {
-                id = "5eaba912d1768c4570dc1a80",
-                tipo = "Cliente",
-                usuario = "user1",
-                clave = "pass1",
-                datos = new Datos()
-                {
-                    nombre = "Juan Carlos",
-                    apellido = "Pillaca",
-                    tipodocumento = "D.N.I.",
-                    numerodocumento = "12345678",
-                    email = "jcPillaca@urp.edu.pe"
-                }
-            },
-            direccionoficio = "av. surco 123",
-            idnotario = new Notario()
-            {
-                id = "5ecb15b38e511a1d5cca29c4",
-                nombre = "Fernando Jose",
-                apellido = "Ezzpinoza Paredes",
-                dni = "4321",
-                colegiatura = "4H5H4K6K6V5J233O6HU6U676",
-                email = "fernandoparedes@cnl.gob.pe"
-            },
-            actojuridico = "Mancomunacion de vienes por casamiento civil",
-            tipoprotocolo = "minuta",
-            otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo" },
-            fecharealizacion = DateTime.Now
-        }
-    };
+    //    Usuario usuario = new Usuario();
 
-    private OficioBPNDTO documento = new OficioBPNDTO();
-    private EditContext _editContext;
+
+
+    //    usuario.id = sesion.usuario.id;
+    //    usuario.usuario = sesion.usuario.usuario;
+    //    usuario.datos.nombre = sesion.usuario.datos.nombre;
+    //    usuario.datos.apellido = sesion.usuario.datos.apellido;
+    //    usuario.datos.fechanacimiento = sesion.usuario.datos.fechanacimiento;
+    //    usuario.datos.tipodocumento = sesion.usuario.datos.tipodocumento;
+    //    usuario.datos.numerodocumento = sesion.usuario.datos.numerodocumento;
+    //    usuario.datos.direccion = sesion.usuario.datos.direccion;
+    //    usuario.datos.email = sesion.usuario.datos.email;
+
+
+
+
+    //    String usuariomuestra = usuario.usuario;
+    //    String nombre = usuario.datos.nombre;
+    //    String apellido = usuario.datos.apellido;
+    //    String fechadenacimiento = usuario.datos.fechanacimiento;
+    //    String tipodocumento = usuario.datos.tipodocumento;
+    //    String numerodocumento = usuario.datos.numerodocumento;
+    //    String direccion = usuario.datos.direccion;
+    //    String email = usuario.datos.email;
+
+    //    Console.WriteLine("Muestra los datos usuario:" + usuariomuestra);
+    //    Console.WriteLine("Muestra los datos nombre:" + nombre);
+    //    Console.WriteLine("Muestra los datos apellido:" + apellido);
+    //    Console.WriteLine("Muestra los datos fecha de nacimeinto:" + fechadenacimiento);
+    //    Console.WriteLine("Muestra los datos tipo de documetno:" + tipodocumento);
+    //    Console.WriteLine("Muestra los datos numero de documento:" + numerodocumento);
+    //    Console.WriteLine("Muestra los datos direccion: " + direccion);
+    //    Console.WriteLine("Muestra los datos email: " + email);
+
+
+    //}
+
 
     /// /////////////////////////////////
-    private UsuarioDTO usuario = new UsuarioDTO();
+
+
+
+
+
+
+
+    Usuario usuario = new Usuario();
+
     private EditContext editContext;
+
     //////////////////////////////////////
     protected override void OnInitialized()
     {
-        _editContext = new EditContext(documento);
+
+
         editContext = new EditContext(usuario);
+
+
+        usuario.id = sesion.usuario.id;
+        usuario.usuario = sesion.usuario.usuario;
+        usuario.datos.nombre = sesion.usuario.datos.nombre;
+        usuario.datos.apellido = sesion.usuario.datos.apellido;
+        usuario.datos.fechanacimiento = sesion.usuario.datos.fechanacimiento;
+        usuario.datos.tipodocumento = sesion.usuario.datos.tipodocumento;
+        usuario.datos.numerodocumento = sesion.usuario.datos.numerodocumento;
+        usuario.datos.direccion = sesion.usuario.datos.direccion;
+        usuario.datos.email = sesion.usuario.datos.email;
+
+
+        String usuariomuestra = usuario.usuario;
+        String nombre = usuario.datos.nombre;
+        String apellido = usuario.datos.apellido;
+        String fechadenacimiento = usuario.datos.fechanacimiento;
+        String tipodocumento = usuario.datos.tipodocumento;
+        String numerodocumento = usuario.datos.numerodocumento;
+        String direccion = usuario.datos.direccion;
+        String email = usuario.datos.email;
+
+
+
+        Console.WriteLine("Muestra los datos usuario:" + usuariomuestra);
+        Console.WriteLine("Muestra los datos nombre:" + nombre);
+        Console.WriteLine("Muestra los datos apellido:" + apellido);
+        Console.WriteLine("Muestra los datos fecha de nacimeinto:" + fechadenacimiento);
+        Console.WriteLine("Muestra los datos tipo de documetno:" + tipodocumento);
+        Console.WriteLine("Muestra los datos numero de documento:" + numerodocumento);
+        Console.WriteLine("Muestra los datos direccion: " + direccion);
+        Console.WriteLine("Muestra los datos email: " + email);
+
     }
+
+
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
     {
         var property = val.GetType().GetProperty(memberName);
         property.SetValue(val, e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
-        _editContext.NotifyFieldChanged(fi);
+        editContext.NotifyFieldChanged(fi);
     }
     //////////////////////
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-       
-        documento.contenidoDTO.fecharealizacion = DateTime.Now;
-        ///////////////////
-        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-        expedienteWrapper.documento = documento;
-        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        expedienteWrapper.idusuarioactual = sesion.usuario.id;
-        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>($"api/documentos/documentosbpn", expedienteWrapper);
-        if (!httpResponse.Error)
-        {
-            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-            expedientebandeja = workspace.expedienteseleccionado;
-            OficioBPN oficiobpn = new OficioBPN();
-            oficiobpn = httpResponse.Response;
-            expedientebandeja.documento.id = oficiobpn.id;
-            expedientebandeja.documento.tipo = oficiobpn.tipo;
-            expedientebandeja.documento.historialcontenido = oficiobpn.historialcontenido;
-            expedientebandeja.documento.historialproceso = oficiobpn.historialproceso;
-            expedientebandeja.documento.contenido = oficiobpn.contenido;
-            expedientebandeja.documento.estado = oficiobpn.estado;
-            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-            Item itemSalida = new Item()
 
-            {
-                nombre = expedientebandeja.tipo,
-                valor = expedientebandeja,
-                icono = "alarm_add",
-                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                currentPlace = "outputs",
-                originPlace = "outputs",
-                cliente = expedientebandeja.cliente
-            };
-            workspace.UpdateComponentBandeja(itemSalida);
-            await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
 
-        }
-        else
-        {
-            await swalfire.errorMessage("Error en el servidor");
-        }
-        loadprocess = false;
     }
 
     public void handleInvalidSubmit()
@@ -377,42 +375,31 @@
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
 
-    /// //////////////////////////////////////////////////////////////////////
-    // public class Usuarios
-    //{
-    //     public string Id { get; set; }
-    //    public string Nombre_usuario { get; set; }
-    //    public string Nombres { get; set; }
-    ///   public string Apellidos { get; set; }
-    //   public string Tipo_documento { get; set; }
-    //   public int Ndocumento { get; set; }
-    //  public string Direccion { get; set; }
-    ///  public string Email { get; set; }
-    //  public string Sexo { get; set; }
+    private string nombre { get; set; } = $"nombre";
+    public Usuario _usuario = new Usuario();
+
+    ///////////////////////////////////////////////////////////////////////
 
 
-    // public Usuarios(string id, string nombre_usuario, string nombres, string apellidos, string tipo_documento, int ndocumento, string direccion, string email, string sexo)
+    //var httpResponse = await repository.Post<Usuario>($"api/usuarios/id?id=[sesion.usurio]");
+
+    // if (httpResponse.Error)
     // {
-    //        Id = id;
-    //        Nombre_usuario = nombre_usuario;
-    //        Nombres = nombres;
-    ///       Apellidos = apellidos;
-    //       Tipo_documento = tipo_documento;
-    ///Ndocumento = ndocumento;
-    // Direccion = direccion;
-    //       Email = email;
-    //     Sexo = sexo;
-    //
-    //  }
+    //     _usuario= (usuario)httpResponse.Response;
+
+    // }
+    // else
+    // {
+    //     Console.WriteLine("algo salio mal");
+
     // }
 
 
-    //  Usuarios[] usuario = new[]
-    //  {
-    //               new Usuarios("usu001","FEDEPRO","Jose luis","torres alvares","dni",72369985,"av.bolognesi","jose123@gmail.com","M"),
-    ///};
+
+   
 
 
-    }
+
+}
 
 
