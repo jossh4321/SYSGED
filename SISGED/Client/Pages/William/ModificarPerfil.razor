@@ -251,7 +251,7 @@
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
-    
+
 
     /// //////////////////////
 
@@ -306,7 +306,7 @@
 
 
 
- Usuario usuario = new Usuario();
+    Usuario usuario = new Usuario();
 
     private EditContext editContext;
 
@@ -316,8 +316,6 @@
 
 
         editContext = new EditContext(usuario);
-
-
 
 
         usuario.id = sesion.usuario.id;
@@ -331,8 +329,6 @@
         usuario.datos.email = sesion.usuario.datos.email;
 
 
-
-
         String usuariomuestra = usuario.usuario;
         String nombre = usuario.datos.nombre;
         String apellido = usuario.datos.apellido;
@@ -341,7 +337,6 @@
         String numerodocumento = usuario.datos.numerodocumento;
         String direccion = usuario.datos.direccion;
         String email = usuario.datos.email;
-
 
 
 
@@ -386,24 +381,24 @@
     ///////////////////////////////////////////////////////////////////////
 
 
-    /* var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id=[sesion.usurio]");
+    //var httpResponse = await repository.Post<Usuario>($"api/usuarios/id?id=[sesion.usurio]");
 
-     if (httpResponse.Error)
-     {
-         _usuario= (usuario)httpResponse.Response;
+    // if (httpResponse.Error)
+    // {
+    //     _usuario= (usuario)httpResponse.Response;
 
-     }
-     else
-     {
-         Console.WriteLine("algo salio mal");
+    // }
+    // else
+    // {
+    //     Console.WriteLine("algo salio mal");
 
-     }
-    */
-
+    // }
 
 
 
-  
+   
+
+
 
 }
 
