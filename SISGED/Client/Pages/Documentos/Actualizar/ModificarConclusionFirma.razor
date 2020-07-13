@@ -280,6 +280,7 @@
     {
         loadprocess = true;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        conclusionFirma.contenidoDTO.precio = conclusionFirma.contenidoDTO.cantidadfoja * 30;
         expedienteWrapper.documento = conclusionFirma;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
@@ -292,14 +293,19 @@
         }
         else
         {
+            ContenidoConclusionFirma contcf = new ContenidoConclusionFirma();
+            contcf.idescriturapublica = conclusionFirma.contenidoDTO.idescriturapublica.id;
+            contcf.cantidadfoja = conclusionFirma.contenidoDTO.cantidadfoja;
+            contcf.precio = conclusionFirma.contenidoDTO.precio;
+            contcf.idcliente = conclusionFirma.contenidoDTO.idcliente.id;
+
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
-
             expedientebandeja.documento.id = conclusionFirma.id;
             expedientebandeja.documento.tipo = conclusionFirma.tipo;
             expedientebandeja.documento.historialcontenido = conclusionFirma.historialcontenido;
             expedientebandeja.documento.historialproceso = conclusionFirma.historialproceso;
-            expedientebandeja.documento.contenido = conclusionFirma.contenidoDTO;
+            expedientebandeja.documento.contenido = contcf;
             expedientebandeja.documento.estado = conclusionFirma.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
@@ -321,7 +327,7 @@
             documentoDTO.id = conclusionFirma.id;
             documentoDTO.tipo = conclusionFirma.tipo;
             documentoDTO.estado = conclusionFirma.estado;
-            documentoDTO.contenido = JsonConvert.SerializeObject(conclusionFirma.contenidoDTO);
+            documentoDTO.contenido = JsonConvert.SerializeObject(contcf);
             documentoDTO.historialcontenido = conclusionFirma.historialcontenido;
             documentoDTO.historialproceso = conclusionFirma.historialproceso;
             documentoDTO.urlanexo = conclusionFirma.urlanexo;

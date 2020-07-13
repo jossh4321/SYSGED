@@ -185,14 +185,20 @@
         var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoAPE", expedienteWrapper);
         if (!httpResponse.Error)
         {
+
+            ContenidoApelacion conta = new ContenidoApelacion();
+            conta.titulo = apelacion.contenidoDTO.titulo;
+            conta.descripcion = apelacion.contenidoDTO.descripcion;
+            conta.fechaapelacion = apelacion.contenidoDTO.fechaapelacion;
+            conta.url = apelacion.contenidoDTO.data;
+
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
-
             expedientebandeja.documento.id = apelacion.id;
             expedientebandeja.documento.tipo = apelacion.tipo;
             expedientebandeja.documento.historialcontenido = apelacion.historialcontenido;
             expedientebandeja.documento.historialproceso = apelacion.historialproceso;
-            expedientebandeja.documento.contenido = apelacion.contenidoDTO;
+            expedientebandeja.documento.contenido = conta;
             expedientebandeja.documento.estado = apelacion.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
@@ -214,7 +220,7 @@
             documentoDTO.id = apelacion.id;
             documentoDTO.tipo = apelacion.tipo;
             documentoDTO.estado = apelacion.estado;
-            documentoDTO.contenido = JsonConvert.SerializeObject(apelacion.contenidoDTO);
+            documentoDTO.contenido = JsonConvert.SerializeObject(conta);
             documentoDTO.historialcontenido = apelacion.historialcontenido;
             documentoDTO.historialproceso = apelacion.historialproceso;
             documentoDTO.urlanexo = apelacion.urlanexo;

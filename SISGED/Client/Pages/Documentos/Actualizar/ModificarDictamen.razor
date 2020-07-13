@@ -360,11 +360,19 @@
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
 
+            ContenidoDictamen contd = new ContenidoDictamen();
+            contd.titulo = dictamen.contenidoDTO.titulo;
+            contd.descripcion = dictamen.contenidoDTO.descripcion;
+            contd.nombredenunciante = dictamen.contenidoDTO.nombredenunciante;
+            contd.observaciones = dictamen.contenidoDTO.observaciones.Select(x => x.descripcion).ToList();
+            contd.recomendaciones = dictamen.contenidoDTO.recomendaciones.Select(x => x.descripcion).ToList();
+            contd.conclusion = dictamen.contenidoDTO.conclusion;
+
             expedientebandeja.documento.id = dictamen.id;
             expedientebandeja.documento.tipo = dictamen.tipo;
             expedientebandeja.documento.historialcontenido = dictamen.historialcontenido;
             expedientebandeja.documento.historialproceso = dictamen.historialproceso;
-            expedientebandeja.documento.contenido = dictamen.contenidoDTO;
+            expedientebandeja.documento.contenido = contd;
             expedientebandeja.documento.estado = dictamen.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
@@ -386,7 +394,7 @@
             documentoDTO.id = dictamen.id;
             documentoDTO.tipo = dictamen.tipo;
             documentoDTO.estado = dictamen.estado;
-            documentoDTO.contenido = JsonConvert.SerializeObject(dictamen.contenidoDTO);
+            documentoDTO.contenido = JsonConvert.SerializeObject(contd);
             documentoDTO.historialcontenido = dictamen.historialcontenido;
             documentoDTO.historialproceso = dictamen.historialproceso;
             documentoDTO.urlanexo = dictamen.urlanexo;

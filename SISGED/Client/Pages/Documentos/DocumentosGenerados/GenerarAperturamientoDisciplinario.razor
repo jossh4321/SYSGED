@@ -120,7 +120,7 @@
 
     private async Task getUsuario()
     {
-        var responseHttp = await repositorio.Get<Usuario>($"api/usuarios/id?id={documento.idfiscal}");
+        var responseHttp = await repositorio.Get<Usuario>("api/usuarios/id?id="+documento.idfiscal);
         usuario = responseHttp.Response;
     }
     private async Task getNotario()

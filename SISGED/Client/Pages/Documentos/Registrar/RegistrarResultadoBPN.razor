@@ -124,6 +124,25 @@
         <FluentValidator></FluentValidator>
         <MatTabGroup>
             <MatTab Label="Datos Generales">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@resultadoBPNDTO.contenidoDTO.idescriturapublica"
+                                       Placeholder="Ingrese el titulo de la escritura pública">
+                        <SelectedTemplate>
+                            <strong>@context.titulo</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            <strong>@context.titulo</strong>
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resultadoBPNDTO.contenidoDTO.cantidadfoja)">
                     <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
                                            @bind-Value=@resultadoBPNDTO.contenidoDTO.cantidadfoja
@@ -144,43 +163,17 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resultadoBPNDTO.contenidoDTO.costo)">
-                    <MatNumericUpDownField Label="Costo" Class="text-field-style"
-                                           @bind-Value=@resultadoBPNDTO.contenidoDTO.costo
-                                           FieldType="MatNumericUpDownFieldType.Numeric"
-                                           DecimalPlaces=0
-                                           Minimum=1 Maximum=50
-                                           AllowInput="false"
-                                           @oninput='@(e => KeyUp(e,"costo",resultadoBPNDTO.contenidoDTO))'>
-                    </MatNumericUpDownField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.costo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+                <div>
+                    Precio Total:
+                    @if (resultadoBPNDTO.contenidoDTO.cantidadfoja > 0)
+                    {
+                        @(resultadoBPNDTO.contenidoDTO.cantidadfoja * 30)
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)">
-                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@resultadoBPNDTO.contenidoDTO.idescriturapublica"
-                                       Placeholder="Ingrese el titulo de la escritura pública">
-                        <SelectedTemplate>
-                            <strong>@context.titulo</strong>
-                        </SelectedTemplate>
-                        <ResultTemplate>
-                            <strong>@context.titulo</strong>
-                        </ResultTemplate>
-                    </BlazoredTypeahead>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
+                    }
+                    else
+                    {
+                        <label>0</label>
+                    }
                 </div>
             </MatTab>
 
@@ -225,8 +218,21 @@
 
     protected override void OnInitialized()
     {
-        resultadoBPNDTO.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(resultadoBPNDTO);
+        resultadoBPNDTO.contenidoDTO.Urlanexo = new List<string>();
+        EscrituraPublicaRDTO epdto = new EscrituraPublicaRDTO();
+        epdto = workspace.escrituraPublicaseleccionada;
+        EscrituraPublica ep = new EscrituraPublica();
+        //Console.WriteLine(epdto.id);
+        ep.id = epdto.id;
+        ep.direccionoficio = epdto.direccionoficio;
+        ep.direccionoficio = epdto.idnotario;
+        ep.actosjuridicos = epdto.actosjuridicos;
+        ep.fechaescriturapublica = epdto.fechaescriturapublica;
+        ep.estado = epdto.estado;
+        ep.titulo = epdto.titulo;
+        ep.url = epdto.url;
+        resultadoBPNDTO.contenidoDTO.idescriturapublica = ep;
         foreach (string u in resultadoBPNDTO.contenidoDTO.Urlanexo)
         {
             if (!string.IsNullOrWhiteSpace(u))
@@ -235,6 +241,8 @@
                 resultadoBPNDTO.contenidoDTO.Urlanexo = null;
             }
         }
+        _editContext = new EditContext(resultadoBPNDTO);
+        StateHasChanged();
     }
 
     private void ImagenSeleccionada2(string imagenbase64)
@@ -253,7 +261,7 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-
+        resultadoBPNDTO.contenidoDTO.costo = resultadoBPNDTO.contenidoDTO.cantidadfoja * 30;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = resultadoBPNDTO;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;

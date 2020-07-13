@@ -103,7 +103,9 @@
     }
     protected async override Task OnInitializedAsync()
     {
+
         documento = JsonConvert.DeserializeObject<ContenidoOficioBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        Console.WriteLine(documento.ToString());
         usuario = new Usuario();
         notario = new Notario();
         await getUsuario();
@@ -113,7 +115,7 @@
 
     private async Task getUsuario()
     {
-        var responseHttp = await repositorio.Get<Usuario>($"api/usuarios/id?id={documento.idcliente}");
+        var responseHttp = await repositorio.Get<Usuario>("api/usuarios/id?id="+documento.idcliente);
         usuario = responseHttp.Response;
     }
     private async Task getNotario()

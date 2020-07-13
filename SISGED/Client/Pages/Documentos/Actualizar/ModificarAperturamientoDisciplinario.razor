@@ -461,6 +461,9 @@
         if (aperturamientodisciplinario.contenidoDTO.url != "" && aperturamientodisciplinario.contenidoDTO.url != null)
         {
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            //hechosimputados
+
+
             expedienteWrapper.documento = aperturamientodisciplinario;
             expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
@@ -469,14 +472,27 @@
             var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoAD", expedienteWrapper);
             if (!httpResponse.Error)
             {
+
+                ContenidoAperturamientoDisciplinario contad = new ContenidoAperturamientoDisciplinario();
+                contad.idnotario = aperturamientodisciplinario.contenidoDTO.idnotario.id;
+                contad.idfiscal = aperturamientodisciplinario.contenidoDTO.idfiscal;
+                contad.nombredenunciante = aperturamientodisciplinario.contenidoDTO.nombredenunciante;
+                contad.titulo = aperturamientodisciplinario.contenidoDTO.titulo;
+                contad.descripcion = aperturamientodisciplinario.contenidoDTO.descripcion;
+                contad.fechafinaudiencia = aperturamientodisciplinario.contenidoDTO.fechafinaudiencia;
+                contad.fechainicioaudiencia = aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia;
+                contad.participantes = aperturamientodisciplinario.contenidoDTO.participantes.Select(x => x.nombre).ToList();
+                contad.lugaraudiencia = aperturamientodisciplinario.contenidoDTO.lugaraudiencia;
+                contad.hechosimputados = aperturamientodisciplinario.contenidoDTO.hechosimputados.Select(x => x.descripcion).ToList();
+                contad.url = aperturamientodisciplinario.contenidoDTO.url;
+
                 ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
                 expedientebandeja = workspace.expedienteseleccionado;
-
                 expedientebandeja.documento.id = aperturamientodisciplinario.id;
                 expedientebandeja.documento.tipo = aperturamientodisciplinario.tipo;
                 expedientebandeja.documento.historialcontenido = aperturamientodisciplinario.historialcontenido;
                 expedientebandeja.documento.historialproceso = aperturamientodisciplinario.historialproceso;
-                expedientebandeja.documento.contenido = aperturamientodisciplinario.contenidoDTO;
+                expedientebandeja.documento.contenido = contad;
                 expedientebandeja.documento.estado = aperturamientodisciplinario.estado;
                 expedientebandeja.documentosobj.Add(expedientebandeja.documento);
                 Item itemSalida = new Item()
@@ -498,7 +514,7 @@
                 documentoDTO.id = aperturamientodisciplinario.id;
                 documentoDTO.tipo = aperturamientodisciplinario.tipo;
                 documentoDTO.estado = aperturamientodisciplinario.estado;
-                documentoDTO.contenido = JsonConvert.SerializeObject(aperturamientodisciplinario.contenidoDTO);
+                documentoDTO.contenido = JsonConvert.SerializeObject(contad);
                 documentoDTO.historialcontenido = aperturamientodisciplinario.historialcontenido;
                 documentoDTO.historialproceso = aperturamientodisciplinario.historialproceso;
                 documentoDTO.urlanexo = aperturamientodisciplinario.urlanexo;
