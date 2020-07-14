@@ -33,6 +33,7 @@ namespace SISGED.Server.Controllers
         [HttpGet("todo")]
         public ActionResult<List<Usuario>> Get()
         {
+
             return _usuarioservice.Get();
         }
         [HttpPost]

@@ -15,7 +15,7 @@ namespace SISGED.Shared.DTOs
     public class ContenidoResultadoBPNDTO
     {
         public Int32 costo { get; set; }
-        public Int32 cantidadfoja { get; set; }
+        public Int32 cantidadfoja { get; set; } = 2;
         public string estado { get; set; }
         public EscrituraPublica idescriturapublica { get; set; }
         public List<string> Urlanexo { get; set; } = new List<string>();

@@ -195,14 +195,20 @@
         var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoSEN", expedienteWrapper);
         if (!httpResponse.Error)
         {
+
+            ContenidoSolicitudExpedienteNotario contsen = new ContenidoSolicitudExpedienteNotario();
+            contsen.titulo = solicitudexpedientenotario.contenidoDTO.titulo;
+            contsen.descripcion = solicitudexpedientenotario.contenidoDTO.descripcion;
+            contsen.idnotario = solicitudexpedientenotario.contenidoDTO.idnotario.id;
+            contsen.fechaemision = solicitudexpedientenotario.contenidoDTO.fechaemision;
+
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
-
             expedientebandeja.documento.id = solicitudexpedientenotario.id;
             expedientebandeja.documento.tipo = solicitudexpedientenotario.tipo;
             expedientebandeja.documento.historialcontenido = solicitudexpedientenotario.historialcontenido;
             expedientebandeja.documento.historialproceso = solicitudexpedientenotario.historialproceso;
-            expedientebandeja.documento.contenido = solicitudexpedientenotario.contenidoDTO;
+            expedientebandeja.documento.contenido = contsen;
             expedientebandeja.documento.estado = solicitudexpedientenotario.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
@@ -224,7 +230,7 @@
             documentoDTO.id = solicitudexpedientenotario.id;
             documentoDTO.tipo = solicitudexpedientenotario.tipo;
             documentoDTO.estado = solicitudexpedientenotario.estado;
-            documentoDTO.contenido = JsonConvert.SerializeObject(solicitudexpedientenotario.contenidoDTO);
+            documentoDTO.contenido = JsonConvert.SerializeObject(contsen);
             documentoDTO.historialcontenido = solicitudexpedientenotario.historialcontenido;
             documentoDTO.historialproceso = solicitudexpedientenotario.historialproceso;
             documentoDTO.urlanexo = solicitudexpedientenotario.urlanexo;

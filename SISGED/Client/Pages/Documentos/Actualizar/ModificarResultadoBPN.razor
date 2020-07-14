@@ -138,44 +138,6 @@
             <FluentValidator></FluentValidator>
             <MatTabGroup>
                 <MatTab Label="Datos Generales">
-                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resultadoBPNDTO.contenidoDTO.cantidadfoja)">
-                        <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
-                                               @bind-Value=@resultadoBPNDTO.contenidoDTO.cantidadfoja
-                                               FieldType="MatNumericUpDownFieldType.Numeric"
-                                               DecimalPlaces=0
-                                               Minimum=2 Maximum=50
-                                               AllowInput="false"
-                                               @oninput='@(e => KeyUp(e,"cantidadfoja",resultadoBPNDTO.contenidoDTO))'></MatNumericUpDownField>
-
-
-                        <div class="incorrecto">
-                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.cantidadfoja)" />
-                        </div>
-                        <div class="correcto">
-                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                            <span class="good-msg">Correcto</span>
-                        </div>
-                    </div>
-
-                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resultadoBPNDTO.contenidoDTO.costo)">
-                        <MatNumericUpDownField Label="Costo" Class="text-field-style"
-                                               @bind-Value=@resultadoBPNDTO.contenidoDTO.costo
-                                               FieldType="MatNumericUpDownFieldType.Numeric"
-                                               DecimalPlaces=0
-                                               Minimum=1 Maximum=50
-                                               AllowInput="false"
-                                               @oninput='@(e => KeyUp(e,"costo",resultadoBPNDTO.contenidoDTO))'>
-                        </MatNumericUpDownField>
-                        <div class="incorrecto">
-                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.costo)" />
-                        </div>
-                        <div class="correcto">
-                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                            <span class="good-msg">Correcto</span>
-                        </div>
-                    </div>
 
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)">
                         <BlazoredTypeahead SearchMethod="match" @bind-Value="@resultadoBPNDTO.contenidoDTO.idescriturapublica"
@@ -196,6 +158,37 @@
                             <span class="good-msg">Correcto</span>
                         </div>
                     </div>
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resultadoBPNDTO.contenidoDTO.cantidadfoja)">
+                        <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
+                                               @bind-Value=@resultadoBPNDTO.contenidoDTO.cantidadfoja
+                                               FieldType="MatNumericUpDownFieldType.Numeric"
+                                               DecimalPlaces=0
+                                               Minimum=2 Maximum=50
+                                               AllowInput="false"
+                                               @oninput='@(e => KeyUp(e,"cantidadfoja",resultadoBPNDTO.contenidoDTO))'></MatNumericUpDownField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.cantidadfoja)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        Precio Total: S/.
+                        @if (resultadoBPNDTO.contenidoDTO.cantidadfoja > 0)
+                        {
+                            @(resultadoBPNDTO.contenidoDTO.cantidadfoja * 30)
+
+                        }
+                        else
+                        {
+                            <label>0</label>
+                        }
+                    </div>
+
                     <div class="field-container">
                         <MatButton type="submit"
                                    Disabled="@loadprocess"
@@ -265,6 +258,7 @@
     {
         loadprocess = true;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        resultadoBPNDTO.contenidoDTO.costo = resultadoBPNDTO.contenidoDTO.cantidadfoja * 30;
         expedienteWrapper.documento = resultadoBPNDTO;
         expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
@@ -272,14 +266,21 @@
         var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoResultadoBPN", expedienteWrapper);
         if (!httpResponse.Error)
         {
+
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
+
+            ContenidoResultadoBPN conrebpn = new ContenidoResultadoBPN();
+            conrebpn.cantidadfoja = resultadoBPNDTO.contenidoDTO.cantidadfoja;
+            conrebpn.costo = resultadoBPNDTO.contenidoDTO.costo;
+            conrebpn.idescriturapublica = resultadoBPNDTO.contenidoDTO.idescriturapublica.id;
+            conrebpn.estado = resultadoBPNDTO.contenidoDTO.estado;
 
             expedientebandeja.documento.id = resultadoBPNDTO.id;
             expedientebandeja.documento.tipo = resultadoBPNDTO.tipo;
             expedientebandeja.documento.historialcontenido = resultadoBPNDTO.historialcontenido;
             expedientebandeja.documento.historialproceso = resultadoBPNDTO.historialproceso;
-            expedientebandeja.documento.contenido = resultadoBPNDTO.contenidoDTO;
+            expedientebandeja.documento.contenido = conrebpn;
             expedientebandeja.documento.estado = resultadoBPNDTO.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
@@ -301,7 +302,7 @@
             documentoDTO.id = resultadoBPNDTO.id;
             documentoDTO.tipo = resultadoBPNDTO.tipo;
             documentoDTO.estado = resultadoBPNDTO.estado;
-            documentoDTO.contenido = JsonConvert.SerializeObject(resultadoBPNDTO.contenidoDTO);
+            documentoDTO.contenido = JsonConvert.SerializeObject(conrebpn);
             documentoDTO.historialcontenido = resultadoBPNDTO.historialcontenido;
             documentoDTO.historialproceso = resultadoBPNDTO.historialproceso;
             documentoDTO.urlanexo = resultadoBPNDTO.urlanexo;

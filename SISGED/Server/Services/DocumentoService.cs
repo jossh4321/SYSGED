@@ -234,7 +234,7 @@ namespace SISGED.Server.Services
             documentoExpediente.fechademora = null;
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
-            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == "5eeadf0b8ca4ff53a0b791e3", updateExpediente);
+            Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);
 
             //Actualizacion de bandeja de salida de usuario
             /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
@@ -595,7 +595,7 @@ namespace SISGED.Server.Services
             Expediente expediente = new Expediente();
             DocumentoExpediente documentoExpediente = new DocumentoExpediente();
             documentoExpediente.indice = 8;
-            documentoExpediente.iddocumento = resultadoBPNDTO.id;
+            documentoExpediente.iddocumento = resultadoBPN.id;
             documentoExpediente.tipo = "ResultadoBPN";
             documentoExpediente.fechacreacion = DateTime.Now;
             documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
@@ -650,7 +650,7 @@ namespace SISGED.Server.Services
             DocumentoExpediente documentoExpediente = new DocumentoExpediente();
             documentoExpediente.indice = 9;
             documentoExpediente.iddocumento = apelacion.id;
-            documentoExpediente.tipo = "AperturamientoDisciplinario";
+            documentoExpediente.tipo = "Apelacion";
             documentoExpediente.fechacreacion = DateTime.Now;
             documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
             documentoExpediente.fechademora = null;

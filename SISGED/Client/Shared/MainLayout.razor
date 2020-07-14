@@ -4,6 +4,16 @@
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.SignalR.Client
 <link href="css/site.css" rel="stylesheet" />
+<style>
+    .span-class {
+        display: block;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.54);
+        margin-left: 70px;
+        font-family: sans-serif;
+        vertical-align: middle;
+    }
+</style>
 <MatDrawerContainer Style="width: 100%; height: 100%;" @onclick="showUserMenu2">
     <MatDrawer @bind-Opened="@Opened" Mode="@MatDrawerMode.Modal" Style="padding-top:0px; width:229px;background-color: #202020; border:none">
 
@@ -65,7 +75,29 @@
                             <div Class="profile-card-menu @valueclassnotification"
                                  Style="background-color:rgb(68, 68, 68);margin-top:58px;
                                             position:absolute; top:5px;" @onclick:stopPropagation="true">
-                                <NotificationMenu />
+
+
+                                <MatCard Style="width:352px;background-color:rgb(68, 68, 68);margin: 10px;">
+                                    <!--aqui va el for-->
+                                    @foreach (NotificacionDTO notificacion in listanotificaciones)
+                                    {
+                                        <MatListItem Class="notification-item-style" Style="margin: 5px 3px; padding: 4px 2px;">
+                                            <div class="notification-avatar">
+                                                <span style="font-size:19px;height:40px;line-height:40px;color:rgb(255, 255, 255)">AC</span>
+                                            </div>
+                                            <div style="display:inline-block;">
+                                                <span class="notification-sender">@notificacion.idemisor.usuario</span>
+                                                <span class="notificatio-summary">@notificacion.titulo</span>
+                                            </div>
+                                            <div style="display:inline-block;">
+                                                <span class="span-class">Enviado: @notificacion.fechaemision</span>
+                                            </div>
+                                        </MatListItem>
+                                        <MatDivider Style="margin:0px"></MatDivider>
+                                    }
+                                </MatCard>
+
+
                             </div>
 
                             <div class="bar-menu-item-container resize-style">
@@ -153,6 +185,7 @@
 
     //lista entradas harcodeadas
     //List<ExpedienteDTO> expedientes = new List<ExpedienteDTO>();
+    List<NotificacionDTO> listanotificaciones = new List<NotificacionDTO>();
 
     //lista salidas
     List<BandejaDTOR> bandejaSalidas = new List<BandejaDTOR>();
@@ -187,6 +220,21 @@
                 await Connect();
                 StateHasChanged();
             }
+            else
+            {
+                Console.WriteLine("algo mal");
+            }
+            var httpResponse = await repositorio.Get<List<NotificacionDTO>>($"api/notificacion/notificacion?id={sesion.usuario.id}");
+            if (!httpResponse.Error)
+            {
+                listanotificaciones = (List<NotificacionDTO>)httpResponse.Response;
+                Console.WriteLine("algo bien");
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("no se pudo obtener la notificacion");
+            }
         }
         else
         {
@@ -196,7 +244,7 @@
 
     public async Task Connect()
     {
-        
+
         Console.WriteLine("Llegue aqui ps papu");
         _hubConnection.On<string, ExpedienteBandejaDTO>("ReceiveMessageBandeja", (user, bandeja) =>
         {
@@ -216,6 +264,14 @@
             StateHasChanged();
         });
 
+        _hubConnection.On<string, NotificacionDTO>("ReceiveNotification", (user, notificacion) =>
+        {
+            Console.WriteLine("se envio la notificacion");
+            listanotificaciones.Add(notificacion);
+            StateHasChanged();
+
+        });
+
         await _hubConnection.StartAsync();
         await ConnectToRoom(sesion.usuario.usuario);
     }
@@ -223,6 +279,7 @@
     public Task DisconnectToRoom(string nombreusuario) => _hubConnection.SendAsync("DisconnectToRoom", _hubConnection.ConnectionId, nombreusuario);
     public Task ConnectToRoom(string nombreusuario) => _hubConnection.SendAsync("ConnectToRoom", _hubConnection.ConnectionId, nombreusuario);
     public Task Send(string nombreusuario, ExpedienteBandejaDTO mensaje) => _hubConnection.SendAsync("SendMessageBandeja", nombreusuario, mensaje);
+    public Task SendNotificacion(string nombreusuario, NotificacionDTO mensaje) => _hubConnection.SendAsync("SendNotification", nombreusuario, mensaje);
 
     #region metodos
     public List<Item> obtenerListaheramientas(List<Permiso> listapermisos)

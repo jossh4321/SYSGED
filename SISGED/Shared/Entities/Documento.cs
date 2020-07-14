@@ -52,6 +52,9 @@ namespace SISGED.Shared.Entities
         public DateTime fechaentrega { get; set; }
         public string url { get; set; }
     }
+
+    
+
     public class SolicitudDenuncia : Documento
     {
 
@@ -137,6 +140,8 @@ namespace SISGED.Shared.Entities
         public string idcliente { get; set; }
         public Int32 cantidadfoja { get; set; }
         public double precio { get; set; }
+
+
     }
     public class ConclusionFirma : Documento
     {

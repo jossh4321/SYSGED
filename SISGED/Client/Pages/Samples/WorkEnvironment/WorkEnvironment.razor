@@ -267,11 +267,23 @@
     public EscrituraPublicaRDTO escrituraPublicaseleccionada = null;
     public Item currentItemDragged;
     public Bandeja bandejaUsuario = new Bandeja();
+    public Usuario miusuario = new Usuario();
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("INICIE: WorkEnvironment");
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
-        var httpResponse = await repository.Get <List<Documento>>("api/documentos");
+        Usuario usuario = new Usuario();
+        /*var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={sesion.usuario.}");
+        if (!httpResponse.Error)
+        {
+            miusuario = (Usuario)httpResponse.Response;
+            Console.WriteLine("algo bien");
+        }
+        else
+        {
+            Console.WriteLine("algo mal");
+        }*/
+        /*var httpResponse = await repository.Get <List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {
             List<Documento> docs = new List<Documento>();
@@ -283,7 +295,7 @@
         else
         {
             Console.WriteLine("algo mal");
-        }
+        }*/
     }
     public void openDialog() { abrirDialogo = true; StateHasChanged(); }
     public void closeDialog() { abrirDialogo = false; }

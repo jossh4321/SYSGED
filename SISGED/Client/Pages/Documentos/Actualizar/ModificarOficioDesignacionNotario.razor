@@ -216,14 +216,22 @@
         var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoODN", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            ContenidoOficioDesignacionNotario contodn = new ContenidoOficioDesignacionNotario();
+            contodn.titulo = oficiodesignacion.contenidoDTO.titulo;
+            contodn.descripcion = oficiodesignacion.contenidoDTO.descripcion;
+            contodn.idnotario = oficiodesignacion.contenidoDTO.idnotario.id;
+            contodn.idusuario = oficiodesignacion.contenidoDTO.idusuario;
+            contodn.lugaroficionotarial = oficiodesignacion.contenidoDTO.lugaroficionotarial;
+            contodn.fecharealizacion = oficiodesignacion.contenidoDTO.fecharealizacion;
+
+
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
-
             expedientebandeja.documento.id = oficiodesignacion.id;
             expedientebandeja.documento.tipo = oficiodesignacion.tipo;
             expedientebandeja.documento.historialcontenido = oficiodesignacion.historialcontenido;
             expedientebandeja.documento.historialproceso = oficiodesignacion.historialproceso;
-            expedientebandeja.documento.contenido = oficiodesignacion.contenidoDTO;
+            expedientebandeja.documento.contenido = contodn;
             expedientebandeja.documento.estado = oficiodesignacion.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
@@ -245,7 +253,7 @@
             documentoDTO.id = oficiodesignacion.id;
             documentoDTO.tipo = oficiodesignacion.tipo;
             documentoDTO.estado = oficiodesignacion.estado;
-            documentoDTO.contenido = JsonConvert.SerializeObject(oficiodesignacion.contenidoDTO);
+            documentoDTO.contenido = JsonConvert.SerializeObject(contodn);
             documentoDTO.historialcontenido = oficiodesignacion.historialcontenido;
             documentoDTO.historialproceso = oficiodesignacion.historialproceso;
             documentoDTO.urlanexo = oficiodesignacion.urlanexo;

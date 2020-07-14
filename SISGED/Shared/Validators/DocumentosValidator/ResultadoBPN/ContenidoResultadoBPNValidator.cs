@@ -14,7 +14,7 @@ namespace SISGED.Shared.Validators.DocumentosValidator.ResultadoBPN
             //DOCUMENTO OBLIGATORIO
             RuleFor(x => x.idescriturapublica).Must(escritura => escritura != null && escritura != new EscrituraPublica())
                 .WithMessage("Debe seleccionar una escritura pública obligatoriamente");
-            RuleFor(x => x.costo).Must(BeAValidCosto).WithMessage("El costo debe ser mayor a 0");
+            //RuleFor(x => x.costo).Must(BeAValidCosto).WithMessage("El costo debe ser mayor a 0");
             RuleFor(x => x.cantidadfoja).Must(BeAValidCantidadFojas).WithMessage("La cantidad de fojas debe ser mayor a 0");
         }
 

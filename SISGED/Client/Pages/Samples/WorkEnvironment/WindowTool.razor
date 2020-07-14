@@ -1,104 +1,110 @@
 ﻿@using SISGED.Client.Pages.Samples.WorkEnvironment.WindowItemContent
 <style>
-    .window {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: #1a1a1a;
-        border: none;
-        text-align: center;
-        color: black;
-        width: inherit;
-        flex-basis: 100%;
-    }
-    .default-title-style {
-        display: block;
-        color: #808080;
-    }
-    
+	.window {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		background-color: #1a1a1a;
+		border: none;
+		text-align: center;
+		color: black;
+		width: inherit;
+		flex-basis: 100%;
+	}
 
+	.default-title-style {
+		display: block;
+		color: #808080;
+	}
 </style>
-@if(ChildContentE != null)
+@if (ChildContentE != null)
 {
-    @ChildContentE
+	@ChildContentE
 }
 <div class="window">
 
-    @if (ChildContent != null)
-    {
-        @ChildContent
-    
-    }
-    else
-    {
-        <h4 class="default-title-style">Arrastre una herramienta al espacio de trabajo</h4>
-    }
+	@if (ChildContent != null)
+	{
+		@ChildContent
+
+	}
+	else
+	{
+		<h4 class="default-title-style">Arrastre una herramienta al espacio de trabajo</h4>
+	}
 
 </div>
 
 
 @code {
-    //[CascadingParameter] public WorkEnvironment workSpace { get; set; }
-    [Parameter] public Item itemArrastrado { get; set; }
-    public RenderFragment ChildContent = null;
-    public RenderFragment ChildContentE = null;
-    [CascadingParameter] WorkEnvironment workspace { get; set; }
-    protected override void OnInitialized()
-    {
+	//[CascadingParameter] public WorkEnvironment workSpace { get; set; }
+	[Parameter] public Item itemArrastrado { get; set; }
+	public RenderFragment ChildContent = null;
+	public RenderFragment ChildContentE = null;
+	[CascadingParameter] WorkEnvironment workspace { get; set; }
+	protected override void OnInitialized()
+	{
 
-    }
-    protected override void OnParametersSet()
-    {
+	}
+	protected override void OnParametersSet()
+	{
 
-        if (itemArrastrado != null)
-        {
-            if(itemArrastrado.nombre == "Busqueda")
-            {
-                ChildContent = @<ContenidoPrueba></ContenidoPrueba>;
-            }
-            else if(itemArrastrado.nombre == "Registrar Documento")
-            {
-                ChildContent = @<EntornoDocumento></EntornoDocumento>;
-            }
-            else if(itemArrastrado.nombre == "Derivar Documento")
-            {
-                ChildContent = @<DerivarDocumento></DerivarDocumento>;
-            }
-            else if(itemArrastrado.nombre == "Evaluar Documento")
-            {
-                ChildContent = @<EvaluarDocumento></EvaluarDocumento>;
-            }
-            else if(itemArrastrado.nombre == "Buscar protocolo notarial")
-            {
-                ChildContent = @<BuscarProtocoloNotarial></BuscarProtocoloNotarial>;
-            }else if(itemArrastrado.nombre == "Generar Documento") 
-            {
-                ChildContent = @<GenerarDocumento></GenerarDocumento>;
-            }else if(itemArrastrado.nombre == "Modificar Documento")
-            {
-                ChildContent = @<ActualizacionDocumento></ActualizacionDocumento>;
-            }else if(itemArrastrado.nombre == "Consultar Historial")
-            {
-                ChildContent = @<ConsultarHistorial></ConsultarHistorial>;
-            }
-            else
-            {
-                ChildContent = @<ContenidoPrueba2></ContenidoPrueba2>;
-            }
-            StateHasChanged();
-        }
-        else
-        {
-            ChildContent = null;
-            ChildContentE = null;
-        }
+		if (itemArrastrado != null)
+		{
+			if (itemArrastrado.nombre == "Busqueda")
+			{
+				ChildContent =@<ContenidoPrueba></ContenidoPrueba>;
+}
+else if (itemArrastrado.nombre == "Registrar Documento")
+{
+ChildContent = @<EntornoDocumento></EntornoDocumento>;
+}
+else if (itemArrastrado.nombre == "Derivar Documento")
+{
+ChildContent = @<DerivarDocumento></DerivarDocumento>;
+}
+else if (itemArrastrado.nombre == "Evaluar Documento")
+{
+ChildContent = @<EvaluarDocumento></EvaluarDocumento>;
+}
+else if (itemArrastrado.nombre == "Buscar protocolo notarial")
+{
+ChildContent = @<BuscarProtocoloNotarial></BuscarProtocoloNotarial>;
+}
+else if (itemArrastrado.nombre == "Generar Documento")
+{
+ChildContent = @<GenerarDocumento></GenerarDocumento>;
+}
+else if (itemArrastrado.nombre == "Visualizar Documento")
+{
+ChildContent = @<VisualizarDocumento></VisualizarDocumento>;
+}
+else if (itemArrastrado.nombre == "Modificar Documento")
+{
+ChildContent = @<ActualizacionDocumento></ActualizacionDocumento>;
+}
+else if (itemArrastrado.nombre == "Consultar Historial")
+{
+ChildContent = @<ConsultarHistorial></ConsultarHistorial>;
+}
+else
+{
+ChildContent = @<ContenidoPrueba2></ContenidoPrueba2>;
+}
+StateHasChanged();
+}
+else
+{
+ChildContent = null;
+ChildContentE = null;
+}
 
-    }
+}
 
-    public object GetInstanceFromString(string classname)
-    {
-        Type type = Type.GetType(classname);
-        return Activator.CreateInstance(type);
-    }
+public object GetInstanceFromString(string classname)
+{
+Type type = Type.GetType(classname);
+return Activator.CreateInstance(type);
+}
 }
