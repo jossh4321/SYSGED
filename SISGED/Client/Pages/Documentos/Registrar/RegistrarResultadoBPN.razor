@@ -1,14 +1,327 @@
-﻿<style>
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
+<style>
     .div-form {
         background-color: #a6a6a6;
         flex-basis: 100%;
         border-radius: 5px 5px 0px 0px;
         width: 100%;
     }
-</style>
-<div class="div-form">
-    <h3>RegistrarResultadoBPN</h3>
-    </div>
-    @code {
 
+    .field-container {
+        display: block;
+        padding: 10px;
     }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+
+    div.mat-date-picker {
+        width: 100% !important;
+    }
+
+    .contenedor-participantes {
+        padding-top: 10px;
+        margin: 20px;
+        border: 2px solid #666666;
+        border-radius: 5px;
+    }
+
+    .titulo-paticipantes {
+        border: 1px solid black;
+        margin: 0px 5px 0px 5px;
+        border-radius: 5px 5px 0px 0px;
+        background-color: #404040;
+        color: white;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .titulo {
+        color: #d9d9d9;
+    }
+
+    .icono {
+        margin-left: 20px;
+    }
+
+        .icono i {
+            margin: 5px;
+        }
+
+    .single-textfield-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .base-field {
+        flex-basis: 90%;
+    }
+
+    .base-icon {
+        display: flex;
+        flex-basis: 8%;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 2px;
+        background: #ff1a1a;
+        border-radius: 3px;
+        border: 1px solid #800000
+    }
+</style>
+
+<div class="div-form">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <FluentValidator></FluentValidator>
+        <MatTabGroup>
+            <MatTab Label="Datos Generales">
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@resultadoBPNDTO.contenidoDTO.idescriturapublica"
+                                       Placeholder="Ingrese el titulo de la escritura pública">
+                        <SelectedTemplate>
+                            <strong>@context.titulo</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            <strong>@context.titulo</strong>
+                        </ResultTemplate>
+                    </BlazoredTypeahead>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.idescriturapublica)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => resultadoBPNDTO.contenidoDTO.cantidadfoja)">
+                    <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
+                                           @bind-Value=@resultadoBPNDTO.contenidoDTO.cantidadfoja
+                                           FieldType="MatNumericUpDownFieldType.Numeric"
+                                           DecimalPlaces=0
+                                           Minimum=2 Maximum=50
+                                           AllowInput="false"
+                                           @oninput='@(e => KeyUp(e,"cantidadfoja",resultadoBPNDTO.contenidoDTO))'></MatNumericUpDownField>
+
+
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => resultadoBPNDTO.contenidoDTO.cantidadfoja)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div>
+                    Precio Total:
+                    @if (resultadoBPNDTO.contenidoDTO.cantidadfoja > 0)
+                    {
+                        @(resultadoBPNDTO.contenidoDTO.cantidadfoja * 30)
+
+                    }
+                    else
+                    {
+                        <label>0</label>
+                    }
+                </div>
+            </MatTab>
+
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
+                <div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>
+            </MatTab>
+        </MatTabGroup>
+    </EditForm>
+</div>
+
+@code {
+    //Variables de sesion
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+
+    //Datos del formulario
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
+    private ResultadoBPNDTO resultadoBPNDTO = new ResultadoBPNDTO();
+    private EditContext _editContext;
+    private string imagenTemporal2;
+    private bool loadprocess = false;
+
+    private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
+
+        if (httpResponse.Error)
+        {
+            return new List<EscrituraPublica>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(resultadoBPNDTO);
+        resultadoBPNDTO.contenidoDTO.Urlanexo = new List<string>();
+        EscrituraPublicaRDTO epdto = new EscrituraPublicaRDTO();
+        epdto = workspace.escrituraPublicaseleccionada;
+        EscrituraPublica ep = new EscrituraPublica();
+        //Console.WriteLine(epdto.id);
+        ep.id = epdto.id;
+        ep.direccionoficio = epdto.direccionoficio;
+        ep.direccionoficio = epdto.idnotario;
+        ep.actosjuridicos = epdto.actosjuridicos;
+        ep.fechaescriturapublica = epdto.fechaescriturapublica;
+        ep.estado = epdto.estado;
+        ep.titulo = epdto.titulo;
+        ep.url = epdto.url;
+        resultadoBPNDTO.contenidoDTO.idescriturapublica = ep;
+        foreach (string u in resultadoBPNDTO.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                resultadoBPNDTO.contenidoDTO.Urlanexo = null;
+            }
+        }
+        _editContext = new EditContext(resultadoBPNDTO);
+        StateHasChanged();
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        resultadoBPNDTO.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        loadprocess = true;
+        resultadoBPNDTO.contenidoDTO.costo = resultadoBPNDTO.contenidoDTO.cantidadfoja * 30;
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = resultadoBPNDTO;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper, ResultadoBPN>($"api/documentos/documentoResultadoBPN", expedienteWrapper);
+        if (!httpResponse.Error)
+        {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            ResultadoBPN documentoResultadoBPN = new ResultadoBPN();
+            documentoResultadoBPN = httpResponse.Response;
+            expedientebandeja.documento.id = documentoResultadoBPN.id;
+            expedientebandeja.documento.tipo = documentoResultadoBPN.tipo;
+            expedientebandeja.documento.historialcontenido = documentoResultadoBPN.historialcontenido;
+            expedientebandeja.documento.historialproceso = documentoResultadoBPN.historialproceso;
+            expedientebandeja.documento.contenido = documentoResultadoBPN.contenido;
+            expedientebandeja.documento.estado = documentoResultadoBPN.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = documentoResultadoBPN.id;
+            documentoDTO.tipo = documentoResultadoBPN.tipo;
+            documentoDTO.estado = documentoResultadoBPN.estado;
+            documentoDTO.contenido = JsonConvert.SerializeObject(documentoResultadoBPN.contenido);
+            documentoDTO.historialcontenido = documentoResultadoBPN.historialcontenido;
+            documentoDTO.historialproceso = documentoResultadoBPN.historialproceso;
+            documentoDTO.urlanexo = documentoResultadoBPN.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
+            await swalfire.successMessage("Resolución registrada correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+        }
+        loadprocess = false;
+    }
+
+    public void handleInvalidSubmit()
+    {
+        loadprocess = false;
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+
+}

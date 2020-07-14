@@ -1,6 +1,7 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -88,20 +89,19 @@
         margin-top: 5px;
         color: #595959;
     }
-    
 </style>
 <div class="div-form">
     @if (firstLoad == true)
     {
-    <div class="loader-block">
-        <div class="spinner-border spin" style="        width: 7rem;
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
         height: 7rem;
         color: #ccc" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
+                <span class="sr-only">Loading...</span>
+            </div>
 
-        <span style="color:white">CARGANDO...</span>
-    </div>
+            <span style="color:white">CARGANDO...</span>
+        </div>
     }
     else
     {
@@ -290,7 +290,7 @@
 
     private OficioBPNDTO documento = new OficioBPNDTO();
     private EditContext _editContext;
-    protected override async Task  OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         firstLoad = true;
         _editContext = new EditContext(documento);
@@ -320,12 +320,15 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        documento.contenidoDTO.idcliente = docSolicitudBPNDTO.contenidoDTO.idcliente;
-        documento.contenidoDTO.direccionoficio = docSolicitudBPNDTO.contenidoDTO.direccionoficio;
-        documento.contenidoDTO.idnotario = docSolicitudBPNDTO.contenidoDTO.idnotario;
-        documento.contenidoDTO.actojuridico = docSolicitudBPNDTO.contenidoDTO.actojuridico;
-        documento.contenidoDTO.tipoprotocolo = docSolicitudBPNDTO.contenidoDTO.tipoprotocolo;
-        documento.contenidoDTO.otorgantes = docSolicitudBPNDTO.contenidoDTO.otorgantes;
+        ContenidoSolicitudBPN contsolbpn = new ContenidoSolicitudBPN();
+        contsolbpn = JsonConvert.DeserializeObject<ContenidoSolicitudBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
+
+        documento.contenidoDTO.idcliente = new Usuario() { id = contsolbpn.idcliente };
+        documento.contenidoDTO.direccionoficio = contsolbpn.direccionoficio;
+        documento.contenidoDTO.idnotario = new Notario() { id = contsolbpn.idnotario };
+        documento.contenidoDTO.actojuridico = contsolbpn.actojuridico;
+        documento.contenidoDTO.tipoprotocolo = contsolbpn.tipoprotocolo;
+        documento.contenidoDTO.otorgantes = contsolbpn.otorgantes;
         documento.contenidoDTO.fecharealizacion = DateTime.Now;
 
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
@@ -334,9 +337,58 @@
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoOficioBPN", expedienteWrapper);
+        var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoOficioBPN", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+
+            //Parseo Necesario//
+            ContenidoOficioBPN contobpn = new ContenidoOficioBPN();
+            contobpn.titulo = documento.contenidoDTO.titulo;
+            contobpn.descripcion = documento.contenidoDTO.descripcion;
+            contobpn.idcliente = documento.contenidoDTO.idcliente.id;
+            contobpn.direccionoficio = documento.contenidoDTO.direccionoficio;
+            contobpn.idnotario = documento.contenidoDTO.idnotario.id;
+            contobpn.actojuridico = documento.contenidoDTO.actojuridico;
+            contobpn.tipoprotocolo = documento.contenidoDTO.tipoprotocolo;
+            contobpn.otorgantes = documento.contenidoDTO.otorgantes;
+            contobpn.fecharealizacion = (DateTime)documento.contenidoDTO.fecharealizacion;
+            contobpn.url = documento.contenidoDTO.url;
+
+            expedientebandeja.documento.id = documento.id;
+            expedientebandeja.documento.tipo = documento.tipo;
+            expedientebandeja.documento.historialcontenido = documento.historialcontenido;
+            expedientebandeja.documento.historialproceso = documento.historialproceso;
+            expedientebandeja.documento.contenido = contobpn;
+            expedientebandeja.documento.estado = documento.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Modificar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = documento.id;
+            documentoDTO.tipo = documento.tipo;
+            documentoDTO.estado = documento.estado;
+            documentoDTO.contenido = JsonConvert.SerializeObject(contobpn);
+            documentoDTO.historialcontenido = documento.historialcontenido;
+            documentoDTO.historialproceso = documento.historialproceso;
+            documentoDTO.urlanexo = documento.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial modificada Correctamente");
         }
         else

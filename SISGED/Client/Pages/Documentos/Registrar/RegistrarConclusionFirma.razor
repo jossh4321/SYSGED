@@ -116,12 +116,12 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => conclusionFirma.contenidoDTO.idcliente)">
                     <BlazoredTypeahead SearchMethod="matchCliente" @bind-Value="@conclusionFirma.contenidoDTO.idcliente"
-                                       Placeholder="Ingrese el Nombre del Notario">
+                                       Placeholder="Ingrese el Nombre del Cliente">
                         <SelectedTemplate>
-                            <strong>Notario: @context.datos.nombre  -  N° DNI: @context.datos.numerodocumento</strong>
+                            <strong>Cliente: @context.datos.nombre  -  N° DNI: @context.datos.numerodocumento</strong>
                         </SelectedTemplate>
                         <ResultTemplate>
-                            <strong>Notario: @context.datos.nombre  -  N° DNI: @context.datos.numerodocumento</strong>
+                            <strong>Cliente: @context.datos.nombre  -  N° DNI: @context.datos.numerodocumento</strong>
                         </ResultTemplate>
                         <NotFoundTemplate>
                             <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
@@ -238,10 +238,12 @@
     protected override void OnInitialized()
     {
         _editContext = new EditContext(conclusionFirma);
+        conclusionFirma.contenidoDTO.idcliente = null;
+        conclusionFirma.contenidoDTO.idnotario = null;
         EscrituraPublicaRDTO epdto = new EscrituraPublicaRDTO();
         epdto = workspace.escrituraPublicaseleccionada;
         EscrituraPublica ep = new EscrituraPublica();
-        Console.WriteLine(epdto.id);
+        //Console.WriteLine(epdto.id);
         ep.id = epdto.id;
         ep.direccionoficio = epdto.direccionoficio;
         ep.direccionoficio = epdto.idnotario;

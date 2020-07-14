@@ -241,13 +241,12 @@
         <div class="modal-info-solicitudBPN">
             @if (expedienteseleccionado.documento.tipo.Equals("OficioDesignacionNotario"))
             {
-                <!--VerOficioDesignacionNotario iddocumento="expedienteseleccionado.documento.id"></!--VerOficioDesignacionNotario-->
-                <div>En construccion...</div>
+                <VerOficioDesignacionNotario iddocumento="@expedienteseleccionado.documento.id"></VerOficioDesignacionNotario>
             }
             else if (expedienteseleccionado.documento.tipo.Equals("ConclusionFirma"))
             {
                 <!--VerConclusionFirma iddocumento="expedienteseleccionado.documento.id"> </!--VerConclusionFirma-->
-                <div>En construccion...</div>
+
             }
             else
             {
@@ -268,21 +267,19 @@
     public EscrituraPublicaRDTO escrituraPublicaseleccionada = null;
     public Item currentItemDragged;
     public Bandeja bandejaUsuario = new Bandeja();
+    public Usuario miusuario = new Usuario();
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("INICIE: WorkEnvironment");
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
-        var httpResponse = await repository.Get<List<NotificacionDTO>>("api/notificacion/notificacion");
-        //TAREA N°1 :                 
-        
-        /* if (!httpResponse.Error)
+        Usuario usuario = new Usuario();
+
+
+        /*var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={sesion.usuario.}");
+        if (!httpResponse.Error)
         {
-            Console.WriteLine("TODO BIEN");
-            List<Documento> docs = new List<Documento>();
-            foreach (Documento doc in docs)
-            {
-                Console.WriteLine("valor: " + doc.id);
-            }
+            miusuario = (Usuario)httpResponse.Response;
+            Console.WriteLine("algo bien");
         }
         else
         {

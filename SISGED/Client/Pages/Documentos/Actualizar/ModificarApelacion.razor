@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -181,9 +182,52 @@
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoAPE", expedienteWrapper);
+        var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoAPE", expedienteWrapper);
         if (!httpResponse.Error)
         {
+
+            ContenidoApelacion conta = new ContenidoApelacion();
+            conta.titulo = apelacion.contenidoDTO.titulo;
+            conta.descripcion = apelacion.contenidoDTO.descripcion;
+            conta.fechaapelacion = apelacion.contenidoDTO.fechaapelacion;
+            conta.url = apelacion.contenidoDTO.data;
+
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            expedientebandeja.documento.id = apelacion.id;
+            expedientebandeja.documento.tipo = apelacion.tipo;
+            expedientebandeja.documento.historialcontenido = apelacion.historialcontenido;
+            expedientebandeja.documento.historialproceso = apelacion.historialproceso;
+            expedientebandeja.documento.contenido = conta;
+            expedientebandeja.documento.estado = apelacion.estado;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            Item itemSalida = new Item()
+
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Modificar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = apelacion.id;
+            documentoDTO.tipo = apelacion.tipo;
+            documentoDTO.estado = apelacion.estado;
+            documentoDTO.contenido = JsonConvert.SerializeObject(conta);
+            documentoDTO.historialcontenido = apelacion.historialcontenido;
+            documentoDTO.historialproceso = apelacion.historialproceso;
+            documentoDTO.urlanexo = apelacion.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
             await swalfire.successMessage("Apelación modificada correctamente");
         }
         else

@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -247,6 +248,7 @@
                                 {
                                 <option value="@fiscal.id">@fiscal.datos.nombre  @fiscal.datos.apellido</option>
                                 }
+                            /**/
                         </InputSelect>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -270,7 +272,7 @@
                                 <MatIcon Icon="add_circle_outline"></MatIcon>
                             </div>
                         </div>
-                        @for(int i =0; i < aperturamientodisciplinario.contenidoDTO.participantes.Count;i++)
+                        @for (int i = 0; i < aperturamientodisciplinario.contenidoDTO.participantes.Count; i++)
                         {
                             int index = i;
                             <div class="single-textfield-container">
@@ -459,14 +461,67 @@
         if (aperturamientodisciplinario.contenidoDTO.url != "" && aperturamientodisciplinario.contenidoDTO.url != null)
         {
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            //hechosimputados
+
+
             expedienteWrapper.documento = aperturamientodisciplinario;
             expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
             expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper>($"api/documentos/actualizarDocumentoAD", expedienteWrapper);
+            var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoAD", expedienteWrapper);
             if (!httpResponse.Error)
             {
+
+                ContenidoAperturamientoDisciplinario contad = new ContenidoAperturamientoDisciplinario();
+                contad.idnotario = aperturamientodisciplinario.contenidoDTO.idnotario.id;
+                contad.idfiscal = aperturamientodisciplinario.contenidoDTO.idfiscal;
+                contad.nombredenunciante = aperturamientodisciplinario.contenidoDTO.nombredenunciante;
+                contad.titulo = aperturamientodisciplinario.contenidoDTO.titulo;
+                contad.descripcion = aperturamientodisciplinario.contenidoDTO.descripcion;
+                contad.fechafinaudiencia = aperturamientodisciplinario.contenidoDTO.fechafinaudiencia;
+                contad.fechainicioaudiencia = aperturamientodisciplinario.contenidoDTO.fechainicioaudiencia;
+                contad.participantes = aperturamientodisciplinario.contenidoDTO.participantes.Select(x => x.nombre).ToList();
+                contad.lugaraudiencia = aperturamientodisciplinario.contenidoDTO.lugaraudiencia;
+                contad.hechosimputados = aperturamientodisciplinario.contenidoDTO.hechosimputados.Select(x => x.descripcion).ToList();
+                contad.url = aperturamientodisciplinario.contenidoDTO.url;
+
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja = workspace.expedienteseleccionado;
+                expedientebandeja.documento.id = aperturamientodisciplinario.id;
+                expedientebandeja.documento.tipo = aperturamientodisciplinario.tipo;
+                expedientebandeja.documento.historialcontenido = aperturamientodisciplinario.historialcontenido;
+                expedientebandeja.documento.historialproceso = aperturamientodisciplinario.historialproceso;
+                expedientebandeja.documento.contenido = contad;
+                expedientebandeja.documento.estado = aperturamientodisciplinario.estado;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                Item itemSalida = new Item()
+
+                {
+                    nombre = expedientebandeja.tipo,
+                    valor = expedientebandeja,
+                    icono = "alarm_add",
+                    descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                    currentPlace = "workspace",
+                    originPlace = "inputs",
+                    cliente = expedientebandeja.cliente,
+                    itemstatus = "registrado"
+                };
+
+                workspace.UpdateDocRegistrado(itemSalida);
+                workspace.UpdateTools("Modificar Documento");
+                DocumentoDTO documentoDTO = new DocumentoDTO();
+                documentoDTO.id = aperturamientodisciplinario.id;
+                documentoDTO.tipo = aperturamientodisciplinario.tipo;
+                documentoDTO.estado = aperturamientodisciplinario.estado;
+                documentoDTO.contenido = JsonConvert.SerializeObject(contad);
+                documentoDTO.historialcontenido = aperturamientodisciplinario.historialcontenido;
+                documentoDTO.historialproceso = aperturamientodisciplinario.historialproceso;
+                documentoDTO.urlanexo = aperturamientodisciplinario.urlanexo;
+                workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+                workspace.expedienteseleccionado.documento = documentoDTO;
+
+                StateHasChanged();
                 await swalfire.successMessage("Aperturamiento Disciplinario modificado correctamente");
             }
             else

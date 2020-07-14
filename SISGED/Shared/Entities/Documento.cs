@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using SISGED.Shared.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -50,6 +51,9 @@ namespace SISGED.Shared.Entities
         public DateTime fechaentrega { get; set; }
         public string url { get; set; }
     }
+
+    
+
     public class SolicitudDenuncia : Documento
     {
 
@@ -86,9 +90,11 @@ namespace SISGED.Shared.Entities
         public string actojuridico { get; set; }
         public string tipoprotocolo { get; set; }
         public List<string> otorgantes { get; set; } = new List<String>();
+        public List<Otorgantelista> otorganteslista { get; set; } 
         public DateTime fecharealizacion { get; set; }
 
     }
+
     public class SolicitudBPN : Documento
     {
         public ContenidoSolicitudBPN contenido { get; set; } = new ContenidoSolicitudBPN();
@@ -133,6 +139,8 @@ namespace SISGED.Shared.Entities
         public string idcliente { get; set; }
         public Int32 cantidadfoja { get; set; }
         public double precio { get; set; }
+
+
     }
     public class ConclusionFirma : Documento
     {

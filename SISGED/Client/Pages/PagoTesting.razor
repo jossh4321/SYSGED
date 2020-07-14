@@ -12,9 +12,9 @@
     {
         string code = "5ed99e50fed03c07c872c85c";
         var exp = await repository.Get<ExpedienteDTO>($"api/expediente/getbynested?iddoc={code}");
-        DocumentoExpediente documentoExpediente = (DocumentoExpediente)(((ExpedienteDTO)exp.Response).documentos[2]);
+        DocumentoExpediente documentoExpediente = (DocumentoExpediente)(((ExpedienteDTO)exp.Response).documentos.Last());
         DocumentoDTO resultado = (DocumentoDTO)(await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={documentoExpediente.iddocumento}")).Response;
-        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo}" });
+        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
         navigationManager.NavigateTo(httpResponse.Response.url);
     }
 }

@@ -42,11 +42,12 @@
 <div style="display: none">
     <table id="convertirPDF">
         <tbody>
+            <tr><td colspan="7">Código: @codigo</td></tr>
+            <tr><td colspan="7"> </td></tr>
             <tr>
                 <th colspan="7">@documento.titulo</th>
             </tr>
             <tr><td colspan="7"> </td></tr>
-            <tr><td colspan="7">Código de generación: @codigo</td></tr>
             <tr><td colspan="7">Descripción: </td></tr>
             <tr><td colspan="7">@documento.descripcion</td></tr>
             <tr><td colspan="7">Fecha de realización: @documento.fecharealizacion.ToString("dd-MM-yy")</td></tr>
@@ -80,7 +81,7 @@
     private async Task Generar()
     {
         generado = true;
-        await js.InvokeVoidAsync("gPDF", imagen);
+        await js.InvokeVoidAsync("gPDF", imagen, sesion.usuario.datos.nombre + " " + sesion.usuario.datos.apellido, sesion.usuario.datos.tipodocumento + " : " + sesion.usuario.datos.numerodocumento);
     }
     private async Task GenerarPDF()
     {
@@ -117,14 +118,16 @@
 
     private async Task ConfirmacionGenerar()
     {
-        generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
+        /*generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
         generarD.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        generarD.idusuario = sesion.usuario.id;
+        generarD.idusuario = sesion.usuario.id;*/
+        Console.WriteLine("ConfirmacionGenerar");
         await ConfirmacionG();
 
     }
     private async Task ConfirmacionG()
     {
+        Console.WriteLine("ConfirmacionG");
         DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;

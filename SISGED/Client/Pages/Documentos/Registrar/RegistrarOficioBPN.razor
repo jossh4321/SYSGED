@@ -290,12 +290,15 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        documento.contenidoDTO.idcliente = docSolicitudBPNDTO.contenidoDTO.idcliente;
-        documento.contenidoDTO.direccionoficio = docSolicitudBPNDTO.contenidoDTO.direccionoficio;
-        documento.contenidoDTO.idnotario = docSolicitudBPNDTO.contenidoDTO.idnotario;
-        documento.contenidoDTO.actojuridico = docSolicitudBPNDTO.contenidoDTO.actojuridico;
-        documento.contenidoDTO.tipoprotocolo = docSolicitudBPNDTO.contenidoDTO.tipoprotocolo;
-        documento.contenidoDTO.otorgantes = docSolicitudBPNDTO.contenidoDTO.otorgantes;
+        ContenidoSolicitudBPN solbpndto = new ContenidoSolicitudBPN();
+        solbpndto = JsonConvert.DeserializeObject<ContenidoSolicitudBPN>(workspace.expedienteseleccionado.documento.contenido.ToString());
+
+        documento.contenidoDTO.idcliente = new Usuario() { id = solbpndto.idcliente };
+        documento.contenidoDTO.direccionoficio = solbpndto.direccionoficio;
+        documento.contenidoDTO.idnotario = new Notario() { id = solbpndto.idnotario };
+        documento.contenidoDTO.actojuridico = solbpndto.actojuridico;
+        documento.contenidoDTO.tipoprotocolo = solbpndto.tipoprotocolo;
+        documento.contenidoDTO.otorgantes = solbpndto.otorgantes;
         documento.contenidoDTO.fecharealizacion = DateTime.Now;
 
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();

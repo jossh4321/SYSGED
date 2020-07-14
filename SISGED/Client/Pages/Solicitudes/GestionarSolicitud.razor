@@ -173,7 +173,9 @@
     bool Registrar_SolicDenuncia = false;
     bool Registrar_SolicBPN = false;
     bool Registrar_SolicEF = false;
-
+    [CascadingParameter]
+    MainLayout layout { get; set;  }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     void CancelButton()
     {
         dialogPrincipal = !dialogPrincipal;
@@ -216,6 +218,15 @@
     void OpenDialogModificar()
     {
         dialogIsOpen_Modificar = true;
+        ExpedienteBandejaDTO expedienteEjemplo = new ExpedienteBandejaDTO();
+        expedienteEjemplo.tipo = "EjemploExpediente";
+        expedienteEjemplo.cliente = new Cliente()
+        {
+            nombre = "usuario ejemplo",
+            tipodocumento = "DNI",
+            numerodocumento = "123456789"
+        };
+        layout.Send("sebastian", expedienteEjemplo);
         //navigationManager.NavigateTo("solicitud/crear");
     }
     void OpenDialogVerDetalles()

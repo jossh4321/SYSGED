@@ -144,7 +144,7 @@
 </div>
 
 @code {
-    private ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
+    ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [Parameter] public string iddocumento { get; set; }
     private bool firstLoad = true;

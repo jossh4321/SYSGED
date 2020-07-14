@@ -128,21 +128,46 @@
             <MatTabGroup>
                 <MatTab Label="Solicitud">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.actojuridico" ReadOnly="true" Class="text-field-style" Label="Acto Juridico"></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.actojuridico" Class="text-field-style" Label="Acto Juridico"
+                                      @oninput='@(e => KeyUp(e,"nombrecliente",solicitudbpn))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.actojuridico)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio"  Class="text-field-style" Label="Direccion de Oficio"
+                                      @oninput='@(e => KeyUp(e,"nombrecliente",solicitudbpn))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.direccionoficio)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.tipoprotocolo" ReadOnly="true" Class="text-field-style" Label="Tipo de Protocolo"></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.tipoprotocolo"  Class="text-field-style" Label="Tipo de Protocolo"
+                                      @oninput='@(e => KeyUp(e,"numerodocumento",solicitudbpn))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.tipoprotocolo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
                     </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio"></MatTextField>
-                    </div>
+                   
                     <!--Copiar y pegar codigo del div para el for de Otorgantes-->
 
                     <div class="field-container input-group-2">
-                        <MatDatePicker @bind-Value="@solicitudbpn.contenidoDTO.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
+                        <MatDatePicker @bind-Value="@solicitudbpn.contenidoDTO.fecharealizacion" Format="MM/dd/yy" Class="text-field-style" Label="Fecha de Realizacion" ></MatDatePicker>
                     </div>
                 </MatTab>
                 <MatTab Label="Otorgantes">
@@ -221,29 +246,35 @@
                         </div>
                     </div>
                 </MatTab>
+                <!--
                 <MatTab Label="Solicitante">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del solicitante">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.nombre" ReadOnly="false" Class="text-field-style" Label="Nombre del solicitante">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del solicitante">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.apellido" ReadOnly="false" Class="text-field-style" Label="Apellido del solicitante">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.tipodocumento" ReadOnly="true" Class="text-field-style" Label="Tipo de Documento">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.tipodocumento" ReadOnly="false" Class="text-field-style" Label="Tipo de Documento">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.numerodocumento" ReadOnly="true" Class="text-field-style" Label="Numero de Documento">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.numerodocumento" ReadOnly="false" Class="text-field-style" Label="Numero de Documento">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.email" ReadOnly="false" Class="text-field-style" Label="Correo Electronico">
                         </MatTextField>
                     </div>
-                </MatTab>    
-
+                </MatTab>-->
+                <div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
+                </div>
             </MatTabGroup>
         </div>
         
@@ -261,7 +292,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        solicitudbpn.contenidoDTO.otorganteslista = new List<Otorgantelista>() { new Otorgantelista() { index = 0, nombre = "" } };
+        solicitudbpn.contenidoDTO.otorganteslista = new List<Otorgantelista>() { new Otorgantelista() { index = 0 } };
         _editContext = new EditContext(solicitudbpn);
 
     }
@@ -284,6 +315,7 @@
     public async Task handleValidSubmit()
     {
         loadprocess = true;
+        /*
         solicitudbpn.contenidoDTO.idcliente = solicitudbpn.contenidoDTO.idcliente;
         solicitudbpn.contenidoDTO.direccionoficio = solicitudbpn.contenidoDTO.direccionoficio;
         solicitudbpn.contenidoDTO.idnotario = solicitudbpn.contenidoDTO.idnotario;
@@ -291,16 +323,19 @@
         solicitudbpn.contenidoDTO.tipoprotocolo = solicitudbpn.contenidoDTO.tipoprotocolo;
         solicitudbpn.contenidoDTO.otorgantes = solicitudbpn.contenidoDTO.otorgantes;
         solicitudbpn.contenidoDTO.fecharealizacion = DateTime.Now;
+        */
 
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = solicitudbpn;
-        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        expedienteWrapper.idusuarioactual = sesion.usuario.id;
-        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+        //expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = "GAAAADenuncia";
+        //expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, OficioBPN>($"api/documentos/documentosbpn", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudBPNDTO>($"api/documentos/documentosolicbpn", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            /*
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
             OficioBPN oficiobpn = new OficioBPN();
@@ -312,6 +347,7 @@
             expedientebandeja.documento.contenido = oficiobpn.contenido;
             expedientebandeja.documento.estado = oficiobpn.estado;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+
             Item itemSalida = new Item()
             {
                 nombre = expedientebandeja.tipo,
@@ -336,7 +372,7 @@
             workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
             workspace.expedienteseleccionado.documento = documentoDTO;
 
-            StateHasChanged();
+            StateHasChanged();*/
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
         }
         else
