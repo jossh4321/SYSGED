@@ -209,36 +209,36 @@
                                 </div>
                             </div>
                             <!--<div class="single-textfield-container">
-                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].apellido)">
-                                    <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.otorganteslista[index].apellido" Class="text-field-style"
-                                                  Label="Apellidos"
-                                                  @oninput='@(e => KeyUp(e, "apellido", solicitudbpn.contenidoDTO.otorganteslista[index]))'></MatTextField>
-                                    <div class="incorrecto">
-                                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                        <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.otorganteslista[index].apellido)" />
-                                    </div>
-                                    <div class="correcto">
-                                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                                        <span class="good-msg">Correcto</span>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].apellido)">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.otorganteslista[index].apellido" Class="text-field-style"
+                                      Label="Apellidos"
+                                      @oninput='@(e => KeyUp(e, "apellido", solicitudbpn.contenidoDTO.otorganteslista[index]))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.otorganteslista[index].apellido)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                </div>
 
-                            <div class="single-textfield-container">
-                                <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].dni)">
-                                    <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.otorganteslista[index].dni" Class="text-field-style"
-                                                  Label="D.N.I."
-                                                  @oninput='@(e => KeyUp(e, "dni", solicitudbpn.contenidoDTO.otorganteslista[index]))'></MatTextField>
-                                    <div class="incorrecto">
-                                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                        <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.otorganteslista[index].dni)" />
-                                    </div>
-                                    <div class="correcto">
-                                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                                        <span class="good-msg">Correcto</span>
-                                    </div>
-                                </div>
-                            </div>-->
+                <div class="single-textfield-container">
+                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].dni)">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.otorganteslista[index].dni" Class="text-field-style"
+                                      Label="D.N.I."
+                                      @oninput='@(e => KeyUp(e, "dni", solicitudbpn.contenidoDTO.otorganteslista[index]))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.otorganteslista[index].dni)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                </div>-->
 
                             <div class="base-icon" @onclick="@(() => removeparticipante(index))">
                                 <MatIcon Icon="remove_circle_outline"></MatIcon>
@@ -257,29 +257,33 @@
                         </div>
                     </div>
                 </MatTab>
+                <MatTab Label="Subir Anexo">
+                    <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada"></DragnDrop>
+                    
+                </MatTab>
                 <!--
-                <MatTab Label="Solicitante">
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.nombre" ReadOnly="false" Class="text-field-style" Label="Nombre del solicitante">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.apellido" ReadOnly="false" Class="text-field-style" Label="Apellido del solicitante">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.tipodocumento" ReadOnly="false" Class="text-field-style" Label="Tipo de Documento">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.numerodocumento" ReadOnly="false" Class="text-field-style" Label="Numero de Documento">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.email" ReadOnly="false" Class="text-field-style" Label="Correo Electronico">
-                        </MatTextField>
-                    </div>
-                </MatTab>-->
+    <MatTab Label="Solicitante">
+        <div class="field-container input-group-2">
+            <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.nombre" ReadOnly="false" Class="text-field-style" Label="Nombre del solicitante">
+            </MatTextField>
+        </div>
+        <div class="field-container input-group-2">
+            <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.apellido" ReadOnly="false" Class="text-field-style" Label="Apellido del solicitante">
+            </MatTextField>
+        </div>
+        <div class="field-container input-group-2">
+            <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.tipodocumento" ReadOnly="false" Class="text-field-style" Label="Tipo de Documento">
+            </MatTextField>
+        </div>
+        <div class="field-container input-group-2">
+            <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.numerodocumento" ReadOnly="false" Class="text-field-style" Label="Numero de Documento">
+            </MatTextField>
+        </div>
+        <div class="field-container input-group-2">
+            <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.idcliente.datos.email" ReadOnly="false" Class="text-field-style" Label="Correo Electronico">
+            </MatTextField>
+        </div>
+    </MatTab>-->
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -296,16 +300,26 @@
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    [CascadingParameter]
+    MainLayout layout { get; set; }
     private bool loadprocess = false;
-
+    private string imagenTemporal;
     private SolicitudBPNDTO solicitudbpn = new SolicitudBPNDTO();
     private EditContext _editContext;
 
     protected override async Task OnInitializedAsync()
     {
         solicitudbpn.contenidoDTO.otorganteslista = new List<Otorgantelista>() { new Otorgantelista() { index = 0 } };
+        solicitudbpn.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(solicitudbpn);
-
+        foreach (string u in solicitudbpn.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal = u;
+                solicitudbpn.contenidoDTO.Urlanexo = null;
+            }
+        }
     }
 
     /* Reemplazado por el OnInitializedAsync()
@@ -315,6 +329,10 @@
         _editContext = new EditContext(documento);
     }
     */
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        solicitudbpn.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
     void KeyUp(ChangeEventArgs e, string memberName, object val)
     {
         var property = val.GetType().GetProperty(memberName);
@@ -322,6 +340,7 @@
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
     }
+
 
     public async Task handleValidSubmit()
     {
@@ -343,9 +362,26 @@
         //expedienteWrapper.idusuarioactual = sesion.usuario.id;
         //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudBPNDTO>($"api/documentos/documentosolicbpn", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/documentosolicbpn", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
+            SolicitudBPN solicitudBPN = new SolicitudBPN();
+            solicitudBPN = httpResponse.Response.solicitduBPN;
+            expedientebandeja.documento = new DocumentoDTO();
+            expedientebandeja.documentosobj = new List<DocumentoDTO>();
+            expedientebandeja.cliente = new Cliente();
+            expedientebandeja.documento.id = solicitudBPN.id;
+            expedientebandeja.documento.tipo = solicitudBPN.tipo;
+            expedientebandeja.documento.historialcontenido = solicitudBPN.historialcontenido;
+            expedientebandeja.documento.historialproceso = solicitudBPN.historialproceso;
+            expedientebandeja.documento.contenido = solicitudBPN.contenido;
+            expedientebandeja.documento.estado = solicitudBPN.estado;
+            expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
+            await layout.Send("josue", expedientebandeja);
             /*
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;

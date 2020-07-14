@@ -154,6 +154,15 @@
                 </div>
                 <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
+                </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -166,15 +175,27 @@
 </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter]
+    MainLayout layout { get; set; }
     private SolicitudExpedicionFirmaDTO solicitudexpedicionfirma = new SolicitudExpedicionFirmaDTO();
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private EditContext _editContext;
     private string documentoTemporal { get; set; } = null;
     private string imagenTemporal;
+    private string imagenTemporal2;
     private bool loadprocess = false;
     protected override void OnInitialized()
     {
+        solicitudexpedicionfirma.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(solicitudexpedicionfirma);
+        foreach (string u in solicitudexpedicionfirma.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                solicitudexpedicionfirma.contenidoDTO.Urlanexo = null;
+            }
+        }
         if (!string.IsNullOrEmpty(solicitudexpedicionfirma.contenidoDTO.data))
         {
             imagenTemporal = solicitudexpedicionfirma.contenidoDTO.data;
@@ -185,6 +206,11 @@
     private void ImagenSeleccionada(string imagenbase64)
     {
         solicitudexpedicionfirma.contenidoDTO.data = imagenbase64;
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        solicitudexpedicionfirma.contenidoDTO.Urlanexo.Add(imagenbase64);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -203,7 +229,7 @@
         expedienteWrapper.documento = solicitudexpedicionfirma;
         expedienteWrapper.idusuarioactual = "GAAAAAA";
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudExpedicionFirmaDTO>("api/documentos/documentosef", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoEFDTO>("api/documentos/documentosef", expedienteWrapper);
         if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
         {
             ExpedienteWrapper ExpedienteWrapper = new ExpedienteWrapper();
@@ -216,6 +242,23 @@
             }
             else
             {
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
+                SolicitudExpedicionFirma solicitudEF = new SolicitudExpedicionFirma();
+                solicitudEF = httpResponse.Response.solicitudEF;
+                expedientebandeja.documento = new DocumentoDTO();
+                expedientebandeja.documentosobj = new List<DocumentoDTO>();
+                expedientebandeja.cliente = new Cliente();
+                expedientebandeja.documento.id = solicitudEF.id;
+                expedientebandeja.documento.tipo = solicitudEF.tipo;
+                expedientebandeja.documento.historialcontenido = solicitudEF.historialcontenido;
+                expedientebandeja.documento.historialproceso = solicitudEF.historialproceso;
+                expedientebandeja.documento.contenido = solicitudEF.contenido;
+                expedientebandeja.documento.estado = solicitudEF.estado;
+                expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
+                await layout.Send("josue", expedientebandeja);
                 await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
             }
         }

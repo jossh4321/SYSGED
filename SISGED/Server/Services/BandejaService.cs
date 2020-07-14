@@ -12,12 +12,14 @@ namespace SISGED.Server.Services
     public class BandejaService
     {
         private readonly IMongoCollection<Bandeja> _bandejas;
+        private readonly IMongoCollection<Usuario> _usuarios;
 
         public BandejaService(ISysgedDatabaseSettings settings)
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
             _bandejas = database.GetCollection<Bandeja>("bandejas");
+            _usuarios = database.GetCollection<Usuario>("usuarios");
         }
 
         public async Task<Bandeja> ObtenerBandejaDocumento(string usuario)
@@ -287,6 +289,16 @@ namespace SISGED.Server.Services
                                         .AppendStage<BandejaEntradaDTOR>(project)
                                         .ToListAsync();
             return listabandejas;
+        }
+
+        public void InsertarBandejaEntradaUsuario(string expedienteid, string documentoid,string nombreusuario)
+        {
+            BandejaDocumento bandejaDocumento = new BandejaDocumento();
+            bandejaDocumento.idexpediente = expedienteid;
+            bandejaDocumento.iddocumento = documentoid;
+            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejaentrada", bandejaDocumento);
+            Usuario usuario = _usuarios.Find(user => user.usuario == nombreusuario).First();
+            _bandejas.UpdateOne(band => band.usuario == usuario.id, updateBandeja);
         }
     }
 }
