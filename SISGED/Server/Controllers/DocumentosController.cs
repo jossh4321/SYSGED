@@ -183,7 +183,17 @@ namespace SISGED.Server.Controllers
             SolicitudDenunciaDTO documento = new SolicitudDenunciaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             documento = JsonConvert.DeserializeObject<SolicitudDenunciaDTO>(json);
-
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in documento.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicituddenuncia");
+                    url2.Add(urlData2);
+                }
+            }
             //subida de archivo a repositorio y retorno de url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.urldata))
@@ -209,10 +219,10 @@ namespace SISGED.Server.Controllers
                 contenido = contenidoSolicitudDenuncia,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo = url2,
                 historialproceso = new List<Proceso>(),
-
             };
-            solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
+            solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia, url2);
 
             //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
             Cliente cliente = new Cliente()

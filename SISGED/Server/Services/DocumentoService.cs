@@ -273,7 +273,7 @@ namespace SISGED.Server.Services
             _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
         }
 
-        public SolicitudDenuncia registrarSolicitudDenuncia(SolicitudDenuncia documentoSD)
+        public SolicitudDenuncia registrarSolicitudDenuncia(SolicitudDenuncia documentoSD, List<string> url2)
         {
             _documentos.InsertOne(documentoSD);
             return documentoSD;

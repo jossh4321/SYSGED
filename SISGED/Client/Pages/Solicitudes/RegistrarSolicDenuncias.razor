@@ -147,6 +147,15 @@
                 <div class="field-container">
                     <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
                 </div>
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
+                </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -164,10 +173,21 @@
     private EditContext _editContext;
     private string documentoTemporal { get; set; } = null;
     private string imagenTemporal;
+    private string imagenTemporal2;
     private bool loadprocess = false;
     protected override void OnInitialized()
     {
+        solicitudDenuncia.contenidoDTO.Urlanexo = new List<string>();
+
         _editContext = new EditContext(solicitudDenuncia);
+        foreach (string u in solicitudDenuncia.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                solicitudDenuncia.contenidoDTO.Urlanexo = null;
+            }
+        }
         if (!string.IsNullOrEmpty(solicitudDenuncia.contenidoDTO.urldata))
         {
             imagenTemporal = solicitudDenuncia.contenidoDTO.urldata;
@@ -187,7 +207,10 @@
     {
         solicitudDenuncia.contenidoDTO.urldata = imagenbase64;
     }
-
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        solicitudDenuncia.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
     public async Task handleValidSubmit()
     {
         loadprocess = true;
