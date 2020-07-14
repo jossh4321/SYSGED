@@ -290,16 +290,6 @@
     void OpenDialogModificar()
     {
         dialogIsOpen_Modificar = true;
-        
-        ExpedienteBandejaDTO expedienteEjemplo = new ExpedienteBandejaDTO();
-        expedienteEjemplo.tipo = "EjemploExpediente";
-        expedienteEjemplo.cliente = new Cliente()
-        {
-            nombre = "usuario ejemplo",
-            tipodocumento = "DNI",
-            numerodocumento = "123456789"
-        };
-        layout.Send("sebastian", expedienteEjemplo);
         //navigationManager.NavigateTo("solicitud/crear");
     }
     void OpenDialogVerDetalles(string id)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using SISGED.Server.Helpers;
 using SISGED.Server.Services;
@@ -17,14 +18,17 @@ namespace SISGED.Server.Controllers
     {
         private readonly DocumentoService _documentoservice;
         private readonly ExpedienteService _expedienteservice;
+        private readonly BandejaService _bandejaService;
         private readonly EscriturasPublicasService _escrituraspublicasservice;
         private readonly IFileStorage _almacenadorDeDocs;
-        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, ExpedienteService expedienteservice, EscriturasPublicasService escrituraspublicasservice)
+        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, 
+            ExpedienteService expedienteservice, EscriturasPublicasService escrituraspublicasservice, BandejaService bandejaService)
         {
             _documentoservice = documentoservice;
             _almacenadorDeDocs = almacenadorDeDocs;
             _expedienteservice = expedienteservice;
             _escrituraspublicasservice = escrituraspublicasservice;
+            _bandejaService = bandejaService;
         }
         [HttpGet]
         public ActionResult<List<Documento>> Get()
@@ -78,7 +82,7 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("documentosolicbpn")]
-        public async Task<ActionResult<SolicitudBPN>> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<ExpedienteDocumentoBPNDTO>> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
         {
             /*
             SolicitudBPN documentoSolicBPN = new SolicitudBPN();
@@ -166,9 +170,10 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
-
+            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id,solicitudBPN.id,"josue");
+            
             //actualizacion de bandeja de salida del usuario
-            _documentoservice.updateBandejaSalida(expediente.id, solicitudBPN.id, expedienteWrapper.idusuarioactual);
+            //_documentoservice.updateBandejaSalida(expediente.id, solicitudBPN.id, expedienteWrapper.idusuarioactual);
 
             //Actualizacion de bandeja de salida de usuario
             /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
@@ -182,13 +187,16 @@ namespace SISGED.Server.Controllers
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
-            return solicitudBPN;
+            ExpedienteDocumentoBPNDTO expedienteDocumentoBPNDTO = new ExpedienteDocumentoBPNDTO();
+            expedienteDocumentoBPNDTO.expediente = expediente;
+            expedienteDocumentoBPNDTO.solicitduBPN = solicitudBPN;
+            return expedienteDocumentoBPNDTO;
 
         }
 
         [HttpPost("documentosd")]
         //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
-        public async Task<ActionResult<SolicitudDenunciaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<ExpedienteDocumentoSDDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
             //conversion de Object a Tipo especifico
             SolicitudDenunciaDTO documento = new SolicitudDenunciaDTO();
@@ -261,9 +269,12 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
-
+            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, solicitudDenuncia.id, "josue");
+            ExpedienteDocumentoSDDTO expedienteDocumentoEFNDTO = new ExpedienteDocumentoSDDTO();
+            expedienteDocumentoEFNDTO.expediente = expediente;
+            expedienteDocumentoEFNDTO.solicitudD = solicitudDenuncia;
             //actualizacion de bandeja de salida del usuario
-            _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
+            //_documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
 
             //creacion de obj ExpedienteBandejaDTO
             /*DocumentoDTO doc = new DocumentoDTO();
@@ -282,12 +293,12 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.tipo = expediente.tipo;
 
             return bandejaexpdto;*/
-            return documento;
+            return expedienteDocumentoEFNDTO;
         }
 
         [HttpPost("documentosef")]
         //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
-        public async Task<ActionResult<SolicitudExpedicionFirmaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<ExpedienteDocumentoEFDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
         {
             //Conversion de Obj a tipo SolicitudExpedicionFirmaDTO
             SolicitudExpedicionFirmaDTO solicitudExpedicionFirmasDTO = new SolicitudExpedicionFirmaDTO();
@@ -359,6 +370,12 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
+            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, documentoSEF.id, "josue");
+            ExpedienteDocumentoEFDTO expedienteDocumentoEFNDTO = new ExpedienteDocumentoEFDTO();
+            expedienteDocumentoEFNDTO.expediente = expediente;
+            expedienteDocumentoEFNDTO.solicitudEF = documentoSEF;
+            return expedienteDocumentoEFNDTO;
+
 
             //Actualizacion de la bandeja de salida del usuario con el expediente
             ///_documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, expedientewrapper.idusuarioactual);
@@ -380,7 +397,6 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.tipo = expediente.tipo;
             
             return bandejaexpdto;*/
-            return solicitudExpedicionFirmasDTO;
         }
 
 
