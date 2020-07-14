@@ -104,6 +104,7 @@
     private async Task ConfirmacionG()
     {
         DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
+        docs.iddocumentoAnterior = workspace.expedienteseleccionado.documentosobj.ElementAt(workspace.expedienteseleccionado.documentosobj.Count - 2).id;
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
         docs.idusuario = sesion.usuario.id;
@@ -116,6 +117,18 @@
         {
             await swalfire.successMessage("Generado correctamente");
             generado = false;
+            //Item itemSalida = new Item()
+            //{
+            //    nombre = workspace.expedienteseleccionado.tipo,
+            //    valor = workspace.expedienteseleccionado,
+            //    icono = "alarm_add",
+            //    descripcion = ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo,
+            //    currentPlace = "outputs",
+            //    originPlace = "outputs",
+            //    cliente = workspace.expedienteseleccionado.cliente
+            //};
+            //workspace.UpdateComponentBandeja(itemSalida);
+            workspace.UpdateTools("Generar Documento");
         }
     }
     //  doc.save('conversion.pdf');
