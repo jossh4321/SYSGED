@@ -245,17 +245,16 @@
     public async Task Connect()
     {
 
-        Console.WriteLine("Llegue aqui ps papu");
+
         _hubConnection.On<string, ExpedienteBandejaDTO>("ReceiveMessageBandeja", (user, bandeja) =>
         {
-            Console.WriteLine("Llegue al receive message");
             Item item = new Item()
             {
                 nombre = bandeja.tipo,
                 valor = bandeja,
                 icono = "alarm_add",
                 //descripcion = ((DocumentoDTO)bandeja.documento).tipo,
-                descripcion = "ejemplo",
+                descripcion = ((DocumentoDTO)bandeja.documento).tipo,
                 currentPlace = "inputs",
                 originPlace = "inputs",
                 cliente = bandeja.cliente

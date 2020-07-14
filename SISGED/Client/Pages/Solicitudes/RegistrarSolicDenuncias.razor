@@ -159,6 +159,8 @@
 </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter]
+    MainLayout layout { get; set; }
     private SolicitudDenunciaDTO solicitudDenuncia = new SolicitudDenunciaDTO();
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private EditContext _editContext;
@@ -198,7 +200,7 @@
             expedienteWrapper.documento = solicitudDenuncia;
             expedienteWrapper.idusuarioactual = "GAAAADenuncia";
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudDenunciaDTO>("api/documentos/documentosd", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoSDDTO>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)
             {
                 await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
@@ -220,6 +222,23 @@
                     cliente = expedientebandeja.cliente
                 };
                 workspace.UpdateComponentBandeja(itemSalida);*/
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
+                SolicitudDenuncia solicitudD = new SolicitudDenuncia();
+                solicitudD = httpResponse.Response.solicitudD;
+                expedientebandeja.documento = new DocumentoDTO();
+                expedientebandeja.documentosobj = new List<DocumentoDTO>();
+                expedientebandeja.cliente = new Cliente();
+                expedientebandeja.documento.id = solicitudD.id;
+                expedientebandeja.documento.tipo = solicitudD.tipo;
+                expedientebandeja.documento.historialcontenido = solicitudD.historialcontenido;
+                expedientebandeja.documento.historialproceso = solicitudD.historialproceso;
+                expedientebandeja.documento.contenido = solicitudD.contenido;
+                expedientebandeja.documento.estado = solicitudD.estado;
+                expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
+                await layout.Send("josue", expedientebandeja);
                 await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
             }
         }

@@ -285,6 +285,8 @@
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    [CascadingParameter]
+    MainLayout layout { get; set; }
     private bool loadprocess = false;
 
     private SolicitudBPNDTO solicitudbpn = new SolicitudBPNDTO();
@@ -332,9 +334,26 @@
         //expedienteWrapper.idusuarioactual = sesion.usuario.id;
         //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudBPNDTO>($"api/documentos/documentosolicbpn", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/documentosolicbpn", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
+            SolicitudBPN solicitudBPN = new SolicitudBPN();
+            solicitudBPN = httpResponse.Response.solicitduBPN;
+            expedientebandeja.documento = new DocumentoDTO();
+            expedientebandeja.documentosobj = new List<DocumentoDTO>();
+            expedientebandeja.cliente = new Cliente();
+            expedientebandeja.documento.id = solicitudBPN.id;
+            expedientebandeja.documento.tipo = solicitudBPN.tipo;
+            expedientebandeja.documento.historialcontenido = solicitudBPN.historialcontenido;
+            expedientebandeja.documento.historialproceso = solicitudBPN.historialproceso;
+            expedientebandeja.documento.contenido = solicitudBPN.contenido;
+            expedientebandeja.documento.estado = solicitudBPN.estado;
+            expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
+            await layout.Send("josue", expedientebandeja);
             /*
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja = workspace.expedienteseleccionado;
