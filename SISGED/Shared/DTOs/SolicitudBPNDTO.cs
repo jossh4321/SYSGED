@@ -28,8 +28,8 @@ namespace SISGED.Shared.DTOs
     public class Otorgantelista
     {
         public string nombre { get; set; }
-        public string apellido { get; set; }
-        public int dni { get; set; }
+        //public string apellido { get; set; }
+        //public int dni { get; set; }
         public Int32 index { get; set; } = 0;
     }
 }

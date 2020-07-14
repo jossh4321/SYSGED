@@ -127,7 +127,7 @@
         <div class="modal-info-solicitudBPN">
             <MatTabGroup>
                 <MatTab Label="Solicitud">
-                    <div class="field-container input-group-2">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.actojuridico)">
                         <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.actojuridico" Class="text-field-style" Label="Acto Juridico"
                                       @oninput='@(e => KeyUp(e,"nombrecliente",solicitudbpn))'></MatTextField>
                         <div class="incorrecto">
@@ -139,7 +139,7 @@
                             <span class="good-msg">Correcto</span>
                         </div>
                     </div>
-                    <div class="field-container input-group-2">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.direccionoficio)">
                         <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio"  Class="text-field-style" Label="Direccion de Oficio"
                                       @oninput='@(e => KeyUp(e,"nombrecliente",solicitudbpn))'></MatTextField>
                         <div class="incorrecto">
@@ -151,7 +151,7 @@
                             <span class="good-msg">Correcto</span>
                         </div>
                     </div>
-                    <div class="field-container input-group-2">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.tipoprotocolo)">
                         <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.tipoprotocolo"  Class="text-field-style" Label="Tipo de Protocolo"
                                       @oninput='@(e => KeyUp(e,"numerodocumento",solicitudbpn))'></MatTextField>
                         <div class="incorrecto">
@@ -166,7 +166,7 @@
                    
                     <!--Copiar y pegar codigo del div para el for de Otorgantes-->
 
-                    <div class="field-container input-group-2">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.fecharealizacion)">
                         <MatDatePicker @bind-Value="@solicitudbpn.contenidoDTO.fecharealizacion" Format="MM/dd/yy" Class="text-field-style" Label="Fecha de Realizacion" ></MatDatePicker>
                     </div>
                 </MatTab>
@@ -197,7 +197,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="single-textfield-container">
+                            <!--<div class="single-textfield-container">
                                 <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].apellido)">
                                     <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.otorganteslista[index].apellido" Class="text-field-style"
                                                   Label="Apellidos"
@@ -227,7 +227,7 @@
                                         <span class="good-msg">Correcto</span>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
 
                             <div class="base-icon" @onclick="@(() => removeparticipante(index))">
                                 <MatIcon Icon="remove_circle_outline"></MatIcon>

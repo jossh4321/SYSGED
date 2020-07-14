@@ -780,6 +780,68 @@ namespace SISGED.Server.Services
 
         }
 
+        public List<Documento> obtenerSolicitudes()
+        {
+            IEnumerable<string> tipos = new[] { "SolicitudExpedicionFirma", "SolicitudDenuncia", "SolicitudBPN" };
+            var filter = Builders<Documento>.Filter.In(x => x.tipo , tipos);
+
+            List<Documento> values = _documentos.Find(filter).ToList();
+            return values;
+        }
+        
+
+        public SolicitudExpedicionFirmaDTO obtenerSolicitudExpedicionFirmas(string id)
+        {
+            SolicitudExpedicionFirma docSolicitudExpedicionFirma = new SolicitudExpedicionFirma();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docSolicitudExpedicionFirma = _documentos.Aggregate().
+              AppendStage<SolicitudExpedicionFirma>(match).First();
+
+            SolicitudExpedicionFirmaDTO solicitudEFDTO = new SolicitudExpedicionFirmaDTO();
+            solicitudEFDTO.id = docSolicitudExpedicionFirma.id;
+            solicitudEFDTO.tipo = docSolicitudExpedicionFirma.tipo;
+            //solicitudbpnDTO.historialcontenido = docSolicitudBPN.historialcontenido;
+            //solicitudbpnDTO.historialproceso = docSolicitudBPN.historialproceso;
+            solicitudEFDTO.estado = docSolicitudExpedicionFirma.estado;
+            solicitudEFDTO.contenidoDTO = new ContenidoSolicitudExpedicionFirmaDTO()
+            {
+
+                titulo = docSolicitudExpedicionFirma.contenido.titulo,
+                descripcion = docSolicitudExpedicionFirma.contenido.descripcion,
+                fecharealizacion = docSolicitudExpedicionFirma.contenido.fecharealizacion,
+                // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
+
+
+            };
+            return solicitudEFDTO;
+        }
+        public SolicitudDenunciaDTO obtenerSolicitudDenuncias(string id)
+        {
+            SolicitudDenuncia docSolicitudDenuncia = new SolicitudDenuncia();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docSolicitudDenuncia = _documentos.Aggregate().
+              AppendStage<SolicitudDenuncia>(match).First();
+
+            SolicitudDenunciaDTO solicitudDenuncia = new SolicitudDenunciaDTO();
+            solicitudDenuncia.id = docSolicitudDenuncia.id;
+            solicitudDenuncia.tipo = docSolicitudDenuncia.tipo;
+            //solicitudbpnDTO.historialcontenido = docSolicitudBPN.historialcontenido;
+            //solicitudbpnDTO.historialproceso = docSolicitudBPN.historialproceso;
+            solicitudDenuncia.estado = docSolicitudDenuncia.estado;
+            solicitudDenuncia.contenidoDTO = new ContenidoSolicitudDenunciaDTO()
+            {
+                
+                titulo = docSolicitudDenuncia.contenido.titulo,
+                descripcion = docSolicitudDenuncia.contenido.descripcion,
+                fechaentrega = docSolicitudDenuncia.contenido.fechaentrega,
+                // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
+
+
+            };
+            return solicitudDenuncia;
+        }
         public SolicitudBPNDTO obtenerSolicitudBusquedaProtocoloNotarial(string id)
         {
             SolicitudBPN docSolicitudBPN = new SolicitudBPN();

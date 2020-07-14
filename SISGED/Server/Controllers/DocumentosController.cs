@@ -64,6 +64,13 @@ namespace SISGED.Server.Controllers
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             documento = JsonConvert.DeserializeObject<SolicitudBPNDTO>(json);
 
+            //Solo para registrar nombre de otorgantes
+            List<String> listadeotorgantes = new List<string>();
+            foreach (Otorgantelista obs in documento.contenidoDTO.otorganteslista)
+            {
+                listadeotorgantes.Add(obs.nombre);
+            }
+
             //Creacionde Obj ContenidoSolicitudBPN y almacenamiento en la coleccion documento
             ContenidoSolicitudBPN contenidoSolicitudBPN = new ContenidoSolicitudBPN()
             {
@@ -73,7 +80,9 @@ namespace SISGED.Server.Controllers
                 idnotario = documento.contenidoDTO.idnotario.id,
                 actojuridico = documento.contenidoDTO.actojuridico,
                 tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
-                otorganteslista = documento.contenidoDTO.otorganteslista,
+                otorgantes = listadeotorgantes,
+                //Lista de objetos
+                //otorganteslista = documento.contenidoDTO.otorganteslista,
                 fecharealizacion = DateTime.Now,
                 //url = "ninguna"
             };
@@ -165,12 +174,12 @@ namespace SISGED.Server.Controllers
                 fechaentrega = DateTime.Now,
                 url = urlData
             };
-            
+
             SolicitudDenuncia solicitudDenuncia = new SolicitudDenuncia()
             {
                 tipo = "SolicitudDenuncia",
                 contenido = contenidoSolicitudDenuncia,
-                estado = "creado",
+                estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>(),
 
@@ -326,6 +335,7 @@ namespace SISGED.Server.Controllers
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
+
 
         [HttpPost("documentoad")]
         public async Task<ActionResult<AperturamientoDisciplinario>> RegistrarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedientewrapper)
@@ -497,6 +507,13 @@ namespace SISGED.Server.Controllers
         }
 
         //obteniendo documentos
+
+        [HttpGet("documentosolicitudes")]
+        public async Task<List<Documento>> obtenerSolicitudes()
+        {
+            return _documentoservice.obtenerSolicitudes();
+        }
+       
         [HttpGet("documentoodn")]
         public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)
         {

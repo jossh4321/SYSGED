@@ -202,13 +202,24 @@
         expedienteWrapper.idusuarioactual = "GAAAAAA";
 
         var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudExpedicionFirmaDTO>("api/documentos/documentosef", expedienteWrapper);
-        if (httpResponse.Error)
+        if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
         {
-            await swalfire.errorMessage("Error en el servidor 505, intentelo de nuevo");
+            ExpedienteWrapper ExpedienteWrapper = new ExpedienteWrapper();
+            //solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
+            ExpedienteWrapper.documento = solicitudexpedicionfirma;
+            ExpedienteWrapper.idusuarioactual = "gaa";
+            if (httpResponse.Error)
+            {
+                await swalfire.errorMessage("Error en el servidor 505, intentelo de nuevo");
+            }
+            else
+            {
+                await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
+            }
         }
         else
         {
-            await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
+            await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
         }
         /*
          * if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
