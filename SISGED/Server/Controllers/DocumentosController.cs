@@ -325,13 +325,24 @@ namespace SISGED.Server.Controllers
 
 
         [HttpPost("documentocf")]
-        public ActionResult<ConclusionFirma> RegistrarDocumentoCF(ExpedienteWrapper expediente)
+        public async Task<ActionResult<ConclusionFirma>> RegistrarDocumentoCF(ExpedienteWrapper expediente)
         {
             ConclusionFirmaDTO conclusionfirmaDTO = new ConclusionFirmaDTO();
             var json = JsonConvert.SerializeObject(expediente.documento);
             conclusionfirmaDTO = JsonConvert.DeserializeObject<ConclusionFirmaDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in conclusionfirmaDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "conclusionfirma");
+                    url2.Add(urlData2);
+                }
+            }
             ConclusionFirma documentoCF = new ConclusionFirma();
-            documentoCF = _documentoservice.registrarConclusionFirmaE(expediente);
+            documentoCF = _documentoservice.registrarConclusionFirmaE(expediente, url2);
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
@@ -351,7 +362,7 @@ namespace SISGED.Server.Controllers
                 if (!string.IsNullOrWhiteSpace(u))
                 {
                     var solicitudBytes2 = Convert.FromBase64String(u);
-                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "aperturamientodiciplinario");
                     url2.Add(urlData2);
                 }
             }
@@ -381,7 +392,7 @@ namespace SISGED.Server.Controllers
                 if (!string.IsNullOrWhiteSpace(u))
                 {
                     var solicitudBytes2 = Convert.FromBase64String(u);
-                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "apelaciones");
                     url2.Add(urlData2);
                 }
             }
@@ -411,7 +422,7 @@ namespace SISGED.Server.Controllers
                 if (!string.IsNullOrWhiteSpace(u))
                 {
                     var solicitudBytes2 = Convert.FromBase64String(u);
-                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicitudexpedientenotario");
                     url2.Add(urlData2);
                 }
             }
@@ -432,7 +443,7 @@ namespace SISGED.Server.Controllers
                 if (!string.IsNullOrWhiteSpace(u))
                 {
                     var solicitudBytes2 = Convert.FromBase64String(u);
-                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "dictamen");
                     url2.Add(urlData2);
                 }
             }

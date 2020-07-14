@@ -276,7 +276,7 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSD);
             return documentoSD;
         }
-        public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper)
+        public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Obtenemos los datos del expedientewrapper
             ConclusionFirmaDTO conclusionfirmaDTO = new ConclusionFirmaDTO();
@@ -299,6 +299,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoCF,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo = url2,
                 historialproceso = new List<Proceso>()
             };
             _documentos.InsertOne(documentoDF);
