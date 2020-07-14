@@ -82,7 +82,7 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("documentosolicbpn")]
-        public ActionResult<ExpedienteDocumentoBPNDTO> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<ExpedienteDocumentoBPNDTO>> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
         {
             /*
             SolicitudBPN documentoSolicBPN = new SolicitudBPN();
