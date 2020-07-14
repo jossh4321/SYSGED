@@ -22,5 +22,7 @@ namespace SISGED.Shared.DTOs
         public string cliente { get; set; }
         public DateTime fecharealizacion { get; set; }
         public string data { get; set; }
+        public List<string> Urlanexo { get; set; } = new List<string>();
+
     }
 }

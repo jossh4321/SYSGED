@@ -258,7 +258,7 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
             return documentoBPN;
         }
-        public SolicitudExpedicionFirma registrarSolicitudExpedicionFirma(SolicitudExpedicionFirma documentoSEF)
+        public SolicitudExpedicionFirma registrarSolicitudExpedicionFirma(SolicitudExpedicionFirma documentoSEF, List<string> url2)
         {
             _documentos.InsertOne(documentoSEF);
             return documentoSEF;

@@ -272,7 +272,17 @@ namespace SISGED.Server.Controllers
             SolicitudExpedicionFirmaDTO solicitudExpedicionFirmasDTO = new SolicitudExpedicionFirmaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             solicitudExpedicionFirmasDTO = JsonConvert.DeserializeObject<SolicitudExpedicionFirmaDTO>(json);
-
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in solicitudExpedicionFirmasDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicitudexpedicionfirma");
+                    url2.Add(urlData2);
+                }
+            }
             //Almacenamiento de archivo en repositorio y obtnecion de url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(solicitudExpedicionFirmasDTO.contenidoDTO.data))
@@ -297,9 +307,10 @@ namespace SISGED.Server.Controllers
                 contenido = contenidoSEF,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo=url2,
                 historialproceso = new List<Proceso>()
             };
-            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF);
+            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF, url2);
 
             //Creacion del objeto Expediente y registro en la coleccion Expedientes
             Cliente cliente = new Cliente()
