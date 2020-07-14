@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace SISGED.Server.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class NotificacionController : ControllerBase
     {
         private readonly NotificacionService _notificacion;
@@ -24,7 +26,7 @@ namespace SISGED.Server.Controllers
             return _notificacion.Get();
         }
         [HttpGet("notificacion")]
-        public ActionResult<List<Notificacion>> getnotificaciones()
+        public ActionResult<List<NotificacionDTO>> getnotificaciones()
         {
             return _notificacion.obtenernotificacion();
         }

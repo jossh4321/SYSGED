@@ -272,7 +272,23 @@
     {
         Console.WriteLine("INICIE: WorkEnvironment");
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
-        var httpResponse = await repository.Get <List<Documento>>("api/documentos");
+        var httpResponse = await repository.Get<List<NotificacionDTO>>("api/notificacion/notificacion");
+        //TAREA N°1 :                 
+        
+        /* if (!httpResponse.Error)
+        {
+            Console.WriteLine("TODO BIEN");
+            List<Documento> docs = new List<Documento>();
+            foreach (Documento doc in docs)
+            {
+                Console.WriteLine("valor: " + doc.id);
+            }
+        }
+        else
+        {
+            Console.WriteLine("algo mal");
+        }*/
+        /*var httpResponse = await repository.Get <List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {
             List<Documento> docs = new List<Documento>();
@@ -284,7 +300,7 @@
         else
         {
             Console.WriteLine("algo mal");
-        }
+        }*/
     }
     public void openDialog() { abrirDialogo = true; StateHasChanged(); }
     public void closeDialog() { abrirDialogo = false; }
