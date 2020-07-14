@@ -66,6 +66,8 @@
         <FluentValidator></FluentValidator>
         <MatTabGroup>
             <MatTab Label="Datos Generales">
+
+
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.nombrecliente)">
                     <MatTextField @bind-Value="@solicitudexpedicionfirma.nombrecliente" Class="text-field-style"
                                   Label="Nombre del cliente" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudexpedicionfirma))'></MatTextField>
@@ -95,7 +97,6 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.numerodocumento)">
                     <MatTextField @bind-Value="@solicitudexpedicionfirma.numerodocumento" Class="text-field-style"
                                   Label="N° de documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudexpedicionfirma))'></MatTextField>
@@ -108,6 +109,7 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
                     <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitud"

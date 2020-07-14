@@ -96,6 +96,7 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.numerodocumento)">
                     <MatTextField @bind-Value="@solicitudDenuncia.numerodocumento" Class="text-field-style"
                                   Label="Numero de Documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudDenuncia))'></MatTextField>

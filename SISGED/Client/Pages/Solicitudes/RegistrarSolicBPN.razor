@@ -3,7 +3,7 @@
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
-        background-color: #a6a6a6;
+        background-color: #A6A6A6;
         flex-basis: 100%;
         border-radius: 15px 15px 15px 15px;
         width: 100%;
@@ -70,7 +70,7 @@
         flex-direction: column;
         /*height: 700px;*/
         width: 100%;
-        background-color: #808080;
+        background-color: #A6A6A6;
         border-radius: 15px 15px 15px 15px;
     }
 
@@ -127,9 +127,8 @@
         <div class="modal-info-solicitudBPN">
             <MatTabGroup>
                 <MatTab Label="Solicitud">
-                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.actojuridico)">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.actojuridico" Class="text-field-style" Label="Acto Juridico"
-                                      @oninput='@(e => KeyUp(e,"nombrecliente",solicitudbpn))'></MatTextField>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.actojuridico" Class="text-field-style" Label="Acto Juridico"></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                             <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.actojuridico)" />
@@ -138,10 +137,12 @@
                             <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                             <span class="good-msg">Correcto</span>
                         </div>
+
                     </div>
+
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.direccionoficio)">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio" Class="text-field-style" Label="Direccion de Oficio"
-                                      @oninput='@(e => KeyUp(e,"nombrecliente",solicitudbpn))'></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.direccionoficio"  Class="text-field-style" Label="Direccion de Oficio"
+                                      @oninput='@(e => KeyUp(e,"direccionoficio",solicitudbpn))'></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                             <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.direccionoficio)" />
@@ -152,8 +153,8 @@
                         </div>
                     </div>
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.tipoprotocolo)">
-                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.tipoprotocolo" Class="text-field-style" Label="Tipo de Protocolo"
-                                      @oninput='@(e => KeyUp(e,"numerodocumento",solicitudbpn))'></MatTextField>
+                        <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.tipoprotocolo"  Class="text-field-style" Label="Tipo de Protocolo"
+                                      @oninput='@(e => KeyUp(e,"tipoprotocolo",solicitudbpn))'></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                             <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.tipoprotocolo)" />
@@ -163,12 +164,22 @@
                             <span class="good-msg">Correcto</span>
                         </div>
                     </div>
-
-                    <!--Copiar y pegar codigo del div para el for de Otorgantes-->
-
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.fecharealizacion)">
                         <MatDatePicker @bind-Value="@solicitudbpn.contenidoDTO.fecharealizacion" Format="MM/dd/yy" Class="text-field-style" Label="Fecha de Realizacion"></MatDatePicker>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudbpn.contenidoDTO.fecharealizacion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+
+
                     </div>
+                    <!--Copiar y pegar codigo del div para el for de Otorgantes-->
+
+                    
                 </MatTab>
                 <MatTab Label="Otorgantes">
                     <div class="contenedor-otorgantes">
