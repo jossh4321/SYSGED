@@ -29,7 +29,7 @@ namespace SISGED.Server.Services
         {
             return _documentos.Find(documento => true).ToList();
         }
-        public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper)
+        public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo OficioDesignacionNotarioDTO
             OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
@@ -56,6 +56,7 @@ namespace SISGED.Server.Services
                     observacion = null
                 },
                 estado = "creado",
+                urlanexo= url2,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
@@ -276,7 +277,7 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSD);
             return documentoSD;
         }
-        public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper)
+        public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Obtenemos los datos del expedientewrapper
             ConclusionFirmaDTO conclusionfirmaDTO = new ConclusionFirmaDTO();
@@ -299,6 +300,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoCF,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo = url2,
                 historialproceso = new List<Proceso>()
             };
             _documentos.InsertOne(documentoDF);
