@@ -56,10 +56,24 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("documentosbpn")]
-        public ActionResult<OficioBPN> RegistrarDocumentoOficioBPN(ExpedienteWrapper expediente)
+        public async Task<ActionResult<OficioBPN>> RegistrarDocumentoOficioBPN(ExpedienteWrapper expediente)
         {
+            OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
+            var json = JsonConvert.SerializeObject(expediente.documento);
+            oficioBPNDTO = JsonConvert.DeserializeObject<OficioBPNDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in oficioBPNDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "oficiobpn");
+                    url2.Add(urlData2);
+                }
+            }
             OficioBPN documentoOficioBPN = new OficioBPN();
-            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente);
+            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente, url2);
             return documentoOficioBPN;
         }
 

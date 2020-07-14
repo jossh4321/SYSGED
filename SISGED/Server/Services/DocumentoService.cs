@@ -188,7 +188,7 @@ namespace SISGED.Server.Services
             return solicitudBPN;
             */
         }
-        public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)
+        public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Obtenemos los datos del expedientewrapper
             OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
@@ -221,6 +221,7 @@ namespace SISGED.Server.Services
                 },
                 estado = "Creado",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo=url2,
                 historialproceso = new List<Proceso>()
             };
             _documentos.InsertOne(documentoBPN);
