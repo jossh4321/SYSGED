@@ -29,7 +29,7 @@ namespace SISGED.Server.Services
         {
             return _documentos.Find(documento => true).ToList();
         }
-        public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper)
+        public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo OficioDesignacionNotarioDTO
             OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
@@ -56,6 +56,7 @@ namespace SISGED.Server.Services
                     observacion = null
                 },
                 estado = "creado",
+                urlanexo= url2,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };

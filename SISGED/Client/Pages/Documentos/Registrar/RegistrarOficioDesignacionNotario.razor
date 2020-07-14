@@ -127,6 +127,15 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -143,6 +152,7 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Notario> notariosseleccionados = new List<Notario>();
     public Notario notarioselect;
+    private string imagenTemporal;
     [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
     private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
     private EditContext _editContext;
@@ -150,7 +160,17 @@
 
     protected override void OnInitialized()
     {
+        oficiodesignacion.contenidoDTO.Urlanexo = new List<string>();
+
         _editContext = new EditContext(oficiodesignacion);
+        foreach (string u in oficiodesignacion.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal = u;
+                oficiodesignacion.contenidoDTO.Urlanexo = null;
+            }
+        }
     }
     private async Task<IEnumerable<Notario>> match(string searchtext)
     {
@@ -164,6 +184,12 @@
             return httpResponse.Response;
         }
     }
+
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        oficiodesignacion.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
     void KeyUp(ChangeEventArgs e, string memberName, object val)
     {
         var property = val.GetType().GetProperty(memberName);

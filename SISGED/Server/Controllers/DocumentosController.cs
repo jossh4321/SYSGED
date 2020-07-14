@@ -34,10 +34,24 @@ namespace SISGED.Server.Controllers
 
         #region Registros de Documentos
         [HttpPost("documentoodn")]
-        public ActionResult<OficioDesignacionNotario> RegistrarDocumentoODN(ExpedienteWrapper expediente)
+        public async Task<ActionResult<OficioDesignacionNotario>> RegistrarDocumentoODN(ExpedienteWrapper expediente)
         {
+            OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
+            var json = JsonConvert.SerializeObject(expediente.documento);
+            oficioDesignacionNotarioDTO = JsonConvert.DeserializeObject<OficioDesignacionNotarioDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in oficioDesignacionNotarioDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "oficiodesignacionnotario");
+                    url2.Add(urlData2);
+                }
+            }
             OficioDesignacionNotario documentoODN = new OficioDesignacionNotario();
-             documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente);
+             documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente, url2);
             return documentoODN;
         }
 
