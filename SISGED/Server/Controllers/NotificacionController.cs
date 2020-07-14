@@ -26,9 +26,9 @@ namespace SISGED.Server.Controllers
             return _notificacion.Get();
         }
         [HttpGet("notificacion")]
-        public ActionResult<List<NotificacionDTO>> getnotificaciones()
+        public ActionResult<List<NotificacionDTO>> getnotificaciones([FromQuery] string id)
         {
-            return _notificacion.obtenernotificacion();
+            return _notificacion.obtenernotificacion(id);
         }
     }
 }

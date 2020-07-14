@@ -21,7 +21,7 @@
     }
 </style>
 
-<div style="width:1050px;position:fixed;">
+<div style="width:1050px;">
     <MatButton OnClick="@OpenDialogRegistrar" Unelevated="true">Registrar Solicitud</MatButton>
     <MatTable style="background-color:aliceblue;color:darkslateblue;border-radius:40px;text-align:center" Items="@cars" class="mat-elevation-z5">
         <MatTableHeader>
@@ -45,6 +45,7 @@
             </td>
         </MatTableRow>
     </MatTable>
+    <MatButton OnClick="@pruebanotificacion">Prueba Notificacion</MatButton>
 </div>
 
 
@@ -159,98 +160,125 @@
 
 @code {
 
-    string TipoSolicitud;
+        string TipoSolicitud;
 
 
-    bool dialogPrincipal = false;
+        bool dialogPrincipal = false;
 
-    bool dialogIsOpen_Registrar = false;
+        bool dialogIsOpen_Registrar = false;
 
-    bool dialogIsOpen_Modificar = false;
-    bool dialogIsOpen_VerDetalles = false;
-    bool dialogIsOpen_Cancelar = false;
+        bool dialogIsOpen_Modificar = false;
+        bool dialogIsOpen_VerDetalles = false;
+        bool dialogIsOpen_Cancelar = false;
 
-    bool Registrar_SolicDenuncia = false;
-    bool Registrar_SolicBPN = false;
-    bool Registrar_SolicEF = false;
-    [CascadingParameter]
-    MainLayout layout { get; set;  }
-    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-    void CancelButton()
-    {
-        dialogPrincipal = !dialogPrincipal;
-
-        Registrar_SolicDenuncia = false;
-        Registrar_SolicBPN = false;
-        Registrar_SolicEF = false;
-    }
-
-    void OkEleccionSolic()
-    {
-        if (dialogPrincipal)
+        bool Registrar_SolicDenuncia = false;
+        bool Registrar_SolicBPN = false;
+        bool Registrar_SolicEF = false;
+        [CascadingParameter]
+        MainLayout layout { get; set;  }
+        [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+        void CancelButton()
         {
+            dialogPrincipal = !dialogPrincipal;
 
-            dialogIsOpen_Registrar = true;
-            if (TipoSolicitud == "Solic_ExpedicionFirma")
+            Registrar_SolicDenuncia = false;
+            Registrar_SolicBPN = false;
+            Registrar_SolicEF = false;
+        }
+
+        void OkEleccionSolic()
+        {
+            if (dialogPrincipal)
             {
-                Registrar_SolicEF = true;
+
+                dialogIsOpen_Registrar = true;
+                if (TipoSolicitud == "Solic_ExpedicionFirma")
+                {
+                    Registrar_SolicEF = true;
+                }
+                else if (TipoSolicitud == "Solic_Denuncia")
+                {
+                    Registrar_SolicDenuncia = true;
+                }
+                else if (TipoSolicitud == "Solic_BPN")
+                {
+                    Registrar_SolicBPN = true;
+                }
+                dialogPrincipal = false;
+
             }
-            else if (TipoSolicitud == "Solic_Denuncia")
-            {
-                Registrar_SolicDenuncia = true;
-            }
-            else if (TipoSolicitud == "Solic_BPN")
-            {
-                Registrar_SolicBPN = true;
-            }
-            dialogPrincipal = false;
 
         }
 
-    }
-
-    void OpenDialogRegistrar()
-    {
-        dialogPrincipal = true;
-        //dialogIsOpen_Registrar = true;
-        //navigationManager.NavigateTo("solicitud/crear");
-    }
-    void OpenDialogModificar()
-    {
-        dialogIsOpen_Modificar = true;
-        ExpedienteBandejaDTO expedienteEjemplo = new ExpedienteBandejaDTO();
-        expedienteEjemplo.tipo = "EjemploExpediente";
-        expedienteEjemplo.cliente = new Cliente()
+        void OpenDialogRegistrar()
         {
-            nombre = "usuario ejemplo",
-            tipodocumento = "DNI",
-            numerodocumento = "123456789"
-        };
-        layout.Send("sebastian", expedienteEjemplo);
-        //navigationManager.NavigateTo("solicitud/crear");
-    }
-    void OpenDialogVerDetalles()
-    {
-        dialogIsOpen_VerDetalles = true;
-        //navigationManager.NavigateTo("solicitud/crear");
-    }
-    void OpenDialogCancelar()
-    {
-        dialogIsOpen_Cancelar = true;
-        //navigationManager.NavigateTo("solicitud/crear");
-    }
+            dialogPrincipal = true;
+            //dialogIsOpen_Registrar = true;
+            //navigationManager.NavigateTo("solicitud/crear");
+        }
+        void OpenDialogModificar()
+        {
+            dialogIsOpen_Modificar = true;
+            ExpedienteBandejaDTO expedienteEjemplo = new ExpedienteBandejaDTO();
+            expedienteEjemplo.tipo = "EjemploExpediente";
+            expedienteEjemplo.cliente = new Cliente()
+            {
+                nombre = "usuario ejemplo",
+                tipodocumento = "DNI",
+                numerodocumento = "123456789"
+            };
+            layout.Send("sebastian", expedienteEjemplo);
+            //navigationManager.NavigateTo("solicitud/crear");
+        }
 
-    void OkClick()
-    {
-        dialogIsOpen_Registrar = false;
+        void pruebanotificacion()
+        {
+            NotificacionDTO notificaciondto = new NotificacionDTO();
+            notificaciondto.id = "qwertyuiop";
+            notificaciondto.titulo = "Prueba de notificacion";
+            notificaciondto.cuerpo = "Se seubieron Commits con Conflictos!!!";
+            notificaciondto.estado = "novisto";
+            notificaciondto.idemisor = new Usuario()
+            {
+                id="poiuytrewq",
+                usuario="Ronald Mancilla"
+            };
+            notificaciondto.idemisor = new Usuario()
+            {
+                id = "poiuytrewq",
+                usuario = "Gloria Llerena"
+            };
+            notificaciondto.fechaemision = DateTime.Now;
+            notificaciondto.iddocumento = new Documento()
+            {
+                id="lkjhgfdsa",
+                tipo="Expedicion Firma",
+            };
+            layout.SendNotificacion("sebastian", notificaciondto);
+        }
 
-        dialogIsOpen_Modificar = false;
-        dialogIsOpen_VerDetalles = false;
-        dialogIsOpen_Cancelar = false;
+        void OpenDialogVerDetalles()
+        {
+            dialogIsOpen_VerDetalles = true;
+            //navigationManager.NavigateTo("solicitud/crear");
+        }
+        void OpenDialogCancelar()
+        {
+            dialogIsOpen_Cancelar = true;
+            //navigationManager.NavigateTo("solicitud/crear");
+        }
+
+        void OkClick()
+        {
+            dialogIsOpen_Registrar = false;
+
+            dialogIsOpen_Modificar = false;
+            dialogIsOpen_VerDetalles = false;
+            dialogIsOpen_Cancelar = false;
 
 
-        TipoSolicitud = "nulo";
-    }
+            TipoSolicitud = "nulo";
+        }
 
     public class Car
     {

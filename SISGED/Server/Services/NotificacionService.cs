@@ -25,11 +25,15 @@ namespace SISGED.Server.Services
             return _notificaciones.Find<Notificacion>(notifiacion => true).ToList();
         }
 
-        public List<NotificacionDTO> obtenernotificacion()
+        public List<NotificacionDTO> obtenernotificacion(string id)
         {
 
             var match = new BsonDocument("$match",
-                    new BsonDocument("estado", "novisto"));
+                    new BsonDocument
+                    {
+                        { "estado", "novisto" },
+                        { "idreceptor", id }
+                    });
             //Agregacion 1
             BsonArray subpipeline1 = new BsonArray();
             subpipeline1.Add(
