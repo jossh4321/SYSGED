@@ -130,7 +130,16 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
+                
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
+                </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -273,10 +282,25 @@
     };
 
     private OficioBPNDTO documento = new OficioBPNDTO();
+    private string imagenTemporal;
     private EditContext _editContext;
     protected override void OnInitialized()
     {
+        documento.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(documento);
+        foreach (string u in documento.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal = u;
+                documento.contenidoDTO.Urlanexo = null;
+            }
+        }
+    }
+
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        documento.contenidoDTO.Urlanexo.Add(imagenbase64);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)

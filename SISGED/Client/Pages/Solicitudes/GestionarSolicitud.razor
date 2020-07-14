@@ -26,9 +26,9 @@
     <MatButton OnClick="@OpenDialogRegistrar" Unelevated="true">Registrar Solicitud</MatButton>
     <MatTable style="background-color:aliceblue;color:darkslateblue;border-radius:40px;text-align:center" Items="docs" class="mat-elevation-z5">
         <MatTableHeader>
-            <th>id</th>
             <th>Tipo de Protocolo Notarial</th>
             <th>Estado</th>
+            <th>Fecha</th>
             <th>Funciones</th>
         </MatTableHeader>
         <MatTableRow>
@@ -44,22 +44,34 @@
             {
                 tipo_front = "Denuncia";
             }
-            <td>@context.id</td>
-            <td bind="@TipoSolicitud2">@tipo_front</td>
-            <td>@context.estado</td>
-            <td>
-                @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado")
-                {
-                    activator = true;
-                }
+            @{
+                int index = context.historialcontenido.Count;
+                <td bind="@TipoSolicitud2">@tipo_front</td>
+                <td>@context.estado</td>
+                @if (index > 0) {
+                    <td>@context.historialcontenido[index - 1].fechamodificacion</td>}
                 else
                 {
-                    activator = false;
+                    <td>No hay historial disponible</td>
                 }
-                <MatButton Icon="@MatIconNames.Description" OnClick="@OpenDialogVerDetalles">Ver Detalles</MatButton>
-                <MatButton Icon="@MatIconNames.Build" Disabled="@activator" OnClick="@OpenDialogModificar">Modificar</MatButton>
-                <MatButton Icon="@MatIconNames.Cancel_presentation" Disabled="@activator" OnClick="@OpenDialogCancelar">Cancelar</MatButton>
-            </td>
+                <td>
+                    @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido")
+                    {
+                        activator = true;
+                    }
+                    else
+                    {
+                        activator = false;
+                    }
+                    <MatButton Icon="@MatIconNames.Description" OnClick="@(()=>OpenDialogVerDetalles(context.id))">Ver Detalles</MatButton>
+                    <MatButton Icon="@MatIconNames.Build" Disabled="@activator" OnClick="@OpenDialogModificar">Modificar</MatButton>
+                    <MatButton Icon="@MatIconNames.Cancel_presentation" Disabled="@activator" OnClick="@OpenDialogCancelar">Cancelar</MatButton>
+                    @if (context.estado == "emitido")
+                    {
+                        <MatButton Icon="@MatIconNames.Payment" Disabled="@activator" >Pagar</MatButton>
+                    }
+                </td>
+            }
 
 
 
@@ -280,7 +292,7 @@
         dialogIsOpen_Modificar = true;
         //navigationManager.NavigateTo("solicitud/crear");
     }
-    void OpenDialogVerDetalles()
+    void OpenDialogVerDetalles(string id)
     {  
         dialogIsOpen_VerDetalles = true;
         //navigationManager.NavigateTo("solicitud/crear");
