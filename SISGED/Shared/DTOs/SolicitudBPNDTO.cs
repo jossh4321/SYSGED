@@ -15,6 +15,8 @@ namespace SISGED.Shared.DTOs
         public List<string> otorgantes { get; set; } = new List<String>();
         public DateTime fecharealizacion { get; set; }
         public List<Otorgantelista> otorganteslista { get; set; } = new List<Otorgantelista>();
+        public List<string> Urlanexo { get; set; } = new List<string>();
+
     }
     public class SolicitudBPNDTO : Documento
     {

@@ -95,7 +95,7 @@ namespace SISGED.Server.Services
             return documentoODN;
         }
 
-        public SolicitudBPN registrarSolicitudBPN(SolicitudBPN expedienteWrapper)
+        public SolicitudBPN registrarSolicitudBPN(SolicitudBPN expedienteWrapper, List<string> url2)
         {
             _documentos.InsertOne(expedienteWrapper);
             return expedienteWrapper;

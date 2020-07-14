@@ -78,7 +78,7 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("documentosolicbpn")]
-        public ActionResult<SolicitudBPN> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<SolicitudBPN>> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
         {
             /*
             SolicitudBPN documentoSolicBPN = new SolicitudBPN();
@@ -91,7 +91,17 @@ namespace SISGED.Server.Controllers
             ContenidoSolicitudBPNDTO listaotor = new ContenidoSolicitudBPNDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             documento = JsonConvert.DeserializeObject<SolicitudBPNDTO>(json);
-
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in documento.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicitudbpn");
+                    url2.Add(urlData2);
+                }
+            }
             //Solo para registrar nombre de otorgantes
             List<String> listadeotorgantes = new List<string>();
             foreach (Otorgantelista obs in documento.contenidoDTO.otorganteslista)
@@ -122,10 +132,11 @@ namespace SISGED.Server.Controllers
                 tipo = "SolicitudBPN",
                 contenido = contenidoSolicitudBPN,
                 estado = "pendiente",
+                urlanexo = url2,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
-            solicitudBPN = _documentoservice.registrarSolicitudBPN(solicitudBPN);
+            solicitudBPN = _documentoservice.registrarSolicitudBPN(solicitudBPN, url2);
             //_documentos.InsertOne(solicitudBPN);
             //Pegar aqui lo que se cortó
 
