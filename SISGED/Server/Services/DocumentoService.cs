@@ -810,7 +810,7 @@ namespace SISGED.Server.Services
                 titulo = docSolicitudExpedicionFirma.contenido.titulo,
                 descripcion = docSolicitudExpedicionFirma.contenido.descripcion,
                 fecharealizacion = docSolicitudExpedicionFirma.contenido.fecharealizacion,
-                // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
+                
 
 
             };
@@ -836,7 +836,7 @@ namespace SISGED.Server.Services
                 titulo = docSolicitudDenuncia.contenido.titulo,
                 descripcion = docSolicitudDenuncia.contenido.descripcion,
                 fechaentrega = docSolicitudDenuncia.contenido.fechaentrega,
-                // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
+                
 
 
             };
@@ -863,9 +863,10 @@ namespace SISGED.Server.Services
                 tipoprotocolo = docSolicitudBPN.contenido.tipoprotocolo,
 
                 fecharealizacion = docSolicitudBPN.contenido.fecharealizacion,
-               // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
-               
-                
+                //Poner lista de objetos
+                // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
+
+
             };
             return solicitudbpnDTO;
         }
