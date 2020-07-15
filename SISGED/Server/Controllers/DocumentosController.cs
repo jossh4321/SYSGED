@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using SISGED.Server.Helpers;
 using SISGED.Server.Services;
@@ -17,14 +18,17 @@ namespace SISGED.Server.Controllers
     {
         private readonly DocumentoService _documentoservice;
         private readonly ExpedienteService _expedienteservice;
+        private readonly BandejaService _bandejaService;
         private readonly EscriturasPublicasService _escrituraspublicasservice;
         private readonly IFileStorage _almacenadorDeDocs;
-        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, ExpedienteService expedienteservice, EscriturasPublicasService escrituraspublicasservice)
+        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, 
+            ExpedienteService expedienteservice, EscriturasPublicasService escrituraspublicasservice, BandejaService bandejaService)
         {
             _documentoservice = documentoservice;
             _almacenadorDeDocs = almacenadorDeDocs;
             _expedienteservice = expedienteservice;
             _escrituraspublicasservice = escrituraspublicasservice;
+            _bandejaService = bandejaService;
         }
         [HttpGet]
         public ActionResult<List<Documento>> Get()
@@ -34,23 +38,51 @@ namespace SISGED.Server.Controllers
 
         #region Registros de Documentos
         [HttpPost("documentoodn")]
-        public ActionResult<OficioDesignacionNotario> RegistrarDocumentoODN(ExpedienteWrapper expediente)
+        public async Task<ActionResult<OficioDesignacionNotario>> RegistrarDocumentoODN(ExpedienteWrapper expediente)
         {
+            OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
+            var json = JsonConvert.SerializeObject(expediente.documento);
+            oficioDesignacionNotarioDTO = JsonConvert.DeserializeObject<OficioDesignacionNotarioDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in oficioDesignacionNotarioDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "oficiodesignacionnotario");
+                    url2.Add(urlData2);
+                }
+            }
             OficioDesignacionNotario documentoODN = new OficioDesignacionNotario();
-             documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente);
+             documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente, url2);
             return documentoODN;
         }
 
         [HttpPost("documentosbpn")]
-        public ActionResult<OficioBPN> RegistrarDocumentoOficioBPN(ExpedienteWrapper expediente)
+        public async Task<ActionResult<OficioBPN>> RegistrarDocumentoOficioBPN(ExpedienteWrapper expediente)
         {
+            OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
+            var json = JsonConvert.SerializeObject(expediente.documento);
+            oficioBPNDTO = JsonConvert.DeserializeObject<OficioBPNDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in oficioBPNDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "oficiobpn");
+                    url2.Add(urlData2);
+                }
+            }
             OficioBPN documentoOficioBPN = new OficioBPN();
-            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente);
+            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente, url2);
             return documentoOficioBPN;
         }
 
         [HttpPost("documentosolicbpn")]
-        public ActionResult<SolicitudBPN> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<ExpedienteDocumentoBPNDTO>> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
         {
             /*
             SolicitudBPN documentoSolicBPN = new SolicitudBPN();
@@ -63,6 +95,23 @@ namespace SISGED.Server.Controllers
             ContenidoSolicitudBPNDTO listaotor = new ContenidoSolicitudBPNDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             documento = JsonConvert.DeserializeObject<SolicitudBPNDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in documento.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicitudbpn");
+                    url2.Add(urlData2);
+                }
+            }
+            //Solo para registrar nombre de otorgantes
+            List<String> listadeotorgantes = new List<string>();
+            foreach (Otorgantelista obs in documento.contenidoDTO.otorganteslista)
+            {
+                listadeotorgantes.Add(obs.nombre);
+            }
 
             //Creacionde Obj ContenidoSolicitudBPN y almacenamiento en la coleccion documento
             ContenidoSolicitudBPN contenidoSolicitudBPN = new ContenidoSolicitudBPN()
@@ -73,7 +122,9 @@ namespace SISGED.Server.Controllers
                 idnotario = documento.contenidoDTO.idnotario.id,
                 actojuridico = documento.contenidoDTO.actojuridico,
                 tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
-                otorganteslista = documento.contenidoDTO.otorganteslista,
+                otorgantes = listadeotorgantes,
+                //Lista de objetos
+                //otorganteslista = documento.contenidoDTO.otorganteslista,
                 fecharealizacion = DateTime.Now,
                 //url = "ninguna"
             };
@@ -85,10 +136,11 @@ namespace SISGED.Server.Controllers
                 tipo = "SolicitudBPN",
                 contenido = contenidoSolicitudBPN,
                 estado = "pendiente",
+                urlanexo = url2,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
-            solicitudBPN = _documentoservice.registrarSolicitudBPN(solicitudBPN);
+            solicitudBPN = _documentoservice.registrarSolicitudBPN(solicitudBPN, url2);
             //_documentos.InsertOne(solicitudBPN);
             //Pegar aqui lo que se cortó
 
@@ -118,9 +170,10 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
-
+            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id,solicitudBPN.id,"josue");
+            
             //actualizacion de bandeja de salida del usuario
-            _documentoservice.updateBandejaSalida(expediente.id, solicitudBPN.id, expedienteWrapper.idusuarioactual);
+            //_documentoservice.updateBandejaSalida(expediente.id, solicitudBPN.id, expedienteWrapper.idusuarioactual);
 
             //Actualizacion de bandeja de salida de usuario
             /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
@@ -134,19 +187,32 @@ namespace SISGED.Server.Controllers
                Builders<Bandeja>.Update.PullFilter("bandejaentrada",
                  Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
             _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
-            return solicitudBPN;
+            ExpedienteDocumentoBPNDTO expedienteDocumentoBPNDTO = new ExpedienteDocumentoBPNDTO();
+            expedienteDocumentoBPNDTO.expediente = expediente;
+            expedienteDocumentoBPNDTO.solicitduBPN = solicitudBPN;
+            return expedienteDocumentoBPNDTO;
 
         }
 
         [HttpPost("documentosd")]
         //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
-        public async Task<ActionResult<SolicitudDenunciaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<ExpedienteDocumentoSDDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
             //conversion de Object a Tipo especifico
             SolicitudDenunciaDTO documento = new SolicitudDenunciaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             documento = JsonConvert.DeserializeObject<SolicitudDenunciaDTO>(json);
-
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in documento.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicituddenuncia");
+                    url2.Add(urlData2);
+                }
+            }
             //subida de archivo a repositorio y retorno de url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(documento.contenidoDTO.urldata))
@@ -165,17 +231,17 @@ namespace SISGED.Server.Controllers
                 fechaentrega = DateTime.Now,
                 url = urlData
             };
-            
+
             SolicitudDenuncia solicitudDenuncia = new SolicitudDenuncia()
             {
                 tipo = "SolicitudDenuncia",
                 contenido = contenidoSolicitudDenuncia,
-                estado = "creado",
+                estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo = url2,
                 historialproceso = new List<Proceso>(),
-
             };
-            solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia);
+            solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia, url2);
 
             //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
             Cliente cliente = new Cliente()
@@ -203,9 +269,12 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
-
+            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, solicitudDenuncia.id, "josue");
+            ExpedienteDocumentoSDDTO expedienteDocumentoEFNDTO = new ExpedienteDocumentoSDDTO();
+            expedienteDocumentoEFNDTO.expediente = expediente;
+            expedienteDocumentoEFNDTO.solicitudD = solicitudDenuncia;
             //actualizacion de bandeja de salida del usuario
-            _documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
+            //_documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
 
             //creacion de obj ExpedienteBandejaDTO
             /*DocumentoDTO doc = new DocumentoDTO();
@@ -224,18 +293,28 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.tipo = expediente.tipo;
 
             return bandejaexpdto;*/
-            return documento;
+            return expedienteDocumentoEFNDTO;
         }
 
         [HttpPost("documentosef")]
         //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
-        public async Task<ActionResult<SolicitudExpedicionFirmaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<ExpedienteDocumentoEFDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
         {
             //Conversion de Obj a tipo SolicitudExpedicionFirmaDTO
             SolicitudExpedicionFirmaDTO solicitudExpedicionFirmasDTO = new SolicitudExpedicionFirmaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
             solicitudExpedicionFirmasDTO = JsonConvert.DeserializeObject<SolicitudExpedicionFirmaDTO>(json);
-
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in solicitudExpedicionFirmasDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicitudexpedicionfirma");
+                    url2.Add(urlData2);
+                }
+            }
             //Almacenamiento de archivo en repositorio y obtnecion de url
             string urlData = "";
             if (!string.IsNullOrWhiteSpace(solicitudExpedicionFirmasDTO.contenidoDTO.data))
@@ -260,9 +339,10 @@ namespace SISGED.Server.Controllers
                 contenido = contenidoSEF,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo=url2,
                 historialproceso = new List<Proceso>()
             };
-            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF);
+            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF, url2);
 
             //Creacion del objeto Expediente y registro en la coleccion Expedientes
             Cliente cliente = new Cliente()
@@ -290,6 +370,12 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
+            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, documentoSEF.id, "josue");
+            ExpedienteDocumentoEFDTO expedienteDocumentoEFNDTO = new ExpedienteDocumentoEFDTO();
+            expedienteDocumentoEFNDTO.expediente = expediente;
+            expedienteDocumentoEFNDTO.solicitudEF = documentoSEF;
+            return expedienteDocumentoEFNDTO;
+
 
             //Actualizacion de la bandeja de salida del usuario con el expediente
             ///_documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, expedientewrapper.idusuarioactual);
@@ -311,21 +397,36 @@ namespace SISGED.Server.Controllers
             bandejaexpdto.tipo = expediente.tipo;
             
             return bandejaexpdto;*/
-            return solicitudExpedicionFirmasDTO;
         }
 
 
         [HttpPost("documentocf")]
-        public ActionResult<ConclusionFirma> RegistrarDocumentoCF(ExpedienteWrapper expediente)
+        public async Task<ActionResult<ConclusionFirma>> RegistrarDocumentoCF(ExpedienteWrapper expediente)
         {
             ConclusionFirmaDTO conclusionfirmaDTO = new ConclusionFirmaDTO();
             var json = JsonConvert.SerializeObject(expediente.documento);
             conclusionfirmaDTO = JsonConvert.DeserializeObject<ConclusionFirmaDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in conclusionfirmaDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "conclusionfirma");
+                    url2.Add(urlData2);
+                }
+            }
+
+            ExpedienteDTO expedientePorConsultar = _expedienteservice.getById(expediente.idexpediente);
+            DocumentoExpediente documentosolicitud = expedientePorConsultar.documentos.Find(x => x.tipo == "SolicitudExpedicionFirma");
+
             ConclusionFirma documentoCF = new ConclusionFirma();
-            documentoCF = _documentoservice.registrarConclusionFirmaE(expediente);
+            documentoCF = _documentoservice.registrarConclusionFirmaE(expediente, url2, documentosolicitud.iddocumento);
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
+
 
         [HttpPost("documentoad")]
         public async Task<ActionResult<AperturamientoDisciplinario>> RegistrarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedientewrapper)
@@ -341,7 +442,7 @@ namespace SISGED.Server.Controllers
                 if (!string.IsNullOrWhiteSpace(u))
                 {
                     var solicitudBytes2 = Convert.FromBase64String(u);
-                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "aperturamientodiciplinario");
                     url2.Add(urlData2);
                 }
             }
@@ -371,7 +472,7 @@ namespace SISGED.Server.Controllers
                 if (!string.IsNullOrWhiteSpace(u))
                 {
                     var solicitudBytes2 = Convert.FromBase64String(u);
-                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "apelaciones");
                     url2.Add(urlData2);
                 }
             }
@@ -401,7 +502,7 @@ namespace SISGED.Server.Controllers
                 if (!string.IsNullOrWhiteSpace(u))
                 {
                     var solicitudBytes2 = Convert.FromBase64String(u);
-                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicitudexpedientenotario");
                     url2.Add(urlData2);
                 }
             }
@@ -422,7 +523,7 @@ namespace SISGED.Server.Controllers
                 if (!string.IsNullOrWhiteSpace(u))
                 {
                     var solicitudBytes2 = Convert.FromBase64String(u);
-                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "dictamen");
                     url2.Add(urlData2);
                 }
             }
@@ -475,7 +576,10 @@ namespace SISGED.Server.Controllers
                 }
             }
 
-            return _documentoservice.registrarResultadoBPN(resultadoBPNDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+            ExpedienteDTO expedientePorConsultar = _expedienteservice.getById(expedientewrapper.idexpediente);
+            DocumentoExpediente documentosolicitud =  expedientePorConsultar.documentos.Find(x => x.tipo == "SolicitudBPN");
+
+            return _documentoservice.registrarResultadoBPN(resultadoBPNDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada, documentosolicitud.iddocumento);
         }
         #endregion
 
@@ -497,6 +601,13 @@ namespace SISGED.Server.Controllers
         }
 
         //obteniendo documentos
+
+        [HttpGet("documentosolicitudes")]
+        public async Task<List<Documento>> obtenerSolicitudes()
+        {
+            return _documentoservice.obtenerSolicitudes();
+        }
+       
         [HttpGet("documentoodn")]
         public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)
         {

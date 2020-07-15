@@ -1,4 +1,5 @@
 ﻿@page "/gestionarsolicitud"
+@inject IRepository repository
 @layout MainLayout
 @inject NavigationManager navigationManager
 
@@ -23,26 +24,57 @@
 
 <div style="width:1050px;position:fixed;">
     <MatButton OnClick="@OpenDialogRegistrar" Unelevated="true">Registrar Solicitud</MatButton>
-    <MatTable style="background-color:aliceblue;color:darkslateblue;border-radius:40px;text-align:center" Items="@cars" class="mat-elevation-z5">
+    <MatTable style="background-color:aliceblue;color:darkslateblue;border-radius:40px;text-align:center" Items="docs" class="mat-elevation-z5">
         <MatTableHeader>
-            <th>Nombre</th>
-            <th>Número de Documento</th>
             <th>Tipo de Protocolo Notarial</th>
             <th>Estado</th>
             <th>Fecha</th>
             <th>Funciones</th>
         </MatTableHeader>
         <MatTableRow>
-            <td>@context.Name</td>
-            <td>@String.Format("${0:f2}", @context.Price)</td>
-            <td>@context.Horsepower</td>
-            <td>asdasd</td>
-            <td>asdasd</td>
-            <td>
-                <MatButton Icon="@MatIconNames.Build" OnClick="@OpenDialogModificar">Modificar</MatButton>
-                <MatButton Icon="@MatIconNames.Description" OnClick="@OpenDialogVerDetalles">Ver Detalles</MatButton>
-                <MatButton Icon="@MatIconNames.Cancel_presentation" OnClick="@OpenDialogCancelar">Cancelar</MatButton>
-            </td>
+            @if (@context.tipo == "SolicitudBPN")
+            {
+                tipo_front = "Busqueda de Protocolo Notarial";
+            }
+            @if (@context.tipo == "SolicitudExpedicionFirma")
+            {
+                tipo_front = "Expedicion de Firma";
+            }
+            @if (@context.tipo == "SolicitudDenuncia")
+            {
+                tipo_front = "Denuncia";
+            }
+            @{
+                int index = context.historialcontenido.Count;
+                <td bind="@TipoSolicitud2">@tipo_front</td>
+                <td>@context.estado</td>
+                @if (index > 0) {
+                    <td>@context.historialcontenido[index - 1].fechamodificacion</td>}
+                else
+                {
+                    <td>No hay historial disponible</td>
+                }
+                <td>
+                    @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido")
+                    {
+                        activator = true;
+                    }
+                    else
+                    {
+                        activator = false;
+                    }
+                    <MatButton Icon="@MatIconNames.Description" OnClick="@(()=>OpenDialogVerDetalles(context.id))">Ver Detalles</MatButton>
+                    <MatButton Icon="@MatIconNames.Build" Disabled="@activator" OnClick="@OpenDialogModificar">Modificar</MatButton>
+                    <MatButton Icon="@MatIconNames.Cancel_presentation" Disabled="@activator" OnClick="@OpenDialogCancelar">Cancelar</MatButton>
+                    @if (context.estado == "emitido")
+                    {
+                        <MatButton Icon="@MatIconNames.Payment" Disabled="@activator" >Pagar</MatButton>
+                    }
+                </td>
+            }
+
+
+
         </MatTableRow>
     </MatTable>
 </div>
@@ -86,14 +118,25 @@
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
     <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
-    <MatDialogContent>
-        @if (TipoSolicitud == "Solic_ExpedicionFirma")
-        {<RegistrarSolicExpedicionF />}
-        @if (TipoSolicitud == "Solic_Denuncia")
-        {<RegistrarSolicDenuncias />}
-        @if (TipoSolicitud == "Solic_BPN")
-        {<RegistrarSolicBPN />}
-    </MatDialogContent>
+    @if (TipoSolicitud2 == "Expedicion de Firma")
+    {
+        <MatDialogContent>
+            <RegistrarSolicExpedicionF />
+        </MatDialogContent>
+    }
+    @if (TipoSolicitud2 == "Denuncia")
+    {
+        <MatDialogContent>
+            <RegistrarSolicDenuncias />
+        </MatDialogContent>
+    }
+    @if (TipoSolicitud2 == "Busqueda de Protocolo Notarial")
+    {
+        <MatDialogContent>
+            <RegistrarSolicBPN />
+        </MatDialogContent>
+    }
+
     <MatDialogActions>
         <MatButton OnClick="@OkClick">Cancelar</MatButton>
     </MatDialogActions>
@@ -101,29 +144,24 @@
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_VerDetalles">
     <MatDialogTitle>Detalles de la Solicitud</MatDialogTitle>
-    <MatDialogContent>
-        @if (TipoSolicitud == "Solic_ExpedicionFirma")
-        {<RegistrarSolicExpedicionF />}
-        @if (TipoSolicitud == "Solic_Denuncia")
-        {<RegistrarSolicDenuncias />}
-        @if (TipoSolicitud == "Solic_BPN")
-        { }
-    </MatDialogContent>
-    <MatDialogActions>
-        <MatButton OnClick="@OkClick">Cancelar</MatButton>
-    </MatDialogActions>
-</MatDialog>
-
-<MatDialog @bind-IsOpen="@dialogIsOpen_Cancelar">
-    <MatDialogTitle>Cancelar Solicitud</MatDialogTitle>
-    <MatDialogContent>
-        @if (TipoSolicitud == "Solic_ExpedicionFirma")
-        {<RegistrarSolicExpedicionF />}
-        @if (TipoSolicitud == "Solic_Denuncia")
-        {<RegistrarSolicDenuncias />}
-        @if (TipoSolicitud == "Solic_BPN")
-        { }
-    </MatDialogContent>
+    @if (TipoSolicitud2 == "Expedicion de Firma")
+    {
+        <MatDialogContent>
+            <RegistrarSolicExpedicionF />
+        </MatDialogContent>
+    }
+    @if (TipoSolicitud2 == "Denuncia")
+    {
+        <MatDialogContent>
+            <RegistrarSolicDenuncias />
+        </MatDialogContent>
+    }
+    @if (TipoSolicitud2 == "Busqueda de Protocolo Notarial")
+    {
+        <MatDialogContent>
+            <RegistrarSolicBPN />
+        </MatDialogContent>
+    }
     <MatDialogActions>
         <MatButton OnClick="@OkClick">Cancelar</MatButton>
     </MatDialogActions>
@@ -160,7 +198,9 @@
 @code {
 
     string TipoSolicitud;
-
+    string TipoSolicitud2;
+    string tipo_front;
+    bool activator;
 
     bool dialogPrincipal = false;
 
@@ -174,8 +214,40 @@
     bool Registrar_SolicBPN = false;
     bool Registrar_SolicEF = false;
     [CascadingParameter]
-    MainLayout layout { get; set;  }
+    MainLayout layout { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+
+
+    List<Documento> docs { get; set; } = new List<Documento>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var httpResponse = await repository.Get<List<Documento>>("api/documentos/documentosolicitudes");
+        if (!httpResponse.Error)
+        {
+            Documento docActivator = new Documento();
+            docs = httpResponse.Response;
+            if (docActivator.estado == "revisado")
+            {
+                activator = true;
+            }
+            else{
+                activator = false;
+            }
+
+
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un error");
+        }
+
+
+
+
+    }
+
     void CancelButton()
     {
         dialogPrincipal = !dialogPrincipal;
@@ -218,19 +290,10 @@
     void OpenDialogModificar()
     {
         dialogIsOpen_Modificar = true;
-        ExpedienteBandejaDTO expedienteEjemplo = new ExpedienteBandejaDTO();
-        expedienteEjemplo.tipo = "EjemploExpediente";
-        expedienteEjemplo.cliente = new Cliente()
-        {
-            nombre = "usuario ejemplo",
-            tipodocumento = "DNI",
-            numerodocumento = "123456789"
-        };
-        layout.Send("sebastian", expedienteEjemplo);
         //navigationManager.NavigateTo("solicitud/crear");
     }
-    void OpenDialogVerDetalles()
-    {
+    void OpenDialogVerDetalles(string id)
+    {  
         dialogIsOpen_VerDetalles = true;
         //navigationManager.NavigateTo("solicitud/crear");
     }
@@ -251,30 +314,5 @@
 
         TipoSolicitud = "nulo";
     }
-
-    public class Car
-    {
-        public string Name { get; set; }
-        public double Price { get; set; }
-        public int Horsepower { get; set; }
-
-        public Car(string name, double price, int horsepower)
-        {
-            Name = name;
-            Price = price;
-            Horsepower = horsepower;
-        }
-    }
-
-
-    Car[] cars = new[]
-    {
-                new Car("Volkswagen Golf", 10000, 220),
-                new Car("Volkswagen Passat", 11000, 240),
-                new Car("Volkswagen Polo", 12000, 110),
-                new Car("Ford Focus", 13000, 200),
-                new Car("Ford Fiesta", 14000, 160),
-                new Car("Ford Fusion", 15000, 260),
-                new Car("Ford Mondeo", 16000, 120),
-    };
+    
 }

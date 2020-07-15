@@ -29,7 +29,7 @@ namespace SISGED.Server.Services
         {
             return _documentos.Find(documento => true).ToList();
         }
-        public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper)
+        public OficioDesignacionNotario registrarOficioDesignacionNotario(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo OficioDesignacionNotarioDTO
             OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
@@ -56,6 +56,7 @@ namespace SISGED.Server.Services
                     observacion = null
                 },
                 estado = "creado",
+                urlanexo= url2,
                 historialcontenido = new List<ContenidoVersion>(),
                 historialproceso = new List<Proceso>()
             };
@@ -94,7 +95,7 @@ namespace SISGED.Server.Services
             return documentoODN;
         }
 
-        public SolicitudBPN registrarSolicitudBPN(SolicitudBPN expedienteWrapper)
+        public SolicitudBPN registrarSolicitudBPN(SolicitudBPN expedienteWrapper, List<string> url2)
         {
             _documentos.InsertOne(expedienteWrapper);
             return expedienteWrapper;
@@ -187,7 +188,7 @@ namespace SISGED.Server.Services
             return solicitudBPN;
             */
         }
-        public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper)
+        public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Obtenemos los datos del expedientewrapper
             OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
@@ -220,6 +221,7 @@ namespace SISGED.Server.Services
                 },
                 estado = "Creado",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo=url2,
                 historialproceso = new List<Proceso>()
             };
             _documentos.InsertOne(documentoBPN);
@@ -256,7 +258,7 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
             return documentoBPN;
         }
-        public SolicitudExpedicionFirma registrarSolicitudExpedicionFirma(SolicitudExpedicionFirma documentoSEF)
+        public SolicitudExpedicionFirma registrarSolicitudExpedicionFirma(SolicitudExpedicionFirma documentoSEF, List<string> url2)
         {
             _documentos.InsertOne(documentoSEF);
             return documentoSEF;
@@ -271,12 +273,12 @@ namespace SISGED.Server.Services
             _bandejas.UpdateOne(band => band.usuario == idusuario, updateBandeja);
         }
 
-        public SolicitudDenuncia registrarSolicitudDenuncia(SolicitudDenuncia documentoSD)
+        public SolicitudDenuncia registrarSolicitudDenuncia(SolicitudDenuncia documentoSD, List<string> url2)
         {
             _documentos.InsertOne(documentoSD);
             return documentoSD;
         }
-        public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper)
+        public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper, List<string> url2, string iddocumentoSolicitud)
         {
             //Obtenemos los datos del expedientewrapper
             ConclusionFirmaDTO conclusionfirmaDTO = new ConclusionFirmaDTO();
@@ -299,6 +301,7 @@ namespace SISGED.Server.Services
                 contenido = contenidoCF,
                 estado = "pendiente",
                 historialcontenido = new List<ContenidoVersion>(),
+                urlanexo = url2,
                 historialproceso = new List<Proceso>()
             };
             _documentos.InsertOne(documentoDF);
@@ -333,6 +336,15 @@ namespace SISGED.Server.Services
             var update = Builders<Documento>.Update
                 .Set("estado", "revisado");
             _documentos.UpdateOne(filter, update);
+
+            //Actualizar el documento de solicitud a emitido, obtener el id de la solicitudBPN
+            if (!string.IsNullOrEmpty(iddocumentoSolicitud))
+            {
+                var filterS = Builders<Documento>.Filter.Eq("id", iddocumentoSolicitud);
+                var updateS = Builders<Documento>.Update
+                    .Set("estado", "emitido");
+                _documentos.UpdateOne(filterS, updateS);
+            }
             return documentoDF;
         }
 
@@ -365,10 +377,13 @@ namespace SISGED.Server.Services
             Documento doc = new Documento();
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = documento.idexpediente;
-            bandejaDocumento.iddocumento = documento.iddocumento;
+            //bandejaDocumento.iddocumento = documento.iddocumento;
+            bandejaDocumento.iddocumento = documento.iddocumentoAnterior;
 
             UpdateDefinition<Bandeja> updateBandejaD = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaD);
+
+            bandejaDocumento.iddocumento = documento.iddocumento;
 
             UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
@@ -570,7 +585,7 @@ namespace SISGED.Server.Services
         }
 
         public ResultadoBPN registrarResultadoBPN(ResultadoBPNDTO resultadoBPNDTO, List<string> url2,
-            string idusuario, string idexpediente, string iddocentrada)
+            string idusuario, string idexpediente, string iddocentrada, string iddocumentoSolicitud)
         {
             //Creacionde le objeto y registro en la coleccion documentos
             ContenidoResultadoBPN contenidoResultadoBPN = new ContenidoResultadoBPN()
@@ -607,6 +622,15 @@ namespace SISGED.Server.Services
             var update = Builders<Documento>.Update
                 .Set("estado", "revisado");
             _documentos.UpdateOne(filter, update);
+
+            //Actualizar el documento de solicitud a emitido, obtener el id de la solicitudBPN
+            if(!string.IsNullOrEmpty(iddocumentoSolicitud))
+            {
+                var filterS = Builders<Documento>.Filter.Eq("id", iddocumentoSolicitud);
+                var updateS = Builders<Documento>.Update
+                    .Set("estado", "emitido");
+                _documentos.UpdateOne(filterS, updateS);
+            }
 
             return resultadoBPN;
         }
@@ -780,6 +804,68 @@ namespace SISGED.Server.Services
 
         }
 
+        public List<Documento> obtenerSolicitudes()
+        {
+            IEnumerable<string> tipos = new[] { "SolicitudExpedicionFirma", "SolicitudDenuncia", "SolicitudBPN" };
+            var filter = Builders<Documento>.Filter.In(x => x.tipo , tipos);
+
+            List<Documento> values = _documentos.Find(filter).ToList();
+            return values;
+        }
+        
+
+        public SolicitudExpedicionFirmaDTO obtenerSolicitudExpedicionFirmas(string id)
+        {
+            SolicitudExpedicionFirma docSolicitudExpedicionFirma = new SolicitudExpedicionFirma();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docSolicitudExpedicionFirma = _documentos.Aggregate().
+              AppendStage<SolicitudExpedicionFirma>(match).First();
+
+            SolicitudExpedicionFirmaDTO solicitudEFDTO = new SolicitudExpedicionFirmaDTO();
+            solicitudEFDTO.id = docSolicitudExpedicionFirma.id;
+            solicitudEFDTO.tipo = docSolicitudExpedicionFirma.tipo;
+            //solicitudbpnDTO.historialcontenido = docSolicitudBPN.historialcontenido;
+            //solicitudbpnDTO.historialproceso = docSolicitudBPN.historialproceso;
+            solicitudEFDTO.estado = docSolicitudExpedicionFirma.estado;
+            solicitudEFDTO.contenidoDTO = new ContenidoSolicitudExpedicionFirmaDTO()
+            {
+
+                titulo = docSolicitudExpedicionFirma.contenido.titulo,
+                descripcion = docSolicitudExpedicionFirma.contenido.descripcion,
+                fecharealizacion = docSolicitudExpedicionFirma.contenido.fecharealizacion,
+                
+
+
+            };
+            return solicitudEFDTO;
+        }
+        public SolicitudDenunciaDTO obtenerSolicitudDenuncias(string id)
+        {
+            SolicitudDenuncia docSolicitudDenuncia = new SolicitudDenuncia();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            docSolicitudDenuncia = _documentos.Aggregate().
+              AppendStage<SolicitudDenuncia>(match).First();
+
+            SolicitudDenunciaDTO solicitudDenuncia = new SolicitudDenunciaDTO();
+            solicitudDenuncia.id = docSolicitudDenuncia.id;
+            solicitudDenuncia.tipo = docSolicitudDenuncia.tipo;
+            //solicitudbpnDTO.historialcontenido = docSolicitudBPN.historialcontenido;
+            //solicitudbpnDTO.historialproceso = docSolicitudBPN.historialproceso;
+            solicitudDenuncia.estado = docSolicitudDenuncia.estado;
+            solicitudDenuncia.contenidoDTO = new ContenidoSolicitudDenunciaDTO()
+            {
+                
+                titulo = docSolicitudDenuncia.contenido.titulo,
+                descripcion = docSolicitudDenuncia.contenido.descripcion,
+                fechaentrega = docSolicitudDenuncia.contenido.fechaentrega,
+                
+
+
+            };
+            return solicitudDenuncia;
+        }
         public SolicitudBPNDTO obtenerSolicitudBusquedaProtocoloNotarial(string id)
         {
             SolicitudBPN docSolicitudBPN = new SolicitudBPN();
@@ -801,9 +887,10 @@ namespace SISGED.Server.Services
                 tipoprotocolo = docSolicitudBPN.contenido.tipoprotocolo,
 
                 fecharealizacion = docSolicitudBPN.contenido.fecharealizacion,
-               // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
-               
-                
+                //Poner lista de objetos
+                // otorgantes = docSolicitudBPN.contenido.otorgantes.Select((x, y) => new Otorgantelista() { nombre = x, index = y }).ToList(),
+
+
             };
             return solicitudbpnDTO;
         }

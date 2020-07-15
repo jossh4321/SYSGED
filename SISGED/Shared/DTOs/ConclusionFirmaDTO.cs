@@ -18,6 +18,8 @@ namespace SISGED.Shared.DTOs
         public Usuario idcliente { get; set; } = new Usuario();
         public Int32 cantidadfoja { get; set; } = 2;
         public double precio { get; set; } = 0;
+        public List<string> Urlanexo { get; set; } = new List<string>();
+
     }
 
     public class ConclusionFirma_lookup

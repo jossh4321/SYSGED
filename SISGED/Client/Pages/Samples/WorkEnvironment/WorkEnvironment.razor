@@ -273,18 +273,16 @@
         Console.WriteLine("INICIE: WorkEnvironment");
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
-
-        ExpedienteBandejaDTO ex = new ExpedienteBandejaDTO();
-        var httpResponse = await repository.Get<ExpedienteBandejaDTO>($"api/expediente/prueba?id=5eeadf0b8ca4ff53a0b791e3");
+        /*var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={sesion.usuario.}");
         if (!httpResponse.Error)
         {
-            ex = (ExpedienteBandejaDTO)httpResponse.Response;
+            miusuario = (Usuario)httpResponse.Response;
             Console.WriteLine("algo bien");
         }
         else
         {
             Console.WriteLine("algo mal");
-        }
+        }*/
         /*var httpResponse = await repository.Get <List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {

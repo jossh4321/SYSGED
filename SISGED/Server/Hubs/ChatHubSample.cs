@@ -30,5 +30,10 @@ namespace SISGED.Server.Hubs
         {
             await Clients.Group(user).SendAsync("ReceiveMessageBandeja", user, bandeja);
         }
+
+        public async Task SendNotification(string user, NotificacionDTO notificacion)
+        {
+            await Clients.Group(user).SendAsync("ReceiveNotification", user, notificacion);
+        }
     }
 }

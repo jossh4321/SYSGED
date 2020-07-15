@@ -166,4 +166,22 @@ namespace SISGED.Shared.DTOs
         public List<DocumentoDTO> documentosobj { get; set; } = new List<DocumentoDTO>();
 
     }
+
+    public class ExpedienteDocumentoBPNDTO
+    {
+        public Expediente expediente { get; set; }
+        public SolicitudBPN solicitduBPN { get; set; }
+    }
+
+    public class ExpedienteDocumentoEFDTO
+    {
+        public Expediente expediente { get; set; }
+        public SolicitudExpedicionFirma solicitudEF { get; set; }
+    }
+
+    public class ExpedienteDocumentoSDDTO
+    {
+        public Expediente expediente { get; set; }
+        public SolicitudDenuncia solicitudD { get; set; }
+    }
 }

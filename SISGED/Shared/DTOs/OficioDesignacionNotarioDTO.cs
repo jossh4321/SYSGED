@@ -22,6 +22,7 @@ namespace SISGED.Shared.DTOs
         public string lugaroficionotarial { get; set; }
         public string idusuario { get; set; }
         public Notario idnotario { get; set; }
+        public List<string> Urlanexo { get; set; } = new List<string>();
     }
 
 

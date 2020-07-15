@@ -96,6 +96,7 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
+
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.numerodocumento)">
                     <MatTextField @bind-Value="@solicitudDenuncia.numerodocumento" Class="text-field-style"
                                   Label="Numero de Documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudDenuncia))'></MatTextField>
@@ -147,6 +148,15 @@
                 <div class="field-container">
                     <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
                 </div>
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
+                </div>*@
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
@@ -159,15 +169,28 @@
 </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter]
+    MainLayout layout { get; set; }
     private SolicitudDenunciaDTO solicitudDenuncia = new SolicitudDenunciaDTO();
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private EditContext _editContext;
     private string documentoTemporal { get; set; } = null;
     private string imagenTemporal;
+    private string imagenTemporal2;
     private bool loadprocess = false;
     protected override void OnInitialized()
     {
+        solicitudDenuncia.contenidoDTO.Urlanexo = new List<string>();
+
         _editContext = new EditContext(solicitudDenuncia);
+        foreach (string u in solicitudDenuncia.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                solicitudDenuncia.contenidoDTO.Urlanexo = null;
+            }
+        }
         if (!string.IsNullOrEmpty(solicitudDenuncia.contenidoDTO.urldata))
         {
             imagenTemporal = solicitudDenuncia.contenidoDTO.urldata;
@@ -187,18 +210,21 @@
     {
         solicitudDenuncia.contenidoDTO.urldata = imagenbase64;
     }
-
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        solicitudDenuncia.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-        //if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
-        //{
+        if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
+        {
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
             //solicitudDenuncia.contenidoDTO.nombrecliente = solicitudDenuncia.nombrecliente;
             expedienteWrapper.documento = solicitudDenuncia;
             expedienteWrapper.idusuarioactual = "GAAAADenuncia";
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudDenunciaDTO>("api/documentos/documentosd", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoSDDTO>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)
             {
                 await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
@@ -220,13 +246,30 @@
                     cliente = expedientebandeja.cliente
                 };
                 workspace.UpdateComponentBandeja(itemSalida);*/
+                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
+                SolicitudDenuncia solicitudD = new SolicitudDenuncia();
+                solicitudD = httpResponse.Response.solicitudD;
+                expedientebandeja.documento = new DocumentoDTO();
+                expedientebandeja.documentosobj = new List<DocumentoDTO>();
+                expedientebandeja.cliente = new Cliente();
+                expedientebandeja.documento.id = solicitudD.id;
+                expedientebandeja.documento.tipo = solicitudD.tipo;
+                expedientebandeja.documento.historialcontenido = solicitudD.historialcontenido;
+                expedientebandeja.documento.historialproceso = solicitudD.historialproceso;
+                expedientebandeja.documento.contenido = solicitudD.contenido;
+                expedientebandeja.documento.estado = solicitudD.estado;
+                expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
+                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
+                await layout.Send("josue", expedientebandeja);
                 await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
             }
-        //}
-        /*else
+        }
+        else
         {
             await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
-        }*/
+        }
         loadprocess = false;
     }
 
