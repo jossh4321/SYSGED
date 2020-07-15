@@ -129,6 +129,7 @@
     {
         Console.WriteLine("ConfirmacionG");
         DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
+        docs.iddocumentoAnterior = workspace.expedienteseleccionado.documentosobj.ElementAt(workspace.expedienteseleccionado.documentosobj.Count - 2).id;
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
         docs.idusuario = sesion.usuario.id;
@@ -141,6 +142,7 @@
         {
             await swalfire.successMessage("Generado correctamente");
             generado = false;
+            workspace.UpdateTools("Generar Documento");
         }
     }
 }

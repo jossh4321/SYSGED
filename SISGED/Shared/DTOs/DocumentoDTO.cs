@@ -41,6 +41,7 @@ namespace SISGED.Shared.DTOs
     }
     public class DocumentoGenerarDTO
     {
+        public string iddocumentoAnterior { get; set; } = null;
         public string iddocumento { get; set; } = null;
         public string idexpediente { get; set; } = null;
         public string idusuario { get; set; } = null;

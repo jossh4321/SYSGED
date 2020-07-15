@@ -53,9 +53,15 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("derivacion")]
-        public ActionResult<Expediente> registrarDerivacion(Expediente expediente, [FromQuery] string userId)
+        public ActionResult<ExpedienteBandejaDTO> registrarDerivacion(Expediente expediente, [FromQuery] string userId)
         {
+
             return _expedienteService.registrarDerivacion(expediente, userId);
+        }
+        [HttpGet("prueba")]
+        public ActionResult<ExpedienteBandejaDTO> obtenerExpediente ([FromQuery] string id)
+        {
+            return _expedienteService.obtenerExpedienteBandeja(id);
         }
     }
 }

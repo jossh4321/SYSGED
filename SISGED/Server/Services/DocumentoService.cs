@@ -278,7 +278,7 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSD);
             return documentoSD;
         }
-        public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper, List<string> url2)
+        public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper, List<string> url2, string iddocumentoSolicitud)
         {
             //Obtenemos los datos del expedientewrapper
             ConclusionFirmaDTO conclusionfirmaDTO = new ConclusionFirmaDTO();
@@ -336,6 +336,15 @@ namespace SISGED.Server.Services
             var update = Builders<Documento>.Update
                 .Set("estado", "revisado");
             _documentos.UpdateOne(filter, update);
+
+            //Actualizar el documento de solicitud a emitido, obtener el id de la solicitudBPN
+            if (!string.IsNullOrEmpty(iddocumentoSolicitud))
+            {
+                var filterS = Builders<Documento>.Filter.Eq("id", iddocumentoSolicitud);
+                var updateS = Builders<Documento>.Update
+                    .Set("estado", "emitido");
+                _documentos.UpdateOne(filterS, updateS);
+            }
             return documentoDF;
         }
 
@@ -368,10 +377,13 @@ namespace SISGED.Server.Services
             Documento doc = new Documento();
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = documento.idexpediente;
-            bandejaDocumento.iddocumento = documento.iddocumento;
+            //bandejaDocumento.iddocumento = documento.iddocumento;
+            bandejaDocumento.iddocumento = documento.iddocumentoAnterior;
 
             UpdateDefinition<Bandeja> updateBandejaD = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaD);
+
+            bandejaDocumento.iddocumento = documento.iddocumento;
 
             UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
@@ -573,7 +585,7 @@ namespace SISGED.Server.Services
         }
 
         public ResultadoBPN registrarResultadoBPN(ResultadoBPNDTO resultadoBPNDTO, List<string> url2,
-            string idusuario, string idexpediente, string iddocentrada)
+            string idusuario, string idexpediente, string iddocentrada, string iddocumentoSolicitud)
         {
             //Creacionde le objeto y registro en la coleccion documentos
             ContenidoResultadoBPN contenidoResultadoBPN = new ContenidoResultadoBPN()
@@ -610,6 +622,15 @@ namespace SISGED.Server.Services
             var update = Builders<Documento>.Update
                 .Set("estado", "revisado");
             _documentos.UpdateOne(filter, update);
+
+            //Actualizar el documento de solicitud a emitido, obtener el id de la solicitudBPN
+            if(!string.IsNullOrEmpty(iddocumentoSolicitud))
+            {
+                var filterS = Builders<Documento>.Filter.Eq("id", iddocumentoSolicitud);
+                var updateS = Builders<Documento>.Update
+                    .Set("estado", "emitido");
+                _documentos.UpdateOne(filterS, updateS);
+            }
 
             return resultadoBPN;
         }
