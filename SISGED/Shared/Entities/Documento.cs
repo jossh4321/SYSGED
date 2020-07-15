@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization.Attributes;
 using SISGED.Shared.DTOs;
 using System;
@@ -90,7 +91,7 @@ namespace SISGED.Shared.Entities
         public string actojuridico { get; set; }
         public string tipoprotocolo { get; set; }
         public List<string> otorgantes { get; set; } = new List<String>();
-        public List<Otorgantelista> otorganteslista { get; set; } 
+        //public List<Otorgantelista> otorganteslista { get; set; } 
         public DateTime fecharealizacion { get; set; }
 
     }

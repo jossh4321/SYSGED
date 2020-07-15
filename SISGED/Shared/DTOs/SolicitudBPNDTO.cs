@@ -15,6 +15,8 @@ namespace SISGED.Shared.DTOs
         public List<string> otorgantes { get; set; } = new List<String>();
         public DateTime fecharealizacion { get; set; }
         public List<Otorgantelista> otorganteslista { get; set; } = new List<Otorgantelista>();
+        public List<string> Urlanexo { get; set; } = new List<string>();
+
     }
     public class SolicitudBPNDTO : Documento
     {
@@ -28,8 +30,8 @@ namespace SISGED.Shared.DTOs
     public class Otorgantelista
     {
         public string nombre { get; set; }
-        public string apellido { get; set; }
-        public int dni { get; set; }
+        //public string apellido { get; set; }
+        //public int dni { get; set; }
         public Int32 index { get; set; } = 0;
     }
 }

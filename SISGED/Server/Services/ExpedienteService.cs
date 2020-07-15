@@ -76,7 +76,7 @@ namespace SISGED.Server.Services
             expedientes = _expedientes.Find(expediente => true).ToList();
             return expedientes;
         }
-        public Expediente registrarDerivacion(Expediente expediente, string userId)
+        public ExpedienteBandejaDTO registrarDerivacion(Expediente expediente, string userId)
         {
 
             Derivacion derivacion = new Derivacion();
@@ -107,12 +107,103 @@ namespace SISGED.Server.Services
             UpdateDefinition<Documento> updateDocumento = Builders<Documento>.Update.Push("historialproceso", proceso);
             _documentos.UpdateOne(doc => doc.id == bandejaDocumento.iddocumento, updateDocumento);
 
-            return expediente;
+            ExpedienteBandejaDTO ex = new ExpedienteBandejaDTO();
+            ex = obtenerExpedienteBandeja(expediente.id);
+
+
+
+            return ex;
         }
+
+
+        public ExpedienteBandejaDTO obtenerExpedienteBandeja(string idexpediente)
+        {
+            BsonArray embebedpipeline = new BsonArray();
+            var match = new BsonDocument("$match",
+                        new BsonDocument("_id",
+                        new ObjectId(idexpediente)));
+
+            embebedpipeline.Add(
+                    new BsonDocument("$match", new BsonDocument(
+                        "$expr", new BsonDocument(
+                            "$eq", new BsonArray{ "$_id", new BsonDocument(
+                                "$toObjectId", "$$iddoc")}
+                            ))));
+
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument("from", "documentos").
+                Add("let", new BsonDocument("iddoc", "$documentos.iddocumento")).
+                Add("pipeline", embebedpipeline).
+                Add("as", "documentosobj"));
+
+
+            var group = new BsonDocument("$group",
+                        new BsonDocument
+                            {
+                                { "_id", "$_id" },
+                                { "tipo",
+                        new BsonDocument("$first", "$tipo") },
+                                { "cliente",
+                        new BsonDocument("$first", "$cliente") },
+                                { "documentosobj",
+                        new BsonDocument("$push", "$documentosobj") }
+                            });
+
+            var project = new BsonDocument("$project",
+                            new BsonDocument
+                                {
+                                    { "_id", 0 },
+                                    { "idexpediente", "$_id" },
+                                    { "tipo", "$tipo" },
+                                    { "cliente", "$cliente" },
+                                    { "documentosobj", "$documentosobj" },
+                                    { "documento",
+                            new BsonDocument("$arrayElemAt",
+                            new BsonArray
+                                        {
+                                            "$documentosobj",
+                                            -1
+                                        }) }
+                                });
+
+
+            ExpedienteBandejaDTO listaexpedientesdto = new ExpedienteBandejaDTO();
+            listaexpedientesdto = _expedientes.Aggregate()
+                .AppendStage<Expediente>(match)
+                .Unwind<Expediente, Expedientedoc>(x => x.documentos)
+                .AppendStage<Expedientedoc_lookup>(lookup)
+                .Unwind<Expedientedoc_lookup, Expedientedoc_lookup_ur>(x => x.documentosobj)
+                .AppendStage<Expedientedoc_group>(group)
+                .AppendStage<ExpedienteBandejaDTO>(project).SingleOrDefault();
+            
+            return listaexpedientesdto;
+
+
+
+        }
+
+
 
         public ExpedienteDTO getbynestediddoc(string iddoc)
         {
             Expediente expediente = _expedientes.Find(exp => exp.documentos.Any(doc=>doc.iddocumento == iddoc)).FirstOrDefault();
+            ExpedienteDTO dTO = new ExpedienteDTO
+            {
+                cliente = expediente.cliente,
+                derivaciones = expediente.derivaciones,
+                documentos = expediente.documentos,
+                estado = expediente.estado,
+                fechafin = expediente.fechafin,
+                fechainicio = expediente.fechainicio,
+                id = expediente.id,
+                tipo = expediente.tipo
+            };
+            return dTO;
+        }
+
+        public ExpedienteDTO getById(string iddoc)
+        {
+            Expediente expediente = _expedientes.Find(exp => exp.id == iddoc).FirstOrDefault();
             ExpedienteDTO dTO = new ExpedienteDTO
             {
                 cliente = expediente.cliente,

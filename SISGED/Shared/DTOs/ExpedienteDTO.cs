@@ -111,4 +111,77 @@ namespace SISGED.Shared.DTOs
         public Documento documento { get; set; } = new Documento();
         public List<Documento> documentosobj { get; set; } = new List<Documento>();
     }
+
+    public class Expedientedoc
+    {
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; } = new DocumentoExpediente();
+        public List<Derivacion> derivaciones { get; set; }
+        public string estado { get; set; }
+    }
+
+    public class Expedientedoc_lookup
+    {
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; } = new DocumentoExpediente();
+        public List<Derivacion> derivaciones { get; set; }
+        public List<DocumentoDTO> documentosobj { get; set; } = new List<DocumentoDTO>();
+        public string estado { get; set; }
+    }
+
+    public class Expedientedoc_lookup_ur
+    {
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; } = new DocumentoExpediente();
+        public List<Derivacion> derivaciones { get; set; }
+        public DocumentoDTO documentosobj { get; set; } = new DocumentoDTO();
+        public string estado { get; set; }
+    }
+
+    public class Expedientedoc_group
+    {
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public List<DocumentoDTO> documentosobj { get; set; } = new List<DocumentoDTO>();
+
+    }
+
+    public class ExpedienteDocumentoBPNDTO
+    {
+        public Expediente expediente { get; set; }
+        public SolicitudBPN solicitduBPN { get; set; }
+    }
+
+    public class ExpedienteDocumentoEFDTO
+    {
+        public Expediente expediente { get; set; }
+        public SolicitudExpedicionFirma solicitudEF { get; set; }
+    }
+
+    public class ExpedienteDocumentoSDDTO
+    {
+        public Expediente expediente { get; set; }
+        public SolicitudDenuncia solicitudD { get; set; }
+    }
 }

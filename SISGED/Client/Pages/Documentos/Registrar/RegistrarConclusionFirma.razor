@@ -175,13 +175,22 @@
                 </div>
 
                 <!---------------------------------------------------------------------------------------------------------------->
+                @*<div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>*@
+
+            </MatTab>
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada"></DragnDrop>
                 <div class="field-container">
                     <MatButton type="submit"
                                Disabled="@loadprocess"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
                 </div>
-
             </MatTab>
         </MatTabGroup>
     </EditForm>
@@ -192,6 +201,7 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
     private EditContext _editContext;
+    private string imagenTemporal;
     private bool loadprocess = false;
     public List<EscrituraPublica> escriturapublicasseleccionados = new List<EscrituraPublica>();
     public EscrituraPublica escriturapublicaselect;
@@ -237,6 +247,7 @@
 
     protected override void OnInitialized()
     {
+        conclusionFirma.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(conclusionFirma);
         conclusionFirma.contenidoDTO.idcliente = null;
         conclusionFirma.contenidoDTO.idnotario = null;
@@ -254,8 +265,21 @@
         ep.url = epdto.url;
         conclusionFirma.contenidoDTO.idescriturapublica = ep;
         _editContext = new EditContext(conclusionFirma);
+        foreach (string u in conclusionFirma.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal = u;
+                conclusionFirma.contenidoDTO.Urlanexo = null;
+            }
+        }
         StateHasChanged();
 
+    }
+
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        conclusionFirma.contenidoDTO.Urlanexo.Add(imagenbase64);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)

@@ -13,6 +13,8 @@ namespace SISGED.Shared.DTOs
         public string nombrecliente { get; set; }
         public DateTime fechaentrega { get; set; }
         public string urldata { get; set; }
+        public List<string> Urlanexo { get; set; } = new List<string>();
+
     }
     public class SolicitudDenunciaDTO : Documento
     {

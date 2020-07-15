@@ -93,7 +93,7 @@ else
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     [CascadingParameter] WorkEnvironment workspace { get; set; }
-
+    [CascadingParameter] MainLayout layout { get; set; }
     #region variables
     bool carga = false;
     bool dialogIsOpen = false;
@@ -168,7 +168,7 @@ else
     public void userChanged(ChangeEventArgs e)
     {
         usuarioId = "";
-        usuarioId = e.Value.ToString();        
+        usuarioId = e.Value.ToString();
     }
 
     public async Task handleValidSubmit()
@@ -183,7 +183,7 @@ else
         Expediente expediente = new Expediente();
         expediente.id = workspace.expedienteseleccionado.idexpediente; /*workspace.expedienteseleccionado;*/ /*"5ee5f24e7d8f833f68cc88a0"*/
         List<DocumentoExpediente> documentoExpediente = new List<DocumentoExpediente>()
-    {
+        {
             new DocumentoExpediente()
             {
                 iddocumento   =   ((DocumentoDTO)workspace.expedienteseleccionado.documento).id /*"5ed9a3dbfed03c07c872c862"*/ //Oficio designacion notario//workspace.expedienteseleccionado.documentos.Last().iddocumento,
@@ -202,16 +202,32 @@ else
         expediente.derivaciones = derivaciones;
         expediente.documentos = documentoExpediente;
 
-        var httpResponse = await repository.Post<Expediente>($"api/expediente/derivacion?userId={usuarioId}", expediente);
+        var httpResponse = await repository.Post<Expediente,ExpedienteBandejaDTO>($"api/expediente/derivacion?userId={usuarioId}", expediente);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Ha ocurrido un error, intente nuevamente");
         }
         else
         {
-            await swalfire.successMessage("Documento derivado correctamente");          
+            Usuario usu = new Usuario();
+            usu = listausuarios.Where(x => x.id == usuarioId).FirstOrDefault();
+            ExpedienteBandejaDTO exp = new ExpedienteBandejaDTO();
+            exp = (ExpedienteBandejaDTO)httpResponse.Response;
+            await layout.Send(usu.usuario, exp);
+            await swalfire.successMessage("Documento derivado correctamente");
         }
+
+        ////logica para enviar con HUB
+        ////expedientebandeja.documento = expediente.documentos.Select(x => )
+        ////sencToDestination();
     }
+
+    void sencToDestination(ExpedienteBandejaDTO expediente,string usuario)
+    {
+        layout.Send(usuario, expediente);
+        //navigationManager.NavigateTo("solicitud/crear");
+    }
+
     //quitar luego
     public void handleInvalidSubmit(String e)
     {
