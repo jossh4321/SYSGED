@@ -110,7 +110,19 @@
         {
             await swalfire.successMessage("Generado correctamente");
             generado = false;
+            Item itemSalida = new Item()
+            {
+                nombre = workspace.expedienteseleccionado.tipo,
+                valor = workspace.expedienteseleccionado,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = workspace.expedienteseleccionado.cliente,
+                itemstatus = "registrado"
+            };
             workspace.UpdateTools("Generar Documento");
+            workspace.RemoveExpedienteSeleccionado(itemSalida);
         }
     }
     //  doc.save('conversion.pdf');

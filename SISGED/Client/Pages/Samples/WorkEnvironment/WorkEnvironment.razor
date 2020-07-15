@@ -364,6 +364,17 @@
         sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(nombre))] = tool;
         StateHasChanged();
     }
+    public void RemoveExpedienteSeleccionado(Item itemsalida)
+    {
+        sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "inputs";
+
+        sesion.listaentradas.RemoveAll(ind => ind.nombre.Equals(itemsalida.nombre) &&
+        ind.cliente.tipodocumento.Equals(itemsalida.cliente.tipodocumento) &&
+        ind.cliente.numerodocumento.Equals(itemsalida.cliente.numerodocumento));
+
+        sesion.listasalidas.Add(itemsalida);
+        StateHasChanged();
+    }
     /* 
     public ExpedienteDTO expedientedto1 = new ExpedienteDTO()
     {
