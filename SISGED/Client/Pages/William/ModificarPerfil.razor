@@ -2,6 +2,7 @@
 @layout  MainLayout
 @inject IRepository repository
 @inject ISwalFireMessage swalfire
+@inject NavigationManager navigationManager
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
@@ -103,7 +104,7 @@
 </style>
 <div class="div-form">
 
-    <EditForm EditContext="@editContext" Context="CurrentEditContext"
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
         <MatTabGroup>
@@ -113,21 +114,20 @@
                 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.usuario)">
                     <MatTextField @bind-Value="@usuario.usuario" Class="text-field-style" Label="Usuario"
-                                  @oninput='@(e => KeyUp(e, "usuario", usuario.usuario))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "usuario", usuario))'></MatTextField>
 
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => usuario)" />
+                        <ValidationMessage For="@(() => usuario.usuario)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-                @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.nombre)">
-                    <MatTextField @bind-Value="@usuario.datos.nombre" Class="text-field-style" Text="nombre" Label="Nombres"
+                    <MatTextField @bind-Value="@usuario.datos.nombre" Class="text-field-style" Label="Nombres"
                                   @oninput='@(e => KeyUp(e, "nombre", usuario.datos))'></MatTextField>
 
 
@@ -232,8 +232,7 @@
                     </div>
                 </div>
 
-
-                <InputImgModificarUsuario></InputImgModificarUsuario>
+                <InputImgModificarUsuario Label="Foto" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@(usuario.datos.imagen)" />
                 <div class="field-container">
                     <MatCardActions>
                         <MatButton Raised="true"
@@ -251,19 +250,12 @@
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
-
-
     Usuario usuario = new Usuario();
 
-    private EditContext editContext;
+    private EditContext _editContext;
 
-    //////////////////////////////////////
     protected override void OnInitialized()
     {
-
-
-        editContext = new EditContext(usuario);
-
 
         usuario.id = sesion.usuario.id;
         usuario.usuario = sesion.usuario.usuario;
@@ -274,64 +266,30 @@
         usuario.datos.numerodocumento = sesion.usuario.datos.numerodocumento;
         usuario.datos.direccion = sesion.usuario.datos.direccion;
         usuario.datos.email = sesion.usuario.datos.email;
-
-
-        String usuariomuestra = usuario.usuario;
-        String nombre = usuario.datos.nombre;
-        String apellido = usuario.datos.apellido;
-        String fechadenacimiento = usuario.datos.fechanacimiento;
-        String tipodocumento = usuario.datos.tipodocumento;
-        String numerodocumento = usuario.datos.numerodocumento;
-        String direccion = usuario.datos.direccion;
-        String email = usuario.datos.email;
-
-
-
-        Console.WriteLine("Muestra los datos usuario:" + usuariomuestra);
-        Console.WriteLine("Muestra los datos nombre:" + nombre);
-        Console.WriteLine("Muestra los datos apellido:" + apellido);
-        Console.WriteLine("Muestra los datos fecha de nacimeinto:" + fechadenacimiento);
-        Console.WriteLine("Muestra los datos tipo de documetno:" + tipodocumento);
-        Console.WriteLine("Muestra los datos numero de documento:" + numerodocumento);
-        Console.WriteLine("Muestra los datos direccion: " + direccion);
-        Console.WriteLine("Muestra los datos email: " + email);
-
+        usuario.datos.imagen = sesion.usuario.datos.imagen;
+        _editContext = new EditContext(usuario);
     }
-
-
-
     void KeyUp(ChangeEventArgs e, string memberName, object val)
     {
         var property = val.GetType().GetProperty(memberName);
         property.SetValue(val, e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
-        editContext.NotifyFieldChanged(fi);
+        _editContext.NotifyFieldChanged(fi);
     }
     //////////////////////
     public async Task handleValidSubmit()
     {
         loadprocess = true;
-
-       
-
-
-
-        var httpResponse = await repository.Put<Usuario>($"api/Usuarios/usuariomodi", usuario);
+        var httpResponse = await repository.Put<Usuario, Usuario>($"api/Usuarios/usuariomodi", usuario);
         if (httpResponse.Error)
         {
             Console.WriteLine("saio mal xdxdxd ");
-            //usuario.id = sesion.usuario.id;
-            //usuario.usuario = sesion.usuario.usuario;
-            //usuario.datos.nombre = sesion.usuario.datos.nombre;
-            //usuario.datos.apellido = sesion.usuario.datos.apellido;
-            //usuario.datos.fechanacimiento = sesion.usuario.datos.fechanacimiento;
-            //usuario.datos.tipodocumento = sesion.usuario.datos.tipodocumento;
-            //usuario.datos.numerodocumento = sesion.usuario.datos.numerodocumento;
-            //usuario.datos.direccion = sesion.usuario.datos.direccion;
-            //usuario.datos.email = sesion.usuario.datos.email;
         }
         else
         {
+            sesion.usuario = httpResponse.Response;
+            await swalfire.successMessage("Se modificaron los datos del usuario correctamente!");
+            navigationManager.NavigateTo("/gestionarsolicitud");
             Console.WriteLine("algo salio bien ");
 
         }
@@ -344,20 +302,10 @@
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
 
-    private string nombre { get; set; } = $"nombre";
-    public Usuario _usuario = new Usuario();
-
-    ///////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
+    public void ImagenSeleccionada(string image)
+    {
+        usuario.datos.imagen = image;
+    }
 }
 
 

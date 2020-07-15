@@ -137,6 +137,7 @@ namespace SISGED.Server.Services
             string newnumdoc = usuario.datos.numerodocumento;
             string newdireccion = usuario.datos.direccion;
             string newemail = usuario.datos.email;
+            string newimage = usuario.datos.imagen;
             var update = Builders<Usuario>.Update
                 .Set("usuario", newusuario)
                 .Set("datos.nombre", newnombre)
@@ -145,8 +146,8 @@ namespace SISGED.Server.Services
                 .Set("datos.tipodocumento", newtipodoc)
                 .Set("datos.numerodocumento", newnumdoc)
                 .Set("datos.direccion", newdireccion)
-                .Set("datos.email", newemail);
-                
+                .Set("datos.email", newemail)
+                .Set("datos.imagen", newimage);
             usuario = _usuarios.FindOneAndUpdate<Usuario>(filter, update, new FindOneAndUpdateOptions<Usuario>
             {
                 ReturnDocument = ReturnDocument.After
