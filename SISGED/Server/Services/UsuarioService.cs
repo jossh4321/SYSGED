@@ -78,6 +78,7 @@ namespace SISGED.Server.Services
             });
             return usuario;
         }
+
         public List<Usuario> GetByStatus(string status)
         {
             List<Usuario> usuarios = new List<Usuario>();
@@ -123,6 +124,47 @@ namespace SISGED.Server.Services
             var filter2 = Builders<Usuario>.Filter.Eq("tipo", "cliente");
             return _usuarios.Find(filter & filter2).ToList();
         }
+
+
+        public Usuario modifyDatos(Usuario usuario)
+        {
+            var filter = Builders<Usuario>.Filter.Eq("id", usuario.id);
+            string newusuario = usuario.usuario ;
+            string newnombre = usuario.datos.nombre;
+            string newapellido = usuario.datos.apellido;
+            string newfecha = usuario.datos.fechanacimiento;
+            string newtipodoc = usuario.datos.tipodocumento;
+            string newnumdoc = usuario.datos.numerodocumento;
+            string newdireccion = usuario.datos.direccion;
+            string newemail = usuario.datos.email;
+            var update = Builders<Usuario>.Update
+                .Set("usuario", newusuario)
+                .Set("datos.nombre", newnombre)
+                .Set("datos.apellido", newapellido)
+                .Set("datos.fechanacimiento", newfecha)
+                .Set("datos.tipodocumento", newtipodoc)
+                .Set("datos.numerodocumento", newnumdoc)
+                .Set("datos.direccion", newdireccion)
+                .Set("datos.email", newemail);
+
+            usuario = _usuarios.FindOneAndUpdate<Usuario>(filter, update, new FindOneAndUpdateOptions<Usuario>
+            {
+                ReturnDocument = ReturnDocument.After
+            });
+            return usuario;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }

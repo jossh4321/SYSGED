@@ -110,5 +110,14 @@ namespace SISGED.Server.Controllers
             return listanotario;
         }
 
+        [HttpPut("usuariomodi")]
+        public ActionResult<Usuario> ModifyDatos(Usuario usuario)
+        {
+            usuario = _usuarioservice.modifyDatos(usuario);
+            
+            return usuario;
+        }
+
+
     }
 }

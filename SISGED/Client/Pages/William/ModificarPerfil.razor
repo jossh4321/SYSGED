@@ -365,7 +365,29 @@
     {
         loadprocess = true;
 
+       
 
+
+
+        var httpResponse = await repository.Put<Usuario>($"api/Usuarios/usuariomodi", usuario);
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("saio mal xdxdxd ");
+            //usuario.id = sesion.usuario.id;
+            //usuario.usuario = sesion.usuario.usuario;
+            //usuario.datos.nombre = sesion.usuario.datos.nombre;
+            //usuario.datos.apellido = sesion.usuario.datos.apellido;
+            //usuario.datos.fechanacimiento = sesion.usuario.datos.fechanacimiento;
+            //usuario.datos.tipodocumento = sesion.usuario.datos.tipodocumento;
+            //usuario.datos.numerodocumento = sesion.usuario.datos.numerodocumento;
+            //usuario.datos.direccion = sesion.usuario.datos.direccion;
+            //usuario.datos.email = sesion.usuario.datos.email;
+        }
+        else
+        {
+            Console.WriteLine("algo salio bien ");
+
+        }
 
     }
 
@@ -381,22 +403,11 @@
     ///////////////////////////////////////////////////////////////////////
 
 
-    //var httpResponse = await repository.Post<Usuario>($"api/usuarios/id?id=[sesion.usurio]");
-
-    // if (httpResponse.Error)
-    // {
-    //     _usuario= (usuario)httpResponse.Response;
-
-    // }
-    // else
-    // {
-    //     Console.WriteLine("algo salio mal");
-
-    // }
 
 
 
-   
+
+
 
 
 
