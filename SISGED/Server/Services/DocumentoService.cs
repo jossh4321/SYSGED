@@ -377,10 +377,13 @@ namespace SISGED.Server.Services
             Documento doc = new Documento();
             BandejaDocumento bandejaDocumento = new BandejaDocumento();
             bandejaDocumento.idexpediente = documento.idexpediente;
-            bandejaDocumento.iddocumento = documento.iddocumento;
+            //bandejaDocumento.iddocumento = documento.iddocumento;
+            bandejaDocumento.iddocumento = documento.iddocumentoAnterior;
 
             UpdateDefinition<Bandeja> updateBandejaD = Builders<Bandeja>.Update.Pull("bandejaentrada", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaD);
+
+            bandejaDocumento.iddocumento = documento.iddocumento;
 
             UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
