@@ -274,17 +274,17 @@
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
 
-
-        /*var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={sesion.usuario.}");
+        ExpedienteBandejaDTO ex = new ExpedienteBandejaDTO();
+        var httpResponse = await repository.Get<ExpedienteBandejaDTO>($"api/expediente/prueba?id=5eeadf0b8ca4ff53a0b791e3");
         if (!httpResponse.Error)
         {
-            miusuario = (Usuario)httpResponse.Response;
+            ex = (ExpedienteBandejaDTO)httpResponse.Response;
             Console.WriteLine("algo bien");
         }
         else
         {
             Console.WriteLine("algo mal");
-        }*/
+        }
         /*var httpResponse = await repository.Get <List<Documento>>("api/documentos");
         if (!httpResponse.Error)
         {
