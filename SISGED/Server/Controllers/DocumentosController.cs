@@ -417,8 +417,12 @@ namespace SISGED.Server.Controllers
                     url2.Add(urlData2);
                 }
             }
+
+            ExpedienteDTO expedientePorConsultar = _expedienteservice.getById(expediente.idexpediente);
+            DocumentoExpediente documentosolicitud = expedientePorConsultar.documentos.Find(x => x.tipo == "SolicitudExpedicionFirma");
+
             ConclusionFirma documentoCF = new ConclusionFirma();
-            documentoCF = _documentoservice.registrarConclusionFirmaE(expediente, url2);
+            documentoCF = _documentoservice.registrarConclusionFirmaE(expediente, url2, documentosolicitud.iddocumento);
             _escrituraspublicasservice.updateEscrituraPublicaporConclusionFirma(conclusionfirmaDTO.contenidoDTO.idescriturapublica);
             return documentoCF;
         }
@@ -572,7 +576,10 @@ namespace SISGED.Server.Controllers
                 }
             }
 
-            return _documentoservice.registrarResultadoBPN(resultadoBPNDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+            ExpedienteDTO expedientePorConsultar = _expedienteservice.getById(expedientewrapper.idexpediente);
+            DocumentoExpediente documentosolicitud =  expedientePorConsultar.documentos.Find(x => x.tipo == "SolicitudBPN");
+
+            return _documentoservice.registrarResultadoBPN(resultadoBPNDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada, documentosolicitud.iddocumento);
         }
         #endregion
 
