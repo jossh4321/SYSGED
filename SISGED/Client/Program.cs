@@ -20,6 +20,7 @@ using SISGED.Shared.Validators.DocumentosValidator.SolicitudPBN;
 using SISGED.Shared.Entities;
 using SISGED.Shared.Validators.DocumentosValidator.AperturamientoDisciplinario;
 using SISGED.Shared.Validators.FiltroEscrituraPublicaValidator;
+using SISGED.Shared.Validators.UsuarioValidator;
 
 namespace SISGED.Client
 {
@@ -59,6 +60,7 @@ namespace SISGED.Client
             services.AddValidatorsFromAssemblyContaining<ParametrosBusquedaEscrituraPublicaValidator>();
             services.AddValidatorsFromAssemblyContaining<SolicitudBPNDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<ContenidoSolicitudBPNDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<UsuarioValidator>();
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();
             services.AddScoped<AuthenticationStateProvider, 
