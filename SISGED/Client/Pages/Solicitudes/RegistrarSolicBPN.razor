@@ -127,7 +127,7 @@
         <div class="modal-info-solicitudBPN">
             <MatTabGroup>
                 <MatTab Label="Solicitud">
-                    <div class="field-container input-group-2">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudbpn.contenidoDTO.actojuridico)">
                         <MatTextField @bind-Value="@solicitudbpn.contenidoDTO.actojuridico" Class="text-field-style" Label="Acto Juridico"></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -344,6 +344,9 @@
 
     public async Task handleValidSubmit()
     {
+        solicitudbpn.nombrecliente = sesion.usuario.datos.nombre;
+        solicitudbpn.tipodocumento = sesion.usuario.datos.tipodocumento;
+        solicitudbpn.numerodocumento = sesion.usuario.datos.numerodocumento;
         loadprocess = true;
         /*
         solicitudbpn.contenidoDTO.idcliente = solicitudbpn.contenidoDTO.idcliente;
@@ -354,11 +357,12 @@
         solicitudbpn.contenidoDTO.otorgantes = solicitudbpn.contenidoDTO.otorgantes;
         solicitudbpn.contenidoDTO.fecharealizacion = DateTime.Now;
         */
-
+        Usuario usuario = new Usuario();
+        usuario.id = sesion.usuario.id;
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = solicitudbpn;
         //expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        expedienteWrapper.idusuarioactual = "GAAAADenuncia";
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
         //expedienteWrapper.idusuarioactual = sesion.usuario.id;
         //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 

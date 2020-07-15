@@ -68,47 +68,7 @@
             <MatTab Label="Datos Generales">
 
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.nombrecliente)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.nombrecliente" Class="text-field-style"
-                                  Label="Nombre del cliente" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudexpedicionfirma))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.nombrecliente)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.tipodocumento)">
-                    <InputSelect @bind-Value="@solicitudexpedicionfirma.tipodocumento" class="text-field-style  custom-select">
-                        <option value="nulo">--Seleccione el Tipo de Documento--</option>
-                        <option value="CE">Carnet de Extranjeria</option>
-                        <option value="DNI">D.N.I.</option>
-                        <option value="pasaporte">Pasaporte</option>
-                    </InputSelect>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.tipodocumento)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.numerodocumento)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.numerodocumento" Class="text-field-style"
-                                  Label="N° de documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudexpedicionfirma))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.numerodocumento)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+                
 
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
@@ -186,6 +146,8 @@
     private bool loadprocess = false;
     protected override void OnInitialized()
     {
+        Usuario usuario = new Usuario();
+        usuario.id = sesion.usuario.id;
         solicitudexpedicionfirma.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(solicitudexpedicionfirma);
         foreach (string u in solicitudexpedicionfirma.contenidoDTO.Urlanexo)
@@ -223,19 +185,18 @@
 
     public async Task handleValidSubmit()
     {
+        solicitudexpedicionfirma.nombrecliente = sesion.usuario.datos.nombre;
+        solicitudexpedicionfirma.tipodocumento = sesion.usuario.datos.tipodocumento;
+        solicitudexpedicionfirma.numerodocumento = sesion.usuario.datos.numerodocumento;
         loadprocess = true;
-        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-        //solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
-        expedienteWrapper.documento = solicitudexpedicionfirma;
-        expedienteWrapper.idusuarioactual = "GAAAAAA";
-
-        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoEFDTO>("api/documentos/documentosef", expedienteWrapper);
         if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
         {
-            ExpedienteWrapper ExpedienteWrapper = new ExpedienteWrapper();
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
             //solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
-            ExpedienteWrapper.documento = solicitudexpedicionfirma;
-            ExpedienteWrapper.idusuarioactual = "gaa";
+            expedienteWrapper.documento = solicitudexpedicionfirma;
+            expedienteWrapper.idusuarioactual = sesion.usuario.id;
+            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoEFDTO>("api/documentos/documentosef", expedienteWrapper);
+
             if (httpResponse.Error)
             {
                 await swalfire.errorMessage("Error en el servidor 505, intentelo de nuevo");

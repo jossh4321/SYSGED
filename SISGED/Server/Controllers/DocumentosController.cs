@@ -82,7 +82,7 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("documentosolicbpn")]
-        public ActionResult<ExpedienteDocumentoBPNDTO> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<ExpedienteDocumentoBPNDTO>> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
         {
             /*
             SolicitudBPN documentoSolicBPN = new SolicitudBPN();
@@ -198,6 +198,7 @@ namespace SISGED.Server.Controllers
         //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         public async Task<ActionResult<ExpedienteDocumentoSDDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
+
             //conversion de Object a Tipo especifico
             SolicitudDenunciaDTO documento = new SolicitudDenunciaDTO();
             var json = JsonConvert.SerializeObject(expedientewrapper.documento);
@@ -227,7 +228,7 @@ namespace SISGED.Server.Controllers
                 codigo = documento.contenidoDTO.codigo,
                 titulo = documento.contenidoDTO.titulo,
                 descripcion = documento.contenidoDTO.descripcion,
-                nombrecliente = documento.contenidoDTO.nombrecliente,
+                nombrecliente = documento.nombrecliente,
                 fechaentrega = DateTime.Now,
                 url = urlData
             };

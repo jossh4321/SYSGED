@@ -68,47 +68,7 @@
         <MatTabGroup>
             <MatTab Label="Datos Generales">
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.nombrecliente)">
-                    <MatTextField @bind-Value="@solicitudDenuncia.nombrecliente" Class="text-field-style"
-                                  Label="Nombre del cliente" @oninput='@(e => KeyUp(e,"nombrecliente",solicitudDenuncia))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudDenuncia.nombrecliente)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.tipodocumento)">
-                    <InputSelect @bind-Value="@solicitudDenuncia.tipodocumento" class="text-field-style custom-select">
-                        <option value="nulo">--Seleccione el Tipo de Documento--</option>
-                        <option value="CE">Carnet de Extranjeria</option>
-                        <option value="DNI">D.N.I.</option>
-                        <option value="pasaporte">Pasaporte</option>
-                    </InputSelect>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudDenuncia.tipodocumento)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
-
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.numerodocumento)">
-                    <MatTextField @bind-Value="@solicitudDenuncia.numerodocumento" Class="text-field-style"
-                                  Label="Numero de Documento" @oninput='@(e => KeyUp(e,"numerodocumento",solicitudDenuncia))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudDenuncia.numerodocumento)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+                
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.codigo)">
                     <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.codigo" Class="text-field-style"
                                   Label="Codigo" @oninput='@(e => KeyUp(e,"codigo",solicitudDenuncia.contenidoDTO))'></MatTextField>
@@ -180,6 +140,7 @@
     private bool loadprocess = false;
     protected override void OnInitialized()
     {
+
         solicitudDenuncia.contenidoDTO.Urlanexo = new List<string>();
 
         _editContext = new EditContext(solicitudDenuncia);
@@ -216,13 +177,16 @@
     }
     public async Task handleValidSubmit()
     {
+        solicitudDenuncia.nombrecliente = sesion.usuario.datos.nombre;
+        solicitudDenuncia.tipodocumento = sesion.usuario.datos.tipodocumento;
+        solicitudDenuncia.numerodocumento = sesion.usuario.datos.numerodocumento;
         loadprocess = true;
         if (solicitudDenuncia.contenidoDTO.urldata != "" && solicitudDenuncia.contenidoDTO.urldata != null)
         {
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
             //solicitudDenuncia.contenidoDTO.nombrecliente = solicitudDenuncia.nombrecliente;
             expedienteWrapper.documento = solicitudDenuncia;
-            expedienteWrapper.idusuarioactual = "GAAAADenuncia";
+            expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
             var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoSDDTO>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)

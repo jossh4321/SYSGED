@@ -57,8 +57,8 @@ namespace SISGED.Client
             services.AddValidatorsFromAssemblyContaining<ParticipanteValidator>();
             services.AddValidatorsFromAssemblyContaining<HechoValidator>();
             services.AddValidatorsFromAssemblyContaining<ParametrosBusquedaEscrituraPublicaValidator>();
-            //services.AddValidatorsFromAssemblyContaining<SolicitudBPNDTOValidator>();
-            //services.AddValidatorsFromAssemblyContaining<ContenidoSolicitudBPNDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<SolicitudBPNDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<ContenidoSolicitudBPNDTOValidator>();
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();
             services.AddScoped<AuthenticationStateProvider, 
