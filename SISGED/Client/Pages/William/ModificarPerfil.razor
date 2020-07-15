@@ -118,7 +118,7 @@
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => usuario.usuario)" />
+                        <ValidationMessage For="@(() => usuario)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -128,7 +128,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.nombre)">
                     <MatTextField @bind-Value="@usuario.datos.nombre" Class="text-field-style" Text="nombre" Label="Nombres"
-                                  @oninput='@(e => KeyUp(e, "nombres", usuario.datos))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "nombre", usuario.datos))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -143,7 +143,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.apellido)">
                     <MatTextField @bind-Value="@usuario.datos.apellido" Class="text-field-style" Label="Apellidos"
-                                  @oninput='@(e => KeyUp(e, "apellidos", usuario.datos))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "apellido", usuario.datos))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -159,7 +159,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.fechanacimiento)">
                     <MatTextField @bind-Value="@usuario.datos.fechanacimiento" Class="text-field-style" Label="Fecha de Nacimiento"
-                                  @oninput='@(e => KeyUp(e, "fechadenacimiento", usuario.datos))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "fechanacimiento", usuario.datos))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -174,7 +174,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.tipodocumento)">
                     <MatTextField @bind-Value="@usuario.datos.tipodocumento" Class="text-field-style" Label="Tipo de documento"
-                                  @oninput='@(e => KeyUp(e, "Tipo de Documento ", usuario.datos))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "tipodocumento", usuario.datos))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -189,7 +189,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.numerodocumento)">
                     <MatTextField @bind-Value="@usuario.datos.numerodocumento" Class="text-field-style" Label="Numero de documento"
-                                  @oninput='@(e => KeyUp(e, "Numero de Documento", usuario.datos))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "numerodocumento", usuario.datos))'></MatTextField>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -204,7 +204,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.direccion)">
                     <MatTextField @bind-Value="@usuario.datos.direccion" Class="text-field-style" Label="Direccion"
-                                  @oninput='@(e => KeyUp(e, "Direccion", usuario.datos))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "direccion", usuario.datos))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -219,7 +219,7 @@
                 @*///////////////////////////////////////////////////*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuario.datos.email)">
                     <MatTextField @bind-Value="@usuario.datos.email" Class="text-field-style" Label="Email"
-                                  @oninput='@(e => KeyUp(e, "Email", usuario.datos))'></MatTextField>
+                                  @oninput='@(e => KeyUp(e, "email", usuario.datos))'></MatTextField>
 
 
                     <div class="incorrecto">
@@ -251,59 +251,6 @@
 @code {
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
-
-
-    /// //////////////////////
-
-
-    //protected override async Task OnInitializedAsync()
-    //{
-
-    //    Usuario usuario = new Usuario();
-
-
-
-    //    usuario.id = sesion.usuario.id;
-    //    usuario.usuario = sesion.usuario.usuario;
-    //    usuario.datos.nombre = sesion.usuario.datos.nombre;
-    //    usuario.datos.apellido = sesion.usuario.datos.apellido;
-    //    usuario.datos.fechanacimiento = sesion.usuario.datos.fechanacimiento;
-    //    usuario.datos.tipodocumento = sesion.usuario.datos.tipodocumento;
-    //    usuario.datos.numerodocumento = sesion.usuario.datos.numerodocumento;
-    //    usuario.datos.direccion = sesion.usuario.datos.direccion;
-    //    usuario.datos.email = sesion.usuario.datos.email;
-
-
-
-
-    //    String usuariomuestra = usuario.usuario;
-    //    String nombre = usuario.datos.nombre;
-    //    String apellido = usuario.datos.apellido;
-    //    String fechadenacimiento = usuario.datos.fechanacimiento;
-    //    String tipodocumento = usuario.datos.tipodocumento;
-    //    String numerodocumento = usuario.datos.numerodocumento;
-    //    String direccion = usuario.datos.direccion;
-    //    String email = usuario.datos.email;
-
-    //    Console.WriteLine("Muestra los datos usuario:" + usuariomuestra);
-    //    Console.WriteLine("Muestra los datos nombre:" + nombre);
-    //    Console.WriteLine("Muestra los datos apellido:" + apellido);
-    //    Console.WriteLine("Muestra los datos fecha de nacimeinto:" + fechadenacimiento);
-    //    Console.WriteLine("Muestra los datos tipo de documetno:" + tipodocumento);
-    //    Console.WriteLine("Muestra los datos numero de documento:" + numerodocumento);
-    //    Console.WriteLine("Muestra los datos direccion: " + direccion);
-    //    Console.WriteLine("Muestra los datos email: " + email);
-
-
-    //}
-
-
-    /// /////////////////////////////////
-
-
-
-
-
 
 
     Usuario usuario = new Usuario();

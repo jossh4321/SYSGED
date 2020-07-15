@@ -146,7 +146,7 @@ namespace SISGED.Server.Services
                 .Set("datos.numerodocumento", newnumdoc)
                 .Set("datos.direccion", newdireccion)
                 .Set("datos.email", newemail);
-
+                
             usuario = _usuarios.FindOneAndUpdate<Usuario>(filter, update, new FindOneAndUpdateOptions<Usuario>
             {
                 ReturnDocument = ReturnDocument.After
