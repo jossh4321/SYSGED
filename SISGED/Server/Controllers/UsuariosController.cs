@@ -111,8 +111,20 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPut("usuariomodi")]
-        public ActionResult<Usuario> ModifyDatos(Usuario usuario)
+        public async Task<ActionResult<Usuario>> ModifyDatos(Usuario usuario)
         {
+            string img = "";
+            img = usuario.datos.imagen;
+            if (!string.IsNullOrWhiteSpace(usuario.datos.imagen))
+            {
+                var profileimg = Convert.FromBase64String(usuario.datos.imagen);
+                usuario.datos.imagen = await _fileStorage.editFile(
+                    profileimg, "jpg", "usuarios", usuario.datos.imagen);
+            }
+            else
+            {
+                usuario.datos.imagen = img;
+            }
             usuario = _usuarioservice.modifyDatos(usuario);
             
             return usuario;
