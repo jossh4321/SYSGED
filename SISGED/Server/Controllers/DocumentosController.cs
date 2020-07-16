@@ -152,7 +152,7 @@ namespace SISGED.Server.Controllers
                 numerodocumento = documento.numerodocumento
             };
             Expediente expediente = new Expediente();
-            expediente.tipo = "SolicitudBPN";
+            expediente.tipo = "Busqueda Protocolo Notarial";
             expediente.cliente = cliente;
             expediente.fechainicio = DateTime.Now;
             expediente.fechafin = null;
