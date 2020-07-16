@@ -95,14 +95,14 @@
                     </div>
                 </div>
 
-                <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
+                <InputFileV2 datosFile="@apelacion.contenidoDTO.data" archivoSeleccionado="ArchivoSeleccionada"></InputFileV2>
 
                 @*<div class="field-container">
                     <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>*@
+                       Disabled="@loadprocess"
+                       Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                       Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>*@
             </MatTab>
             <MatTab Label="Subir Anexo">
                 <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2"></DragnDrop>
@@ -149,7 +149,7 @@
         }
     }
 
-    private void ImagenSeleccionada(string imagenbase64)
+    private void ArchivoSeleccionada(string imagenbase64)
     {
         apelacion.contenidoDTO.data = imagenbase64;
     }
