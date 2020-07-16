@@ -168,6 +168,7 @@
     bool Opened = true;
     public string valueclass = "non-show";
     public string valueclassnotification = "non-show";
+    //public bool cargasesion = false;
     [CascadingParameter]
     private Task<AuthenticationState> authenticationState { get; set; }
 
@@ -180,8 +181,8 @@
     ForwardRef buttonForwardRefMore = new ForwardRef();
     BaseMatMenu MenuMore;
 
-    Sesion sesion = new Sesion();
-    bool cargasesion = true;
+    public Sesion sesion = new Sesion();
+    public bool cargasesion = true;
 
     //lista entradas harcodeadas
     //List<ExpedienteDTO> expedientes = new List<ExpedienteDTO>();
@@ -212,13 +213,17 @@
             if (!datosSesion.Error)
             {
                 sesion = (Sesion)datosSesion.Response;
-                await setearBandeja(sesion.usuario.id);
+                if(sesion.usuario.tipo != "cliente")
+                {
+                    await setearBandeja(sesion.usuario.id);
+                    sesion.herramientasutilizables = obtenerListaheramientas(sesion.permisosHerram);
+                    sesion.listaentradas = obtenerListaEntradas(bandejaunificada.expedienteentrada);
+                    sesion.listasalidas = obtenerListaSalidas(bandejaunificada.expedientesalida);
+                }
                 //await setearBandejaEntrada(sesion.usuario.id);
-                sesion.herramientasutilizables = obtenerListaheramientas(sesion.permisosHerram);
-                sesion.listaentradas = obtenerListaEntradas(bandejaunificada.expedienteentrada);
-                sesion.listasalidas = obtenerListaSalidas(bandejaunificada.expedientesalida);
                 await Connect();
                 StateHasChanged();
+                cargasesion = true;
             }
             else
             {
