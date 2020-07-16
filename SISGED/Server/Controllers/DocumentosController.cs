@@ -603,10 +603,11 @@ namespace SISGED.Server.Controllers
 
         //obteniendo documentos
 
-        [HttpGet("documentosolicitudes")]
-        public async Task<List<Documento>> obtenerSolicitudes()
+        [HttpGet("documentosolicitudes/{numerodocumento}")]
+        public async Task<List<DocumentoADTO>> obtenerSolicitudes(string numerodocumento)
         {
-            return _documentoservice.obtenerSolicitudes();
+            numerodocumento = "67584990";
+            return await _documentoservice.ObtenerSolicitudesUsuario(numerodocumento);
         }
        
         [HttpGet("documentoodn")]

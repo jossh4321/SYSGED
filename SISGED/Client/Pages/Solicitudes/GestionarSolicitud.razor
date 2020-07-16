@@ -36,11 +36,11 @@
             {
                 tipo_front = "Busqueda de Protocolo Notarial";
             }
-            @if (@context.tipo == "SolicitudExpedicionFirma")
+            else @if (@context.tipo == "SolicitudExpedicionFirma")
             {
                 tipo_front = "Expedicion de Firma";
             }
-            @if (@context.tipo == "SolicitudDenuncia")
+            else @if (@context.tipo == "SolicitudDenuncia")
             {
                 tipo_front = "Denuncia";
             }
@@ -218,15 +218,15 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
 
-    List<Documento> docs { get; set; } = new List<Documento>();
+    List<DocumentoADTO> docs { get; set; } = new List<DocumentoADTO>();
 
     protected override async Task OnInitializedAsync()
     {
 
-        var httpResponse = await repository.Get<List<Documento>>("api/documentos/documentosolicitudes");
+        var httpResponse = await repository.Get<List<DocumentoADTO>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
         if (!httpResponse.Error)
         {
-            Documento docActivator = new Documento();
+            DocumentoADTO docActivator = new DocumentoADTO();
             docs = httpResponse.Response;
             if (docActivator.estado == "revisado")
             {
