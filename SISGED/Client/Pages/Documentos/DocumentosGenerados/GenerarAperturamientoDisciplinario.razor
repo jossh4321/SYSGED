@@ -116,7 +116,10 @@
         notario = new Notario();
         await getUsuario();
         faltaCargar = false;
-
+        foreach (DocumentoDTO i in workspace.expedienteseleccionado.documentosobj)
+        {
+            Console.WriteLine(i.id);
+        }
     }
 
     private async Task getUsuario()

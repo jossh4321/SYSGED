@@ -2,6 +2,9 @@
 @inject IRepository repository
 @layout MainLayout
 @inject NavigationManager navigationManager
+@inject HttpClient Http
+@inject IJSRuntime js
+@inject ISwalFireMessage swalfire
 
 <style>
     .mdc-dialog .mdc-dialog__surface {
@@ -12,180 +15,375 @@
         color: white;
     }
 
-    th {
-        text-align: center;
-        text-emphasis: filled;
+    .container-c {
+        display: inline-flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        margin: 10px auto;
     }
 
-    td {
-        text-align: center;
+    tr.mdc-table-header-row {
+        background-color: #1a1a1a !important;
+    }
+
+    .table-header {
+        color: white;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: inline-block
+    }
+
+    tbody {
+        background-color: #4d4d4d !important;
+    }
+
+    .table-row {
+        color: #ccc;
+        font-family: sans-serif;
+        font-size: 14px;
+        display: inline-block
+    }
+
+    .mat-success-c {
+        color: green !important;
+        border: 1px solid green !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-dark-c {
+        color: black !important;
+        border: 1px solid black !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    /*#ffd11a*/
+    .mat-warning-c {
+        color: #ffd11a !important;
+        border: 1px solid #ffd11a !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-danger-c {
+        color: #ff3333 !important;
+        border: 1px solid #ff3333 !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    .mat-pay-c {
+        color: #5B97FF !important;
+        border: 1px solid #5B97FF !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    .mat-disabled-c {
+        color: #818181 !important;
+        border: 1px solid #818181 !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-info-c {
+        color: #0ACD2A !important;
+        border: 1px solid #0ACD2A !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+        .mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover, .mat-dark-c:hover {
+            background-color: none !important;
+            transform: scale(1.07,1.07) !important;
+        }
+
+
+    .button-container {
+        display: block;
+        margin: 5px;
+        flex-grow: 1;
+    }
+
+    .button-container-lvl {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+    }
+
+    .mdc-table td:last-child {
+        width: unset !important;
+    }
+
+    .head-flex {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        color: white
+    }
+
+    .pruebita {
+        width: 300px;
+        height: 200px;
+        border: 1px solid black;
+    }
+
+    .loader-block {
+        display: flex;
+        margin-top: 20px !important;
+        min-width: 800px;
+        height: 300px;
+        background-color: #4d4d4d;
+        justify-content: center;
+        justify-content: center;
+        align-items: center;
+    }
+    .formulario-eleccion .mdc-dialog__surface {
+        width:350px !important;
     }
 </style>
 
-<div style="width:1050px;position:fixed;">
-    <MatButton OnClick="@OpenDialogRegistrar" Unelevated="true">Registrar Solicitud</MatButton>
-    <MatTable style="background-color:aliceblue;color:darkslateblue;border-radius:40px;text-align:center" Items="docs" class="mat-elevation-z5">
-        <MatTableHeader>
-            <th>Tipo de Protocolo Notarial</th>
-            <th>Estado</th>
-            <th>Fecha</th>
-            <th>Funciones</th>
-        </MatTableHeader>
-        <MatTableRow>
-            @if (@context.tipo == "SolicitudBPN")
-            {
-                tipo_front = "Busqueda de Protocolo Notarial";
-            }
-            @if (@context.tipo == "SolicitudExpedicionFirma")
-            {
-                tipo_front = "Expedicion de Firma";
-            }
-            @if (@context.tipo == "SolicitudDenuncia")
-            {
-                tipo_front = "Denuncia";
-            }
-            @{
-                int index = context.historialcontenido.Count;
-                <td bind="@TipoSolicitud2">@tipo_front</td>
-                <td>@context.estado</td>
-                @if (index > 0) {
-                    <td>@context.historialcontenido[index - 1].fechamodificacion</td>}
-                else
-                {
-                    <td>No hay historial disponible</td>
+<div class="container-c" style=" width: auto;">
+    <div class="head-flex">
+        <h1>Vista de Gestion de Solicitudes</h1>
+        <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true" Position="@MatTooltipPosition.Left">
+            <MatFAB Icon="@MatIconNames.Add" @onclick="@OpenDialogRegistrar"></MatFAB>
+        </MatTooltip>
+    </div>
+    @if (cargatabla == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc
+" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+
+
+        <MatTable Items="docs" class="mat-elevation-z5" Style="width:auto">
+            <MatTableHeader>
+                <th>
+                    <span class="table-header">Tipo de Protocolo Notarial</span>
+                </th>
+                <th>
+                    <span class="table-header">Estado</span>
+                </th>
+                <th>
+                    <span class="table-header">Fecha</span>
+                </th>
+                <th>
+                    <span class="table-header">Funciones</span>
+                </th>
+            </MatTableHeader>
+            <MatTableRow>
+                @if (@context.tipo == "SolicitudBPN")
+                    {
+                        tipo_front = "Busqueda de Protocolo Notarial";
+                    }
+                @if (@context.tipo == "SolicitudExpedicionFirma")
+                    {
+                        tipo_front = "Expedicion de Firma";
+                    }
+                @if (@context.tipo == "SolicitudDenuncia")
+                    {
+                        tipo_front = "Denuncia";
+                    }
+                @{
+                        int index = context.historialcontenido.Count;
+
+                    <td bind="@TipoSolicitud2">
+                        <span class="table-row">@tipo_front</span>
+                    </td>
+                    <td>
+                        <span class="table-row">@context.estado</span>
+                    </td>
+                    @if (index > 0)
+                        {
+                        <td>
+                            <span class="table-row">@context.historialcontenido[index - 1].fechamodificacion</span>
+                        </td>
+                        }
+                        else
+                        {
+                        <td>
+                            <span class="table-row">No hay historial disponible</span>
+                        </td>
+                        }
+                    /**/
+                    /**/
+                    /**/
+                    /**/
+                    <td>
+                        @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido") { activator = true; }
+                            else { activator = false; }
+                        <div class="button-container-lvl">
+                            <div class="button-container">
+                                    <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
+                            </div>
+                            <div class="button-container">
+                                @if (activator == false)
+                                    {
+                                    <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@OpenDialogModificar" Style="width:100% !important">Modificar</MatButton>
+
+                                    }
+                                    else
+                                    {
+                                    <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@OpenDialogModificar" Style="width:100% !important">Modificar</MatButton>
+
+                                    }
+                            </div>
+                            <div class="button-container">
+                                @if (activator == false)
+                                    {
+                                    <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@OpenDialogCancelar" Style="width:100% !important">Cancelar</MatButton>
+
+                                    }
+                                    else
+                                    {
+                                    <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@OpenDialogCancelar" Style="width:100% !important">Cancelar</MatButton>
+
+                                    }
+                            </div>
+                            <div class="button-container">
+                                @if (context.estado == "emitido")
+                                {
+                                    <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
+                                }
+                            </div>
+
+
+                        </div>
+
+
+                    </td>
                 }
-                <td>
-                    @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido")
-                    {
-                        activator = true;
-                    }
-                    else
-                    {
-                        activator = false;
-                    }
-                    <MatButton Icon="@MatIconNames.Description" OnClick="@(()=>OpenDialogVerDetalles(context.id))">Ver Detalles</MatButton>
-                    <MatButton Icon="@MatIconNames.Build" Disabled="@activator" OnClick="@OpenDialogModificar">Modificar</MatButton>
-                    <MatButton Icon="@MatIconNames.Cancel_presentation" Disabled="@activator" OnClick="@OpenDialogCancelar">Cancelar</MatButton>
-                    @if (context.estado == "emitido")
-                    {
-                        <MatButton Icon="@MatIconNames.Payment" Disabled="false" OnClick="@(()=>Pagar(context.id))">Pagar</MatButton>
-                    }
-                </td>
-            }
 
 
 
-        </MatTableRow>
-    </MatTable>
+            </MatTableRow>
+        </MatTable>
+
+    }
 </div>
-
-
-
-<MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-    @if (TipoSolicitud == "Solic_ExpedicionFirma")
-    {
-        <MatDialogTitle>Registrar Solicitud de Expedicion de Firma</MatDialogTitle>
-        <MatDialogContent>
-            <RegistrarSolicExpedicionF />
-        </MatDialogContent>
-    }
-    @if (TipoSolicitud == "Solic_Denuncia")
-    {
-        <MatDialogTitle>Registrar Solicitud de Denuncia</MatDialogTitle>
-        <MatDialogContent>
-            <RegistrarSolicDenuncias />
-        </MatDialogContent>
-    }
-    @if (TipoSolicitud == "Solic_BPN")
-    {
-        <MatDialogTitle>Registrar Solicitud de BPN</MatDialogTitle>
-        <MatDialogContent>
-            <RegistrarSolicBPN />
-        </MatDialogContent>
-    }
-
-    <MatDialogActions>
-        <MatButton OnClick="@OkClick">Cancelar</MatButton>
-    </MatDialogActions>
-</MatDialog>
+  
 
 
 
 
-
-
-
-
-<MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
-    <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
-    @if (TipoSolicitud2 == "Expedicion de Firma")
-    {
-        <MatDialogContent>
-            <RegistrarSolicExpedicionF />
-        </MatDialogContent>
-    }
-    @if (TipoSolicitud2 == "Denuncia")
-    {
-        <MatDialogContent>
-            <RegistrarSolicDenuncias />
-        </MatDialogContent>
-    }
-    @if (TipoSolicitud2 == "Busqueda de Protocolo Notarial")
-    {
-        <MatDialogContent>
-            <RegistrarSolicBPN />
-        </MatDialogContent>
-    }
-
-    <MatDialogActions>
-        <MatButton OnClick="@OkClick">Cancelar</MatButton>
-    </MatDialogActions>
-</MatDialog>
-
-<MatDialog @bind-IsOpen="@dialogIsOpen_VerDetalles">
-    <MatDialogTitle>Detalles de la Solicitud</MatDialogTitle>
-    @if (TipoSolicitud2 == "Expedicion de Firma")
-    {
-        <MatDialogContent>
-            <RegistrarSolicExpedicionF />
-        </MatDialogContent>
-    }
-    @if (TipoSolicitud2 == "Denuncia")
-    {
-        <MatDialogContent>
-            <RegistrarSolicDenuncias />
-        </MatDialogContent>
-    }
-    @if (TipoSolicitud2 == "Busqueda de Protocolo Notarial")
-    {
-        <MatDialogContent>
-            <RegistrarSolicBPN />
-        </MatDialogContent>
-    }
-    <MatDialogActions>
-        <MatButton OnClick="@OkClick">Cancelar</MatButton>
-    </MatDialogActions>
-</MatDialog>
-<MatDialog @bind-IsOpen="@dialogPrincipal">
-    <MatDialogTitle>Elegir Tipo de Solicitud</MatDialogTitle>
-    <MatDialogContent>
-        <p>
-            <MatSelect Label="" @bind-Value="@TipoSolicitud">
-                <MatOptionString Value="nulo"></MatOptionString>
-                <MatOptionString Value="Solic_ExpedicionFirma">Expedicion de Firmas</MatOptionString>
-                <MatOptionString Value="Solic_Denuncia">Denuncia</MatOptionString>
-                <MatOptionString Value="Solic_BPN">Busqueda de Protocolo Notarial</MatOptionString>
-            </MatSelect>
-        </p>
-    </MatDialogContent>
-    <MatDialogActions>
-        @if (TipoSolicitud == "Solic_ExpedicionFirma" || TipoSolicitud == "Solic_Denuncia" || TipoSolicitud == "Solic_BPN")
+    <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
+        @if (TipoSolicitud == "Solic_ExpedicionFirma")
         {
-            <MatButton OnClick="@OkEleccionSolic">OK</MatButton>
+            <MatDialogTitle>Registrar Solicitud de Expedicion de Firma</MatDialogTitle>
+            <MatDialogContent>
+                <RegistrarSolicExpedicionF />
+            </MatDialogContent>
         }
-        <MatButton OnClick="@CancelButton">Cerrar</MatButton>
-    </MatDialogActions>
-</MatDialog>
+        @if (TipoSolicitud == "Solic_Denuncia")
+        {
+            <MatDialogTitle>Registrar Solicitud de Denuncia</MatDialogTitle>
+            <MatDialogContent>
+                <RegistrarSolicDenuncias />
+            </MatDialogContent>
+        }
+        @if (TipoSolicitud == "Solic_BPN")
+        {
+            <MatDialogTitle>Registrar Solicitud de BPN</MatDialogTitle>
+            <MatDialogContent>
+                <RegistrarSolicBPN />
+            </MatDialogContent>
+        }
+
+        <MatDialogActions>
+            <MatButton OnClick="@OkClick">Cancelar</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+
+
+
+
+
+
+
+    <MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
+        <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
+        @if (TipoSolicitud2 == "Expedicion de Firma")
+        {
+            <MatDialogContent>
+                <RegistrarSolicExpedicionF />
+            </MatDialogContent>
+        }
+        @if (TipoSolicitud2 == "Denuncia")
+        {
+            <MatDialogContent>
+                <RegistrarSolicDenuncias />
+            </MatDialogContent>
+        }
+        @if (TipoSolicitud2 == "Busqueda de Protocolo Notarial")
+        {
+            <MatDialogContent>
+                <RegistrarSolicBPN />
+            </MatDialogContent>
+        }
+
+        <MatDialogActions>
+            <MatButton OnClick="@OkClick">Cancelar</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+    <MatDialog @bind-IsOpen="@dialogIsOpen_VerDetalles">
+        <MatDialogTitle>Detalles de la Solicitud</MatDialogTitle>
+        @if (TipoSolicitud2 == "Expedicion de Firma")
+        {
+            <MatDialogContent>
+                <RegistrarSolicExpedicionF />
+            </MatDialogContent>
+        }
+        @if (TipoSolicitud2 == "Denuncia")
+        {
+            <MatDialogContent>
+                <RegistrarSolicDenuncias />
+            </MatDialogContent>
+        }
+        @if (TipoSolicitud2 == "Busqueda de Protocolo Notarial")
+        {
+            <MatDialogContent>
+                <RegistrarSolicBPN />
+            </MatDialogContent>
+        }
+        <MatDialogActions>
+            <MatButton OnClick="@OkClick">Cancelar</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+    <MatDialog Class="formulario-eleccion" @bind-IsOpen="@dialogPrincipal">
+        <MatDialogTitle>Elegir Tipo de Solicitud</MatDialogTitle>
+        <MatDialogContent>
+            <p>
+                <MatSelect Label="" @bind-Value="@TipoSolicitud">
+                    <MatOptionString Value="nulo"></MatOptionString>
+                    <MatOptionString Value="Solic_ExpedicionFirma">Expedicion de Firmas</MatOptionString>
+                    <MatOptionString Value="Solic_Denuncia">Denuncia</MatOptionString>
+                    <MatOptionString Value="Solic_BPN">Busqueda de Protocolo Notarial</MatOptionString>
+                </MatSelect>
+            </p>
+        </MatDialogContent>
+        <MatDialogActions>
+            @if (TipoSolicitud == "Solic_ExpedicionFirma" || TipoSolicitud == "Solic_Denuncia" || TipoSolicitud == "Solic_BPN")
+            {
+                <MatButton OnClick="@OkEleccionSolic">OK</MatButton>
+            }
+            <MatButton OnClick="@CancelButton">Cerrar</MatButton>
+        </MatDialogActions>
+    </MatDialog>
 
 
 
@@ -195,38 +393,40 @@
 
 
 
-@code {
+    @code {
 
-    string TipoSolicitud;
-    string TipoSolicitud2;
-    string tipo_front;
-    bool activator;
+        string TipoSolicitud;
+        string TipoSolicitud2;
+        string tipo_front;
+        bool activator;
 
-    bool dialogPrincipal = false;
+        public bool cargatabla { get; set; } = false;
 
-    bool dialogIsOpen_Registrar = false;
+        bool dialogPrincipal = false;
 
-    bool dialogIsOpen_Modificar = false;
-    bool dialogIsOpen_VerDetalles = false;
-    bool dialogIsOpen_Cancelar = false;
+        bool dialogIsOpen_Registrar = false;
 
-    bool Registrar_SolicDenuncia = false;
-    bool Registrar_SolicBPN = false;
-    bool Registrar_SolicEF = false;
-    [CascadingParameter]
-    MainLayout layout { get; set; }
-    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+        bool dialogIsOpen_Modificar = false;
+        bool dialogIsOpen_VerDetalles = false;
+        bool dialogIsOpen_Cancelar = false;
+
+        bool Registrar_SolicDenuncia = false;
+        bool Registrar_SolicBPN = false;
+        bool Registrar_SolicEF = false;
+        [CascadingParameter]
+        MainLayout layout { get; set; }
+        [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
 
-    List<Documento> docs { get; set; } = new List<Documento>();
+    List<DocumentoADTO> docs { get; set; } = new List<DocumentoADTO>();
 
-    protected override async Task OnInitializedAsync()
-    {
+        protected override async Task OnInitializedAsync()
+        {
 
-        var httpResponse = await repository.Get<List<Documento>>("api/documentos/documentosolicitudes");
+        var httpResponse = await repository.Get<List<DocumentoADTO>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
         if (!httpResponse.Error)
         {
-            Documento docActivator = new Documento();
+            DocumentoADTO docActivator = new DocumentoADTO();
             docs = httpResponse.Response;
             if (docActivator.estado == "revisado")
             {
@@ -237,91 +437,92 @@
             }
 
 
+            }
+            else
+            {
+                Console.WriteLine("Ocurrio un error");
+            }
+            cargatabla = false;
+
+
         }
-        else
+
+        void CancelButton()
         {
-            Console.WriteLine("Ocurrio un error");
+            dialogPrincipal = !dialogPrincipal;
+
+            Registrar_SolicDenuncia = false;
+            Registrar_SolicBPN = false;
+            Registrar_SolicEF = false;
         }
 
-
-
-
-    }
-
-    void CancelButton()
-    {
-        dialogPrincipal = !dialogPrincipal;
-
-        Registrar_SolicDenuncia = false;
-        Registrar_SolicBPN = false;
-        Registrar_SolicEF = false;
-    }
-
-    void OkEleccionSolic()
-    {
-        if (dialogPrincipal)
+        void OkEleccionSolic()
         {
+            if (dialogPrincipal)
+            {
 
-            dialogIsOpen_Registrar = true;
-            if (TipoSolicitud == "Solic_ExpedicionFirma")
-            {
-                Registrar_SolicEF = true;
+                dialogIsOpen_Registrar = true;
+                if (TipoSolicitud == "Solic_ExpedicionFirma")
+                {
+                    Registrar_SolicEF = true;
+                }
+                else if (TipoSolicitud == "Solic_Denuncia")
+                {
+                    Registrar_SolicDenuncia = true;
+                }
+                else if (TipoSolicitud == "Solic_BPN")
+                {
+                    Registrar_SolicBPN = true;
+                }
+                dialogPrincipal = false;
+
             }
-            else if (TipoSolicitud == "Solic_Denuncia")
-            {
-                Registrar_SolicDenuncia = true;
-            }
-            else if (TipoSolicitud == "Solic_BPN")
-            {
-                Registrar_SolicBPN = true;
-            }
-            dialogPrincipal = false;
 
         }
 
-    }
+        void OpenDialogRegistrar()
+        {
+            dialogPrincipal = true;
+            //dialogIsOpen_Registrar = true;
+            //navigationManager.NavigateTo("solicitud/crear");
+        }
+        void OpenDialogModificar()
+        {
+            dialogIsOpen_Modificar = true;
+            //Consultar
+            //Modificar
+        }
+        void OpenDialogVerDetalles(string id)
+        {
+            dialogIsOpen_VerDetalles = true;
+            //Consultar
+        }
+        void OpenDialogCancelar()
+        {
+            dialogIsOpen_Cancelar = true;
+            //Consultar
+            //Modificar
+        }
 
-    void OpenDialogRegistrar()
-    {
-        dialogPrincipal = true;
-        //dialogIsOpen_Registrar = true;
-        //navigationManager.NavigateTo("solicitud/crear");
-    }
-    void OpenDialogModificar()
-    {
-        dialogIsOpen_Modificar = true;
-        //navigationManager.NavigateTo("solicitud/crear");
-    }
-    void OpenDialogVerDetalles(string id)
-    {
-        dialogIsOpen_VerDetalles = true;
-        //navigationManager.NavigateTo("solicitud/crear");
-    }
-    void OpenDialogCancelar()
-    {
-        dialogIsOpen_Cancelar = true;
-        //navigationManager.NavigateTo("solicitud/crear");
-    }
+        public void OkClick()
+        {
+            dialogIsOpen_Registrar = false;
 
-    void OkClick()
-    {
-        dialogIsOpen_Registrar = false;
-
-        dialogIsOpen_Modificar = false;
-        dialogIsOpen_VerDetalles = false;
-        dialogIsOpen_Cancelar = false;
+            dialogIsOpen_Modificar = false;
+            dialogIsOpen_VerDetalles = false;
+            dialogIsOpen_Cancelar = false;
 
 
-        TipoSolicitud = "nulo";
-    }
+            TipoSolicitud = "nulo";
+        }
 
-    private async Task Pagar(string code)
-    {
-        var exp = await repository.Get<ExpedienteDTO>($"api/expediente/getbynested?iddoc={code}");
-        DocumentoExpediente documentoExpediente = (DocumentoExpediente)(((ExpedienteDTO)exp.Response).documentos.Last());
-        DocumentoDTO resultado = (DocumentoDTO)(await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={documentoExpediente.iddocumento}")).Response;
-        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
-        navigationManager.NavigateTo(httpResponse.Response.url);
-    }
+        private async Task Pagar(string code)
+        {
+            var exp = await repository.Get<ExpedienteDTO>($"api/expediente/getbynested?iddoc={code}");
+            DocumentoExpediente documentoExpediente = (DocumentoExpediente)(((ExpedienteDTO)exp.Response).documentos.Last());
+            DocumentoDTO resultado = (DocumentoDTO)(await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={documentoExpediente.iddocumento}")).Response;
+            var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
+            navigationManager.NavigateTo(httpResponse.Response.url);
+        }
 
-}
+    }

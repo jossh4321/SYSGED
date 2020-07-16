@@ -152,7 +152,7 @@ namespace SISGED.Server.Controllers
                 numerodocumento = documento.numerodocumento
             };
             Expediente expediente = new Expediente();
-            expediente.tipo = "SolicitudBPN";
+            expediente.tipo = "Busqueda Protocolo Notarial";
             expediente.cliente = cliente;
             expediente.fechainicio = DateTime.Now;
             expediente.fechafin = null;
@@ -330,7 +330,7 @@ namespace SISGED.Server.Controllers
                 titulo = solicitudExpedicionFirmasDTO.contenidoDTO.titulo,
                 descripcion = solicitudExpedicionFirmasDTO.contenidoDTO.descripcion,
                 fecharealizacion = DateTime.Now,
-                cliente = solicitudExpedicionFirmasDTO.contenidoDTO.cliente,
+                cliente = solicitudExpedicionFirmasDTO.nombrecliente,
                 codigo = solicitudExpedicionFirmasDTO.contenidoDTO.codigo,
                 url = urlData
             };
@@ -353,7 +353,7 @@ namespace SISGED.Server.Controllers
                 numerodocumento = solicitudExpedicionFirmasDTO.numerodocumento
             };
             Expediente expediente = new Expediente();
-            expediente.tipo = "Expedicion de Firmas";
+            expediente.tipo = "SolicitudExpedicionFirma";
             expediente.cliente = cliente;
             expediente.fechainicio = DateTime.Now;
             expediente.fechafin = null;
@@ -603,10 +603,11 @@ namespace SISGED.Server.Controllers
 
         //obteniendo documentos
 
-        [HttpGet("documentosolicitudes")]
-        public async Task<List<Documento>> obtenerSolicitudes()
+        [HttpGet("documentosolicitudes/{numerodocumento}")]
+        public async Task<List<DocumentoADTO>> obtenerSolicitudes(string numerodocumento)
         {
-            return _documentoservice.obtenerSolicitudes();
+            numerodocumento = "67584990";
+            return await _documentoservice.ObtenerSolicitudesUsuario(numerodocumento);
         }
        
         [HttpGet("documentoodn")]

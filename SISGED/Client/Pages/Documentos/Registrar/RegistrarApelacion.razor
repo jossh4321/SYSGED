@@ -190,7 +190,7 @@
             expedientebandeja.documento.historialproceso = apelacionact.historialproceso;
             expedientebandeja.documento.contenido = apelacionact.contenido;
             expedientebandeja.documento.estado = apelacionact.estado;
-            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            //expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             Item itemSalida = new Item()
             {
                 nombre = expedientebandeja.tipo,
@@ -214,7 +214,10 @@
             documentoDTO.urlanexo = apelacionact.urlanexo;
             workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
             workspace.expedienteseleccionado.documento = documentoDTO;
-
+            foreach (DocumentoDTO i in workspace.expedienteseleccionado.documentosobj)
+            {
+                Console.WriteLine(i.id);
+            }
             StateHasChanged();
             //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Apelación registrado correctamente");

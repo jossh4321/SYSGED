@@ -114,8 +114,9 @@ namespace SISGED.Server.Controllers
         public async Task<ActionResult<Usuario>> ModifyDatos(Usuario usuario)
         {
             string img = "";
+            Usuario usuariodb = _usuarioservice.GetById(usuario.id);
             img = usuario.datos.imagen;
-            if (!string.IsNullOrWhiteSpace(usuario.datos.imagen))
+            if (!string.IsNullOrWhiteSpace(usuario.datos.imagen) && !usuariodb.datos.imagen.Equals(img))
             {
                 var profileimg = Convert.FromBase64String(usuario.datos.imagen);
                 usuario.datos.imagen = await _fileStorage.editFile(
