@@ -353,7 +353,7 @@ namespace SISGED.Server.Controllers
                 numerodocumento = solicitudExpedicionFirmasDTO.numerodocumento
             };
             Expediente expediente = new Expediente();
-            expediente.tipo = "SolicitudExpedicionFirma";
+            expediente.tipo = "Expedicion de Firma";
             expediente.cliente = cliente;
             expediente.fechainicio = DateTime.Now;
             expediente.fechafin = null;
