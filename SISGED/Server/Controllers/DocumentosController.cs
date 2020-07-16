@@ -330,7 +330,7 @@ namespace SISGED.Server.Controllers
                 titulo = solicitudExpedicionFirmasDTO.contenidoDTO.titulo,
                 descripcion = solicitudExpedicionFirmasDTO.contenidoDTO.descripcion,
                 fecharealizacion = DateTime.Now,
-                cliente = solicitudExpedicionFirmasDTO.contenidoDTO.cliente,
+                cliente = solicitudExpedicionFirmasDTO.nombrecliente,
                 codigo = solicitudExpedicionFirmasDTO.contenidoDTO.codigo,
                 url = urlData
             };

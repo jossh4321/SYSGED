@@ -9,7 +9,7 @@ namespace SISGED.Shared.DTOs
     {
         public Usuario idcliente { get; set; } = new Usuario();
         public string direccionoficio { get; set; }
-        public Notario idnotario { get; set; } = new Notario();
+        public Notario idnotario { get; set; } 
         public string actojuridico { get; set; }
         public string tipoprotocolo { get; set; }
         public List<string> otorgantes { get; set; } = new List<String>();
