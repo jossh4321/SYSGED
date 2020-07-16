@@ -89,6 +89,16 @@
         border-radius: 5px 5px 0px 0px;
         border-bottom: 1px solid black;
     }
+    .base-icon {
+        display: flex;
+        flex-basis: 8%;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 2px;
+        background: #ff1a1a;
+        border-radius: 3px;
+        border: 1px solid #800000
+    }
 
     .base-field {
         flex-basis: 90%;
@@ -96,7 +106,7 @@
 
     .contenedor-otorgantes {
         padding-top: 10px;
-        margin: 20px;
+        margin: 10px;
         border: 2px solid #666666;
         border-radius: 5px;
     }
@@ -230,6 +240,12 @@
                                         <span class="good-msg">Correcto</span>
                                     </div>
                                 </div>
+                               @if (index>0)
+                                {
+                                    <div class="base-icon" @onclick="@(() => removeparticipante(index))">
+                                        <MatIcon Icon="remove_circle_outline"></MatIcon>
+                                    </div>
+                                }
                             </div>
                             <!--<div class="single-textfield-container">
                                 <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista[index].apellido)">
@@ -262,12 +278,7 @@
                                     </div>
                                 </div>
                             </div>-->
-                            @if (index>0)
-                            {
-                                <div class="base-icon" @onclick="@(() => removeparticipante(index))">
-                                <MatIcon Icon="remove_circle_outline"></MatIcon>
-                                </div>
-                            }
+                            
                             
 
                         }
