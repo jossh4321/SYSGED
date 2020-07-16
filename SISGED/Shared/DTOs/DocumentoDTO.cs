@@ -46,4 +46,31 @@ namespace SISGED.Shared.DTOs
         public string idexpediente { get; set; } = null;
         public string idusuario { get; set; } = null;
     }
+    public class DocumentoUsuarioDTO
+    {
+        public DocumentoExpediente documento { get; set; }
+    }
+    public class DocumentoUsuarioLUDTO
+    {
+        public DocumentoExpediente documento { get; set; }
+        public List<Documento> documentoOriginal { get; set; }
+    }
+    public class DocumentoUsuarioUDTO
+    {
+        public DocumentoExpediente documento { get; set; }
+        public Documento documentoOriginal { get; set; }
+    }
+    public class DocumentoADTO
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
+        public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
+        public Object contenido { get; set; }
+        public string estado { get; set; }
+        public Object evaluacion { get; set; }
+        public List<string> urlanexo { get; set; } = new List<string>();
+    }
 }

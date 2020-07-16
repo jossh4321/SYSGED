@@ -418,26 +418,23 @@
         [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
 
-        List<Documento> docs { get; set; } = new List<Documento>();
+    List<DocumentoADTO> docs { get; set; } = new List<DocumentoADTO>();
 
         protected override async Task OnInitializedAsync()
         {
 
-            cargatabla = true;
-
-            var httpResponse = await repository.Get<List<Documento>>("api/documentos/documentosolicitudes");
-            if (!httpResponse.Error)
+        var httpResponse = await repository.Get<List<DocumentoADTO>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
+        if (!httpResponse.Error)
+        {
+            DocumentoADTO docActivator = new DocumentoADTO();
+            docs = httpResponse.Response;
+            if (docActivator.estado == "revisado")
             {
-                Documento docActivator = new Documento();
-                docs = httpResponse.Response;
-                if (docActivator.estado == "revisado")
-                {
-                    activator = true;
-                }
-                else
-                {
-                    activator = false;
-                }
+                activator = true;
+            }
+            else{
+                activator = false;
+            }
 
 
             }

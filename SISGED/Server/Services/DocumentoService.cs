@@ -1609,5 +1609,52 @@ namespace SISGED.Server.Services
                 .Set("contenido.idescriturapublica", contenidoResultadoBPN.idescriturapublica);
             _documentos.UpdateOne(filter, update);
         }
+        public async Task<List<DocumentoADTO>> ObtenerSolicitudesUsuario(string numerodocumento)
+        {
+
+            var filtroNumeroDocumento = Builders<Expediente>.Filter.Eq("cliente.numerodocumento",numerodocumento);
+
+            var proyeccionInicial = new BsonDocument("$project",
+                                               new BsonDocument("_id", 0)
+                                                    .Add("documento", 
+                                                    new BsonDocument("$arrayElemAt",
+                                                        new BsonArray { "$documentos", 0 })));
+
+            BsonArray subpipeline = new BsonArray();
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$iddoc")}
+                        )
+                    )
+                ));
+
+            var lookupe = new BsonDocument("$lookup",
+                new BsonDocument("from", "documentos")
+                    .Add("let", new BsonDocument("iddoc", "$documento.iddocumento"))
+                    .Add("pipeline", subpipeline)
+                    .Add("as", "documentoOriginal")
+                );
+
+            var proyeccionFinal = new BsonDocument("$project",
+                                               new BsonDocument("_id", "$documentoOriginal._id")
+                                                    .Add("tipo", "$documentoOriginal.tipo")
+                                                    .Add("estado", "$documentoOriginal.estado")
+                                                    .Add("contenido","$documentoOriginal.contenido")
+                                                    .Add("urlanexo" ,"$documentoOriginal.urlanexo")
+                                                    .Add("historialcontenido","$documentoOriginal.historialcontenido")
+                                                    .Add("historialproceso","$documentoOriginal.historialproceso"));
+
+         
+            List<DocumentoADTO> expedientes = await _expedientes.Aggregate()
+                                        .Match(filtroNumeroDocumento)
+                                        .AppendStage<DocumentoUsuarioDTO>(proyeccionInicial)
+                                        .AppendStage<DocumentoUsuarioLUDTO>(lookupe)
+                                        .Unwind<DocumentoUsuarioLUDTO, DocumentoUsuarioUDTO>(t => t.documentoOriginal)
+                                        .AppendStage<DocumentoADTO>(proyeccionFinal)
+                                        .ToListAsync();
+
+            return expedientes;
+        }
     }
 }
