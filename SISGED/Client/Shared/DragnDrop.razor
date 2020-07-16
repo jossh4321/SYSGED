@@ -54,6 +54,7 @@
     [Parameter] public string Label { get; set; } = "Documento";
     [Parameter] public string ImagenTemporal { get; set; }
     [Parameter] public EventCallback<string> ImagenSeleccionada { get; set; }
+    [Parameter] public EventCallback<string> FileNames { get; set; }
     private string imagenBase64;
     ElementReference dropTargetElement;
     ElementReference dropTargetInput;
@@ -156,7 +157,7 @@
         foreach (var file in await reader.EnumerateFilesAsync())
         {
             var fileInfo = await file.ReadFileInfoAsync();
-            list.Add(fileInfo);
+            //list.Add(fileInfo);
         }
         await ReadFile(ipReference);
         this.StateHasChanged();
@@ -184,7 +185,7 @@
         foreach (var file in await list.EnumerateFilesAsync())
         {
             var fileInfo = await file.ReadFileInfoAsync();
-
+            string FileName = fileInfo.Name;
             this.StateHasChanged();
 
             using (var fs = await file.OpenReadAsync())
@@ -198,6 +199,8 @@
                     this.StateHasChanged();
                 }
                 imagenBase64 = Convert.ToBase64String(buffer);
+
+                await FileNames.InvokeAsync(FileName);
                 await ImagenSeleccionada.InvokeAsync(imagenBase64);
                 ImagenTemporal = null;
             }
