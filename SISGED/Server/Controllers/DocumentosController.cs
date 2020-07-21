@@ -606,7 +606,6 @@ namespace SISGED.Server.Controllers
         [HttpGet("documentosolicitudes/{numerodocumento}")]
         public async Task<List<DocumentoADTO>> obtenerSolicitudes(string numerodocumento)
         {
-            numerodocumento = "67584990";
             return await _documentoservice.ObtenerSolicitudesUsuario(numerodocumento);
         }
        
