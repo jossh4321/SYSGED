@@ -59,7 +59,7 @@ namespace SISGED.Server.Services
                 .Set("usuario", usuario.usuario)
                 .Set("clave", usuario.clave)
                 .Set("datos", usuario.datos)
-                .Set("roles", usuario.rol);
+                .Set("rol", usuario.rol);
             usuario = _usuarios.FindOneAndUpdate<Usuario>(filter, update, new FindOneAndUpdateOptions<Usuario>
             {
                 ReturnDocument = ReturnDocument.After
