@@ -353,7 +353,7 @@ namespace SISGED.Server.Controllers
                 numerodocumento = solicitudExpedicionFirmasDTO.numerodocumento
             };
             Expediente expediente = new Expediente();
-            expediente.tipo = "SolicitudExpedicionFirma";
+            expediente.tipo = "Expedicion de Firmas";
             expediente.cliente = cliente;
             expediente.fechainicio = DateTime.Now;
             expediente.fechafin = null;
@@ -362,7 +362,7 @@ namespace SISGED.Server.Controllers
                 new DocumentoExpediente(){
                     indice = 1,
                     iddocumento = documentoSEF.id,
-                    tipo="ExpedicionFirmas",
+                    tipo="SolicitudExpedicionFirma",
                     fechacreacion = documentoSEF.contenido.fecharealizacion,
                     fechaexceso = documentoSEF.contenido.fecharealizacion.AddDays(10),
                     fechademora = null
@@ -606,7 +606,6 @@ namespace SISGED.Server.Controllers
         [HttpGet("documentosolicitudes/{numerodocumento}")]
         public async Task<List<DocumentoADTO>> obtenerSolicitudes(string numerodocumento)
         {
-            numerodocumento = "67584990";
             return await _documentoservice.ObtenerSolicitudesUsuario(numerodocumento);
         }
        
