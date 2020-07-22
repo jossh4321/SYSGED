@@ -274,33 +274,16 @@
         Console.WriteLine("INICIE: WorkEnvironment");
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
-        var httpResponse = await repository.Get<List<Asistente>>($"api/asistente/getasistentes");
+        List<Documento> documentos = new List<Documento>();
+        var httpResponse = await repository.Get<List<Documento>>($"api/documentos");
+        if (!httpResponse.Error)
+        {
+            documentos = httpResponse.Response;
+        }
+        /*var httpResponse = await repository.Get<List<Asistente>>($"api/asistente/getasistentes");
         if(!httpResponse.Error)
         {
             asistentes = httpResponse.Response;
-        }
-        /*var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={sesion.usuario.}");
-        if (!httpResponse.Error)
-        {
-            miusuario = (Usuario)httpResponse.Response;
-            Console.WriteLine("algo bien");
-        }
-        else
-        {
-            Console.WriteLine("algo mal");
-        }*/
-        /*var httpResponse = await repository.Get <List<Documento>>("api/documentos");
-        if (!httpResponse.Error)
-        {
-            List<Documento> docs = new List<Documento>();
-            foreach(Documento doc in docs)
-            {
-                Console.WriteLine("valor: "+doc.id);
-            }
-        }
-        else
-        {
-            Console.WriteLine("algo mal");
         }*/
     }
     public void openDialog() { abrirDialogo = true; StateHasChanged(); }
