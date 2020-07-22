@@ -184,8 +184,8 @@
                         </div>
 
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.fechanacimiento)">
-                            <MatTextField @bind-Value="@usuariodto.datos.fechanacimiento" Class="text-field-style" Label="Fecha Nacimiento"
-                                          @oninput='@(e => KeyUp(e,"fechanacimiento",usuariodto.datos))'></MatTextField>
+                            <MatDatePicker @bind-Value="@usuariodto.datos.fechanacimiento" Format="MM/dd/yyyy" Class="text-field-style" Label="Fecha Nacimiento"
+                                          @oninput='@(e => KeyUp(e,"fechanacimiento",usuariodto.datos))'></MatDatePicker>
 
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>

@@ -132,7 +132,7 @@ namespace SISGED.Server.Services
             string newusuario = usuario.usuario ;
             string newnombre = usuario.datos.nombre;
             string newapellido = usuario.datos.apellido;
-            string newfecha = usuario.datos.fechanacimiento;
+            DateTime newfecha = usuario.datos.fechanacimiento;
             string newtipodoc = usuario.datos.tipodocumento;
             string newnumdoc = usuario.datos.numerodocumento;
             string newdireccion = usuario.datos.direccion;
