@@ -180,9 +180,9 @@
                 <td>
                     <span class="table-row">@context.datos.email</span>
                 </td>
-                <!--<td>
-                    <span class="table-row">context.roles[0].nombre</span>
-                </td>-->
+                <td>
+                    <span class="table-row">@context.rol</span>
+                </td>
                 <td>
                     <span class="table-row">@context.estado</span>
                 </td>
@@ -212,7 +212,6 @@
                                        Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context.id))" Style="width:100% !important">Detalle</MatButton>
                         </div>
                     </div>
-
                 </td>
             </MatTableRow>
         </MatTable>
@@ -281,7 +280,7 @@
         usuariodto.datos = usuario.datos;
         usuariodto.id = usuario.id;
         usuariodto.estado = usuario.estado;
-        //usuariodto.rolid = usuario.roles[0].id;
+        usuariodto.rolid = usuario.rol;
         rendermod = true;
         StateHasChanged();
         dialogoEdicion = true;
