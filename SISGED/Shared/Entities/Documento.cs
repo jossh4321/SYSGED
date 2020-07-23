@@ -40,9 +40,18 @@ namespace SISGED.Shared.Entities
     }
     public class Evaluacion
     {
-        public string status { get; set; }
-        public string observacion { get; set;}
+        public string resultado { get; set; }
+        public List<EvaluacionIndividual> evaluaciones { get; set; } = new List<EvaluacionIndividual>();
     }
+
+    public class EvaluacionIndividual
+    {
+        public string idparticipante { get; set; }
+        public string status { get; set; }
+        public string descripcion { get; set; }
+    }
+
+
     public class ContenidoSolicitudDenuncia
     {
         public string codigo { get; set; }

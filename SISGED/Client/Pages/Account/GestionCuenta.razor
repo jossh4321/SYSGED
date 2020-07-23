@@ -68,10 +68,17 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+    .mat-danger-c2 {
+        color: #0ACD2A !important;
+        border: 1px solid #0ACD2A !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
 
     .mat-info-c {
-        color: #3333ff !important;
-        border: 1px solid #3333ff !important;
+        color: #3F7CFF !important;
+        border: 1px solid #3F7CFF !important;
         border-radius: 15px !important;
         font-size: 13px !important;
         transition: all 300ms !important;
@@ -186,10 +193,20 @@
                                        Class="mat-warning-c" @onclick="@(e => abrirDialogoEdicion(context.id))" Style="width:100% !important">Modificar</MatButton>
                         </div>
 
-                        <div class="button-container">
+                        @if (context.estado == "activo")
+                        {
+                            <div class="button-container">
                             <MatButton Icon="@MatBlazor.MatIconNames.Close"
                                        Class="mat-danger-c" @onclick="@(e => abrirNotificacionEstado(context))" Style="width:100% !important">Bloquear</MatButton>
-                        </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="button-container">
+                            <MatButton Icon="@MatBlazor.MatIconNames.Supervisor_account"
+                                       Class="mat-danger-c2" @onclick="@(e => abrirNotificacionEstado(context))" Style="width:100% !important">Desbloquear</MatButton>
+                            </div>
+                        }
                         <div class="button-container">
                             <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
                                        Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context.id))" Style="width:100% !important">Detalle</MatButton>
@@ -302,8 +319,9 @@
         {
             usuario = await cambiarEstadoUsuario(usuario);
             string accion = usuario.estado == "activo" ? "Bloqueo" : "Desbloqueo";
-            listausuarios[listausuarios.FindIndex(ind => ind.id == usuario.id)] = usuario;
 
+            listausuarios[listausuarios.FindIndex(ind => ind.id == usuario.id)] = usuario;
+            accion = usuario.estado == "activo" ? "Desbloqueo" : "Bloqueo";
             await swalfire.successMessage($"Se {accion} la cuenta del usuario {usuario.usuario} Satisfactoriamente");
             StateHasChanged();
         }

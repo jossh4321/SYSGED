@@ -52,8 +52,8 @@ namespace SISGED.Server.Services
                 contenido = contenidoODN,
                 evaluacion = new Evaluacion()
                 {
-                    status = "pendiente",
-                    observacion = null
+                    resultado = "pendiente",
+                    evaluaciones = new List<EvaluacionIndividual>()
                 },
                 estado = "creado",
                 urlanexo= url2,
@@ -216,8 +216,8 @@ namespace SISGED.Server.Services
                 //estado = "pendiente",
                 evaluacion = new Evaluacion()
                 {
-                    status = "pendiente",
-                    observacion = "Ninguna",
+                    resultado = "pendiente",
+                    evaluaciones = new List<EvaluacionIndividual>(),
                 },
                 estado = "Creado",
                 historialcontenido = new List<ContenidoVersion>(),
@@ -546,8 +546,8 @@ namespace SISGED.Server.Services
                 urlanexo = url2,
                 evaluacion = new Evaluacion()
                 {
-                    status = "pendiente",
-                    observacion = ""
+                    resultado = "pendiente",
+                    evaluaciones = new List<EvaluacionIndividual>()
                 },estado = "creado"
             };
             _documentos.InsertOne(resolucion);
@@ -662,8 +662,8 @@ namespace SISGED.Server.Services
                 urlanexo = url2,
                 evaluacion = new Evaluacion()
                 {
-                    status = "pendiente",
-                    observacion = "Ninguna",
+                    resultado = "pendiente",
+                    evaluaciones = new List<EvaluacionIndividual>(),
                 },
                 estado = "creado"
             };

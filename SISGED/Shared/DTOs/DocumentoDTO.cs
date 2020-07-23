@@ -19,8 +19,8 @@ namespace SISGED.Shared.DTOs
         public string id { get; set; } = null;
         public Evaluacion evaluacion { get; set; } = new Evaluacion()
         {
-            status = "",
-            observacion = null,
+            resultado = "",
+            evaluaciones = new List<EvaluacionIndividual>()
         };
         public string idexpediente { get; set; } = null;
         public string idusuario { get; set; } = null;
