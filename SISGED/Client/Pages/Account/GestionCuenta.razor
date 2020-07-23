@@ -153,9 +153,9 @@
                 <th>
                     <span class="table-header">Email</span>
                 </th>
-                <th>
+                <!--<th>
                     <span class="table-header">Rol</span>
-                </th>
+                </th>-->
                 <th>
                     <span class="table-header">Estado</span>
                 </th>
@@ -173,9 +173,9 @@
                 <td>
                     <span class="table-row">@context.datos.email</span>
                 </td>
-                <td>
-                    <span class="table-row">@context.rol</span>
-                </td>
+                <!--<td>
+                    <span class="table-row">context.rol</span>
+                </td>-->
                 <td>
                     <span class="table-row">@context.estado</span>
                 </td>
@@ -286,7 +286,7 @@
         usuariodto.datos = usuario.datos;
         usuariodto.id = usuario.id;
         usuariodto.estado = usuario.estado;
-        //usuariodto.rolid = usuario.roles[0].id;
+        usuariodto.rolid = usuario.rol;
         dialogoDetalle = true;
 
     }
