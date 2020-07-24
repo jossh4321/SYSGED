@@ -128,9 +128,9 @@
 
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.tipo)">
                             <MatSelect Label="Seleccione el tipo de usuario" @bind-Value="@usuariodto.tipo" Class="text-field-style disabled-field">
-                                <MatOptionString Class="option-color" Disabled="true" Value="nulo"></MatOptionString>
-                                <MatOptionString Class="option-color" Disabled="true" Value="administracion">Administracion</MatOptionString>
-                                <MatOptionString Class="option-color" Disabled="true" Value="cliente">Cliente</MatOptionString>
+                                <MatOptionString Class="option-color" Disabled="false" Value="nulo"></MatOptionString>
+                                <MatOptionString Class="option-color" Disabled="false" Value="administracion">Administracion</MatOptionString>
+                                <MatOptionString Class="option-color" Disabled="false" Value="cliente">Cliente</MatOptionString>
                             </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
@@ -146,10 +146,10 @@
                         {
                             <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuariodto.rolid)">
                                 <MatSelect Label="Seleccione el rol del usuario" @bind-Value="@usuariodto.rolid" Class="text-field-style disabled-field">
-                                    <MatOptionString Class="option-color" Disabled="true" Value="nulo"></MatOptionString>
+                                    <MatOptionString Class="option-color" Disabled="false" Value="nulo"></MatOptionString>
                                     @foreach (Rol rol in listaroles)
                                             {
-                                        <MatOptionString Class="option-color" Disabled="true" Value="@rol.id">@rol.label</MatOptionString>
+                                        <MatOptionString Class="option-color" Disabled="false" Value="@rol.id">@rol.label</MatOptionString>
                                             }
                                 </MatSelect>
                                 <div class="incorrecto">
