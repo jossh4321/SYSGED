@@ -12,7 +12,7 @@ namespace SISGED.Shared.Validators
         {
             RuleFor(x => x.usuario).NotEmpty().WithMessage("Debe Ingresar un nombre de Usuario");
             RuleFor(x => x.clave).NotEmpty().WithMessage("Debe Ingresar una clave de Usuario");
-            RuleFor(x => x.tipo).NotEmpty().WithMessage("Debe seleccionar un tipo de Usuario");
+            //RuleFor(x => x.tipo).NotEmpty().WithMessage("Debe seleccionar un tipo de Usuario");
             RuleFor(x => x.datos).SetValidator(new DatosValidator());
             RuleFor(x => x.rolid).NotEmpty().WithMessage("Debe ingresar un Rol");
         }
