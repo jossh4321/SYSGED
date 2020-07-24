@@ -105,24 +105,43 @@
 
                         </div>
 
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.rolid)">
-                            <MatSelect Label="Seleccione algo" @bind-Value="@usuariodto.rolid" Class="text-field-style disabled-field">
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.tipo)">
+                            <MatSelect Label="Seleccione el tipo de usuario" @bind-Value="@usuariodto.tipo" Class="text-field-style disabled-field">
                                 <MatOptionString Class="option-color" Disabled="true" Value="nulo"></MatOptionString>
-                                @foreach (Rol rol in listaroles)
-                                    {
-                                    <MatOptionString Class="option-color" Disabled="true" Value="@rol.id">@rol.nombre</MatOptionString>
-                                    }
+                                <MatOptionString Class="option-color" Disabled="true" Value="administracion">Administracion</MatOptionString>
+                                <MatOptionString Class="option-color" Disabled="true" Value="cliente">Cliente</MatOptionString>
                             </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.rolid)" />
+                                <ValidationMessage For="@(() => usuariodto.tipo)" />
                             </div>
                             <div class="correcto">
                                 <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
                                 <span>Correcto</span>
                             </div>
                         </div>
-                    </MatTab>
+
+                        @if (usuariodto.tipo == "administracion")
+                        {
+                            <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuariodto.rolid)">
+                                <MatSelect Label="Seleccione el rol del usuario" @bind-Value="@usuariodto.rolid" Class="text-field-style disabled-field">
+                                    <MatOptionString Class="option-color" Disabled="true" Value="nulo"></MatOptionString>
+                                    @foreach (Rol rol in listaroles)
+                                    {
+                                        <MatOptionString Class="option-color" Disabled="true" Value="@rol.id">@rol.label</MatOptionString>
+                                    }
+                                </MatSelect>
+                                <div class="incorrecto">
+                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                    <ValidationMessage For="@(() => usuariodto.rolid)" />
+                                </div>
+                                <div class="correcto">
+                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                    <span>Correcto</span>
+                                </div>
+                            </div>
+                        }
+                        </MatTab>
 
                     <MatTab Label="Datos">
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.nombre)">
@@ -300,7 +319,7 @@
         carga = true;
         Console.WriteLine("Todo Bien");
         Usuario usuario = new Usuario();
-        usuario.tipo = "administracion";
+        usuario.tipo = usuariodto.tipo;
         usuario.usuario = usuariodto.usuario;
         usuario.clave = usuariodto.clave;
         usuario.estado = "activo";
@@ -310,7 +329,7 @@
         var httpResponse = await repository.Post<Usuario, Usuario>("api/usuarios", usuario);
         if (httpResponse.Error)
         {
-            Console.WriteLine("Algo Ocurrio");
+            await swalfire.errorMessage("Error en el servidor");
         }
         else
         {
