@@ -585,7 +585,7 @@ namespace SISGED.Server.Controllers
         #endregion
 
         [HttpPut("cambiarestado")]
-        public ActionResult<Documento> ModificarEstado(DocumentoEvaluadoDTO documento)
+        public ActionResult<Documento> ModificarEstado(Evaluacion documento)
         {
             return _documentoservice.modificarEstado(documento);
         }

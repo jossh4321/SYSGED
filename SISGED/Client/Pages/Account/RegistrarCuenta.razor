@@ -105,43 +105,23 @@
 
                         </div>
 
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.tipo)">
-                            <InputSelect @bind-Value="@usuariodto.tipo" class="text-field-style">
-                                <option value="">--Seleccione un tipo de usuario--</option>
-                                <option value="administracion">Administrador</option>
-                                <option value="cliente">Cliente</option>
-                            </InputSelect>
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.rolid)">
+                            <MatSelect Label="Seleccione algo" @bind-Value="@usuariodto.rolid" Class="text-field-style disabled-field">
+                                <MatOptionString Class="option-color" Disabled="true" Value="nulo"></MatOptionString>
+                                @foreach (Rol rol in listaroles)
+                                    {
+                                    <MatOptionString Class="option-color" Disabled="true" Value="@rol.id">@rol.nombre</MatOptionString>
+                                    }
+                            </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.tipo)" />
+                                <ValidationMessage For="@(() => usuariodto.rolid)" />
                             </div>
                             <div class="correcto">
                                 <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
                                 <span>Correcto</span>
                             </div>
                         </div>
-
-                        @if (usuariodto.tipo == "administracion")
-                        {
-                            <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.rolid)">
-                                <InputSelect @bind-Value="@usuariodto.rolid" class="text-field-style">
-                                    <option value="">--Seleccione el rol del usuario--</option>
-                                    @foreach (Rol rol in listaroles)
-                                         {
-                                            <option value="@rol.id">@rol.label</option>
-                                         }
-                                    
-                                </InputSelect>
-                                <div class="incorrecto">
-                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => usuariodto.rolid)" />
-                                </div>
-                                <div class="correcto">
-                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                    <span>Correcto</span>
-                                </div>
-                            </div>
-                        }
                     </MatTab>
 
                     <MatTab Label="Datos">
@@ -173,12 +153,12 @@
                         </div>
 
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.tipodocumento)">
-                            <InputSelect @bind-Value="@usuariodto.datos.tipodocumento" class="text-field-style">
-                                <option value="">--Seleccione el tipo de documento--</option>
-                                <option value="CE">Carnet de Extranjeria</option>
-                                <option value="DNI">D.N.I.</option>
-                                <option value="pasaporte">Pasaporte</option>
-                            </InputSelect>
+                            <MatSelect Label="Tipo de documento" @bind-Value="@usuariodto.datos.tipodocumento">
+                                <MatOptionString Class="option-color" Value="nulo"></MatOptionString>
+                                <MatOptionString Class="option-color" Value="CE">Carnet de Extranjeria</MatOptionString>
+                                <MatOptionString Class="option-color" Value="DNI">D.N.I.</MatOptionString>
+                                <MatOptionString Class="option-color" Value="pasaporte">Pasaporte</MatOptionString>
+                            </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                                 <ValidationMessage For="@(() => usuariodto.datos.tipodocumento)" />
@@ -190,7 +170,7 @@
                         </div>
 
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.numerodocumento)">
-                            <MatTextField @bind-Value="@usuariodto.datos.numerodocumento" Class="text-field-style" Label="Número del Documento"
+                            <MatTextField @bind-Value="@usuariodto.datos.numerodocumento" Class="text-field-style" Label="Numero de Documento"
                                           @oninput='@(e => KeyUp(e,"numerodocumento",usuariodto.datos))'></MatTextField>
 
                             <div class="incorrecto">
@@ -320,7 +300,7 @@
         carga = true;
         Console.WriteLine("Todo Bien");
         Usuario usuario = new Usuario();
-        usuario.tipo = usuariodto.tipo;
+        usuario.tipo = "administracion";
         usuario.usuario = usuariodto.usuario;
         usuario.clave = usuariodto.clave;
         usuario.estado = "activo";
@@ -330,7 +310,7 @@
         var httpResponse = await repository.Post<Usuario, Usuario>("api/usuarios", usuario);
         if (httpResponse.Error)
         {
-            await swalfire.errorMessage("Error en el servidor");
+            Console.WriteLine("Algo Ocurrio");
         }
         else
         {

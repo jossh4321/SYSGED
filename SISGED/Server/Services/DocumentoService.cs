@@ -355,11 +355,11 @@ namespace SISGED.Server.Services
             return documentoCF;
         }*/
 
-        public Documento modificarEstado(DocumentoEvaluadoDTO documento)
+        public Documento modificarEstado(Evaluacion documento)
         {
-            var filter = Builders<Documento>.Filter.Eq("id", documento.id);
+            var filter = Builders<Documento>.Filter.Eq("id", documento.resultado);
             var update = Builders<Documento>.Update
-                .Set("evaluacion", documento.evaluacion);
+                .Set("evaluacion", documento.evaluaciones);
             //BandejaDocumento bandejaDocumento = new BandejaDocumento();
             //bandejaDocumento.idexpediente = documento.idexpediente;
             //bandejaDocumento.iddocumento = documento.id;
