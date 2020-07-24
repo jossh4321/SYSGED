@@ -154,6 +154,45 @@ namespace SISGED.Server.Services
             });
             return usuario;
         }
+        /*
+         public List<UsuarioRDTO> Get()
+        {
+            //List<Usuario> usuarios = new List<Usuario>();
+            //usuarios = _usuarios.Find(usuario => true).ToList();
+            //
+            BsonArray subpipeline = new BsonArray();
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$idrol") }
+                        )
+                    ))
+                );
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument("from", "roles")
+                .Add("let", new BsonDocument("idrol", "$rol"))
+                .Add("pipeline", subpipeline)
+                .Add("as", "rolobj"));
+
+            List<UsuarioRDTO> usuariosF = new List<UsuarioRDTO>();
+            usuariosF = _usuarios.Aggregate()
+                .AppendStage<List<UsuarioRDTO>>(lookup)
+                .First();
+
+            return usuariosF;
+        }
+         */
+
+
+
+
+
+
+
+
+
+
+
 
         public List<Usuario> filtroEvaluar(string term)
         {

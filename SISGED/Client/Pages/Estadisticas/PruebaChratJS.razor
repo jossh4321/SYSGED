@@ -1,0 +1,54 @@
+﻿@page "/charts"
+@layout MainLayout
+@inject IJSRuntime JS
+@inject IRepository repository
+<style>
+    .cont-chart{
+        display:flex;
+        flex-direction:column;
+        width:100%;
+    }
+</style>
+<div class="cont-chart">
+    <h3>PruebaChratJS</h3>
+    <h1>AMCharts 4 Demo In Blazor!</h1>
+    <button @onclick="GenerateColumnChart" class="btn btn-info">Show Column Chart</button>
+    <button @onclick="fromCSHARPtoJS" class="btn btn-info">From C# to JS</button>
+    <button @onclick="fun" class="btn btn-info">prueba 2</button>
+    <div id="chartdiv"></div>
+</div>
+
+@code {
+
+    private async Task GenerateColumnChart()
+    {
+
+        await JS.InvokeVoidAsync("CreateColumnChart");
+    }
+    private async Task fromCSHARPtoJS()
+    {
+        string resultado =   await JS.InvokeAsync<string>("fromCSHARPtoJS", 1234);
+        Console.WriteLine("resultado desde C#: "+resultado);
+    }
+
+
+    public async Task fun()
+    {
+        await JS.InvokeVoidAsync("DotNetInstanceTest", DotNetObjectReference.Create(this));
+    }
+    [JSInvokable]
+    public async Task<List<Documento>> fromJStoCSHARP()
+    {
+        List<Documento> docs = new List<Documento>();
+        var httpResponse = await repository.Get<List<Documento>>("api/documentos");
+        if (!httpResponse.Error)
+        {
+            docs = httpResponse.Response;
+        }
+        else
+        {
+            Console.WriteLine("un error");
+        }
+        return docs;
+    }
+}
