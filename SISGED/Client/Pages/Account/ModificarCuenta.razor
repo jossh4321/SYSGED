@@ -117,43 +117,23 @@
 
                         </div>
 
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.tipo)">
-                            <MatSelect Label="Seleccione el tipo de usuario" @bind-Value="@usuariodto.tipo" Class="text-field-style disabled-field">
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuariodto.rolid)">
+                            <MatSelect Label="Seleccione el rol del usuario" @bind-Value="@usuariodto.rolid" Class="text-field-style disabled-field">
                                 <MatOptionString Class="option-color" Disabled="true" Value="nulo"></MatOptionString>
-                                <MatOptionString Class="option-color" Disabled="true" Value="administracion">Administracion</MatOptionString>
-                                <MatOptionString Class="option-color" Disabled="true" Value="cliente">Cliente</MatOptionString>
+                                @foreach (Rol rol in listaroles)
+                                    {
+                                        <MatOptionString Class="option-color" Disabled="true" Value="@rol.id">@rol.label</MatOptionString>
+                                    }
                             </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.tipo)" />
+                                <ValidationMessage For="@(() => usuariodto.rolid)" />
                             </div>
                             <div class="correcto">
                                 <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
                                 <span>Correcto</span>
                             </div>
                         </div>
-
-                        @if (usuariodto.tipo == "administracion")
-                        {
-                            <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuariodto.rolid)">
-                                <MatSelect Label="Seleccione el rol del usuario" @bind-Value="@usuariodto.rolid" Class="text-field-style disabled-field">
-                                    <MatOptionString Class="option-color" Disabled="true" Value="nulo"></MatOptionString>
-                                    @foreach (Rol rol in listaroles)
-                                            {
-                                        <MatOptionString Class="option-color" Disabled="true" Value="@rol.id">@rol.label</MatOptionString>
-                                            }
-                                    /**/
-                                </MatSelect>
-                                <div class="incorrecto">
-                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => usuariodto.rolid)" />
-                                </div>
-                                <div class="correcto">
-                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                    <span>Correcto</span>
-                                </div>
-                            </div>
-                        }
 
                     </MatTab>
 
@@ -332,7 +312,7 @@
         Usuario usuario = new Usuario();
         usuario.id = usuariodto.id;
         usuario.usuario = usuariodto.usuario;
-        usuario.tipo = usuariodto.tipo;
+        usuario.tipo = "A";
         usuario.clave = usuariodto.clave;
         usuario.estado = "activo";
         usuario.datos = usuariodto.datos;
