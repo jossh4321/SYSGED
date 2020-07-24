@@ -155,17 +155,12 @@ namespace SISGED.Server.Services
             return usuario;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
+        public List<Usuario> filtroEvaluar(string term)
+        {
+            string regex = "\\b" + term.ToLower() + ".*";
+            var filter = Builders<Usuario>.Filter.Regex("datos.numerodocumento", new BsonRegularExpression(regex, "i"));
+            var filter2 = Builders<Usuario>.Filter.Eq("tipo", "administracion");
+            return _usuarios.Find(filter & filter2).ToList();
+        }
     }
 }

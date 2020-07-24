@@ -1,0 +1,33 @@
+﻿@if (usuarioParticipanteEvaluacion == null)
+{
+    <text>Cargando...</text>
+}
+else
+{
+    <MatCard class="demo-mat-card">
+        <MatCardContent>
+            <MatCardMedia Wide="true" ImageUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcStZDNDDRR1RX6_sgzVyX2FmiOkyldgwMFJgg&usqp=CAU"></MatCardMedia>
+            <div class="demo-mat-card-content">
+                <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Nombres: @usuarioParticipanteEvaluacion.datos.nombre</MatSubtitle2>
+                <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Apellidos: @usuarioParticipanteEvaluacion.datos.apellido</MatSubtitle2>
+                <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Descripcion: @usuarioParticipanteEvaluacion.descripcion</MatSubtitle2>
+                <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Resultado: @usuarioParticipanteEvaluacion.status</MatSubtitle2>
+            </div>
+        </MatCardContent>
+        <MatCardActions>
+            <MatCardActionButtons Class="mat-card-actions-modificado">
+                <MatButton Raised="true" Icon="@MatIconNames.Search" Class="mat-color" @onclick="(() => mostrarDatosParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Modificar</MatButton>
+                <MatButton Raised="true" Icon="@MatIconNames.Select_all" Class="mat-color-green" @onclick="(() => eliminarParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Eliminar</MatButton>
+            </MatCardActionButtons>
+        </MatCardActions>
+    </MatCard>
+}
+
+@code {
+    [Parameter]
+    public UsuarioEvaluacionDTO usuarioParticipanteEvaluacion { get; set; }
+    [Parameter]
+    public EventCallback<UsuarioEvaluacionDTO> mostrarDatosParticipante { get; set; }
+    [Parameter]
+    public EventCallback<UsuarioEvaluacionDTO> eliminarParticipante { get; set; }
+}
