@@ -1,72 +1,262 @@
 ﻿@inject IDocumentRepository documentRepository
+@inject IRepository repository
+@layout MainLayout
+@inject NavigationManager navigationManager
+@inject HttpClient Http
+@inject IJSRuntime js
+@inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 @using SISGED.Client.Pages.Documentos.DocumentosGenerados
 @using Newtonsoft.Json;
 
 <style>
-	div.tool-content-style {
-		width: 100%;
-		flex-basis: 100%;
-		display: flex;
+	.container-c {
+		display: inline-flex;
+		flex-wrap: wrap;
 		flex-direction: column;
-		background-color: #a6a6a6;
-		border-radius: 5px 5px 0px 0px;
+		margin: 10px auto;
 	}
-	.caja-vista-doc {
+
+	tr.mdc-table-header-row {
+		background-color: #1a1a1a !important;
+	}
+
+	.table-header {
+		color: white;
+		font-family: sans-serif;
+		font-size: 15px;
+		display: inline-block
+	}
+
+	tbody {
+		background-color: #4d4d4d !important;
+	}
+
+	.table-row {
+		color: #ccc;
+		font-family: sans-serif;
+		font-size: 14px;
+		display: inline-block
+	}
+
+	.mat-success-c {
+		color: green !important;
+		border: 1px solid green !important;
+		border-radius: 15px !important;
+		font-size: 13px !important;
+		transition: all 300ms !important;
+	}
+
+	.mat-dark-c {
+		color: black !important;
+		border: 1px solid black !important;
+		border-radius: 15px !important;
+		font-size: 13px !important;
+		transition: all 300ms !important;
+	}
+	/*#ffd11a*/
+	.mat-warning-c {
+		color: #3e3efc !important;
+		border: 1px solid #3e3efc !important;
+		border-radius: 15px !important;
+		font-size: 13px !important;
+		transition: all 300ms !important;
+	}
+
+	.mat-danger-c {
+		color: #ff3333 !important;
+		border: 1px solid #ff3333 !important;
+		border-radius: 15px !important;
+		font-size: 13px !important;
+		transition: all 300ms !important;
+	}
+
+	.mat-info-c {
+		color: #3333ff !important;
+		border: 1px solid #3333ff !important;
+		border-radius: 15px !important;
+		font-size: 13px !important;
+		transition: all 300ms !important;
+	}
+
+	.mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover, .mat-dark-c:hover {
+		background-color: none !important;
+		transform: scale(1.07,1.07) !important;
+	}
+
+	.button-container {
+		display: block;
+		margin: 5px;
+		flex-grow: 1;
+	}
+
+	.button-container-lvl {
 		display: flex;
-		flex-direction: column;
-		flex-basis: 90%;
-		align-items: center;
+		flex-wrap: wrap;
+		flex-direction: row;
+	}
+
+	.mdc-table td:last-child {
+		width: unset !important;
+	}
+
+	.head-flex {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		color: white
+	}
+
+	.pruebita {
+		width: 300px;
+		height: 200px;
+		border: 1px solid black;
+	}
+
+	.loader-block {
+		display: flex;
+		margin-top: 20px !important;
+		min-width: 800px;
+		height: 300px;
+		background-color: #4d4d4d;
 		justify-content: center;
+		justify-content: center;
+		align-items: center;
 	}
 </style>
-
-<div class="tool-content-style">
-	<div class="caja-vista-doc">
-		<div class="form-inline">
-			<div class="form-group mb-2">
-				<label for="coddoc" class="sr-only">codigodocumento</label>
-				<input @bind-value="coddoc" @bind-value:event="oninput"
-					   @onkeypress="@((KeyboardEventArgs e) => DocumentoKeyPress(e))"
-					   type="text" class="form-control" id="titulo" placeholder="Código del documento" />
-			</div>
-			<div class="form-group mx-sm-3 mb-2">
-				<select class="form-control" @bind="tiposeleccionado">
-					<option value="0">--Seleccione tipo de documento--</option>
-					@foreach (OpcionDocumento opcion in tiposdocumentos)
-					{
-						<option value="@opcion.value">@opcion.label</option>
-					}
-				</select>
-			</div>
-			<button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="VerDocumento">Ver</button>
-			<button type="button" class="btn btn-danger mb-2" @onclick="CerrarDocumento">Cerrar</button>
-		</div>
+	
+<div class="form-inline">
+	<div class="form-group mb-2">
+		<label for="coddoc" class="sr-only">codigodocumento</label>
+		<input @bind-value="coddoc" @bind-value:event="oninput"
+			   @onkeypress="@((KeyboardEventArgs e) => DocumentoKeyPress(e))"
+			   type="text" class="form-control" id="titulo" placeholder="Código del documento" />
 	</div>
+	<div class="form-group mx-sm-3 mb-2">
+		<select class="form-control" @bind="tiposeleccionado">
+			<option value="0">--Seleccione tipo de documento--</option>
+			@foreach (Documento opcion in listadocumentos)
+			{
+				
+			}
+		</select>
+	</div>
+	<button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="FiltrarDocumento">Filtrar</button>	
+</div>
+	
+<div class="container-c" style=" width: auto;">
+	@if (cargatabla == true)
+	{
+		<div class="loader-block">
+			<div class="spinner-border" style="width: 7rem; height: 7rem;color:#ccc" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+	}
+	else
+	{
+		<MatTable Items="@listadocumentos" class="mat-elevation-z5" Style="width:auto">
+			<MatTableHeader>
+				<th>
+					<span class="table-header">Código del documento</span>
+				</th>
+				<th>
+					<span class="table-header">Tipo</span>
+				</th>
+				<th>
+					<span class="table-header">Estado</span>
+				</th>
+				<th>
+					<span class="table-header">Opciones</span>
+				</th>
+			</MatTableHeader>
+			<MatTableRow>
+				<td>
+					<span class="table-row">@context.id</span>
+				</td>
+				<td>
+					<span class="table-row">@context.tipo</span>
+				</td>
+				<td>
+					<span class="table-row">@context.estado</span>
+				</td>
+				<td>
+					<div class="button-container-lvl">
+						<div class="button-container">
+							<MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
+									   Class="mat-warning-c" @onclick="@(e => Visualizar(context.id))" Style="width:100% !important">Ver Documento</MatButton>
+						</div>							
+					</div>
+				</td>
+			</MatTableRow>
+		</MatTable>
+	}
 </div>
 
-		@code {
-			public RenderFragment ChildContent = null;
-			[CascadingParameter] WorkEnvironment workspace { get; set; }
-			string coddoc = "";
-			string tiposeleccionado = "";
-			List<OpcionDocumento> tiposdocumentos = new List<OpcionDocumento>();
+@code {
+	public RenderFragment ChildContent = null;
+	string coddoc = "";
+	string tiposeleccionado = "";
+	public List<Documento> listadocumentos = new List<Documento>();
+	public DocumentoDTO documentodto = new DocumentoDTO();
+	private bool Ver = false;
+	public string imagenTemporalMod { get; set; }
+	public bool rendermod { get; set; } = false;
+	public bool cargatabla { get; set; } = false;
 
-			private void DocumentoKeyPress(KeyboardEventArgs e)
-			{
-				if (e.Key == "Enter")
-				{
-					VerDocumento();
-				}
-			}
-
-			private void VerDocumento()
-			{
-
-			}
-
-			private void CerrarDocumento()
-			{
-
-			}
+	private void DocumentoKeyPress(KeyboardEventArgs e)
+	{
+		if (e.Key == "Enter")
+		{
+			FiltrarDocumento();
 		}
+	}
+
+	private void FiltrarDocumento()
+	{
+
+	}
+
+	private void CerrarDocumento()
+	{
+
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		cargatabla = true;
+		var httpResponse = await repository.Get<List<Documento>>("api/documentos/todo");
+		if (!httpResponse.Error)
+		{
+			listadocumentos = httpResponse.Response;
+			listadocumentos.ForEach(x => Console.WriteLine(x.id));
+		}
+		else
+		{
+			Console.WriteLine("Ocurrio un error");
+		}
+		cargatabla = false;
+	}
+
+	public async Task Visualizar(string id)
+	{
+		Documento documento = new Documento();
+		Console.WriteLine("inicio");
+		var httpResponse = await repository.Get<Documento>($"api/documentos/id?id={id}");
+		if (httpResponse.Error)
+		{
+			Console.WriteLine("Algo Mal");
+		}
+		else
+		{
+			documento = httpResponse.Response;
+
+		}
+		documento.id = documento.id;
+		documentodto.tipo = documento.tipo;
+		documentodto.estado = documento.estado;
+		rendermod = true;
+		StateHasChanged();
+		Ver = true;
+	}
+}
