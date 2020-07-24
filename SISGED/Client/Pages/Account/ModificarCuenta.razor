@@ -142,7 +142,6 @@
                                             {
                                         <MatOptionString Class="option-color" Disabled="true" Value="@rol.id">@rol.label</MatOptionString>
                                             }
-                                    /**/
                                 </MatSelect>
                                 <div class="incorrecto">
                                     <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
@@ -185,12 +184,12 @@
                             </div>
                         </div>
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.tipodocumento)">
-                            <InputSelect @bind-Value="@usuariodto.datos.tipodocumento" class="text-field-style">
-                                <option value="">--Seleccione Algo--</option>
-                                <option value="CE">Carnet de Extranjeria</option>
-                                <option value="DNI">D.N.I.</option>
-                                <option value="pasaporte">Pasaporte</option>
-                            </InputSelect>
+                            <MatSelect Label="Tipo de documento" @bind-Value="@usuariodto.datos.tipodocumento">
+                                <MatOptionString Class="option-color" Value="nulo"></MatOptionString>
+                                <MatOptionString Class="option-color" Value="CE">Carnet de Extranjeria</MatOptionString>
+                                <MatOptionString Class="option-color" Value="DNI">D.N.I.</MatOptionString>
+                                <MatOptionString Class="option-color" Value="pasaporte">Pasaporte</MatOptionString>
+                            </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                                 <ValidationMessage For="@(() => usuariodto.datos.tipodocumento)" />
