@@ -10,6 +10,7 @@ namespace SISGED.Shared.Entities
     public class UsuarioDTO
     {
         public string id { get; set; }
+        public string tipo { get; set; }
 
         public string usuario { get; set; }
 

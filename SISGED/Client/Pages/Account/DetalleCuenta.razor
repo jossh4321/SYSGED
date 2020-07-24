@@ -114,7 +114,7 @@
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.clave)">
 
                             <MatTextField @bind-Value="@usuariodto.clave" Class="text-field-style disabled-field"
-                                          Label="Clave"  Disabled="true"></MatTextField>
+                                          Label="Clave" Disabled="true"></MatTextField>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                                 <ValidationMessage For="@(() => usuariodto.clave)" />
@@ -144,6 +144,21 @@
                             </div>
                         </div>
 
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.tipo)">
+                            <InputSelect @bind-Value="@usuariodto.tipo" class="text-field-style">
+                                <option value="">--Seleccione un tipo de usuario--</option>
+                                <option value="administracion">Administrador</option>
+                                <option value="cliente">Cliente</option>
+                            </InputSelect>
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.tipo)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
 
                     </MatTab>
 

@@ -135,6 +135,21 @@
                             </div>
                         </div>
 
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.tipo)">
+                            <InputSelect @bind-Value="@usuariodto.tipo" class="text-field-style">
+                                <option value="">--Seleccione un tipo de usuario--</option>
+                                <option value="administracion">Administrador</option>
+                                <option value="cliente">Cliente</option>
+                            </InputSelect>
+                            <div class="incorrecto">
+                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                                <ValidationMessage For="@(() => usuariodto.tipo)" />
+                            </div>
+                            <div class="correcto">
+                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                                <span>Correcto</span>
+                            </div>
+                        </div>
 
                     </MatTab>
 
@@ -286,15 +301,12 @@
     void doSomething(ChangeEventArgs e)
     {
         string selectedString = e.Value.ToString();
-        Console.WriteLine("It is definitely: " + selectedString);
     }
     void KeyUp(ChangeEventArgs e, string memberName, object val)
     {
         //var property = usuario2.GetType().GetProperty(memberName);
         var property = val.GetType().GetProperty(memberName); //GetProperty(memberName, usuario2);
         property.SetValue(val, e.Value.ToString());
-        Console.WriteLine(e.Value.ToString());
-        Console.WriteLine("Aqui Todo Bien: " + e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
     }
@@ -303,7 +315,6 @@
     {
         if (gestionCuenta.rendermod == true)
         {
-            Console.WriteLine("me renderize en modificacion con rendermod");
             _editContext = new EditContext(usuariodto);
             gestionCuenta.rendermod = false;
             StateHasChanged();
@@ -317,10 +328,11 @@
         Usuario usuario = new Usuario();
         usuario.id = usuariodto.id;
         usuario.usuario = usuariodto.usuario;
+        usuario.tipo = usuariodto.tipo;
         usuario.clave = usuariodto.clave;
         usuario.estado = "activo";
         usuario.datos = usuariodto.datos;
-        //usuario.roles = listaroles.Where(x => x.id == usuariodto.rolid).ToList();
+        usuario.rol = usuariodto.rolid;
 
         var httpResponse = await repository.Put<Usuario, Usuario>("api/usuarios", usuario);
         if (httpResponse.Error)
