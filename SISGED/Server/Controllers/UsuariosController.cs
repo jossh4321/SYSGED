@@ -131,6 +131,12 @@ namespace SISGED.Server.Controllers
             return usuario;
         }
 
-
+        [HttpGet("filtroevaluar")]
+        public ActionResult<List<Usuario>> autocompleteEvaluar([FromQuery] string term)
+        {
+            List<Usuario> listanotario = new List<Usuario>();
+            listanotario = _usuarioservice.filtroEvaluar(term);
+            return listanotario;
+        }
     }
 }

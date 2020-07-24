@@ -1,0 +1,96 @@
+﻿@inject IRepository repository
+<style>
+    .card-historial {
+        margin: 5px;
+        /*border: 1px solid;*/
+        transition: all 0.3s ease-out;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 14px 26px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        text-align: left;
+    }
+
+    .mdc-dialog {
+        z-index: 1000 !important;
+    }
+
+    .demo-mat-card-content {
+        /* padding: 1rem;*/
+        margin: 0px;
+        z-index: 100 !important;
+    }
+
+    .mdc-dialog__content {
+        padding: 0 !important;
+    }
+
+    p {
+        font-size: 12px;
+    }
+
+    b {
+        color: black;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto;
+    }
+
+    .mar {
+        padding: 10px;
+    }
+</style>
+
+<hr />
+<div class="card-historial">
+    <p>Área: @rol.label</p>
+    <p>Fecha emisión: @proceso.fechaemision</p>
+    <p>Fecha recepción: @proceso.fecharecepcion</p>
+    <p>Usuario: @usuario.datos.nombre @usuario.datos.apellido</p>
+</div>
+@code{
+
+    [Parameter]
+    public Proceso proceso { get; set; }
+
+    private Usuario usuario = new Usuario();
+    private Rol rol = new Rol();
+    private string usuarioEmisorId;
+
+    protected async override Task OnInitializedAsync()
+    {
+        usuarioEmisorId = proceso.idusuario;
+        await getUsuario();
+        await getRol();
+    }
+    public async Task getUsuario()
+    {
+        var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={usuarioEmisorId}");
+        if (responseHttp.Error)
+        {
+
+            Console.WriteLine("Ha ocurrido un error al traer usuario");
+        }
+        else
+        {
+            usuario = responseHttp.Response;
+        }
+    }
+
+    public async Task getRol()
+    {
+        var responseHttp = await repository.Get<Rol>($"api/roles/id?id={proceso.area}");
+        if (responseHttp.Error)
+        {
+            Console.WriteLine("Ha ocurrido un error al traer role.s");
+        }
+        else
+        {
+
+            rol = responseHttp.Response;
+        }
+    }
+
+}

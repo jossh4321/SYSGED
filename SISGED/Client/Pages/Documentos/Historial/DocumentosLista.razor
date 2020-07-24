@@ -51,26 +51,20 @@
 <MatDialog @bind-IsOpen="dialogoHistorialProceso" Class="dialogo"> 
     <MatDialogTitle>Historial Proceso</MatDialogTitle>
     <MatDialogContent>
-        @if (historialproceso.Count == 0)
-        {
-            <div class="card-historial">
-                <p>El documento no cuenta con historial de procesos</p>
-            </div>
-        }
-        else
-        {
-            <div class="grid-container">
-                @foreach (Proceso proceso in historialproceso)
-                {
-                    <div class="card-historial">
-                        <p>Área: @proceso.area</p>
-                        <p>Fecha emisión: @proceso.fechaemision</p>
-                        <p>Fecha recepción: @proceso.fecharecepcion</p>
-                        <p>Usuario: @proceso.idemisor</p>
-                    </div>
-
-                }
-            </div>
+            @if (historialproceso.Count == 0)
+            {
+                <div class="card-historial">
+                    <p>El documento no cuenta con historial de procesos</p>
+                </div>
+            }
+            else
+            {
+                <div class="grid-container">
+                    @foreach (Proceso proceso in historialproceso)
+                    {            
+                        <ProcesoLista proceso="proceso" @key="proceso.indice"></ProcesoLista>                   
+                    }
+                </div>
         }
 
     </MatDialogContent>

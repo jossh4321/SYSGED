@@ -1,9 +1,52 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalfire
-@using SISGED.Client.Pages.Samples.WorkEnvironment
 @using Newtonsoft.Json;
-
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Blazored.Typeahead
+<link rel="stylesheet" href="css/estilosEP/styleEP.css" />
 <style>
+    .field-container-a {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+
+    .base-field {
+        flex-basis: 100%;
+    }
+
+    .single-textfield-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .contenedor-participantes {
+        padding-top: 10px;
+        margin: 20px;
+        border: 2px solid #666666;
+        border-radius: 5px;
+    }
+
+    .titulo {
+        color: #d9d9d9;
+    }
+
+    .titulo-paticipantes {
+        border: 1px solid black;
+        margin: 0px 5px 0px 5px;
+        border-radius: 5px 5px 0px 0px;
+        background-color: #404040;
+        color: white;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
     * {
         color: black;
     }
@@ -16,11 +59,32 @@
     }
 
     .field-container {
-        padding: 10px;
+        padding: 20px;
+    }
+
+    div.tool-content-style {
+        width: 100%;
+        flex-basis: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: #a6a6a6;
+        border-radius: 5px 5px 0px 0px;
+    }
+
+    .caja-vista-doc {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 90%;
+        align-items: center;
+        justify-content: initial !important;
     }
 
     .sub-but {
         width: 49%;
+    }
+
+    .sub-but-a {
+        width: 45%;
     }
 
     .mat-success-c {
@@ -49,72 +113,154 @@
 }
 else
 {
-    <div class="div-form">
-        <div class="field-container">
-            <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" Class="mat-success-c sub-but" OnClick="@(e => { OpenAprobado = true; })">Aprobar</MatButton>
-            <MatButton Icon="@MatBlazor.MatIconNames.Highlight_off" Class="mat-error-c sub-but" OnClick="@(e => { OpenDesaprobado = true; })">Desprobar</MatButton>
+    <div class="tool-content-style">
+        <div class="caja-vista-doc">
+            <div class="div-form">
+                <MatTabGroup>
+                    <MatTab Label="Evaluación por junta">
+                        <div class="contenedor-participantes">
+                            <div class="titulo-paticipantes">
+                                <div><span class="titulo">Datos del participante</span></div>
+                            </div>
+                            <div class="single-textfield-container">
+                                <div class="field-container-a base-field">
+                                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@participanteElegido" Placeholder="Ingrese el dni del participante" Class="text-field-style">
+                                        <SelectedTemplate>
+                                            <strong> N° DNI: @context.datos.numerodocumento</strong>
+                                        </SelectedTemplate>
+                                        <ResultTemplate>
+                                            <strong> N° DNI: @context.datos.numerodocumento - Nombre: @context.datos.nombre @context.datos.apellido </strong>
+                                        </ResultTemplate>
+                                        <NotFoundTemplate>
+                                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                                        </NotFoundTemplate>
+                                    </BlazoredTypeahead>
+                                </div>
+                                @if (participanteElegido == null)
+                                {
+                                    <div class="field-container-a base-field">
+                                        <MatTextField @bind-Value="@nada" ReadOnly="true" Class="text-field-style" Label="Nombre del participante"></MatTextField>
+                                    </div>
+                                    <div class="field-container-a base-field">
+                                        <MatTextField @bind-Value="@nada" ReadOnly="true" Class="text-field-style" Label="Apellido del participante"></MatTextField>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="field-container-a base-field">
+                                        <MatTextField @bind-Value="@participanteElegido.datos.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del participante"></MatTextField>
+                                    </div>
+                                    <div class="field-container-a base-field">
+                                        <MatTextField @bind-Value="@participanteElegido.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del participante"></MatTextField>
+                                    </div>
+                                }
+                            <div class="field-container-a base-field">
+                                <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" Class="mat-success-c sub-but-a" OnClick="@AgregarParticipante">Aprobó</MatButton>
+                                <MatButton Icon="@MatBlazor.MatIconNames.Highlight_off" Class="mat-error-c sub-but-a" OnClick="@(e => { OpenDesaprobadovarios = true; })">Desaprobó</MatButton>
+                            </div>
+                            </div>
+                        </div>
+                        
+                        @if(datosParticipantes.Count != 0)
+                        {
+                            <div class="field-container">
+                                @foreach (var participante in listadopaginacion)
+                                {
+                                    <div class="mat-layout-grid-cell-span-4">
+                                        <UsuarioParticipanteC usuarioParticipanteEvaluacion="participante" @key="participante.id"
+                                                              mostrarDatosParticipante="ModificarParticipante" eliminarParticipante="EliminarParticipante"></UsuarioParticipanteC>
+                                    </div>
+                                }
+                            </div>
+                            <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales()" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
+                        }
+
+                        <MatDialog @bind-IsOpen="@OpenDesaprobadovarios">
+                            <MatDialogTitle>El participante ha desprobado el documento </MatDialogTitle>
+                            <MatDialogContent>
+                                <MatTextField Label="Escriba el motivo de la desaprobación" @bind-Value="@observacion"></MatTextField>
+                            </MatDialogContent>
+                            <MatDialogActions>
+                                <MatButton OnClick="@AgregarParticipante">Aceptar</MatButton>
+                                <MatButton OnClick="@(e => { OpenDesaprobadovarios = false; })">Cancelar</MatButton>
+                            </MatDialogActions>
+                        </MatDialog>
+                    </MatTab>
+
+
+                    <MatTab Label="Evaluación individual">
+                        <div class="field-container">
+                            <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" Class="mat-success-c sub-but" OnClick="@(e => { OpenAprobado = true; })">Aprobar</MatButton>
+                            <MatButton Icon="@MatBlazor.MatIconNames.Highlight_off" Class="mat-error-c sub-but" OnClick="@(e => { OpenDesaprobado = true; })">Desaprobar</MatButton>
+                        </div>
+                        <MatDialog @bind-IsOpen="@OpenAprobado">
+                            <MatDialogTitle>¿Desea aprobar este documento?</MatDialogTitle>
+                            <MatDialogActions>
+                                <MatButton OnClick="@RealizarEvaluacion">Aceptar</MatButton>
+                                <MatButton OnClick="@(e => { OpenAprobado = false; })">Cancelar</MatButton>
+                            </MatDialogActions>
+                        </MatDialog>
+
+                        <MatDialog @bind-IsOpen="@OpenDesaprobado">
+                            <MatDialogTitle>¿Desea desaprobar este documento?</MatDialogTitle>
+                            <MatDialogContent>
+                                <MatTextField Label="Motivo de la desaprobación del documento" @bind-Value="@observacion"></MatTextField>
+                            </MatDialogContent>
+                            <MatDialogActions>
+                                <MatButton OnClick="@RealizarEvaluacion">Aceptar</MatButton>
+                                <MatButton OnClick="@(e => { OpenDesaprobado = false; })">Cancelar</MatButton>
+                            </MatDialogActions>
+                        </MatDialog>
+                    </MatTab>
+                </MatTabGroup>
+            </div>
         </div>
-
-        <MatDialog @bind-IsOpen="@OpenAprobado">
-            <MatDialogTitle>¿Desea aprobar este documento?</MatDialogTitle>
-            <MatDialogActions>
-                <MatButton OnClick="@AprobarDocumento">Aceptar</MatButton>
-                <MatButton OnClick="@(e => { OpenAprobado = false; })">Cancelar</MatButton>
-            </MatDialogActions>
-        </MatDialog>
-
-        <MatDialog @bind-IsOpen="@OpenDesaprobado">
-            <MatDialogTitle>¿Desea desaprobar este documento?</MatDialogTitle>
-            <MatDialogContent>
-                <MatTextField Label="Motivo de la desaprobación del documento" @bind-Value="@observacion"></MatTextField>
-            </MatDialogContent>
-            <MatDialogActions>
-                <MatButton OnClick="@DesaprobarDocumento">Aceptar</MatButton>
-                <MatButton OnClick="@(e => { OpenDesaprobado = false; })">Cancelar</MatButton>
-            </MatDialogActions>
-        </MatDialog>
     </div>
 }
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-    private DocumentoEvaluadoDTO documentoEvaluado { get; set; }
-    private OficioDesignacionNotario cagada { get; set; }
-    private string observacion;
+    private string observacion = "";
+    public Evaluacion evaluacion;
+    public Usuario participanteElegido { get; set; }
+    public List<UsuarioEvaluacionDTO> datosParticipantes;
+    public List<UsuarioEvaluacionDTO> listadopaginacion;
+    public string nada = "";
     private bool OpenAprobado = false;
     private bool OpenDesaprobado = false;
+    private bool OpenDesaprobadovarios = false;
     private bool DocumentoRevisado;
+    public int paginaactual = 1;
 
-
-    private async Task AprobarDocumento()
+    protected override void OnInitialized()
     {
-        documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
-        //documentoEvaluado.evaluacion.status = "aprobado";
-        //documentoEvaluado.evaluacion.observacion = "Ninguna";
-        documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
-        documentoEvaluado.idusuario = sesion.usuario.id;
-        await Actualizar();
-    }
-    private async Task DesaprobarDocumento()
-    {
-        if (String.IsNullOrWhiteSpace(observacion))
+        datosParticipantes = new List<UsuarioEvaluacionDTO>();
+        listadopaginacion = new List<UsuarioEvaluacionDTO>();
+        evaluacion = new Evaluacion();
+        Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
+        string tipo = workspace.expedienteseleccionado.documento.tipo;
+        if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
         {
-            await swalfire.errorMessage("Debe ingresar una descripción");
+            Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
+            if (evaluacion.resultado == "pendiente")
+            {
+                DocumentoRevisado = false;
+            }
+            else
+            {
+                DocumentoRevisado = true;
+            }
+
         }
         else
         {
-            documentoEvaluado.id = workspace.expedienteseleccionado.documento.id;
-            //documentoEvaluado.evaluacion.status = "desaprobado";
-            //documentoEvaluado.evaluacion.observacion = observacion.Trim();
-            documentoEvaluado.idexpediente = workspace.expedienteseleccionado.idexpediente;
-            documentoEvaluado.idusuario = sesion.usuario.id;
-            await Actualizar();
+            DocumentoRevisado = true;
         }
     }
 
-    private async Task Actualizar()
+    private async Task RealizarEvaluacion()
     {
-        var responseHttp = await repositorio.Put<Documento, DocumentoEvaluadoDTO>("api/Documentos/cambiarestado", documentoEvaluado);
+        var responseHttp = await repositorio.Put<Documento, Evaluacion>("api/Documentos/cambiarestado", evaluacion);
         if (responseHttp.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
@@ -128,28 +274,188 @@ else
             DocumentoRevisado = true;
         }
     }
-    protected override void OnInitialized()
-    {
-        documentoEvaluado = new DocumentoEvaluadoDTO();
-        Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
-        string tipo = workspace.expedienteseleccionado.documento.tipo;
-        if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
-        {
-            Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
-            /*Console.WriteLine(evaluacion.status);
-            if (evaluacion.status == "pendiente")
-            {
-                DocumentoRevisado = false;
-            }
-            else
-            {
-                DocumentoRevisado = true;
-            }*/
 
+    private async Task AgregarParticipante()
+    {
+        if (participanteElegido == null)
+        {
+            await swalfire.errorMessage("Debe ingresar los datos del participante");
         }
         else
         {
-            DocumentoRevisado = true;
+            Usuario participante = participanteElegido;
+            bool registrado = false;
+            foreach (UsuarioEvaluacionDTO i in datosParticipantes)
+            {
+                if(i.id == participante.id)
+                {
+                    registrado = true;
+                }
+            }
+
+            if (registrado)
+            {
+                await swalfire.errorMessage("Este participante ya esta registrado");
+            }
+            else
+            {
+                UsuarioEvaluacionDTO usuarioEva = new UsuarioEvaluacionDTO();
+                usuarioEva.id = participante.id;
+                usuarioEva.datos = participante.datos;
+                if (OpenDesaprobadovarios)
+                {
+                    usuarioEva.descripcion = observacion;
+                    usuarioEva.status = "desaprobado";
+                }
+                else
+                {
+                    usuarioEva.descripcion = "Ninguna";
+                    usuarioEva.status = "aprobado";
+                }
+                datosParticipantes.Add(usuarioEva);
+                OpenDesaprobadovarios = false;
+                observacion = "";
+                await swalfire.successMessage("Participante ingresado");
+                participanteElegido = null;
+            }
         }
     }
+
+    public int paginastotales()
+    {
+        int numeroTotal = 0;
+        if (datosParticipantes.Count % 3 == 0)
+        {
+            numeroTotal = datosParticipantes.Count / 3;
+        }
+        else
+        {
+            numeroTotal = (datosParticipantes.Count / 3) + 1;
+        }
+        return numeroTotal;
+    }
+
+    public void paginaSeleccionada(int pagina)
+    {
+        paginaactual = pagina;
+        listadopaginacion.Clear();
+        for (int i = 0; i < datosParticipantes.Count; i++)
+        {
+            if (i >= 3 * (paginaactual - 1) && i < paginaactual * 3)
+            {
+                listadopaginacion.Add(datosParticipantes.ElementAt(i));
+            }
+        }
+        Console.WriteLine("Esta es mi paginacion" + listadopaginacion.ElementAt(0).status);
+    }
+
+    private void ModificarParticipante()
+    {
+
+    }
+
+    private void EliminarParticipante()
+    {
+
+    }
+
+    private async Task<IEnumerable<Usuario>> match(string searchtext)
+    {
+        var httpResponse = await repositorio.Get<List<Usuario>>($"api/usuarios/filtroevaluar?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<Usuario>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+    //private async Task Actualizar()
+    //{
+    //    var responseHttp = await repositorio.Put<Documento, DocumentoEvaluadoDTO>("api/Documentos/cambiarestado", documentoEvaluado);
+    //    if (responseHttp.Error)
+    //    {
+    //        await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
+    //    }
+    //    else
+    //    {
+    //        await swalfire.successMessage("Documento evaluado correctamente");
+    //        OpenAprobado = false;
+    //        OpenDesaprobado = false;
+    //        observacion = null;
+    //        DocumentoRevisado = true;
+    //    }
+    //}
+    //protected override void OnInitialized()
+    //{
+    //    documentoEvaluado = new DocumentoEvaluadoDTO();
+    //    participante = new ParticipanteEvaluacion();
+    //    Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
+    //    string tipo = workspace.expedienteseleccionado.documento.tipo;
+    //    if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
+    //    {
+    //        Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
+    //        Console.WriteLine(evaluacion.status);
+    //        if (evaluacion.status == "pendiente")
+    //        {
+    //            DocumentoRevisado = false;
+    //        }
+    //        else
+    //        {
+    //            DocumentoRevisado = true;
+    //        }
+
+    //    }
+    //    else
+    //    {
+    //        DocumentoRevisado = true;
+    //    }
+    //}
+    //private void AgregarParticipante()
+    //{
+    //    if (OpenDesaprobadovarios)
+    //    {
+    //        participante.resultadoEvaluacion = "desaprobado";
+    //        participante.observacion = observacion.Trim();
+    //    }
+    //    else
+    //    {
+    //        participante.resultadoEvaluacion = "aprobado";
+    //        participante.observacion = "Ninguna";
+    //    }
+
+    //    listaParticipantes.Add(participante);
+    //    participante.nombre = "";
+    //    participante.observacion = "";
+    //    participante.dni = "";
+    //    participante.foto = "";
+    //    observacion = "";
+    //    OpenDesaprobadovarios = false;
+    //}
+    //public void paginaSeleccionada(int pagina)
+    //{
+    //    paginaactual = pagina;
+    //    listado.Clear();
+    //    for (int i = 0; i < listaParticipantes.Count; i++)
+    //    {
+    //        if (i >= 3 * (paginaactual - 1) && i < paginaactual * 3)
+    //        {
+    //            listado.Add(listaParticipantes.ElementAt(i));
+    //        }
+    //    }
+    //}
+    //public int paginastotales()
+    //{
+    //    int numeroTotal = 0;
+    //    if (listaParticipantes.Count % 3 == 0)
+    //    {
+    //        numeroTotal = listaParticipantes.Count / 3;
+    //    }
+    //    else
+    //    {
+    //        numeroTotal = (listaParticipantes.Count / 3) + 1;
+    //    }
+    //    return numeroTotal;
+    //}
 }

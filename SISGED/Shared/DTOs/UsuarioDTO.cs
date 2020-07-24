@@ -10,6 +10,7 @@ namespace SISGED.Shared.Entities
     public class UsuarioDTO
     {
         public string id { get; set; }
+        public string tipo { get; set; }
 
         public string usuario { get; set; }
 
@@ -50,5 +51,12 @@ namespace SISGED.Shared.Entities
         public Rol rolobj { get; set; } = new Rol();
     }
 
-
+    public class UsuarioEvaluacionDTO
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public Datos datos { get; set; } = new Datos();
+        public string descripcion { get; set; }
+        public string status { get; set; }
+    }
 }
