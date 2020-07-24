@@ -254,7 +254,7 @@
         }
         else
         {
-            Console.WriteLine("Ocurrio un error");
+            //await swalfire("Error en el servidor");
         }
         cargatabla = false;
     }
@@ -288,7 +288,6 @@
     public async Task abrirDialogoDetalle(string id)
     {
         Usuario usuario = new Usuario();
-        Console.WriteLine("inicio");
         var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={id}");
         if (httpResponse.Error)
         {
@@ -304,6 +303,7 @@
         usuariodto.id = usuario.id;
         usuariodto.estado = usuario.estado;
         usuariodto.rolid = usuario.rol;
+        usuariodto.tipo = usuario.tipo;
         dialogoDetalle = true;
 
     }
