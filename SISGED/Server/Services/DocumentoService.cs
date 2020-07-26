@@ -1656,5 +1656,160 @@ namespace SISGED.Server.Services
 
             return expedientes;
         }
+
+        public async Task<List<StatisticsDTOR>> estadisticasDocXMesXArea(int mes, string area)
+        {
+           var match1= new BsonDocument("$match",
+                new BsonDocument("historialproceso.area", area));
+           var project = new BsonDocument("$project",
+                    new BsonDocument
+                        {
+                            { "_id", "$_id" },
+                            { "tipo", "$tipo" },
+                            { "mes",  new BsonDocument("$month", "$fechacreacion") }
+                        });
+            var match2 = new BsonDocument("$match",
+                            new BsonDocument("mes", mes));
+
+            var group = new BsonDocument("$group",
+                            new BsonDocument
+                                {
+                                    { "_id", "$tipo" },
+                                    { "cantidad",
+                            new BsonDocument("$sum", 1) }
+                                });
+
+            List<StatisticsDTOR> estadisticas = new List<StatisticsDTOR>();
+            estadisticas = await _documentos.Aggregate()
+                .AppendStage<Documento>(match1)
+                .AppendStage<StatisticsDTO>(project)
+                .AppendStage<StatisticsDTO>(match2)
+                .AppendStage<StatisticsDTOR>(group)
+                .ToListAsync();
+            return estadisticas;
+        }
+
+        public async Task<List<StatisticsDTOR>> estadisticasDocXMes(int mes)
+        {
+            var project = new BsonDocument("$project",
+                     new BsonDocument
+                         {
+                            { "_id", "$_id" },
+                            { "tipo", "$tipo" },
+                            { "mes",  new BsonDocument("$month", "$fechacreacion") }
+                         });
+            var match2 = new BsonDocument("$match",
+                            new BsonDocument("mes", mes));
+
+            var group = new BsonDocument("$group",
+                            new BsonDocument
+                                {
+                                    { "_id", "$tipo" },
+                                    { "cantidad",
+                            new BsonDocument("$sum", 1) }
+                                });
+
+            List<StatisticsDTOR> estadisticas = new List<StatisticsDTOR>();
+            estadisticas = await _documentos.Aggregate()
+                .AppendStage<StatisticsDTO>(project)
+                .AppendStage<StatisticsDTO>(match2)
+                .AppendStage<StatisticsDTOR>(group)
+                .ToListAsync();
+            return estadisticas;
+        }
+
+        public async Task<List<StatisticsDTO4R>> statisticsDTO4EvaluadosJuntaDirectiva(int mes)
+        {
+            var match1 = new BsonDocument("$match",
+                            new BsonDocument("tipo",
+                            new BsonDocument("$in",
+                            new BsonArray
+                                        {
+                                            "OficioDesignacionNotario",
+                                            "Resolucion",
+                                            "Apelacion",
+                                            "OficioBPN"
+                                        })));
+            var project = new BsonDocument("$project",
+                            new BsonDocument
+                                {
+                                    { "_id", "$_id" },
+                                    { "tipo", "$tipo" },
+                                    { "evaluacion", "$evaluacion" },
+                                    { "mes", new BsonDocument("$month", "$fechacreacion") }
+                                });
+
+            var group = new BsonDocument("$group",
+                                new BsonDocument
+                                    {
+                                        { "_id", "$tipo" },
+                                        { "aprobados",
+                                new BsonDocument("$sum",
+                                new BsonDocument("$cond",
+                                new BsonArray{
+                                                    new BsonDocument("$eq",
+                                                    new BsonArray
+                                                        {
+                                                            "$evaluacion.resultado",
+                                                            "Aprobado"
+                                                        }),
+                                                    1,
+                                                    0
+                                                })) },
+                                        { "rechazados",
+                                new BsonDocument("$sum",
+                                new BsonDocument("$cond",
+                                new BsonArray
+                                                {
+                                                    new BsonDocument("$eq",
+                                                    new BsonArray
+                                                        {
+                                                            "$evaluacion.resultado",
+                                                            "Desaprobado"
+                                                        }), 1, 0
+                                                })) }
+                                    });
+
+            var match2 = new BsonDocument("$match",
+                            new BsonDocument("mes",mes));
+            List<StatisticsDTO4R> estadisticas = new List<StatisticsDTO4R>();
+            estadisticas = await _documentos.Aggregate()
+                .AppendStage<Documento>(match1)
+                .AppendStage<StatisticsDTO4_project1>(project)
+                .AppendStage<StatisticsDTO4_project1>(match2)
+                .AppendStage<StatisticsDTO4R>(group)
+                .ToListAsync();
+            return estadisticas;
+        }
+        public async Task<List<StatisticsDTO3_group>> estadisticasDocumentosCaducadosXMes(int mes)
+        {
+            var match1 = new BsonDocument("$match",
+                new BsonDocument("estado", "caducado"));
+            var project = new BsonDocument("$project",
+                            new BsonDocument
+                                {
+                                    { "_id", "$_id" },
+                                    { "tipo", "$tipo" },
+                                    { "mes",
+                            new BsonDocument("$month", "$fechacreacion") }
+                                });
+            var match2 = new BsonDocument("$match",
+                             new BsonDocument("mes", mes));
+            var group = new BsonDocument("$group",
+                                new BsonDocument
+                                    {
+                                        { "_id", "$tipo" },
+                                        { "caducados",
+                                new BsonDocument("$sum", 1) }
+                                    });
+            List<StatisticsDTO3_group> estadisticas = new List<StatisticsDTO3_group>();
+            estadisticas = await _documentos.Aggregate()
+                .AppendStage<Documento>(match1)
+                .AppendStage<StatisticsDTO3_project>(project)
+                .AppendStage<StatisticsDTO3_project>(match2)
+                .AppendStage<StatisticsDTO3_group>(group)
+                .ToListAsync();
+            return estadisticas;
+        }
     }
 }
