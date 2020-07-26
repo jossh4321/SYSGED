@@ -400,6 +400,80 @@ namespace SISGED.Server.Controllers
             return bandejaexpdto;*/
         }
 
+        [HttpPost("registrarsolicitudinicial")]
+        public async Task<ActionResult<SolicitudInicial>> RegistrarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        {
+            //Obtenemos los datos del expedientewrapper
+            SolicitudInicialDTO doc = new SolicitudInicialDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            doc = JsonConvert.DeserializeObject<SolicitudInicialDTO>(json);
+
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in doc.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicitudesiniciales");
+                    url2.Add(urlData2);
+                }
+            }
+
+            //Creacionde Obj y almacenamiento en la coleccion documento
+            ContenidoSolicitudInicial contenidoDTOInicial = new ContenidoSolicitudInicial()
+            {
+                titulo = doc.contenidoDTO.titulo,
+                descripcion = doc.contenidoDTO.descripcion,
+                fechacreacion = DateTime.Now
+            };
+
+            SolicitudInicial soliInicial = new SolicitudInicial()
+            {
+                tipo = "SolicitudInicial",
+                contenido = contenidoDTOInicial,
+                estado = "pendiente",
+                urlanexo = url2,
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+
+            soliInicial = _documentoservice.registrarSolicitudInicial(soliInicial);
+
+            //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
+            Cliente cliente = new Cliente()
+            {
+                nombre = doc.nombrecliente,
+                tipodocumento = doc.tipodocumento,
+                numerodocumento = doc.numerodocumento
+            };
+            Expediente expediente = new Expediente();
+            expediente.tipo = "Solicitud";
+            expediente.cliente = cliente;
+            expediente.fechainicio = DateTime.Now;
+            expediente.fechafin = null;
+            expediente.documentos = new List<DocumentoExpediente>()
+            {
+                new DocumentoExpediente(){
+                    indice = 1,
+                    iddocumento = soliInicial.id,
+                    tipo  = "SolicitudInicial",
+                    fechacreacion = soliInicial.contenido.fechacreacion,
+                    fechaexceso=soliInicial.contenido.fechacreacion.AddDays(10),
+                    fechademora = null
+                }
+            };
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+            expediente = _expedienteservice.saveExpediente(expediente);
+            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, soliInicial.id, "josue");
+            ExpedienteDocumentoSIDTO expedienteDocumentoSIDTO = new ExpedienteDocumentoSIDTO();
+            expedienteDocumentoSIDTO.expediente = expediente;
+            expedienteDocumentoSIDTO.solicitudI = soliInicial;
+
+            return soliInicial;
+        }
+
 
         [HttpPost("documentocf")]
         public async Task<ActionResult<ConclusionFirma>> RegistrarDocumentoCF(ExpedienteWrapper expediente)
@@ -604,7 +678,7 @@ namespace SISGED.Server.Controllers
         //obteniendo documentos
 
         [HttpGet("documentosolicitudes/{numerodocumento}")]
-        public async Task<List<DocumentoADTO>> obtenerSolicitudes(string numerodocumento)
+        public async Task<List<DocumentoADTO2>> obtenerSolicitudes(string numerodocumento)
         {
             return await _documentoservice.ObtenerSolicitudesUsuario(numerodocumento);
         }
@@ -677,6 +751,11 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerDocumentoDTO(iddoc);
         }
+        [HttpGet("obtenersolicitudinicial")]
+        public async Task<ActionResult<SolicitudInicialDTO>> obtenerSolicitudInicial([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerSolicitudInicial(iddoc);
+        }
 
         //Actualizaciones
         [HttpPut("actualizarDocumentoODN")]
@@ -723,6 +802,11 @@ namespace SISGED.Server.Controllers
         public void modificarrDocumentoResultadoBPN(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoResultadoBPN(expedienteWrapper);
+        }
+        [HttpPut("actualizarDocumentoSolicitudInicial")]
+        public void modificarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoSolicitudInicial(expedienteWrapper);
         }
     }
 }

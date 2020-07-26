@@ -171,150 +171,109 @@
     {
 
 
-        <MatTable Items="docs" class="mat-elevation-z5" Style="width:auto">
-            <MatTableHeader>
-                <th>
-                    <span class="table-header">Tipo de Protocolo Notarial</span>
-                </th>
-                <th>
-                    <span class="table-header">Estado</span>
-                </th>
-                <th>
-                    <span class="table-header">Fecha</span>
-                </th>
-                <th>
-                    <span class="table-header">Funciones</span>
-                </th>
-            </MatTableHeader>
-            <MatTableRow>
-                @if (@context.tipo == "SolicitudBPN")
-                    {
-                        tipo_front = "Busqueda de Protocolo Notarial";
-                    }
-                @if (@context.tipo == "SolicitudExpedicionFirma")
-                    {
-                        tipo_front = "Expedicion de Firma";
-                    }
-                @if (@context.tipo == "SolicitudDenuncia")
-                    {
-                        tipo_front = "Denuncia";
-                    }
-                @{
-                        int index = context.historialcontenido.Count;
+<MatTable Items="docs" class="mat-elevation-z5" Style="width:auto">
+    <MatTableHeader>
+        <th>
+            <span class="table-header">Titulo</span>
+        </th>
+        <th>
+            <span class="table-header">Tipo</span>
+        </th>
+        <th>
+            <span class="table-header">Estado</span>
+        </th>
+        <th>
+            <span class="table-header">Fecha</span>
+        </th>
+        <th>
+            <span class="table-header">Funciones</span>
+        </th>
+    </MatTableHeader>
+    <MatTableRow>
 
-                    <td bind="@TipoSolicitud2">
-                        <span class="table-row">@tipo_front</span>
-                    </td>
-                    <td>
-                        <span class="table-row">@context.estado</span>
-                    </td>
-                    @if (index > 0)
-                        {
-                        <td>
-                            <span class="table-row">@context.historialcontenido[index - 1].fechamodificacion</span>
-                        </td>
-                        }
-                        else
-                        {
-                        <td>
-                            <span class="table-row">No hay historial disponible</span>
-                        </td>
-                        }
-                    /**/
-                    /**/
-                    /**/
-                    /**/
-                    <td>
-                        @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido") { activator = true; }
-                            else { activator = false; }
-                        <div class="button-container-lvl">
-                            <div class="button-container">
-                                    <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
-                            </div>
-                            <div class="button-container">
-                                @if (activator == false)
-                                    {
-                                    <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@OpenDialogModificar" Style="width:100% !important">Modificar</MatButton>
+        @{
+                int index = context.historialcontenido.Count;
 
-                                    }
-                                    else
-                                    {
-                                    <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@OpenDialogModificar" Style="width:100% !important">Modificar</MatButton>
-
-                                    }
-                            </div>
-                            <div class="button-container">
-                                @if (activator == false)
-                                    {
-                                    <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@OpenDialogCancelar" Style="width:100% !important">Cancelar</MatButton>
-
-                                    }
-                                    else
-                                    {
-                                    <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@OpenDialogCancelar" Style="width:100% !important">Cancelar</MatButton>
-
-                                    }
-                            </div>
-                            <div class="button-container">
-                                @if (context.estado == "emitido")
-                                {
-                                    <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
-                                }
-                            </div>
-
-
-                        </div>
-
-
-                    </td>
+            <td>
+                <span class="table-row">@context.contenido.titulo</span>
+            </td>
+            <td>
+                <span class="table-row">@context.tipo</span>
+            </td>
+            <td>
+                <span class="table-row">@context.estado</span>
+            </td>
+            @if (index > 0)
+                {
+                <td>
+                    <span class="table-row">@context.historialcontenido[index - 1].fechamodificacion</span>
+                </td>
                 }
+                else
+                {
+                <td>
+                    <span class="table-row">No hay historial disponible</span>
+                </td>
+                }
+            <td>
+                @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido") { activator = true; }
+                    else { activator = false; }
+                <div class="button-container-lvl">
+                    <div class="button-container">
+                        <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
+                    </div>
+                    <div class="button-container">
+                        @if (activator == false)
+                            {
+                            <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@OpenDialogModificar" Style="width:100% !important">Modificar</MatButton>
+
+                            }
+                            else
+                            {
+                            <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@OpenDialogModificar" Style="width:100% !important">Modificar</MatButton>
+
+                            }
+                    </div>
+                    <div class="button-container">
+                        @if (activator == false)
+                            {
+                            <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@OpenDialogCancelar" Style="width:100% !important">Cancelar</MatButton>
+
+                            }
+                            else
+                            {
+                            <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@OpenDialogCancelar" Style="width:100% !important">Cancelar</MatButton>
+
+                            }
+                    </div>
+                    <div class="button-container">
+                        @if (context.estado == "emitido")
+                            {
+                            <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
+                            }
+                    </div>
+
+
+                </div>
+
+
+            </td>
+        }
 
 
 
-            </MatTableRow>
-        </MatTable>
+    </MatTableRow>
+</MatTable>
 
     }
 </div>
   
-
-
-
-
     <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-        @if (TipoSolicitud == "Solic_ExpedicionFirma")
-        {
-            <MatDialogTitle>Registrar Solicitud de Expedicion de Firma</MatDialogTitle>
-            <MatDialogContent>
-                <RegistrarSolicExpedicionF />
-            </MatDialogContent>
-        }
-        @if (TipoSolicitud == "Solic_Denuncia")
-        {
-            <MatDialogTitle>Registrar Solicitud de Denuncia</MatDialogTitle>
-            <MatDialogContent>
-                <RegistrarSolicDenuncias />
-            </MatDialogContent>
-        }
-        @if (TipoSolicitud == "Solic_BPN")
-        {
-            <MatDialogTitle>Registrar Solicitud de BPN</MatDialogTitle>
-            <MatDialogContent>
-                <RegistrarSolicBPN />
-            </MatDialogContent>
-        }
-
+        <SolicitudInicial></SolicitudInicial>
         <MatDialogActions>
             <MatButton OnClick="@OkClick">Cancelar</MatButton>
         </MatDialogActions>
     </MatDialog>
-
-
-
-
-
-
-
 
     <MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
         <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
@@ -344,48 +303,12 @@
 
     <MatDialog @bind-IsOpen="@dialogIsOpen_VerDetalles">
         <MatDialogTitle>Detalles de la Solicitud</MatDialogTitle>
-        @if (TipoSolicitud2 == "Expedicion de Firma")
-        {
-            <MatDialogContent>
-                <RegistrarSolicExpedicionF />
-            </MatDialogContent>
-        }
-        @if (TipoSolicitud2 == "Denuncia")
-        {
-            <MatDialogContent>
-                <RegistrarSolicDenuncias />
-            </MatDialogContent>
-        }
-        @if (TipoSolicitud2 == "Busqueda de Protocolo Notarial")
-        {
-            <MatDialogContent>
-                <RegistrarSolicBPN />
-            </MatDialogContent>
-        }
+            <SolicitudInicial></SolicitudInicial>
         <MatDialogActions>
             <MatButton OnClick="@OkClick">Cancelar</MatButton>
         </MatDialogActions>
     </MatDialog>
-    <MatDialog Class="formulario-eleccion" @bind-IsOpen="@dialogPrincipal">
-        <MatDialogTitle>Elegir Tipo de Solicitud</MatDialogTitle>
-        <MatDialogContent>
-            <p>
-                <MatSelect Label="" @bind-Value="@TipoSolicitud">
-                    <MatOptionString Class="option-color" Value="nulo"></MatOptionString>
-                    <MatOptionString Class="option-color" Value="Solic_ExpedicionFirma">Expedicion de Firmas</MatOptionString>
-                    <MatOptionString Class="option-color" Value="Solic_Denuncia">Denuncia</MatOptionString>
-                    <MatOptionString Class="option-color" Value="Solic_BPN">Busqueda de Protocolo Notarial</MatOptionString>
-                </MatSelect>
-            </p>
-        </MatDialogContent>
-        <MatDialogActions>
-            @if (TipoSolicitud == "Solic_ExpedicionFirma" || TipoSolicitud == "Solic_Denuncia" || TipoSolicitud == "Solic_BPN")
-            {
-                <MatButton OnClick="@OkEleccionSolic">OK</MatButton>
-            }
-            <MatButton OnClick="@CancelButton">Cerrar</MatButton>
-        </MatDialogActions>
-    </MatDialog>
+    
 
 
 
@@ -404,8 +327,6 @@
 
         public bool cargatabla { get; set; } = false;
 
-        bool dialogPrincipal = false;
-
         bool dialogIsOpen_Registrar = false;
 
         bool dialogIsOpen_Modificar = false;
@@ -420,23 +341,23 @@
         [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
 
-    List<DocumentoADTO> docs { get; set; } = new List<DocumentoADTO>();
+        List<DocumentoADTO2> docs { get; set; } = new List<DocumentoADTO2>();
 
         protected override async Task OnInitializedAsync()
         {
 
-        var httpResponse = await repository.Get<List<DocumentoADTO>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
-        if (!httpResponse.Error)
-        {
-            DocumentoADTO docActivator = new DocumentoADTO();
-            docs = httpResponse.Response;
-            if (docActivator.estado == "revisado")
+            var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
+            if (!httpResponse.Error)
             {
-                activator = true;
-            }
-            else{
-                activator = false;
-            }
+                DocumentoADTO2 docActivator = new DocumentoADTO2();
+                docs = httpResponse.Response;
+                if (docActivator.estado == "revisado")
+                {
+                    activator = true;
+                }
+                else{
+                    activator = false;
+                }
 
 
             }
@@ -451,41 +372,16 @@
 
         void CancelButton()
         {
-            dialogPrincipal = !dialogPrincipal;
-
             Registrar_SolicDenuncia = false;
             Registrar_SolicBPN = false;
             Registrar_SolicEF = false;
         }
 
-        void OkEleccionSolic()
-        {
-            if (dialogPrincipal)
-            {
 
-                dialogIsOpen_Registrar = true;
-                if (TipoSolicitud == "Solic_ExpedicionFirma")
-                {
-                    Registrar_SolicEF = true;
-                }
-                else if (TipoSolicitud == "Solic_Denuncia")
-                {
-                    Registrar_SolicDenuncia = true;
-                }
-                else if (TipoSolicitud == "Solic_BPN")
-                {
-                    Registrar_SolicBPN = true;
-                }
-                dialogPrincipal = false;
-
-            }
-
-        }
 
         void OpenDialogRegistrar()
         {
-            dialogPrincipal = true;
-            //dialogIsOpen_Registrar = true;
+            dialogIsOpen_Registrar = true;
             //navigationManager.NavigateTo("solicitud/crear");
         }
         void OpenDialogModificar()
