@@ -1687,5 +1687,26 @@ namespace SISGED.Server.Services
 
             return expedientes;
         }
+
+        public void actualizarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            SolicitudInicialDTO SIDTO = new SolicitudInicialDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            SIDTO = JsonConvert.DeserializeObject<SolicitudInicialDTO>(json);
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoSolicitudInicial contenidoSolicitudInicial = new ContenidoSolicitudInicial()
+            {
+                titulo = SIDTO.contenidoDTO.titulo,
+                descripcion = SIDTO.contenidoDTO.descripcion
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", SIDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", SIDTO.contenidoDTO.titulo)
+                .Set("contenido.descripcion", SIDTO.contenidoDTO.descripcion);
+            _documentos.UpdateOne(filter, update);
+        }
     }
 }

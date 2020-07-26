@@ -803,10 +803,10 @@ namespace SISGED.Server.Controllers
         {
             _documentoservice.actualizarDocumentoResultadoBPN(expedienteWrapper);
         }
-        /*[HttpPut("actualizarDocumentoSolicitudInicial")]
+        [HttpPut("actualizarDocumentoSolicitudInicial")]
         public void modificarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
-        }*/
+            _documentoservice.actualizarDocumentoSolicitudInicial(expedienteWrapper);
+        }
     }
 }
