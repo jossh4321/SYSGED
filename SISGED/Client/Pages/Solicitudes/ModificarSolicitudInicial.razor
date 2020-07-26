@@ -1,4 +1,4 @@
-﻿@page "/agarratudistinguidadama"
+﻿@page "/agarratudistinguidadama2"
 @inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
@@ -97,7 +97,8 @@
 </style>
 
 <div class="div-form">
-    <EditForm EditContext="@_editContext" Context="CurrentEditContext">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
         <div class="modal-info-solicitudBPN">
             <MatTabGroup>
@@ -130,17 +131,21 @@
                     </div>
                 </MatTab>
                 <MatTab Label="Subir Anexo">
-
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@carga"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Modificar</MatButton>
+                    </div>
                 </MatTab>
             </MatTabGroup>
         </div>
     </EditForm>
 </div>
 @code{
-        //public Usuario2 usuario2 = new Usuario2();
+    //public Usuario2 usuario2 = new Usuario2();
     private EditContext _editContext;
     private bool carga = false;
-
     //[Parameter] public Usuario { get; set; }
     [Parameter] public SolicitudInicialDTO solicinicialdto { get; set; } //Data a editar
     [Parameter] public List<DocumentoADTO2> docs { get; set; }
@@ -167,7 +172,11 @@
         solicinicial.contenido.titulo = solicinicialdto.contenidoDTO.titulo;
         solicinicial.contenido.descripcion = solicinicialdto.contenidoDTO.descripcion;
 
-        var httpResponse = await repository.Put<SolicitudInicial, SolicitudInicial>("api/usuarios", solicinicial);
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = solicinicialdto;
+
+
+        var httpResponse = await repository.Put<SolicitudInicial, SolicitudInicial>("api/documentos/actualizarDocumentoSolicitudInicial", solicinicial);
         if (httpResponse.Error)
         {
             Console.WriteLine("Algo Ocurrio");
