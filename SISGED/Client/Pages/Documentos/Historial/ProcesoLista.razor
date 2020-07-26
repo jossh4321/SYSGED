@@ -61,7 +61,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        usuarioEmisorId = proceso.idusuario;
+        usuarioEmisorId = proceso.idemisor;
         await getUsuario();
         await getRol();
     }

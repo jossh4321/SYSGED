@@ -37,6 +37,8 @@ namespace SISGED.Shared.Entities
         public List<string> urlanexo { get; set; } = new List<string>();
         [BsonElement("estado")]
         public string estado { get; set; }
+        [BsonElement("fechacreacion")]
+        public DateTime fechacreacion { get; set; } = DateTime.Now;
     }
     public class Evaluacion
     {
