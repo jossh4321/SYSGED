@@ -257,4 +257,16 @@ namespace SISGED.Shared.Entities
         public Evaluacion evaluacion { get; set; }
         public ContenidoApelacion contenido { get; set; }
     }
+
+    public class ContenidoSolicitudInicial
+    {
+        public string descripcion { get; set; }
+        public string titulo { get; set; }
+
+    }
+
+    public class SolicitudInicial : Documento
+    {
+        public ContenidoSolicitudInicial contenido { get; set; }
+    }
 }
