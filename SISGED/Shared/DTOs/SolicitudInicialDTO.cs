@@ -19,5 +19,6 @@ namespace SISGED.Shared.DTOs
         public string titulo { get; set; }
         public string descripcion { get; set; }
         public List<string> Urlanexo { get; set; } = new List<string>();
+        public DateTime fechacreacion { get; set; }
     }
 }

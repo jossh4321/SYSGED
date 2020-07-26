@@ -184,4 +184,9 @@ namespace SISGED.Shared.DTOs
         public Expediente expediente { get; set; }
         public SolicitudDenuncia solicitudD { get; set; }
     }
+    public class ExpedienteDocumentoSIDTO
+    {
+        public Expediente expediente { get; set; }
+        public SolicitudInicial solicitudI { get; set; }
+    }
 }

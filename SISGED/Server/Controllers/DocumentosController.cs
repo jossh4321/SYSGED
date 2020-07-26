@@ -424,7 +424,8 @@ namespace SISGED.Server.Controllers
             ContenidoSolicitudInicial contenidoDTOInicial = new ContenidoSolicitudInicial()
             {
                 titulo = doc.contenidoDTO.titulo,
-                descripcion = doc.contenidoDTO.descripcion
+                descripcion = doc.contenidoDTO.descripcion,
+                fechacreacion = DateTime.Now
             };
 
             SolicitudInicial soliInicial = new SolicitudInicial()
@@ -437,7 +438,38 @@ namespace SISGED.Server.Controllers
                 historialproceso = new List<Proceso>()
             };
 
-            //soliInicial = _documentoservice.registrarSolicitudInicial(solicitudBPN, url2);
+            //soliInicial = _documentoservice.registrarSolicitudInicial(soliInicial, url2);
+
+            //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
+            Cliente cliente = new Cliente()
+            {
+                nombre = doc.nombrecliente,
+                tipodocumento = doc.tipodocumento,
+                numerodocumento = doc.numerodocumento
+            };
+            Expediente expediente = new Expediente();
+            expediente.tipo = "Solicitud";
+            expediente.cliente = cliente;
+            expediente.fechainicio = DateTime.Now;
+            expediente.fechafin = null;
+            expediente.documentos = new List<DocumentoExpediente>()
+            {
+                new DocumentoExpediente(){
+                    indice = 1,
+                    iddocumento = soliInicial.id,
+                    tipo  = "SolicitudInicial",
+                    fechacreacion = soliInicial.contenido.fechacreacion,
+                    fechaexceso=soliInicial.contenido.fechacreacion.AddDays(10),
+                    fechademora = null
+                }
+            };
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+            expediente = _expedienteservice.saveExpediente(expediente);
+            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, soliInicial.id, "josue");
+            ExpedienteDocumentoSIDTO expedienteDocumentoSIDTO = new ExpedienteDocumentoSIDTO();
+            expedienteDocumentoSIDTO.expediente = expediente;
+            expedienteDocumentoSIDTO.solicitudI = soliInicial;
 
             return soliInicial;
         }
