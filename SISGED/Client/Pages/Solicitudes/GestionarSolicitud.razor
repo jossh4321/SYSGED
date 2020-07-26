@@ -277,44 +277,12 @@
     }
 </div>
   
-
-
-
-
     <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-        @if (TipoSolicitud == "Solic_ExpedicionFirma")
-        {
-            <MatDialogTitle>Registrar Solicitud de Expedicion de Firma</MatDialogTitle>
-            <MatDialogContent>
-                <RegistrarSolicExpedicionF />
-            </MatDialogContent>
-        }
-        @if (TipoSolicitud == "Solic_Denuncia")
-        {
-            <MatDialogTitle>Registrar Solicitud de Denuncia</MatDialogTitle>
-            <MatDialogContent>
-                <RegistrarSolicDenuncias />
-            </MatDialogContent>
-        }
-        @if (TipoSolicitud == "Solic_BPN")
-        {
-            <MatDialogTitle>Registrar Solicitud de BPN</MatDialogTitle>
-            <MatDialogContent>
-                <RegistrarSolicBPN />
-            </MatDialogContent>
-        }
-
+        <SolicitudInicial></SolicitudInicial>
         <MatDialogActions>
             <MatButton OnClick="@OkClick">Cancelar</MatButton>
         </MatDialogActions>
     </MatDialog>
-
-
-
-
-
-
-
 
     <MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
         <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
@@ -366,26 +334,7 @@
             <MatButton OnClick="@OkClick">Cancelar</MatButton>
         </MatDialogActions>
     </MatDialog>
-    <MatDialog Class="formulario-eleccion" @bind-IsOpen="@dialogPrincipal">
-        <MatDialogTitle>Elegir Tipo de Solicitud</MatDialogTitle>
-        <MatDialogContent>
-            <p>
-                <MatSelect Label="" @bind-Value="@TipoSolicitud">
-                    <MatOptionString Class="option-color" Value="nulo"></MatOptionString>
-                    <MatOptionString Class="option-color" Value="Solic_ExpedicionFirma">Expedicion de Firmas</MatOptionString>
-                    <MatOptionString Class="option-color" Value="Solic_Denuncia">Denuncia</MatOptionString>
-                    <MatOptionString Class="option-color" Value="Solic_BPN">Busqueda de Protocolo Notarial</MatOptionString>
-                </MatSelect>
-            </p>
-        </MatDialogContent>
-        <MatDialogActions>
-            @if (TipoSolicitud == "Solic_ExpedicionFirma" || TipoSolicitud == "Solic_Denuncia" || TipoSolicitud == "Solic_BPN")
-            {
-                <MatButton OnClick="@OkEleccionSolic">OK</MatButton>
-            }
-            <MatButton OnClick="@CancelButton">Cerrar</MatButton>
-        </MatDialogActions>
-    </MatDialog>
+    
 
 
 
@@ -403,8 +352,6 @@
         bool activator;
 
         public bool cargatabla { get; set; } = false;
-
-        bool dialogPrincipal = false;
 
         bool dialogIsOpen_Registrar = false;
 
@@ -451,41 +398,16 @@
 
         void CancelButton()
         {
-            dialogPrincipal = !dialogPrincipal;
-
             Registrar_SolicDenuncia = false;
             Registrar_SolicBPN = false;
             Registrar_SolicEF = false;
         }
 
-        void OkEleccionSolic()
-        {
-            if (dialogPrincipal)
-            {
-
-                dialogIsOpen_Registrar = true;
-                if (TipoSolicitud == "Solic_ExpedicionFirma")
-                {
-                    Registrar_SolicEF = true;
-                }
-                else if (TipoSolicitud == "Solic_Denuncia")
-                {
-                    Registrar_SolicDenuncia = true;
-                }
-                else if (TipoSolicitud == "Solic_BPN")
-                {
-                    Registrar_SolicBPN = true;
-                }
-                dialogPrincipal = false;
-
-            }
-
-        }
+        
 
         void OpenDialogRegistrar()
         {
-            dialogPrincipal = true;
-            //dialogIsOpen_Registrar = true;
+            dialogIsOpen_Registrar = true;
             //navigationManager.NavigateTo("solicitud/crear");
         }
         void OpenDialogModificar()
