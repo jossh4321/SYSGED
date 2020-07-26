@@ -3,6 +3,7 @@
 @using Newtonsoft.Json;
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 @using Blazored.Typeahead
+@page "/evaluar"
 <link rel="stylesheet" href="css/estilosEP/styleEP.css" />
 <style>
     .field-container-a {
@@ -102,6 +103,10 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+    .dialogo .mdc-dialog__surface {
+        max-width: none !important;
+        width: 400px;
+    }
 </style>
 @if (DocumentoRevisado)
 {
@@ -154,24 +159,27 @@ else
                                         <MatTextField @bind-Value="@participanteElegido.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del participante"></MatTextField>
                                     </div>
                                 }
-                            <div class="field-container-a base-field">
-                                <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" Class="mat-success-c sub-but-a" OnClick="@AgregarParticipante">Aprobó</MatButton>
-                                <MatButton Icon="@MatBlazor.MatIconNames.Highlight_off" Class="mat-error-c sub-but-a" OnClick="@(e => { OpenDesaprobadovarios = true; })">Desaprobó</MatButton>
-                            </div>
+                                <div class="field-container-a base-field">
+                                    <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" Class="mat-success-c sub-but-a" OnClick="@AgregarParticipante">Aprobó</MatButton>
+                                    <MatButton Icon="@MatBlazor.MatIconNames.Highlight_off" Class="mat-error-c sub-but-a" OnClick="@(e => { OpenDesaprobadovarios = true; })">Desaprobó</MatButton>
+                                </div>
                             </div>
                         </div>
-                        
-                        @if(datosParticipantes.Count != 0)
+
+                        @if (datosParticipantes.Count != 0)
                         {
-                            <div class="field-container">
-                                @foreach (var participante in listadopaginacion)
-                                {
-                                    <div class="mat-layout-grid-cell-span-4">
-                                        <UsuarioParticipanteC usuarioParticipanteEvaluacion="participante" @key="participante.id"
-                                                              mostrarDatosParticipante="ModificarParticipante" eliminarParticipante="EliminarParticipante"></UsuarioParticipanteC>
-                                    </div>
-                                }
+                            <div class="mat-layout-grid">
+                                <div class="mat-layout-grid-inner">
+                                    @foreach (var participante in listadopaginacion)
+                                    {
+                                        <div class="mat-layout-grid-cell-span-4">
+                                            <UsuarioParticipanteC usuarioParticipanteEvaluacion="participante" @key="participante.id"
+                                                                  mostrarDatosParticipante="ModificarParticipante" eliminarParticipante="EliminarParticipante"></UsuarioParticipanteC>
+                                        </div>
+                                    }
+                                </div>
                             </div>
+
                             <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales()" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
                         }
 
@@ -185,6 +193,48 @@ else
                                 <MatButton OnClick="@(e => { OpenDesaprobadovarios = false; })">Cancelar</MatButton>
                             </MatDialogActions>
                         </MatDialog>
+
+                        <MatDialog @bind-IsOpen="@OpenModificar" Class="dialogo">
+                            <MatDialogTitle>Modificar evaluación del participante </MatDialogTitle>
+                            <MatDialogContent>
+                                <MatTextField @bind-Value="@participanteSeleccionado.datos.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del participante"></MatTextField>
+                                <MatTextField @bind-Value="@participanteSeleccionado.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del participante"></MatTextField>
+                                <MatTextField @bind-Value="@participanteSeleccionado.datos.numerodocumento" ReadOnly="true" Class="text-field-style" Label="DNI del participante"></MatTextField>
+                                @if (estadoModificado == "Aprobado")
+                                {
+                                    <MatTextField Label="Observación" @bind-Value="@observacionModificada" ReadOnly="true"></MatTextField>
+                                }
+                                else
+                                {
+                                    <MatTextField Label="Observación" @bind-Value="@observacionModificada"></MatTextField>
+                                }
+                                <select class="form-control-lg custom-select my-2" @onchange="CambioEstado">
+                                    <option Value="@participanteSeleccionado.status" selected>@participanteSeleccionado.status</option>
+                                    @if (participanteSeleccionado.status == "Aprobado")
+                                    {
+                                        <option Value="Desaprobado">Desaprobado</option>
+                                    }
+                                    else
+                                    {
+                                        <option Value="Aprobado">Aprobado</option>
+                                    }
+                                </select>
+
+                            </MatDialogContent>
+                            <MatDialogActions>
+                                <MatButton OnClick="@ConfirmarModificacion">Aceptar</MatButton>
+                                <MatButton OnClick="@(e => { OpenModificar = false; })">Cancelar</MatButton>
+                            </MatDialogActions>
+                        </MatDialog>
+
+                        <MatDialog @bind-IsOpen="@OpenEliminar">
+                            <MatDialogTitle>¿Desea eliminar a este participante?</MatDialogTitle>
+                            <MatDialogActions>
+                                <MatButton OnClick="@ConfirmarEliminacion">Aceptar</MatButton>
+                                <MatButton OnClick="@(e => { OpenEliminar = false; })">Cancelar</MatButton>
+                            </MatDialogActions>
+                        </MatDialog>
+
                     </MatTab>
 
 
@@ -221,14 +271,19 @@ else
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private string observacion = "";
+    public string estadoModificado = "";
+    private string observacionModificada = "";
     public Evaluacion evaluacion;
     public Usuario participanteElegido { get; set; }
     public List<UsuarioEvaluacionDTO> datosParticipantes;
     public List<UsuarioEvaluacionDTO> listadopaginacion;
+    public UsuarioEvaluacionDTO participanteSeleccionado;
     public string nada = "";
     private bool OpenAprobado = false;
     private bool OpenDesaprobado = false;
     private bool OpenDesaprobadovarios = false;
+    private bool OpenEliminar = false;
+    private bool OpenModificar = false;
     private bool DocumentoRevisado;
     public int paginaactual = 1;
 
@@ -236,26 +291,27 @@ else
     {
         datosParticipantes = new List<UsuarioEvaluacionDTO>();
         listadopaginacion = new List<UsuarioEvaluacionDTO>();
+        participanteSeleccionado = new UsuarioEvaluacionDTO();
         evaluacion = new Evaluacion();
-        Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
-        string tipo = workspace.expedienteseleccionado.documento.tipo;
-        if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
-        {
-            Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
-            if (evaluacion.resultado == "pendiente")
-            {
-                DocumentoRevisado = false;
-            }
-            else
-            {
-                DocumentoRevisado = true;
-            }
+        //Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
+        //string tipo = workspace.expedienteseleccionado.documento.tipo;
+        //if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
+        //{
+        //    Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
+        //    if (evaluacion.resultado == "pendiente")
+        //    {
+        //        DocumentoRevisado = false;
+        //    }
+        //    else
+        //    {
+        //        DocumentoRevisado = true;
+        //    }
 
-        }
-        else
-        {
-            DocumentoRevisado = true;
-        }
+        //}
+        //else
+        //{
+        //    DocumentoRevisado = true;
+        //}
     }
 
     private async Task RealizarEvaluacion()
@@ -287,7 +343,7 @@ else
             bool registrado = false;
             foreach (UsuarioEvaluacionDTO i in datosParticipantes)
             {
-                if(i.id == participante.id)
+                if (i.id == participante.id)
                 {
                     registrado = true;
                 }
@@ -305,18 +361,23 @@ else
                 if (OpenDesaprobadovarios)
                 {
                     usuarioEva.descripcion = observacion;
-                    usuarioEva.status = "desaprobado";
+                    usuarioEva.status = "Desaprobado";
                 }
                 else
                 {
                     usuarioEva.descripcion = "Ninguna";
-                    usuarioEva.status = "aprobado";
+                    usuarioEva.status = "Aprobado";
                 }
                 datosParticipantes.Add(usuarioEva);
                 OpenDesaprobadovarios = false;
                 observacion = "";
-                await swalfire.successMessage("Participante ingresado");
                 participanteElegido = null;
+
+                if(datosParticipantes.Count < 4)
+                {
+                    listadopaginacion.Add(usuarioEva);
+                }
+                await swalfire.successMessage("Participante ingresado");
             }
         }
     }
@@ -324,7 +385,11 @@ else
     public int paginastotales()
     {
         int numeroTotal = 0;
-        if (datosParticipantes.Count % 3 == 0)
+        if(datosParticipantes.Count == 0)
+        {
+            numeroTotal = 0;
+        }
+        else if (datosParticipantes.Count % 3 == 0)
         {
             numeroTotal = datosParticipantes.Count / 3;
         }
@@ -349,14 +414,45 @@ else
         Console.WriteLine("Esta es mi paginacion" + listadopaginacion.ElementAt(0).status);
     }
 
-    private void ModificarParticipante()
+    private void ModificarParticipante(UsuarioEvaluacionDTO participanteSeleccionado)
     {
-
+        this.participanteSeleccionado = participanteSeleccionado;
+        estadoModificado = this.participanteSeleccionado.status;
+        observacionModificada = this.participanteSeleccionado.descripcion;
+        OpenModificar = true;
     }
 
-    private void EliminarParticipante()
+    private void EliminarParticipante(UsuarioEvaluacionDTO participanteSeleccionado)
     {
+        this.participanteSeleccionado = participanteSeleccionado;
+        OpenEliminar = true;
+    }
 
+    private void ConfirmarEliminacion()
+    {
+        datosParticipantes.RemoveAll(ind => ind.id.Equals(participanteSeleccionado.id));
+        listadopaginacion.RemoveAll(ind => ind.id.Equals(participanteSeleccionado.id));
+        OpenEliminar = false;
+    }
+
+    private void ConfirmarModificacion()
+    {
+        participanteSeleccionado.status = estadoModificado;
+        participanteSeleccionado.descripcion = observacionModificada;
+        datosParticipantes[datosParticipantes.FindIndex(ind => ind.id.Equals(participanteSeleccionado.id))] = participanteSeleccionado;
+        listadopaginacion[listadopaginacion.FindIndex(ind => ind.id.Equals(participanteSeleccionado.id))] = participanteSeleccionado;
+        OpenEliminar = false;
+        estadoModificado = "";
+        observacionModificada = "";
+    }
+
+    public void CambioEstado(ChangeEventArgs e)
+    {
+        estadoModificado = e.Value.ToString();
+        if(estadoModificado == "Aprobado")
+        {
+            observacionModificada = "Ninguna";
+        }
     }
 
     private async Task<IEnumerable<Usuario>> match(string searchtext)

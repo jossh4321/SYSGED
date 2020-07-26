@@ -6,11 +6,12 @@ else
 {
     <MatCard class="demo-mat-card">
         <MatCardContent>
-            <MatCardMedia Wide="true" ImageUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcStZDNDDRR1RX6_sgzVyX2FmiOkyldgwMFJgg&usqp=CAU"></MatCardMedia>
+            <MatCardMedia Wide="true" ImageUrl="@usuarioParticipanteEvaluacion.datos.imagen"></MatCardMedia>
             <div class="demo-mat-card-content">
                 <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Nombres: @usuarioParticipanteEvaluacion.datos.nombre</MatSubtitle2>
                 <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Apellidos: @usuarioParticipanteEvaluacion.datos.apellido</MatSubtitle2>
-                <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Descripcion: @usuarioParticipanteEvaluacion.descripcion</MatSubtitle2>
+                <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">DNI: @usuarioParticipanteEvaluacion.datos.numerodocumento</MatSubtitle2>
+                <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Observación: @usuarioParticipanteEvaluacion.descripcion</MatSubtitle2>
                 <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Resultado: @usuarioParticipanteEvaluacion.status</MatSubtitle2>
             </div>
         </MatCardContent>
