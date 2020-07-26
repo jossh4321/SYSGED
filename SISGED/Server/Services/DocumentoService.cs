@@ -1029,6 +1029,7 @@ namespace SISGED.Server.Services
             resolucionDTO.estado = docResolucion.estado;
             resolucionDTO.contenidoDTO = new ContenidoResolucionDTO()
             {
+                Urlanexo = docResolucion.urlanexo.ToList(),
                 descripcion = docResolucion.contenido.descripcion,
                 titulo = docResolucion.contenido.titulo,
                 fechainicioaudiencia = docResolucion.contenido.fechainicioaudiencia,
@@ -1559,7 +1560,7 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
         }
 
-        public void actualizarDocumentoResolucion(ExpedienteWrapper expedienteWrapper)
+        public Resolucion actualizarDocumentoResolucion(ExpedienteWrapper expedienteWrapper, string urlData, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             ResolucionDTO resolucionDTO = new ResolucionDTO();
@@ -1581,9 +1582,10 @@ namespace SISGED.Server.Services
                 sancion = resolucionDTO.contenidoDTO.sancion,
                 fechainicioaudiencia = resolucionDTO.contenidoDTO.fechainicioaudiencia,
                 fechafinaudiencia = resolucionDTO.contenidoDTO.fechafinaudiencia,
+                url = urlData,
                 participantes = listaParticipantes
             };
-
+            Resolucion resolucion = new Resolucion();
             var filter = Builders<Documento>.Filter.Eq("id", resolucionDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.titulo", contenidoResolucion.titulo)
@@ -1591,10 +1593,13 @@ namespace SISGED.Server.Services
                 .Set("contenido.sancion", contenidoResolucion.sancion)
                 .Set("contenido.fechainicioaudiencia", contenidoResolucion.fechainicioaudiencia)
                 .Set("contenido.fechafinaudiencia", contenidoResolucion.fechafinaudiencia)
-                .Set("contenido.participantes", contenidoResolucion.participantes);
+                .Set("contenido.url", contenidoResolucion.url)
+                .Set("contenido.participantes", contenidoResolucion.participantes)
+                .Set("urlanexo", url2);
             _documentos.UpdateOne(filter, update);
+            return resolucion;
         }
-        
+
         public void actualizarDocumentoSEN(ExpedienteWrapper expedienteWrapper)
         {
             //Deserealizacion de Obcject a tipo DTO
@@ -1686,6 +1691,27 @@ namespace SISGED.Server.Services
                                         .ToListAsync();
 
             return expedientes;
+        }
+
+        public void actualizarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            SolicitudInicialDTO SIDTO = new SolicitudInicialDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            SIDTO = JsonConvert.DeserializeObject<SolicitudInicialDTO>(json);
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoSolicitudInicial contenidoSolicitudInicial = new ContenidoSolicitudInicial()
+            {
+                titulo = SIDTO.contenidoDTO.titulo,
+                descripcion = SIDTO.contenidoDTO.descripcion
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", SIDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", SIDTO.contenidoDTO.titulo)
+                .Set("contenido.descripcion", SIDTO.contenidoDTO.descripcion);
+            _documentos.UpdateOne(filter, update);
         }
     }
 }

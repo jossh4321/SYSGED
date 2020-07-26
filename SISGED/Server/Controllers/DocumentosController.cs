@@ -789,9 +789,29 @@ namespace SISGED.Server.Controllers
             _documentoservice.actualizarDocumentoOficioBPN(expedienteWrapper);
         }
         [HttpPut("actualizarDocumentoR")]
-        public void modificarDocumentoResolucion(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<Resolucion>> modificarDocumentoResolucion(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoResolucion(expedienteWrapper);
+            ResolucionDTO resolucionDTO = new ResolucionDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            resolucionDTO = JsonConvert.DeserializeObject<ResolucionDTO>(json);
+            string urlData = "";
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in resolucionDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resolucion");
+                    url2.Add(urlData2);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(resolucionDTO.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(resolucionDTO.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "resolucion");
+            }
+            return _documentoservice.actualizarDocumentoResolucion(expedienteWrapper, urlData, url2);
         }
         [HttpPut("actualizarDocumentoSEN")]
         public void modificarDocumentoSEN(ExpedienteWrapper expedienteWrapper)
@@ -803,10 +823,10 @@ namespace SISGED.Server.Controllers
         {
             _documentoservice.actualizarDocumentoResultadoBPN(expedienteWrapper);
         }
-        /*[HttpPut("actualizarDocumentoSolicitudInicial")]
+        [HttpPut("actualizarDocumentoSolicitudInicial")]
         public void modificarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
-        }*/
+            _documentoservice.actualizarDocumentoSolicitudInicial(expedienteWrapper);
+        }
     }
 }

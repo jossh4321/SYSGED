@@ -248,6 +248,33 @@
                             </div>
                         </div>
                     </div>
+                    @*<div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Edit"
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
+                    </div>*@
+                </MatTab>
+                <MatTab Label="Subir Anexo">
+                    <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2" FileNames="FileName" ImagenTemporal="@(imagenTemporal2)"></DragnDrop>
+
+                    @if (nombres != null && nombres.Count > 0)
+                    {
+                        @for (int i = 0; i < nombres.Count; i++)
+                        {
+                            int index = i;
+                            string a = nombres[i];
+                            <div>
+
+                                @nombres[i]
+
+                                <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                        @onclick="@(e => RemoveFile(a,index))">
+                                    <small class="RedText">Eliminar</small>
+                                </button>
+                            </div>
+                        }
+                    }
                     <div class="field-container">
                         <MatButton type="submit"
                                    Disabled="@loadprocess"
@@ -270,6 +297,8 @@
     private ResolucionDTO resolucion = new ResolucionDTO();
     private EditContext _editContext;
     private string imagenTemporal;
+    private List<string> imagenTemporal2 = new List<string>();
+    List<string> nombres = new List<string>();
     private bool loadprocess = false;
     private bool firstLoad = true;
 
@@ -277,6 +306,7 @@
     {
         firstLoad = true;
         resolucion.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0 } };
+        resolucion.contenidoDTO.Urlanexo = new List<string>();
         _editContext = new EditContext(resolucion);
         var httpResponse = await repository.Get<ResolucionDTO>($"api/documentos/documentord?iddoc={workspace.expedienteseleccionado.documento.id}");
         if (!httpResponse.Error)
@@ -289,7 +319,14 @@
         {
 
         }
-
+        foreach (string u in resolucion.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2.Add(u);
+            }
+        }
+        resolucion.contenidoDTO.Urlanexo.Clear();
         if (!string.IsNullOrEmpty(resolucion.contenidoDTO.data))
         {
             imagenTemporal = resolucion.contenidoDTO.data;
@@ -301,6 +338,23 @@
     private void ImagenSeleccionada(string imagenbase64)
     {
         resolucion.contenidoDTO.data = imagenbase64;
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        resolucion.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+
+    private async Task RemoveFile(string file, int imagen64)
+    {
+        nombres.Remove(file);
+        resolucion.contenidoDTO.Urlanexo.RemoveAt(imagen64);
+        StateHasChanged();
     }
 
     private void addParticipante()
