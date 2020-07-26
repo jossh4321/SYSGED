@@ -1,4 +1,4 @@
-﻿@inject IRepository repository 
+﻿@inject IRepository repository
 <style>
     .card-content-padding {
         padding: 15px;
@@ -62,6 +62,7 @@
         flex-wrap: wrap;
         justify-content: space-around
     }
+
     div.disabled-field input {
         text-decoration: none !important;
         color: black !important;
@@ -114,7 +115,7 @@
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.clave)">
 
                             <MatTextField @bind-Value="@usuariodto.clave" Class="text-field-style disabled-field"
-                                          Label="Clave"  Disabled="true"></MatTextField>
+                                          Label="Clave" Disabled="true"></MatTextField>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                                 <ValidationMessage For="@(() => usuariodto.clave)" />
@@ -126,14 +127,14 @@
 
                         </div>
 
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.rolid)">
-                            <InputSelect @bind-Value="@usuariodto.rolid" class="text-field-style disabled-field">
-                                <option value="" disabled="disabled">--Seleccione Algo--</option>
+                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => usuariodto.rolid)">
+                            <MatSelect Label="Seleccione el rol del usuario" @bind-Value="@usuariodto.rolid" Class="text-field-style disabled-field">
+                                <MatOptionString Class="option-color" Disabled="false" Value="nulo"></MatOptionString>
                                 @foreach (Rol rol in listaroles)
                                     {
-                                    <option value="@rol.id" disabled="disabled">@rol.nombre</option>
+                                        <MatOptionString Class="option-color" Disabled="false" Value="@rol.id">@rol.label</MatOptionString>
                                     }
-                            </InputSelect>
+                            </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                                 <ValidationMessage For="@(() => usuariodto.rolid)" />
@@ -144,14 +145,12 @@
                             </div>
                         </div>
 
-
                     </MatTab>
 
                     <MatTab Label="Datos">
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.nombre)">
                             <MatTextField @bind-Value="@usuariodto.datos.nombre" Class="text-field-style disabled-field" Label="Nombre"
-                                          Disabled="true"
-                                         ></MatTextField>
+                                          Disabled="true"></MatTextField>
 
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
@@ -165,7 +164,7 @@
 
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.apellido)">
                             <MatTextField @bind-Value="@usuariodto.datos.apellido" Class="text-field-style disabled-field" Label="Apellido"
-                                           Disabled="true" ></MatTextField>
+                                          Disabled="true"></MatTextField>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error"></MatIcon>
                                 <ValidationMessage For="@(() => usuariodto.datos.apellido)" />
@@ -176,12 +175,12 @@
                             </div>
                         </div>
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.tipodocumento)">
-                            <InputSelect @bind-Value="@usuariodto.datos.tipodocumento" class="text-field-style disabled-field">
-                                <option value="" disabled="disabled">--Seleccione Algo--</option>
-                                <option value="CE" disabled="disabled">Carnet de Extranjeria</option>
-                                <option value="DNI" disabled="disabled">D.N.I.</option>
-                                <option value="pasaporte" disabled="disabled">Pasaporte</option>
-                            </InputSelect>
+                            <MatSelect Label="Tipo de documento" Disabled="false" @bind-Value="@usuariodto.datos.tipodocumento">
+                                <MatOptionString Class="option-color" Disabled="false" Value="nulo"></MatOptionString>
+                                <MatOptionString Class="option-color" Disabled="false" Value="CE">Carnet de Extranjeria</MatOptionString>
+                                <MatOptionString Class="option-color" Disabled="false" Value="DNI">D.N.I.</MatOptionString>
+                                <MatOptionString Class="option-color" Disabled="false" Value="pasaporte">Pasaporte</MatOptionString>
+                            </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                                 <ValidationMessage For="@(() => usuariodto.datos.tipodocumento)" />
@@ -206,7 +205,7 @@
                         </div>
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.fechanacimiento)">
                             <MatDatePicker @bind-Value="@usuariodto.datos.fechanacimiento" Format="MM/dd/yyyy" Class="text-field-style disabled-field" Label="Fecha Nacimiento"
-                                         Disabled="true" ></MatDatePicker>
+                                           Disabled="true"></MatDatePicker>
 
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
@@ -219,7 +218,7 @@
                         </div>
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.direccion)">
                             <MatTextField @bind-Value="@usuariodto.datos.direccion" Class="text-field-style disabled-field" Label="Direccion"
-                                         Disabled="true"></MatTextField>
+                                          Disabled="true"></MatTextField>
 
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
@@ -232,7 +231,7 @@
                         </div>
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.email)">
                             <MatTextField @bind-Value="@usuariodto.datos.email" Class="text-field-style disabled-field" Label="Email"
-                                        Disabled="true"></MatTextField>
+                                          Disabled="true"></MatTextField>
 
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
@@ -244,11 +243,11 @@
                             </div>
                         </div>
                         <div class="field-container">
-                            <InputImg  ImagenTemporal="@(usuariodto.datos.imagen)" />
+                            <InputImg ImagenTemporal="@(usuariodto.datos.imagen)" />
                         </div>
                         <div class="field-container">
                             <MatButton Icon="@MatBlazor.MatIconNames.Backspace"
-                                       Class="button-input-style mat-dark-c sub-but" 
+                                       Class="button-input-style mat-dark-c sub-but"
                                        @onclick="@(e => cerraDialogoDet())">Volver a la vista principal</MatButton>
                         </div>
                     </MatTab>
