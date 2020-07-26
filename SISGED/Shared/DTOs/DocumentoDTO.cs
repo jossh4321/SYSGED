@@ -73,4 +73,18 @@ namespace SISGED.Shared.DTOs
         public Object evaluacion { get; set; }
         public List<string> urlanexo { get; set; } = new List<string>();
     }
+
+    public class DocumentoADTO2
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
+        public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
+        public ContenidoSolicitudInicial contenido { get; set; }
+        public string estado { get; set; }
+        public Object evaluacion { get; set; }
+        public List<string> urlanexo { get; set; } = new List<string>();
+    }
 }
