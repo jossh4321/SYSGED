@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SISGED.Shared.Validators
 {
-    public class DatosValidator: AbstractValidator<Datos>
+    public class DatosValidator : AbstractValidator<Datos>
     {
         public DatosValidator()
         {
@@ -20,6 +20,8 @@ namespace SISGED.Shared.Validators
                 .WithMessage("Debe ingresar un apellido válido").When(x => x.apellido != null && x.apellido != "");
             RuleFor(x => x.fechanacimiento).NotEmpty()
                 .WithMessage("Debe Ingresar una Fecha de Nacimiento");
+            RuleFor(x => x.fechanacimiento).Must(BeAValidDate1)
+               .WithMessage("El cliente debe ser mayor de 18 años");
             RuleFor(x => x.tipodocumento).NotEmpty()
                 .WithMessage("Debe Ingresar un Tipo de Doc.");
             RuleFor(x => x.numerodocumento).NotEmpty()
@@ -34,6 +36,11 @@ namespace SISGED.Shared.Validators
             RuleFor(x => x.email)
                 .Matches(@"^(([^<>()\[\]\\.,;:\s@”]+(\.[^<>()\[\]\\.,;:\s@”]+)*)|(“.+”))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$")
                 .WithMessage("Debe Ingresar un email válido").When(x => x.email != null && x.email != "");
+        }
+        private bool BeAValidDate1(DateTime date)
+        {
+            if (date.AddYears(18) > DateTime.Today) { return false; }
+            return !date.Equals(default(DateTime));
         }
     }
 }

@@ -55,7 +55,7 @@
 
 @code {
     [Parameter] public string Label { get; set; } = "Documento";
-    [Parameter] public string ImagenTemporal { get; set; }
+    [Parameter] public List<string> ImagenTemporal { get; set; }
     [Parameter] public EventCallback<string> ImagenSeleccionada { get; set; }
     [Parameter] public EventCallback<string> FileNames { get; set; }
     private string imagenBase64;
@@ -190,7 +190,6 @@
             var fileInfo = await file.ReadFileInfoAsync();
             string FileName = fileInfo.Name;
             this.StateHasChanged();
-
             using (var fs = await file.OpenReadAsync())
             {
                 var bufferSize = 20480;
