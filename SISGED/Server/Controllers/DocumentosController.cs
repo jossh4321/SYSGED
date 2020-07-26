@@ -400,7 +400,7 @@ namespace SISGED.Server.Controllers
             return bandejaexpdto;*/
         }
 
-        [HttpPost("documentosolicitudinicial")]
+        [HttpPost("registrarsolicitudinicial")]
         public async Task<ActionResult<SolicitudInicial>> RegistrarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
             //Obtenemos los datos del expedientewrapper
@@ -438,7 +438,7 @@ namespace SISGED.Server.Controllers
                 historialproceso = new List<Proceso>()
             };
 
-            //soliInicial = _documentoservice.registrarSolicitudInicial(soliInicial, url2);
+            soliInicial = _documentoservice.registrarSolicitudInicial(soliInicial);
 
             //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
             Cliente cliente = new Cliente()
@@ -751,6 +751,11 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerDocumentoDTO(iddoc);
         }
+        [HttpGet("obtenersolicitudinicial")]
+        public async Task<ActionResult<SolicitudInicialDTO>> obtenerSolicitudInicial([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerSolicitudInicial(iddoc);
+        }
 
         //Actualizaciones
         [HttpPut("actualizarDocumentoODN")]
@@ -798,5 +803,10 @@ namespace SISGED.Server.Controllers
         {
             _documentoservice.actualizarDocumentoResultadoBPN(expedienteWrapper);
         }
+        /*[HttpPut("actualizarDocumentoSolicitudInicial")]
+        public void modificarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
+        }*/
     }
 }

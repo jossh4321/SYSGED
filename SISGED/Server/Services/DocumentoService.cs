@@ -278,6 +278,12 @@ namespace SISGED.Server.Services
             _documentos.InsertOne(documentoSD);
             return documentoSD;
         }
+
+        public SolicitudInicial registrarSolicitudInicial(SolicitudInicial documentoSI)
+        {
+            _documentos.InsertOne(documentoSI);
+            return documentoSI;
+        }
         public ConclusionFirma registrarConclusionFirmaE(ExpedienteWrapper expedienteWrapper, List<string> url2, string iddocumentoSolicitud)
         {
             //Obtenemos los datos del expedientewrapper
@@ -1317,7 +1323,32 @@ namespace SISGED.Server.Services
             //};
             return docDocumento;
         }
-        //actualizarDocumentoODN
+
+
+        public SolicitudInicialDTO obtenerSolicitudInicial(string id)
+        {
+            SolicitudInicial doc = new SolicitudInicial();
+            var match = new BsonDocument("$match", new BsonDocument("_id",
+                        new ObjectId(id)));
+            doc = _documentos.Aggregate().
+              AppendStage<SolicitudInicial>(match).First();
+
+            SolicitudInicialDTO SIDTO = new SolicitudInicialDTO();
+            SIDTO.id = doc.id;
+            SIDTO.tipo = doc.tipo;
+            SIDTO.historialcontenido = doc.historialcontenido;
+            SIDTO.historialproceso = doc.historialproceso;
+            SIDTO.estado = doc.estado;
+            SIDTO.contenidoDTO = new ContenidoSolicitudInicialDTO()
+            {
+                titulo = doc.contenido.titulo,
+                descripcion = doc.contenido.descripcion,
+                fechacreacion = doc.contenido.fechacreacion
+            };
+            return SIDTO;
+        }
+
+
         public void actualizarDocumentoODN(ExpedienteWrapper expedienteWrapper)
         {
             //Deserealizacion de Obcject a tipo OficioDesignacionNotarioDTO
