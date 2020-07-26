@@ -1,0 +1,307 @@
+﻿@page "/agarratudistinguidadama"
+@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+
+<style>
+    .div-form {
+        background-color: #A6A6A6;
+        flex-basis: 100%;
+        border-radius: 15px 15px 15px 15px;
+        width: 100%;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    .single-textfield-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+
+    .modal-info-solicitudBPN {
+        display: flex;
+        flex-direction: column;
+        /*height: 700px;*/
+        width: 100%;
+        background-color: #A6A6A6;
+        border-radius: 15px 15px 15px 15px;
+    }
+
+    .div-form.mat-tab-group {
+        max-width: 500px;
+    }
+
+    .base-icon {
+        display: flex;
+        flex-basis: 8%;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 2px;
+        background: #ff1a1a;
+        border-radius: 3px;
+        border: 1px solid #800000
+    }
+
+    .base-field {
+        flex-basis: 90%;
+    }
+
+</style>
+
+<div class="div-form">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <FluentValidator></FluentValidator>
+        <div class="modal-info-solicitudBPN">
+            <MatTabGroup>
+                <MatTab Label="Solicitud">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitud.contenidoDTO.titulo)">
+                        <MatTextField @bind-Value="@solicitud.contenidoDTO.titulo" Class="text-field-style" Label="Titulo de Solicitud"
+                                      @oninput='@(e => KeyUp(e,"actojuridico",solicitud.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitud.contenidoDTO.titulo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+
+                    </div>
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitud.contenidoDTO.descripcion)">
+                        <MatTextField @bind-Value="@solicitud.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..."
+                                      @oninput='@(e => KeyUp(e,"direccionoficio",solicitud.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitud.contenidoDTO.descripcion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                </MatTab>
+                <MatTab Label="Subir Anexo">
+                    <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada" FileNames="FileName"></DragnDrop>
+                    @if (nombres != null && nombres.Count > 0)
+                    {
+                        @for (int i = 0; i < nombres.Count; i++)
+                        {
+                            int index = i;
+                            string a = nombres[i];
+                            <div>
+                                @nombres[i]
+
+                                <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                        @onclick="@(e => RemoveFile(a,index))">
+                                    <small class="RedText">Eliminar</small>
+                                </button>
+                            </div>
+                        }
+                    }
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
+                    </div>
+                </MatTab>
+            </MatTabGroup>
+        </div>
+
+
+
+    </EditForm>
+</div>
+@code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    [CascadingParameter]
+    MainLayout layout { get; set; }
+    private bool loadprocess = false;
+    List<string> nombres = new List<string>();
+    private string imagenTemporal;
+    private SolicitudInicialDTO solicitud = new SolicitudInicialDTO();
+    private EditContext _editContext;
+
+    protected override async Task OnInitializedAsync()
+    {
+        solicitud.contenidoDTO.Urlanexo = new List<string>();
+        _editContext = new EditContext(solicitud);
+        foreach (string u in solicitud.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal = u;
+                solicitud.contenidoDTO.Urlanexo = null;
+            }
+        }
+    }
+
+    /* Reemplazado por el OnInitializedAsync()
+    protected override void OnInitialized()
+    {
+
+        _editContext = new EditContext(documento);
+    }
+    */
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        solicitud.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+
+    private async Task RemoveFile(string file, int imagen64)
+    {
+        nombres.Remove(file);
+        solicitud.contenidoDTO.Urlanexo.RemoveAt(imagen64);
+        StateHasChanged();
+
+    }
+
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+
+    public async Task handleValidSubmit()
+    {
+        solicitud.contenidoDTO.idcliente.id = sesion.usuario.id;
+        solicitud.nombrecliente = sesion.usuario.datos.nombre;
+        solicitud.tipodocumento = sesion.usuario.datos.tipodocumento;
+        solicitud.numerodocumento = sesion.usuario.datos.numerodocumento;
+        loadprocess = true;
+        /*
+        solicitudbpn.contenidoDTO.idcliente = solicitudbpn.contenidoDTO.idcliente;
+        solicitudbpn.contenidoDTO.direccionoficio = solicitudbpn.contenidoDTO.direccionoficio;
+        solicitudbpn.contenidoDTO.idnotario = solicitudbpn.contenidoDTO.idnotario;
+        solicitudbpn.contenidoDTO.actojuridico = solicitudbpn.contenidoDTO.actojuridico;
+        solicitudbpn.contenidoDTO.tipoprotocolo = solicitudbpn.contenidoDTO.tipoprotocolo;
+        solicitudbpn.contenidoDTO.otorgantes = solicitudbpn.contenidoDTO.otorgantes;
+        solicitudbpn.contenidoDTO.fecharealizacion = DateTime.Now;
+        */
+
+        //solicitudbpn.contenidoDTO.otorganteslista.Count
+
+        Usuario usuario = new Usuario();
+        usuario.id = sesion.usuario.id;
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = solicitud;
+        //expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        //expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/documentosolicbpn", expedienteWrapper);
+        if (!httpResponse.Error)
+        {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
+            SolicitudBPN solicitudBPN = new SolicitudBPN();
+            solicitudBPN = httpResponse.Response.solicitduBPN;
+            expedientebandeja.documento = new DocumentoDTO();
+            expedientebandeja.documentosobj = new List<DocumentoDTO>();
+            expedientebandeja.cliente = new Cliente();
+            expedientebandeja.documento.id = solicitudBPN.id;
+            expedientebandeja.documento.tipo = solicitudBPN.tipo;
+            expedientebandeja.documento.historialcontenido = solicitudBPN.historialcontenido;
+            expedientebandeja.documento.historialproceso = solicitudBPN.historialproceso;
+            expedientebandeja.documento.contenido = solicitudBPN.contenido;
+            expedientebandeja.documento.estado = solicitudBPN.estado;
+            expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
+            expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+            expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
+            await layout.Send("josue", expedientebandeja);
+
+
+            //StateHasChanged();
+            await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("Error en el servidor");
+        }
+        loadprocess = false;
+    }
+
+    public void handleInvalidSubmit()
+    {
+        loadprocess = false;
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+
+    
+    private async Task<IEnumerable<Notario>> match(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<Notario>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+
+
+}
