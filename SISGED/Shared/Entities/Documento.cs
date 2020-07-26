@@ -37,6 +37,8 @@ namespace SISGED.Shared.Entities
         public List<string> urlanexo { get; set; } = new List<string>();
         [BsonElement("estado")]
         public string estado { get; set; }
+        [BsonElement("fechacreacion")]
+        public DateTime fechacreacion { get; set; } = DateTime.Now;
     }
     public class Evaluacion
     {
@@ -256,5 +258,17 @@ namespace SISGED.Shared.Entities
         [BsonElement("evaluacion")]
         public Evaluacion evaluacion { get; set; }
         public ContenidoApelacion contenido { get; set; }
+    }
+
+    public class ContenidoSolicitudInicial
+    {
+        public string descripcion { get; set; }
+        public string titulo { get; set; }
+
+    }
+
+    public class SolicitudInicial : Documento
+    {
+        public ContenidoSolicitudInicial contenido { get; set; }
     }
 }
