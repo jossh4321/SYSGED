@@ -1,0 +1,158 @@
+﻿@page "/agarratudistinguidadama"
+@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+<style>
+    .div-form {
+        background-color: #A6A6A6;
+        flex-basis: 100%;
+        border-radius: 15px 15px 15px 15px;
+        width: 100%;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    .single-textfield-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+
+    .modal-info-solicitudBPN {
+        display: flex;
+        flex-direction: column;
+        /*height: 700px;*/
+        width: 100%;
+        background-color: #A6A6A6;
+        border-radius: 15px 15px 15px 15px;
+    }
+
+    .div-form.mat-tab-group {
+        max-width: 500px;
+    }
+
+    .base-icon {
+        display: flex;
+        flex-basis: 8%;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 2px;
+        background: #ff1a1a;
+        border-radius: 3px;
+        border: 1px solid #800000
+    }
+
+    .base-field {
+        flex-basis: 90%;
+    }
+</style>
+
+<div class="div-form">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext">
+        <FluentValidator></FluentValidator>
+        <div class="modal-info-solicitudBPN">
+            <MatTabGroup>
+                <MatTab Label="Solicitud">
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicinicialdto.contenidoDTO.titulo)">
+                        <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.titulo" Class="text-field-style" Label="Titulo de Solicitud"></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicinicialdto.contenidoDTO.titulo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+
+                    </div>
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicinicialdto.contenidoDTO.descripcion)">
+                        <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..."></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicinicialdto.contenidoDTO.descripcion)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>
+                </MatTab>
+                <MatTab Label="Subir Anexo">
+                    
+                </MatTab>
+            </MatTabGroup>
+        </div>
+    </EditForm>
+</div>
+@code{
+    //public Usuario2 usuario2 = new Usuario2();
+    private List<Rol> listaroles = new List<Rol>();
+    private EditContext _editContext;
+    private bool carga = true;
+
+    //[Parameter] public Usuario { get; set; }
+    [Parameter] public SolicitudInicialDTO solicinicialdto { get; set; }
+    [Parameter] public EventCallback<bool> cerrarDialogoDetalle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _editContext = new EditContext(solicinicialdto);
+    }
+    public async Task cerraDialogoDet()
+    {
+        await cerrarDialogoDetalle.InvokeAsync(false);
+        StateHasChanged();
+    }
+
+
+}
