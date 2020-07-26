@@ -107,7 +107,7 @@
                 <MatTab Label="Solicitud">
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitud.contenidoDTO.titulo)">
                         <MatTextField @bind-Value="@solicitud.contenidoDTO.titulo" Class="text-field-style" Label="Titulo de Solicitud"
-                                      @oninput='@(e => KeyUp(e,"actojuridico",solicitud.contenidoDTO))'></MatTextField>
+                                      @oninput='@(e => KeyUp(e,"titulo",solicitud.contenidoDTO))'></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                             <ValidationMessage For="@(() => solicitud.contenidoDTO.titulo)" />
@@ -121,7 +121,7 @@
 
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitud.contenidoDTO.descripcion)">
                         <MatTextField @bind-Value="@solicitud.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..."
-                                      @oninput='@(e => KeyUp(e,"direccionoficio",solicitud.contenidoDTO))'></MatTextField>
+                                      @oninput='@(e => KeyUp(e,"descripcion",solicitud.contenidoDTO))'></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                             <ValidationMessage For="@(() => solicitud.contenidoDTO.descripcion)" />
@@ -251,29 +251,30 @@
         //expedienteWrapper.idusuarioactual = sesion.usuario.id;
         //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/documentosolicbpn", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/registrarsolicitudinicial", expedienteWrapper);
         if (!httpResponse.Error)
         {
+            /*
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
-            SolicitudBPN solicitudBPN = new SolicitudBPN();
-            solicitudBPN = httpResponse.Response.solicitduBPN;
+            SolicitudInicial solicitudinic = new SolicitudInicial();
+            solicitudinic = httpResponse.Response.solicitduBPN;
             expedientebandeja.documento = new DocumentoDTO();
             expedientebandeja.documentosobj = new List<DocumentoDTO>();
             expedientebandeja.cliente = new Cliente();
-            expedientebandeja.documento.id = solicitudBPN.id;
-            expedientebandeja.documento.tipo = solicitudBPN.tipo;
-            expedientebandeja.documento.historialcontenido = solicitudBPN.historialcontenido;
-            expedientebandeja.documento.historialproceso = solicitudBPN.historialproceso;
-            expedientebandeja.documento.contenido = solicitudBPN.contenido;
-            expedientebandeja.documento.estado = solicitudBPN.estado;
+            expedientebandeja.documento.id = solicitudinic.id;
+            expedientebandeja.documento.tipo = "Solicitud";
+            expedientebandeja.documento.historialcontenido = solicitudinic.historialcontenido;
+            expedientebandeja.documento.historialproceso = solicitudinic.historialproceso;
+            expedientebandeja.documento.contenido = solicitudinic.contenido;
+            expedientebandeja.documento.estado = solicitudinic.estado;
             expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
             expedientebandeja.documentosobj.Add(expedientebandeja.documento);
             expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
             await layout.Send("josue", expedientebandeja);
 
 
-            //StateHasChanged();
+            //StateHasChanged();*/
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
         }
         else
@@ -289,7 +290,7 @@
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
 
-    
+
     private async Task<IEnumerable<Notario>> match(string searchtext)
     {
         var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");

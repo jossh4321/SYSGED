@@ -1645,7 +1645,7 @@ namespace SISGED.Server.Services
                 .Set("contenido.idescriturapublica", contenidoResultadoBPN.idescriturapublica);
             _documentos.UpdateOne(filter, update);
         }
-        public async Task<List<DocumentoADTO>> ObtenerSolicitudesUsuario(string numerodocumento)
+        public async Task<List<DocumentoADTO2>> ObtenerSolicitudesUsuario(string numerodocumento)
         {
 
             var filtroNumeroDocumento = Builders<Expediente>.Filter.Eq("cliente.numerodocumento",numerodocumento);
@@ -1682,15 +1682,36 @@ namespace SISGED.Server.Services
                                                     .Add("historialproceso","$documentoOriginal.historialproceso"));
 
          
-            List<DocumentoADTO> expedientes = await _expedientes.Aggregate()
+            List<DocumentoADTO2> expedientes = await _expedientes.Aggregate()
                                         .Match(filtroNumeroDocumento)
                                         .AppendStage<DocumentoUsuarioDTO>(proyeccionInicial)
                                         .AppendStage<DocumentoUsuarioLUDTO>(lookupe)
                                         .Unwind<DocumentoUsuarioLUDTO, DocumentoUsuarioUDTO>(t => t.documentoOriginal)
-                                        .AppendStage<DocumentoADTO>(proyeccionFinal)
+                                        .AppendStage<DocumentoADTO2>(proyeccionFinal)
                                         .ToListAsync();
 
             return expedientes;
+        }
+
+        public void actualizarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            SolicitudInicialDTO SIDTO = new SolicitudInicialDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            SIDTO = JsonConvert.DeserializeObject<SolicitudInicialDTO>(json);
+
+            //Creacion de Obj y registro en coleccion de documentos 
+            ContenidoSolicitudInicial contenidoSolicitudInicial = new ContenidoSolicitudInicial()
+            {
+                titulo = SIDTO.contenidoDTO.titulo,
+                descripcion = SIDTO.contenidoDTO.descripcion
+            };
+
+            var filter = Builders<Documento>.Filter.Eq("id", SIDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("contenido.titulo", SIDTO.contenidoDTO.titulo)
+                .Set("contenido.descripcion", SIDTO.contenidoDTO.descripcion);
+            _documentos.UpdateOne(filter, update);
         }
     }
 }

@@ -678,7 +678,7 @@ namespace SISGED.Server.Controllers
         //obteniendo documentos
 
         [HttpGet("documentosolicitudes/{numerodocumento}")]
-        public async Task<List<DocumentoADTO>> obtenerSolicitudes(string numerodocumento)
+        public async Task<List<DocumentoADTO2>> obtenerSolicitudes(string numerodocumento)
         {
             return await _documentoservice.ObtenerSolicitudesUsuario(numerodocumento);
         }
@@ -823,10 +823,10 @@ namespace SISGED.Server.Controllers
         {
             _documentoservice.actualizarDocumentoResultadoBPN(expedienteWrapper);
         }
-        /*[HttpPut("actualizarDocumentoSolicitudInicial")]
+        [HttpPut("actualizarDocumentoSolicitudInicial")]
         public void modificarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
-        }*/
+            _documentoservice.actualizarDocumentoSolicitudInicial(expedienteWrapper);
+        }
     }
 }
