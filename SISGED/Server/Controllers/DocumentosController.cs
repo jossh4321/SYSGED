@@ -400,6 +400,48 @@ namespace SISGED.Server.Controllers
             return bandejaexpdto;*/
         }
 
+        [HttpPost("documentosolicitudinicial")]
+        public async Task<ActionResult<SolicitudInicial>> RegistrarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        {
+            //Obtenemos los datos del expedientewrapper
+            SolicitudInicialDTO doc = new SolicitudInicialDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            doc = JsonConvert.DeserializeObject<SolicitudInicialDTO>(json);
+
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in doc.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "solicitudesiniciales");
+                    url2.Add(urlData2);
+                }
+            }
+
+            //Creacionde Obj y almacenamiento en la coleccion documento
+            ContenidoSolicitudInicial contenidoDTOInicial = new ContenidoSolicitudInicial()
+            {
+                titulo = doc.contenidoDTO.titulo,
+                descripcion = doc.contenidoDTO.descripcion
+            };
+
+            SolicitudInicial soliInicial = new SolicitudInicial()
+            {
+                tipo = "SolicitudInicial",
+                contenido = contenidoDTOInicial,
+                estado = "pendiente",
+                urlanexo = url2,
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>()
+            };
+
+            //soliInicial = _documentoservice.registrarSolicitudInicial(solicitudBPN, url2);
+
+            return soliInicial;
+        }
+
 
         [HttpPost("documentocf")]
         public async Task<ActionResult<ConclusionFirma>> RegistrarDocumentoCF(ExpedienteWrapper expediente)
