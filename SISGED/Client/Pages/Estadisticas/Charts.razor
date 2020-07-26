@@ -1,0 +1,102 @@
+﻿@page "/charts2"
+@layout MainLayout
+@inject IJSRuntime JS
+@inject IRepository repository
+<h3>Charts</h3>
+<style>
+    .cont-chart {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height:700px;
+    }
+    .statistics-selector {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        align-items: center;
+        
+    }
+    .selector-button {
+        color: #ff3333 !important;
+        border: 1px solid #ff3333 !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+        height: 57px !important;
+        margin-bottom:10px;
+    }
+    div.mdc-select__anchor {
+        width: 100%
+    }
+    .window {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #1a1a1a;
+        border: none;
+        text-align: center;
+        color: black;
+        width: inherit;
+        flex-basis: 100%;
+    }
+    .default-title-style {
+        display: block;
+        color: #808080;
+    }
+</style>
+<div class="cont-chart">
+    <h3>PruebaChratJS</h3>
+    <h1>AMCharts 4 Demo In Blazor!</h1>
+    <div class="statistics-selector">
+    <MatSelect Label="Seleccione la Estadistica a visualizar" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
+        <MatOptionString Class="option-color" Value="estadistica1">Documentos Creados por Area y Mes</MatOptionString>
+        <MatOptionString Class="option-color" Value="estadistica2">Documentos Creados por Mes</MatOptionString>
+        <MatOptionString Class="option-color" Value="estadistica3">Documentos Caducados por Mes </MatOptionString>
+        <MatOptionString Class="option-color" Value="estadistica4">Documentos Aprobados por la Junta Directiva</MatOptionString>
+    </MatSelect>
+    <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="seleccionarEstadistica"
+               Class="selector-button">Seleccionar Estadistica!!!</MatButton>
+    </div>
+    <div class="window">
+        @if (ChildContent != null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            <h4 class="default-title-style">Ingrese los datos</h4>
+        }
+    </div>
+    
+    <!--button onclick="GenerateColumnChart" class="btn btn-info">Show Column Chart</button-->
+    <!--div id="chartdiv"></!--div-->
+</div>
+    @code {
+        public string selector = "estadistica1";
+        public RenderFragment ChildContent = null;
+        private async Task GenerateColumnChart()
+        {
+            await JS.InvokeVoidAsync("CreateColumnChart");
+        }
+        public void seleccionarEstadistica()
+        {
+            if(selector == "estadistica1")
+            {
+                ChildContent = @<Estadistica1DocXAreaXMes></Estadistica1DocXAreaXMes>;
+            }
+            else if(selector == "estadistica2")
+            {
+                ChildContent = @<Estadistica1DocXMes></Estadistica1DocXMes>;
+            }
+            else if (selector == "estadistica3")
+            {
+                ChildContent = @<Estadistica1DocCaducaron></Estadistica1DocCaducaron>;
+            }
+
+            else if (selector == "estadistica4")
+            {
+                ChildContent = @<Estadistica1DocEvaluados></Estadistica1DocEvaluados>;
+            }
+        }
+    }

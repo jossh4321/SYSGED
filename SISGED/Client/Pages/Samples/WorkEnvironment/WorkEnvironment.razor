@@ -274,12 +274,19 @@
         Console.WriteLine("INICIE: WorkEnvironment");
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
-        List<Documento> documentos = new List<Documento>();
+        List<StatisticsDTO3_group> lista = new List<StatisticsDTO3_group>();
+        var httpResponse = await repository.Get<List<StatisticsDTO3_group>>($"api/statistics/doccaducadosxmes/id?mes=3");
+        if (!httpResponse.Error)
+        {
+            lista = httpResponse.Response;
+        }
+        /*List<Documento> documentos = new List<Documento>();
+
         var httpResponse = await repository.Get<List<Documento>>($"api/documentos");
         if (!httpResponse.Error)
         {
             documentos = httpResponse.Response;
-        }
+        }*/
         /*var httpResponse = await repository.Get<List<Asistente>>($"api/asistente/getasistentes");
         if(!httpResponse.Error)
         {
