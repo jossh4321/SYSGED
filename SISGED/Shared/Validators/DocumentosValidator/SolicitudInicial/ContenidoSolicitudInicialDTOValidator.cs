@@ -10,8 +10,8 @@ namespace SISGED.Shared.Validators.DocumentosValidator.SolicitudInicial
     {
         public ContenidoSolicitudInicialDTOValidator()
         {
-            RuleFor(x => x.titulo).NotEmpty().WithMessage("Debe ingresar el titulo de la soli");
-            RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe Ingresar un Direccion de Oficio obligatoriamente");
+            RuleFor(x => x.titulo).NotEmpty().WithMessage("Debe ingresar el titulo de la solicitud inicial");
+            RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe Ingresar la descripción de la solicitud inicial obligatoriamente");
         }
     }
 }
