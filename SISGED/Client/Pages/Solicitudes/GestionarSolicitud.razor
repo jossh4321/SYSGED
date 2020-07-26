@@ -269,7 +269,7 @@
 </div>
   
     <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-        <SolicitudInicial></SolicitudInicial>
+        <RegistrarSolicitudInicial></RegistrarSolicitudInicial>
         <MatDialogActions>
             <MatButton OnClick="@OkClick">Cancelar</MatButton>
         </MatDialogActions>
@@ -277,25 +277,11 @@
 
     <MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
         <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
-        @if (TipoSolicitud2 == "Expedicion de Firma")
-        {
-            <MatDialogContent>
-                <RegistrarSolicExpedicionF />
-            </MatDialogContent>
-        }
-        @if (TipoSolicitud2 == "Denuncia")
-        {
-            <MatDialogContent>
-                <RegistrarSolicDenuncias />
-            </MatDialogContent>
-        }
-        @if (TipoSolicitud2 == "Busqueda de Protocolo Notarial")
-        {
-            <MatDialogContent>
-                <RegistrarSolicBPN />
-            </MatDialogContent>
-        }
-
+        <CascadingValue Value="this">
+            <ModificarSolicitudInicial docs="docs"
+                             cerrarDialogoModificacion="cerrarDialogoModificacion"
+                             solicinicialdto="solicinicialdto" />
+        </CascadingValue>
         <MatDialogActions>
             <MatButton OnClick="@OkClick">Cancelar</MatButton>
         </MatDialogActions>
@@ -303,7 +289,9 @@
 
     <MatDialog @bind-IsOpen="@dialogIsOpen_VerDetalles">
         <MatDialogTitle>Detalles de la Solicitud</MatDialogTitle>
-            <SolicitudInicial></SolicitudInicial>
+            <CascadingValue Value="this">
+                 <DetalleSolicitudInicial solicinicialdto="solicinicialdto" cerrarDialogoDetalle="cerrarDialogoDetalle" />
+            </CascadingValue>
         <MatDialogActions>
             <MatButton OnClick="@OkClick">Cancelar</MatButton>
         </MatDialogActions>
@@ -326,11 +314,9 @@
         bool activator;
 
         public bool cargatabla { get; set; } = false;
-
-        bool dialogIsOpen_Registrar = false;
-
-        bool dialogIsOpen_Modificar = false;
-        bool dialogIsOpen_VerDetalles = false;
+        private bool dialogIsOpen_Registrar = false;
+        private bool dialogIsOpen_Modificar = false;
+        private bool dialogIsOpen_VerDetalles = false;
         bool dialogIsOpen_Cancelar = false;
 
         bool Registrar_SolicDenuncia = false;
@@ -340,8 +326,8 @@
         MainLayout layout { get; set; }
         [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
-
-        List<DocumentoADTO2> docs { get; set; } = new List<DocumentoADTO2>();
+        public SolicitudInicialDTO solicinicialdto = new SolicitudInicialDTO();
+        public List<DocumentoADTO2> docs { get; set; } = new List<DocumentoADTO2>();
 
         protected override async Task OnInitializedAsync()
         {
@@ -390,10 +376,28 @@
             //Consultar
             //Modificar
         }
-        void OpenDialogVerDetalles(string id)
+        public async Task OpenDialogVerDetalles(string id)
         {
+
+            DocumentoADTO2 usuario = new DocumentoADTO2();
+            var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={id}");
+            if (httpResponse.Error)
+            {
+                Console.WriteLine("Algo Mal");
+            }
+            else
+            {
+                usuario = httpResponse.Response;
+            }
+            usuariodto.usuario = usuario.usuario;
+            usuariodto.clave = usuario.clave;
+            usuariodto.datos = usuario.datos;
+            usuariodto.id = usuario.id;
+            usuariodto.estado = usuario.estado;
+            usuariodto.rolid = usuario.rol;
+            usuariodto.tipo = usuario.tipo;
             dialogIsOpen_VerDetalles = true;
-            //Consultar
+
         }
         void OpenDialogCancelar()
         {
@@ -422,5 +426,7 @@
             var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
             navigationManager.NavigateTo(httpResponse.Response.url);
         }
+        public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
+        public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
 
     }
