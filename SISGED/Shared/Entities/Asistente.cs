@@ -10,23 +10,22 @@ namespace SISGED.Shared.Entities
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string id { get; set; }
-        [BsonElement("nombreexpediente")]
-        public string nombreexpediente { get; set; }
-        [BsonElement("documentos")]
-        public List<DocumentoAsistente> documentos { get; set; }
+        public String id { get; set; }
+        [BsonElement("idexpediente")]
+        public String idexpediente { get; set; }
+        [BsonElement("pasos")]
+        public PasoAsistente pasos {get; set;}
+        [BsonElement("paso")]
+        public Int32 paso { get; set; }
+        [BsonElement("subpaso")]
+        public Int32 subpaso { get; set; }
+        [BsonElement("tipodocumento")]
+        public String tipodocumento { get; set; }
     }
 
-    public class DocumentoAsistente
+    public class PasoAsistente
     {
-        public string tipo { get; set; }
-        public List<Paso> pasos { get; set; }
-    }
-
-    public class Paso
-    {
-        public string indice { get; set; }
-        public string nombre { get; set; }
-        public string descripcion { get; set; }
+        public String nombreexpediente { get; set; }
+        public List<DocumentoPaso> documentos { get; set; }
     }
 }
