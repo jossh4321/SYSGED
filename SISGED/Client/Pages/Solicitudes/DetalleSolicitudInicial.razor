@@ -1,4 +1,4 @@
-﻿@page "/agarratudistinguidadama"
+﻿@page "/agarratudistinguidadama1"
 @inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
@@ -103,7 +103,7 @@
             <MatTabGroup>
                 <MatTab Label="Solicitud">
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicinicialdto.contenidoDTO.titulo)">
-                        <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.titulo" Class="text-field-style" Label="Titulo de Solicitud"></MatTextField>
+                        <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.titulo" Class="text-field-style" Label="Titulo de Solicitud" Disabled="false"></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                             <ValidationMessage For="@(() => solicinicialdto.contenidoDTO.titulo)" />
@@ -116,7 +116,7 @@
                     </div>
 
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicinicialdto.contenidoDTO.descripcion)">
-                        <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..."></MatTextField>
+                        <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..." Disabled="false"></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
                             <ValidationMessage For="@(() => solicinicialdto.contenidoDTO.descripcion)" />

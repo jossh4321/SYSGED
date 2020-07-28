@@ -345,23 +345,6 @@
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
         Console.WriteLine("Algo Mal");
     }
-    public System.Reflection.PropertyInfo GetProperty(string name, Object obj)
-    {
-        System.Reflection.PropertyInfo info = null;
-        foreach (string item in name.Split('.'))
-        {
-            if (obj == null)
-            {
-                return null;
-            }
-            Type type = obj.GetType();
-            info = type.GetProperty(item);
-            if (info == null) { return null; }
-            obj = info.GetValue(obj, null);
-        }
-        Console.WriteLine("se retorno aqui");
-        return info;
-    }
 
 
 }

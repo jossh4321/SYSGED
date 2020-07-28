@@ -225,12 +225,12 @@
                     <div class="button-container">
                         @if (activator == false)
                             {
-                            <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@OpenDialogModificar" Style="width:100% !important">Modificar</MatButton>
+                            <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
 
                             }
                             else
                             {
-                            <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@OpenDialogModificar" Style="width:100% !important">Modificar</MatButton>
+                            <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
 
                             }
                     </div>
@@ -296,15 +296,6 @@
             <MatButton OnClick="@OkClick">Cancelar</MatButton>
         </MatDialogActions>
     </MatDialog>
-    
-
-
-
-
-
-
-
-
 
     @code {
 
@@ -370,35 +361,47 @@
             dialogIsOpen_Registrar = true;
             //navigationManager.NavigateTo("solicitud/crear");
         }
-        void OpenDialogModificar()
-        {
-            dialogIsOpen_Modificar = true;
-            //Consultar
-            //Modificar
-        }
+        
         public async Task OpenDialogVerDetalles(string id)
         {
 
-            DocumentoADTO2 usuario = new DocumentoADTO2();
-            var httpResponse = await repository.Get<Usuario>($"api/usuarios/id?id={id}");
-            if (httpResponse.Error)
+            SolicitudInicialDTO docadto = new SolicitudInicialDTO();
+            var httpResponse = await repository.Get<SolicitudInicialDTO>($"api/documentos/obtenersolicitudinicial?iddoc={id}");
+            if (!httpResponse.Error)
             {
-                Console.WriteLine("Algo Mal");
+                docadto = httpResponse.Response;
+                solicinicialdto.contenidoDTO.titulo = docadto.contenidoDTO.titulo;
+                solicinicialdto.contenidoDTO.descripcion = docadto.contenidoDTO.descripcion;
+                dialogIsOpen_VerDetalles = true;
+                Console.WriteLine("esto está bien la ptmre");
+
             }
             else
             {
-                //usuario = httpResponse.Response;
+                Console.WriteLine("Algo Mal");
             }
-            /*usuariodto.usuario = usuario.usuario;
-            usuariodto.clave = usuario.clave;
-            usuariodto.datos = usuario.datos;
-            usuariodto.id = usuario.id;
-            usuariodto.estado = usuario.estado;
-            usuariodto.rolid = usuario.rol;
-            usuariodto.tipo = usuario.tipo;*/
-            dialogIsOpen_VerDetalles = true;
 
         }
+        public async Task OpenDialogModificar(string id)
+        {
+            SolicitudInicialDTO docadto = new SolicitudInicialDTO();
+            var httpResponse = await repository.Get<SolicitudInicialDTO>($"api/documentos/obtenersolicitudinicial?iddoc={id}");
+            if (!httpResponse.Error)
+            {
+                docadto = httpResponse.Response;
+                solicinicialdto.contenidoDTO.titulo = docadto.contenidoDTO.titulo;
+                solicinicialdto.contenidoDTO.descripcion = docadto.contenidoDTO.descripcion;
+                dialogIsOpen_Modificar = true;
+                Console.WriteLine("esto está bien la ptmre");
+
+            }
+            else
+            {
+                Console.WriteLine("Algo Mal");
+            }
+        }
+
+
         void OpenDialogCancelar()
         {
             dialogIsOpen_Cancelar = true;
