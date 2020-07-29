@@ -177,7 +177,7 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPost("registrarsolicitudinicial")]
-        public async Task<ActionResult<SolicitudInicial>> RegistrarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<ExpedienteDocumentoSIDTO>> RegistrarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
             //Obtenemos los datos del expedientewrapper
             SolicitudInicialDTO doc = new SolicitudInicialDTO();
@@ -246,7 +246,7 @@ namespace SISGED.Server.Controllers
             expedienteDocumentoSIDTO.expediente = expediente;
             expedienteDocumentoSIDTO.solicitudI = soliInicial;
 
-            return soliInicial;
+            return expedienteDocumentoSIDTO;
         }
 
 

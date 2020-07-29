@@ -230,17 +230,6 @@
         solicitud.tipodocumento = sesion.usuario.datos.tipodocumento;
         solicitud.numerodocumento = sesion.usuario.datos.numerodocumento;
         loadprocess = true;
-        /*
-        solicitudbpn.contenidoDTO.idcliente = solicitudbpn.contenidoDTO.idcliente;
-        solicitudbpn.contenidoDTO.direccionoficio = solicitudbpn.contenidoDTO.direccionoficio;
-        solicitudbpn.contenidoDTO.idnotario = solicitudbpn.contenidoDTO.idnotario;
-        solicitudbpn.contenidoDTO.actojuridico = solicitudbpn.contenidoDTO.actojuridico;
-        solicitudbpn.contenidoDTO.tipoprotocolo = solicitudbpn.contenidoDTO.tipoprotocolo;
-        solicitudbpn.contenidoDTO.otorgantes = solicitudbpn.contenidoDTO.otorgantes;
-        solicitudbpn.contenidoDTO.fecharealizacion = DateTime.Now;
-        */
-
-        //solicitudbpn.contenidoDTO.otorganteslista.Count
 
         Usuario usuario = new Usuario();
         usuario.id = sesion.usuario.id;
@@ -251,19 +240,21 @@
         //expedienteWrapper.idusuarioactual = sesion.usuario.id;
         //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/registrarsolicitudinicial", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoSIDTO>($"api/documentos/registrarsolicitudinicial", expedienteWrapper);
         if (!httpResponse.Error)
         {
-            /*
+            
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
+
             SolicitudInicial solicitudinic = new SolicitudInicial();
-            solicitudinic = httpResponse.Response.solicitduBPN;
+            solicitudinic = httpResponse.Response.solicitudI;
+
             expedientebandeja.documento = new DocumentoDTO();
             expedientebandeja.documentosobj = new List<DocumentoDTO>();
             expedientebandeja.cliente = new Cliente();
             expedientebandeja.documento.id = solicitudinic.id;
-            expedientebandeja.documento.tipo = "Solicitud";
+            expedientebandeja.documento.tipo = "SolicitudInicial";
             expedientebandeja.documento.historialcontenido = solicitudinic.historialcontenido;
             expedientebandeja.documento.historialproceso = solicitudinic.historialproceso;
             expedientebandeja.documento.contenido = solicitudinic.contenido;
@@ -273,8 +264,7 @@
             expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
             await layout.Send("josue", expedientebandeja);
 
-
-            //StateHasChanged();*/
+            //StateHasChanged();
             await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
         }
         else
@@ -289,20 +279,4 @@
         loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
-
-
-    private async Task<IEnumerable<Notario>> match(string searchtext)
-    {
-        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
-        if (httpResponse.Error)
-        {
-            return new List<Notario>();
-        }
-        else
-        {
-            return httpResponse.Response;
-        }
-    }
-
-
 }
