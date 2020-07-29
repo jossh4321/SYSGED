@@ -254,6 +254,8 @@
     public bool abrirDialogo = false;
     public void openDialog() { abrirDialogo = true; }
     public void closeDialog() { abrirDialogo = false; }
+    int paso=1;
+    int subpaso = 0;
 
     public SolicitudBPNDTO docSolicitudBPNDTO = new SolicitudBPNDTO()
     {
@@ -313,6 +315,8 @@
                 documento.contenidoDTO.Urlanexo = null;
             }
         }
+        subpaso = 1;
+        //Enviar paso=0,subpaso=1,idexp
     }
 
     private void ImagenSeleccionada(string imagenbase64)

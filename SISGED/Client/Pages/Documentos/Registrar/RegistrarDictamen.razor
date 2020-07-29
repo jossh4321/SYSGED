@@ -309,6 +309,8 @@
     List<string> nombres = new List<string>();
     private string imagenTemporal;
     private bool loadprocess = false;
+    int paso=0;
+    int subpaso = 0;
 
     protected override void OnInitialized()
     {
@@ -324,6 +326,8 @@
                 dictamen.contenidoDTO.Urlanexo = null;
             }
         }
+        subpaso = 1;
+        //Enviar paso=0, subpaso=1, idexp
     }
     private void addObservaciones()
     {
@@ -416,6 +420,8 @@
 
             StateHasChanged();
             await swalfire.successMessage("Dictamen registrado correctamente");
+            subpaso = 2;
+            //Enviar paso=0, subpaso=2, idexp
         }
         else
         {

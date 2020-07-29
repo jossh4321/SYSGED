@@ -378,6 +378,8 @@
     private string imagenTemporal;
     private string imagenTemporal2;
     private bool loadprocess = false;
+    int paso=0;
+    int subpaso=0;
 
     List<UsuarioRDTO> fiscales { get; set; } = new List<UsuarioRDTO>();
 
@@ -409,6 +411,8 @@
         {
             Console.WriteLine("Ocurrio un error");
         }
+        subpaso = 1;
+        //Enviar paso=0, subpas=1, idexp
     }
 
     private void addparticipante()
@@ -536,6 +540,8 @@
                 Console.WriteLine(documentoDTO.ToString());
                 //workspace.UpdateComponentBandeja(itemSalida);
                 await swalfire.successMessage("Aperturamiento Disciplinario registrado correctamente");
+                subpaso = 2;
+                //Enviar paso=0,subpaso=2, idexp
             }
             else
             {

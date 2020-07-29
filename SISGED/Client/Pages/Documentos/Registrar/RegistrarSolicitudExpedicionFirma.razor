@@ -138,8 +138,8 @@
                 </div>
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.descripcion)">
-                    <textarea class="form-control text-field-style txt-area" @bind="@solicitudexpedicionfirma.contenidoDTO.descripcion" 
-                               @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedicionfirma.contenidoDTO))' placeholder="Descripcion de la Solicitud"></textarea>
+                    <textarea class="form-control text-field-style txt-area" @bind="@solicitudexpedicionfirma.contenidoDTO.descripcion"
+                              @oninput='@(e => KeyUp(e,"descripcion",solicitudexpedicionfirma.contenidoDTO))' placeholder="Descripcion de la Solicitud"></textarea>
 
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -170,6 +170,8 @@
     private string documentoTemporal { get; set; } = null;
     private string imagenTemporal;
     private bool loadprocess = false;
+    int paso = 0;
+    int subpaso = 0;
     protected override void OnInitialized()
     {
         _editContext = new EditContext(solicitudexpedicionfirma);
@@ -178,6 +180,8 @@
             imagenTemporal = solicitudexpedicionfirma.contenidoDTO.data;
             solicitudexpedicionfirma.contenidoDTO.data = null;
         }
+        subpaso = 1;
+        //Enviar paso=0,subpaso=1,idexp
     }
 
     private void ImagenSeleccionada(string imagenbase64)
@@ -225,6 +229,8 @@
                 };
                 workspace.UpdateComponentBandeja(itemSalida);
                 await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
+                subpaso = 2;
+                //Enviar paso=0,subpaso=2,idexp
             }
         }
         else

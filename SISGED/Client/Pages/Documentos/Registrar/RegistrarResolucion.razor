@@ -284,6 +284,8 @@
     private string imagenTemporal;
     private string imagenTemporal2;
     private bool loadprocess = false;
+    int paso=0;
+    int subpaso = 0;
 
     protected override void OnInitialized()
     {
@@ -303,6 +305,8 @@
             imagenTemporal = resolucion.contenidoDTO.data;
             resolucion.contenidoDTO.data = null;
         }
+        subpaso = 1;
+        //Enviar paso=0,subpaso=1,idexp
     }
 
     private void ImagenSeleccionada(string imagenbase64)
@@ -401,6 +405,8 @@
 
                 StateHasChanged();
                 await swalfire.successMessage("Resolución registrada correctamente");
+                subpaso = 2;
+                //Enviar paso=0,subpaso=2,idexp
             }
             else
             {

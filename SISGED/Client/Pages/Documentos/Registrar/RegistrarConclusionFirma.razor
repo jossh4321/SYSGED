@@ -176,11 +176,11 @@
 
                 <!---------------------------------------------------------------------------------------------------------------->
                 @*<div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>*@
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>*@
 
             </MatTab>
             <MatTab Label="Subir Anexo">
@@ -222,6 +222,8 @@
     private bool loadprocess = false;
     public List<EscrituraPublica> escriturapublicasseleccionados = new List<EscrituraPublica>();
     public EscrituraPublica escriturapublicaselect;
+    int paso = 0;
+    int subpaso = 0;
     private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
     {
         var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
@@ -291,7 +293,8 @@
             }
         }
         StateHasChanged();
-
+        subpaso = 1;
+        //Enviar paso=0,subpaso=1,idexp
     }
 
     private void ImagenSeleccionada(string imagenbase64)
@@ -373,6 +376,8 @@
             StateHasChanged();
             //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Conclusión de Firma registrada Correctamente");
+            subpaso = 2;
+            //Enviar paso=0,subpaso=2,idexp
         }
         loadprocess = false;
     }
