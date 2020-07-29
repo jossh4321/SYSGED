@@ -21,14 +21,18 @@ namespace SISGED.Server.Controllers
         private readonly BandejaService _bandejaService;
         private readonly EscriturasPublicasService _escrituraspublicasservice;
         private readonly IFileStorage _almacenadorDeDocs;
+        private readonly AsistenteService asistenteService;
+
         public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs,
-            ExpedienteService expedienteservice, EscriturasPublicasService escrituraspublicasservice, BandejaService bandejaService)
+            ExpedienteService expedienteservice, EscriturasPublicasService escrituraspublicasservice, BandejaService bandejaService,
+            AsistenteService asistenteService)
         {
             _documentoservice = documentoservice;
             _almacenadorDeDocs = almacenadorDeDocs;
             _expedienteservice = expedienteservice;
             _escrituraspublicasservice = escrituraspublicasservice;
             _bandejaService = bandejaService;
+            this.asistenteService = asistenteService;
         }
         [HttpGet]
         public ActionResult<List<Documento>> Get()
@@ -241,7 +245,16 @@ namespace SISGED.Server.Controllers
             expediente.derivaciones = new List<Derivacion>();
             expediente.estado = "solicitado";
             expediente = _expedienteservice.saveExpediente(expediente);
+
             _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, soliInicial.id, "josue");
+
+            Asistente asistente = new Asistente();
+            asistente.idexpediente = expediente.id;
+            asistente.pasos = new PasoAsistente();
+            asistente.pasos.nombreexpediente = "Solicitud";
+
+            await asistenteService.Create(asistente);
+
             ExpedienteDocumentoSIDTO expedienteDocumentoSIDTO = new ExpedienteDocumentoSIDTO();
             expedienteDocumentoSIDTO.expediente = expediente;
             expedienteDocumentoSIDTO.solicitudI = soliInicial;
