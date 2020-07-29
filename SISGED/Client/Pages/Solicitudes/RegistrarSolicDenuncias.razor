@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -68,19 +69,19 @@
         <MatTabGroup>
             <MatTab Label="Datos Generales">
 
-                
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.codigo)">
-                    <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.codigo" Class="text-field-style"
-                                  Label="Codigo" @oninput='@(e => KeyUp(e,"codigo",solicitudDenuncia.contenidoDTO))'></MatTextField>
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.codigo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+
+                @*<div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.codigo)">
+                        <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.codigo" Class="text-field-style"
+                                      Label="Codigo" @oninput='@(e => KeyUp(e,"codigo",solicitudDenuncia.contenidoDTO))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudDenuncia.contenidoDTO.codigo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>*@
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudDenuncia.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@solicitudDenuncia.contenidoDTO.titulo" Class="text-field-style"
                                   Label="Titulo de la Solicitud" @oninput='@(e => KeyUp(e,"titulo",solicitudDenuncia.contenidoDTO))'></MatTextField>
@@ -109,11 +110,11 @@
                     <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
                 </div>
                 @*<div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
-                </div>*@
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
+                    </div>*@
             </MatTab>
             <MatTab Label="Subir Anexo">
                 <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2" FileNames="FileName"></DragnDrop>
@@ -218,46 +219,58 @@
             //solicitudDenuncia.contenidoDTO.nombrecliente = solicitudDenuncia.nombrecliente;
             expedienteWrapper.documento = solicitudDenuncia;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
+            expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+            expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoSDDTO>("api/documentos/documentosd", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudDenuncia>("api/documentos/documentosd", expedienteWrapper);
             if (httpResponse.Error)
             {
                 await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
             }
             else
             {
-                /*
                 ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+                expedientebandeja = workspace.expedienteseleccionado;
 
-                expedientebandeja = httpResponse.Response;
+                SolicitudDenuncia solicitudDenuncia = new SolicitudDenuncia();
+                solicitudDenuncia = httpResponse.Response;
+
+                expedientebandeja.documento.id = solicitudDenuncia.id;
+                expedientebandeja.documento.tipo = solicitudDenuncia.tipo;
+                expedientebandeja.documento.historialcontenido = solicitudDenuncia.historialcontenido;
+                expedientebandeja.documento.historialproceso = solicitudDenuncia.historialproceso;
+                expedientebandeja.documento.contenido = solicitudDenuncia.contenido;
+                expedientebandeja.documento.estado = solicitudDenuncia.estado;
+                expedientebandeja.tipo = "Denuncia";
+
                 Item itemSalida = new Item()
                 {
                     nombre = expedientebandeja.tipo,
                     valor = expedientebandeja,
                     icono = "alarm_add",
                     descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                    currentPlace = "outputs",
-                    originPlace = "outputs",
-                    cliente = expedientebandeja.cliente
+                    currentPlace = "workspace",
+                    originPlace = "inputs",
+                    cliente = expedientebandeja.cliente,
+                    itemstatus = "registrado"
                 };
-                workspace.UpdateComponentBandeja(itemSalida);*/
-                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-                expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
-                SolicitudDenuncia solicitudD = new SolicitudDenuncia();
-                solicitudD = httpResponse.Response.solicitudD;
-                expedientebandeja.documento = new DocumentoDTO();
-                expedientebandeja.documentosobj = new List<DocumentoDTO>();
-                expedientebandeja.cliente = new Cliente();
-                expedientebandeja.documento.id = solicitudD.id;
-                expedientebandeja.documento.tipo = solicitudD.tipo;
-                expedientebandeja.documento.historialcontenido = solicitudD.historialcontenido;
-                expedientebandeja.documento.historialproceso = solicitudD.historialproceso;
-                expedientebandeja.documento.contenido = solicitudD.contenido;
-                expedientebandeja.documento.estado = solicitudD.estado;
-                expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
-                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-                expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
-                await layout.Send("josue", expedientebandeja);
+
+                workspace.UpdateDocRegistrado(itemSalida);
+                workspace.UpdateTools("Registrar Documento");
+
+                DocumentoDTO documentoDTO = new DocumentoDTO();
+                documentoDTO.id = solicitudDenuncia.id;
+                documentoDTO.tipo = solicitudDenuncia.tipo;
+                documentoDTO.estado = solicitudDenuncia.estado;
+                documentoDTO.contenido = JsonConvert.SerializeObject(solicitudDenuncia.contenido);
+                documentoDTO.historialcontenido = solicitudDenuncia.historialcontenido;
+                documentoDTO.historialproceso = solicitudDenuncia.historialproceso;
+                documentoDTO.urlanexo = solicitudDenuncia.urlanexo;
+
+                workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+                workspace.expedienteseleccionado.documento = documentoDTO;
+                workspace.expedienteseleccionado.tipo = "Denuncia";
+
                 await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
             }
         }

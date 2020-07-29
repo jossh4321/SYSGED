@@ -78,18 +78,13 @@ namespace SISGED.Server.Controllers
             }
             OficioBPN documentoOficioBPN = new OficioBPN();
             documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente, url2);
+
             return documentoOficioBPN;
         }
 
         [HttpPost("documentosolicbpn")]
-        public async Task<ActionResult<ExpedienteDocumentoBPNDTO>> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<SolicitudBPN>> RegistrarDocumentoSolicitudBPN(ExpedienteWrapper expedienteWrapper)
         {
-            /*
-            SolicitudBPN documentoSolicBPN = new SolicitudBPN();
-            documentoSolicBPN = _documentoservice.registrarSolicitudBPN(expediente);
-            return documentoSolicBPN;*/
-
-
             //Obtenemos los datos del expedientewrapper
             SolicitudBPNDTO documento = new SolicitudBPNDTO();
             ContenidoSolicitudBPNDTO listaotor = new ContenidoSolicitudBPNDTO();
@@ -97,6 +92,7 @@ namespace SISGED.Server.Controllers
             documento = JsonConvert.DeserializeObject<SolicitudBPNDTO>(json);
             List<string> url2 = new List<string>();
             string urlData2 = "";
+
             foreach (string u in documento.contenidoDTO.Urlanexo)
             {
                 if (!string.IsNullOrWhiteSpace(u))
@@ -106,97 +102,16 @@ namespace SISGED.Server.Controllers
                     url2.Add(urlData2);
                 }
             }
-            //Solo para registrar nombre de otorgantes
-            List<String> listadeotorgantes = new List<string>();
-            foreach (Otorgantelista obs in documento.contenidoDTO.otorganteslista)
-            {
-                listadeotorgantes.Add(obs.nombre);
-            }
 
-            //Creacionde Obj ContenidoSolicitudBPN y almacenamiento en la coleccion documento
-            ContenidoSolicitudBPN contenidoSolicitudBPN = new ContenidoSolicitudBPN()
-            {
-                
-                idcliente = documento.contenidoDTO.idcliente.id,
-                direccionoficio = documento.contenidoDTO.direccionoficio,
-                idnotario = documento.contenidoDTO.idnotario.id,
-                actojuridico = documento.contenidoDTO.actojuridico,
-                tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
-                otorgantes = listadeotorgantes,
-                //Lista de objetos
-                //otorganteslista = documento.contenidoDTO.otorganteslista,
-                fecharealizacion = DateTime.Now,
-                //url = "ninguna"
-            };
+            SolicitudBPN solicitudBPN = new SolicitudBPN();
+            solicitudBPN = _documentoservice.registrarSolicitudBPN(expedienteWrapper, url2);
 
-            
-
-            SolicitudBPN solicitudBPN = new SolicitudBPN()
-            {
-                tipo = "SolicitudBPN",
-                contenido = contenidoSolicitudBPN,
-                estado = "pendiente",
-                urlanexo = url2,
-                historialcontenido = new List<ContenidoVersion>(),
-                historialproceso = new List<Proceso>()
-            };
-            solicitudBPN = _documentoservice.registrarSolicitudBPN(solicitudBPN, url2);
-            //_documentos.InsertOne(solicitudBPN);
-            //Pegar aqui lo que se cortó
-
-            //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
-            Cliente cliente = new Cliente()
-            {
-                nombre = documento.nombrecliente,
-                tipodocumento = documento.tipodocumento,
-                numerodocumento = documento.numerodocumento
-            };
-            Expediente expediente = new Expediente();
-            expediente.tipo = "Busqueda Protocolo Notarial";
-            expediente.cliente = cliente;
-            expediente.fechainicio = DateTime.Now;
-            expediente.fechafin = null;
-            expediente.documentos = new List<DocumentoExpediente>()
-            {
-                new DocumentoExpediente(){
-                    indice = 1,
-                    iddocumento = solicitudBPN.id,
-                    tipo="SolicitudBPN",
-                    fechacreacion = solicitudBPN.contenido.fecharealizacion,
-                    fechaexceso=solicitudBPN.contenido.fecharealizacion.AddDays(10),
-                    fechademora = null
-                }
-            };
-            expediente.derivaciones = new List<Derivacion>();
-            expediente.estado = "solicitado";
-            expediente = _expedienteservice.saveExpediente(expediente);
-            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id,solicitudBPN.id,"josue");
-            
-            //actualizacion de bandeja de salida del usuario
-            //_documentoservice.updateBandejaSalida(expediente.id, solicitudBPN.id, expedienteWrapper.idusuarioactual);
-
-            //Actualizacion de bandeja de salida de usuario
-            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
-            bandejaDocumento.idexpediente = expediente.id;
-            bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
-            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);
-
-            //Actualizacion de bandeja de entrada de usuario
-            UpdateDefinition<Bandeja> updateBandejaEntrada =
-               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
-                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
-            ExpedienteDocumentoBPNDTO expedienteDocumentoBPNDTO = new ExpedienteDocumentoBPNDTO();
-            expedienteDocumentoBPNDTO.expediente = expediente;
-            expedienteDocumentoBPNDTO.solicitduBPN = solicitudBPN;
-            return expedienteDocumentoBPNDTO;
-
+            return solicitudBPN;
         }
 
         [HttpPost("documentosd")]
         //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
-        public async Task<ActionResult<ExpedienteDocumentoSDDTO>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<SolicitudDenuncia>> RegistrarDocumentoSolicitudDenuncia(ExpedienteWrapper expedientewrapper)
         {
 
             //conversion de Object a Tipo especifico
@@ -222,84 +137,15 @@ namespace SISGED.Server.Controllers
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicituddenuncia");
             }
 
-            //Creacionde Obj ContenidoSolicitudDenuncia y almacenamiento en la coleccion documento
-            ContenidoSolicitudDenuncia contenidoSolicitudDenuncia = new ContenidoSolicitudDenuncia()
-            {
-                codigo = documento.contenidoDTO.codigo,
-                titulo = documento.contenidoDTO.titulo,
-                descripcion = documento.contenidoDTO.descripcion,
-                nombrecliente = documento.nombrecliente,
-                fechaentrega = DateTime.Now,
-                url = urlData
-            };
+            SolicitudDenuncia solicitudDenuncia = new SolicitudDenuncia();
+            solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(expedientewrapper, url2, urlData);
 
-            SolicitudDenuncia solicitudDenuncia = new SolicitudDenuncia()
-            {
-                tipo = "SolicitudDenuncia",
-                contenido = contenidoSolicitudDenuncia,
-                estado = "pendiente",
-                historialcontenido = new List<ContenidoVersion>(),
-                urlanexo = url2,
-                historialproceso = new List<Proceso>(),
-            };
-            solicitudDenuncia = _documentoservice.registrarSolicitudDenuncia(solicitudDenuncia, url2);
-
-            //Creacionde del Obj. Expediente de Denuncia y registro en coleccion de expedientes
-            Cliente cliente = new Cliente()
-            {
-                nombre = documento.nombrecliente,
-                tipodocumento = documento.tipodocumento,
-                numerodocumento = documento.numerodocumento
-            };
-            Expediente expediente = new Expediente();
-            expediente.tipo = "Denuncia";
-            expediente.cliente = cliente;
-            expediente.fechainicio = DateTime.Now;
-            expediente.fechafin = null;
-            expediente.documentos = new List<DocumentoExpediente>()
-            {
-                new DocumentoExpediente(){
-                    indice = 1,
-                    iddocumento = solicitudDenuncia.id,
-                    tipo="SolicitudDenuncia",
-                    fechacreacion = solicitudDenuncia.contenido.fechaentrega,
-                    fechaexceso=solicitudDenuncia.contenido.fechaentrega.AddDays(10),
-                    fechademora = null
-                }
-            };
-            expediente.derivaciones = new List<Derivacion>();
-            expediente.estado = "solicitado";
-            expediente = _expedienteservice.saveExpediente(expediente);
-            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, solicitudDenuncia.id, "josue");
-            ExpedienteDocumentoSDDTO expedienteDocumentoEFNDTO = new ExpedienteDocumentoSDDTO();
-            expedienteDocumentoEFNDTO.expediente = expediente;
-            expedienteDocumentoEFNDTO.solicitudD = solicitudDenuncia;
-            //actualizacion de bandeja de salida del usuario
-            //_documentoservice.updateBandejaSalida(expediente.id, solicitudDenuncia.id, expedientewrapper.idusuarioactual);
-
-            //creacion de obj ExpedienteBandejaDTO
-            /*DocumentoDTO doc = new DocumentoDTO();
-            doc.id = solicitudDenuncia.id;
-            doc.id = solicitudDenuncia.tipo;
-            doc.historialcontenido = new List<ContenidoVersion>();
-            doc.historialproceso = new List<Proceso>();
-            doc.contenido = solicitudDenuncia.contenido;
-            doc.estado = solicitudDenuncia.estado;
-
-            ExpedienteBandejaDTO bandejaexpdto = new ExpedienteBandejaDTO();
-            bandejaexpdto.idexpediente = expediente.id;
-            bandejaexpdto.cliente = expediente.cliente;
-            bandejaexpdto.documento = doc;
-            bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
-            bandejaexpdto.tipo = expediente.tipo;
-
-            return bandejaexpdto;*/
-            return expedienteDocumentoEFNDTO;
+            return solicitudDenuncia;
         }
 
         [HttpPost("documentosef")]
         //public async Task<ActionResult<ExpedienteBandejaDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
-        public async Task<ActionResult<ExpedienteDocumentoEFDTO>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
+        public async Task<ActionResult<SolicitudExpedicionFirma>> RegistrarDocumentoSEF(ExpedienteWrapper expedientewrapper)
         {
             //Conversion de Obj a tipo SolicitudExpedicionFirmaDTO
             SolicitudExpedicionFirmaDTO solicitudExpedicionFirmasDTO = new SolicitudExpedicionFirmaDTO();
@@ -324,84 +170,14 @@ namespace SISGED.Server.Controllers
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "solicitudexpedicionfirma");
             }
 
-            //Registro de objeto ContenidoSolicitudExpedicionFirma y registro en coleccion documentos
-            ContenidoSolicitudExpedicionFirma contenidoSEF = new ContenidoSolicitudExpedicionFirma()
-            {
-                titulo = solicitudExpedicionFirmasDTO.contenidoDTO.titulo,
-                descripcion = solicitudExpedicionFirmasDTO.contenidoDTO.descripcion,
-                fecharealizacion = DateTime.Now,
-                cliente = solicitudExpedicionFirmasDTO.nombrecliente,
-                codigo = solicitudExpedicionFirmasDTO.contenidoDTO.codigo,
-                url = urlData
-            };
-            SolicitudExpedicionFirma documentoSEF = new SolicitudExpedicionFirma()
-            {
-                tipo = "SolicitudExpedicionFirma",
-                contenido = contenidoSEF,
-                estado = "pendiente",
-                historialcontenido = new List<ContenidoVersion>(),
-                urlanexo=url2,
-                historialproceso = new List<Proceso>()
-            };
-            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(documentoSEF, url2);
-
-            //Creacion del objeto Expediente y registro en la coleccion Expedientes
-            Cliente cliente = new Cliente()
-            {
-                nombre = solicitudExpedicionFirmasDTO.nombrecliente,
-                tipodocumento = solicitudExpedicionFirmasDTO.tipodocumento,
-                numerodocumento = solicitudExpedicionFirmasDTO.numerodocumento
-            };
-            Expediente expediente = new Expediente();
-            expediente.tipo = "Expedicion de Firmas";
-            expediente.cliente = cliente;
-            expediente.fechainicio = DateTime.Now;
-            expediente.fechafin = null;
-            expediente.documentos = new List<DocumentoExpediente>()
-            {
-                new DocumentoExpediente(){
-                    indice = 1,
-                    iddocumento = documentoSEF.id,
-                    tipo="SolicitudExpedicionFirma",
-                    fechacreacion = documentoSEF.contenido.fecharealizacion,
-                    fechaexceso = documentoSEF.contenido.fecharealizacion.AddDays(10),
-                    fechademora = null
-                }
-            };
-            expediente.derivaciones = new List<Derivacion>();
-            expediente.estado = "solicitado";
-            expediente = _expedienteservice.saveExpediente(expediente);
-            _bandejaService.InsertarBandejaEntradaUsuario(expediente.id, documentoSEF.id, "josue");
-            ExpedienteDocumentoEFDTO expedienteDocumentoEFNDTO = new ExpedienteDocumentoEFDTO();
-            expedienteDocumentoEFNDTO.expediente = expediente;
-            expedienteDocumentoEFNDTO.solicitudEF = documentoSEF;
-            return expedienteDocumentoEFNDTO;
-
-
-            //Actualizacion de la bandeja de salida del usuario con el expediente
-            ///_documentoservice.updateBandejaSalida(expediente.id, documentoSEF.id, expedientewrapper.idusuarioactual);
-
-            //Creacion del objeto ExpedienteBandejaDTO y retorno
-            /*DocumentoDTO doc = new DocumentoDTO();
-            doc.id = documentoSEF.id;
-            doc.id = documentoSEF.tipo;
-            doc.historialcontenido = new List<ContenidoVersion>();
-            doc.historialproceso = new List<Proceso>();
-            doc.contenido = documentoSEF.contenido;
-            doc.estado = documentoSEF.estado;
-
-            ExpedienteBandejaDTO bandejaexpdto = new ExpedienteBandejaDTO();
-            bandejaexpdto.idexpediente = expediente.id;
-            bandejaexpdto.cliente = expediente.cliente;
-            bandejaexpdto.documento = doc;
-            bandejaexpdto.documentosobj = new List<DocumentoDTO>() { doc };
-            bandejaexpdto.tipo = expediente.tipo;
+            SolicitudExpedicionFirma documentoSEF = new SolicitudExpedicionFirma();
+            documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(expedientewrapper, url2, urlData);
             
-            return bandejaexpdto;*/
+            return documentoSEF;
         }
 
         [HttpPost("registrarsolicitudinicial")]
-        public async Task<ActionResult<SolicitudInicial>> RegistrarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<ExpedienteDocumentoSIDTO>> RegistrarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
             //Obtenemos los datos del expedientewrapper
             SolicitudInicialDTO doc = new SolicitudInicialDTO();
@@ -470,7 +246,7 @@ namespace SISGED.Server.Controllers
             expedienteDocumentoSIDTO.expediente = expediente;
             expedienteDocumentoSIDTO.solicitudI = soliInicial;
 
-            return soliInicial;
+            return expedienteDocumentoSIDTO;
         }
 
 

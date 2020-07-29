@@ -67,9 +67,11 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
-    .option-color{
-        color:black !important;
+
+    .option-color {
+        color: black !important;
     }
+
     .mat-danger-c {
         color: #ff3333 !important;
         border: 1px solid #ff3333 !important;
@@ -77,6 +79,7 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+
     .mat-pay-c {
         color: #5B97FF !important;
         border: 1px solid #5B97FF !important;
@@ -84,6 +87,7 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+
     .mat-disabled-c {
         color: #818181 !important;
         border: 1px solid #818181 !important;
@@ -99,6 +103,7 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+
         .mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover, .mat-dark-c:hover {
             background-color: none !important;
             transform: scale(1.07,1.07) !important;
@@ -144,8 +149,9 @@
         justify-content: center;
         align-items: center;
     }
+
     .formulario-eleccion .mdc-dialog__surface {
-        width:350px !important;
+        width: 350px !important;
     }
 </style>
 
@@ -159,10 +165,7 @@
     @if (cargatabla == true)
     {
         <div class="loader-block">
-            <div class="spinner-border" style="        width: 7rem;
-        height: 7rem;
-        color: #ccc
-" role="status">
+            <div class="spinner-border" style="width: 7rem; height: 7rem; color: #ccc;" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
@@ -171,66 +174,67 @@
     {
 
 
-<MatTable Items="docs" class="mat-elevation-z5" Style="width:auto">
-    <MatTableHeader>
-        <th>
-            <span class="table-header">Titulo</span>
-        </th>
-        <th>
-            <span class="table-header">Tipo</span>
-        </th>
-        <th>
-            <span class="table-header">Estado</span>
-        </th>
-        <th>
-            <span class="table-header">Fecha</span>
-        </th>
-        <th>
-            <span class="table-header">Funciones</span>
-        </th>
-    </MatTableHeader>
-    <MatTableRow>
+        <MatTable Items="docs" class="mat-elevation-z5" Style="width:auto">
+            <MatTableHeader>
+                <th>
+                    <span class="table-header">Titulo</span>
+                </th>
+                <th>
+                    <span class="table-header">Tipo</span>
+                </th>
+                <th>
+                    <span class="table-header">Estado</span>
+                </th>
+                <th>
+                    <span class="table-header">Fecha</span>
+                </th>
+                <th>
+                    <span class="table-header">Funciones</span>
+                </th>
+            </MatTableHeader>
+            <MatTableRow>
 
-        @{
-                int index = context.historialcontenido.Count;
+                @{
+                        int index = context.historialcontenido.Count;
 
-            <td>
-                <span class="table-row">@context.contenido.titulo</span>
-            </td>
-            <td>
-                <span class="table-row">@context.tipo</span>
-            </td>
-            <td>
-                <span class="table-row">@context.estado</span>
-            </td>
-            @if (index > 0)
-                {
-                <td>
-                    <span class="table-row">@context.historialcontenido[index - 1].fechamodificacion</span>
-                </td>
-                }
-                else
-                {
-                <td>
-                    <span class="table-row">No hay historial disponible</span>
-                </td>
-                }
-            <td>
-                @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido") { activator = true; }
-                    else { activator = false; }
-                <div class="button-container-lvl">
-                    <div class="button-container">
-                        <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
-                    </div>
-                    <div class="button-container">
-                        @if (activator == false)
-                            {
-                            <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
+                    <td>
+                        <span class="table-row">@context.contenido.titulo</span>
+                    </td>
+                    <td>
+                        <span class="table-row">@context.tipo</span>
+                    </td>
+                    <td>
+                        <span class="table-row">@context.estado</span>
+                    </td>
+                    @if (index > 0)
+                        {
+                        <td>
+                            <span class="table-row">@context.historialcontenido[index - 1].fechamodificacion</span>
+                        </td>
+                        }
+                        else
+                        {
+                        <td>
+                            <span class="table-row">No hay historial disponible</span>
+                        </td>
+                        }
+                    /**/
+                    <td>
+                        @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido") { activator = true; }
+                            else { activator = false; }
+                        <div class="button-container-lvl">
+                            <div class="button-container">
+                                <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
+                            </div>
+                            <div class="button-container">
+                                @if (activator == false)
+                                    {
+                                    <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
 
-                            }
-                            else
-                            {
-                            <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
+                                    }
+                                    else
+                                    {
+                                    <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
 
                             }
                     </div>
@@ -244,185 +248,176 @@
                             {
                             <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@(e => abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
 
-                            }
-                    </div>
-                    <div class="button-container">
-                        @if (context.estado == "emitido")
-                            {
-                            <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
-                            }
-                    </div>
+                                    }
+                            </div>
+                            <div class="button-container">
+                                @if (context.estado == "emitido")
+                                    {
+                                    <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
+                                    }
+                            </div>
 
 
-                </div>
+                        </div>
 
 
-            </td>
-        }
+                    </td>
+                }
 
 
 
-    </MatTableRow>
-</MatTable>
+            </MatTableRow>
+        </MatTable>
 
     }
 </div>
-  
-    <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-        <RegistrarSolicitudInicial></RegistrarSolicitudInicial>
-        <MatDialogActions>
-            <MatButton OnClick="@OkClick">Cancelar</MatButton>
-        </MatDialogActions>
-    </MatDialog>
 
-    <MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
-        <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
-        <CascadingValue Value="this">
-            <ModificarSolicitudInicial docs="docs"
-                             cerrarDialogoModificacion="cerrarDialogoModificacion"
-                             solicinicialdto="solicinicialdto" />
-        </CascadingValue>
-        <MatDialogActions>
-            <MatButton OnClick="@OkClick">Cancelar</MatButton>
-        </MatDialogActions>
-    </MatDialog>
+<MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
+    <RegistrarSolicitudInicial></RegistrarSolicitudInicial>
+    <MatDialogActions>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
+    </MatDialogActions>
+</MatDialog>
 
-    <MatDialog @bind-IsOpen="@dialogIsOpen_VerDetalles">
-        <MatDialogTitle>Detalles de la Solicitud</MatDialogTitle>
-            <CascadingValue Value="this">
-                 <DetalleSolicitudInicial solicinicialdto="solicinicialdto" cerrarDialogoDetalle="cerrarDialogoDetalle" />
-            </CascadingValue>
-        <MatDialogActions>
-            <MatButton OnClick="@OkClick">Cancelar</MatButton>
-        </MatDialogActions>
-    </MatDialog>
+<MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
+    <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
+    <CascadingValue Value="this">
+        <ModificarSolicitudInicial docs="docs"
+                                   cerrarDialogoModificacion="cerrarDialogoModificacion"
+                                   solicinicialdto="solicinicialdto" />
+    </CascadingValue>
+    <MatDialogActions>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
+    </MatDialogActions>
+</MatDialog>
 
-    @code {
+<MatDialog @bind-IsOpen="@dialogIsOpen_VerDetalles">
+    <MatDialogTitle>Detalles de la Solicitud</MatDialogTitle>
+    <CascadingValue Value="this">
+        <DetalleSolicitudInicial solicinicialdto="solicinicialdto" cerrarDialogoDetalle="cerrarDialogoDetalle" />
+    </CascadingValue>
+    <MatDialogActions>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
+    </MatDialogActions>
+</MatDialog>
 
-        string TipoSolicitud;
-        string TipoSolicitud2;
-        string tipo_front;
-        bool activator;
+@code {
 
-        public bool cargatabla { get; set; } = false;
-        private bool dialogIsOpen_Registrar = false;
-        private bool dialogIsOpen_Modificar = false;
-        private bool dialogIsOpen_VerDetalles = false;
-        bool dialogIsOpen_Cancelar = false;
+    string TipoSolicitud;
+    string TipoSolicitud2;
+    string tipo_front;
+    bool activator;
 
-        bool Registrar_SolicDenuncia = false;
-        bool Registrar_SolicBPN = false;
-        bool Registrar_SolicEF = false;
-        [CascadingParameter]
-        MainLayout layout { get; set; }
-        [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    public bool cargatabla { get; set; } = false;
+    private bool dialogIsOpen_Registrar = false;
+    private bool dialogIsOpen_Modificar = false;
+    private bool dialogIsOpen_VerDetalles = false;
+    bool dialogIsOpen_Cancelar = false;
 
-        public SolicitudInicialDTO solicinicialdto = new SolicitudInicialDTO();
-        public List<DocumentoADTO2> docs { get; set; } = new List<DocumentoADTO2>();
+    bool Registrar_SolicDenuncia = false;
+    bool Registrar_SolicBPN = false;
+    bool Registrar_SolicEF = false;
+    [CascadingParameter]
+    MainLayout layout { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
 
-        protected override async Task OnInitializedAsync()
+    public SolicitudInicialDTO solicinicialdto = new SolicitudInicialDTO();
+    public List<DocumentoADTO2> docs { get; set; } = new List<DocumentoADTO2>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
+        if (!httpResponse.Error)
         {
-
-            var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
-            if (!httpResponse.Error)
+            DocumentoADTO2 docActivator = new DocumentoADTO2();
+            docs = httpResponse.Response;
+            if (docActivator.estado == "revisado")
             {
-                DocumentoADTO2 docActivator = new DocumentoADTO2();
-                docs = httpResponse.Response;
-                if (docActivator.estado == "revisado")
-                {
-                    activator = true;
-                }
-                else{
-                    activator = false;
-                }
-
-
+                activator = true;
             }
             else
             {
-                Console.WriteLine("Ocurrio un error");
+                activator = false;
             }
-            cargatabla = false;
-
-
         }
-
-        void CancelButton()
+        else
         {
-            Registrar_SolicDenuncia = false;
-            Registrar_SolicBPN = false;
-            Registrar_SolicEF = false;
+            Console.WriteLine("Ocurrio un error");
         }
+        cargatabla = false;
+    }
+
+    void CancelButton()
+    {
+        Registrar_SolicDenuncia = false;
+        Registrar_SolicBPN = false;
+        Registrar_SolicEF = false;
+    }
 
 
 
-        void OpenDialogRegistrar()
+    void OpenDialogRegistrar()
+    {
+        dialogIsOpen_Registrar = true;
+        //navigationManager.NavigateTo("solicitud/crear");
+    }
+
+    public async Task OpenDialogVerDetalles(string id)
+    {
+
+        SolicitudInicialDTO docadto = new SolicitudInicialDTO();
+        var httpResponse = await repository.Get<SolicitudInicialDTO>($"api/documentos/obtenersolicitudinicial?iddoc={id}");
+        if (!httpResponse.Error)
         {
-            dialogIsOpen_Registrar = true;
-            //navigationManager.NavigateTo("solicitud/crear");
+            docadto = httpResponse.Response;
+            solicinicialdto.contenidoDTO.titulo = docadto.contenidoDTO.titulo;
+            solicinicialdto.contenidoDTO.descripcion = docadto.contenidoDTO.descripcion;
+            dialogIsOpen_VerDetalles = true;
         }
-
-        public async Task OpenDialogVerDetalles(string id)
+        else
         {
-
-            SolicitudInicialDTO docadto = new SolicitudInicialDTO();
-            var httpResponse = await repository.Get<SolicitudInicialDTO>($"api/documentos/obtenersolicitudinicial?iddoc={id}");
-            if (!httpResponse.Error)
-            {
-                docadto = httpResponse.Response;
-                solicinicialdto.contenidoDTO.titulo = docadto.contenidoDTO.titulo;
-                solicinicialdto.contenidoDTO.descripcion = docadto.contenidoDTO.descripcion;
-                dialogIsOpen_VerDetalles = true;
-                Console.WriteLine("esto está bien la ptmre");
-
-            }
-            else
-            {
-                Console.WriteLine("Algo Mal");
-            }
-
+            await swalfire.errorMessage("Ocurrio un error al abrir el modal, intentelo más tarde");
         }
-        public async Task OpenDialogModificar(string id)
+
+    }
+    public async Task OpenDialogModificar(string id)
+    {
+        SolicitudInicialDTO docadto = new SolicitudInicialDTO();
+        var httpResponse = await repository.Get<SolicitudInicialDTO>($"api/documentos/obtenersolicitudinicial?iddoc={id}");
+        if (!httpResponse.Error)
         {
-            SolicitudInicialDTO docadto = new SolicitudInicialDTO();
-            var httpResponse = await repository.Get<SolicitudInicialDTO>($"api/documentos/obtenersolicitudinicial?iddoc={id}");
-            if (!httpResponse.Error)
-            {
-                docadto = httpResponse.Response;
-                solicinicialdto.id = docadto.id;
-                solicinicialdto.contenidoDTO.titulo = docadto.contenidoDTO.titulo;
-                solicinicialdto.contenidoDTO.descripcion = docadto.contenidoDTO.descripcion;
-                dialogIsOpen_Modificar = true;
-                Console.WriteLine("esto está bien la ptmre");
-                StateHasChanged();
-            }
-            else
-            {
-                Console.WriteLine("Algo Mal");
-            }
-            
-
+            docadto = httpResponse.Response;
+            solicinicialdto.id = docadto.id;
+            solicinicialdto.contenidoDTO.titulo = docadto.contenidoDTO.titulo;
+            solicinicialdto.contenidoDTO.descripcion = docadto.contenidoDTO.descripcion;
+            dialogIsOpen_Modificar = true;
         }
-
-
-        void OpenDialogCancelar()
+        else
         {
-            dialogIsOpen_Cancelar = true;
-            //Consultar
-            //Modificar
+            await swalfire.errorMessage("Ocurrio un error al abrir el modal, intentelo más tarde");
         }
-
-        public void OkClick()
-        {
-            dialogIsOpen_Registrar = false;
-
-            dialogIsOpen_Modificar = false;
-            dialogIsOpen_VerDetalles = false;
-            dialogIsOpen_Cancelar = false;
+    }
 
 
-            TipoSolicitud = "nulo";
-        }
+    void OpenDialogCancelar()
+    {
+        dialogIsOpen_Cancelar = true;
+        //Consultar
+        //Modificar
+    }
+
+    public void OkClick()
+    {
+        dialogIsOpen_Registrar = false;
+
+        dialogIsOpen_Modificar = false;
+        dialogIsOpen_VerDetalles = false;
+        dialogIsOpen_Cancelar = false;
+
+
+        TipoSolicitud = "nulo";
+    }
 
         private async Task Pagar(string code)
         {
@@ -461,5 +456,15 @@
 
         public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
         public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
-
+    private async Task Pagar(string code)
+    {
+        var exp = await repository.Get<ExpedienteDTO>($"api/expediente/getbynested?iddoc={code}");
+        DocumentoExpediente documentoExpediente = (DocumentoExpediente)(((ExpedienteDTO)exp.Response).documentos.Last());
+        DocumentoDTO resultado = (DocumentoDTO)(await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={documentoExpediente.iddocumento}")).Response;
+        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
+        navigationManager.NavigateTo(httpResponse.Response.url);
     }
+    public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
+    public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
+
+}
