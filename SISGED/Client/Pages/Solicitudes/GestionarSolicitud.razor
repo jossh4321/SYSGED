@@ -456,15 +456,6 @@
 
         public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
         public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
-    private async Task Pagar(string code)
-    {
-        var exp = await repository.Get<ExpedienteDTO>($"api/expediente/getbynested?iddoc={code}");
-        DocumentoExpediente documentoExpediente = (DocumentoExpediente)(((ExpedienteDTO)exp.Response).documentos.Last());
-        DocumentoDTO resultado = (DocumentoDTO)(await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={documentoExpediente.iddocumento}")).Response;
-        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
-        navigationManager.NavigateTo(httpResponse.Response.url);
-    }
-    public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
-    public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
+
 
 }
