@@ -251,7 +251,7 @@
         //expedienteWrapper.idusuarioactual = sesion.usuario.id;
         //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/registrarsolicitudinicial", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudInicial>($"api/documentos/registrarsolicitudinicial", expedienteWrapper);
         if (!httpResponse.Error)
         {
             /*

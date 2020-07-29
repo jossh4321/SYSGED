@@ -389,6 +389,7 @@
             if (!httpResponse.Error)
             {
                 docadto = httpResponse.Response;
+                solicinicialdto.id = docadto.id;
                 solicinicialdto.contenidoDTO.titulo = docadto.contenidoDTO.titulo;
                 solicinicialdto.contenidoDTO.descripcion = docadto.contenidoDTO.descripcion;
                 dialogIsOpen_Modificar = true;

@@ -168,15 +168,12 @@
     public async Task handleValidSubmit()
     {
         carga = true;
-        SolicitudInicial solicinicial = new SolicitudInicial();
-        solicinicial.contenido.titulo = solicinicialdto.contenidoDTO.titulo;
-        solicinicial.contenido.descripcion = solicinicialdto.contenidoDTO.descripcion;
 
         ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
         expedienteWrapper.documento = solicinicialdto;
 
 
-        var httpResponse = await repository.Put<SolicitudInicial, SolicitudInicial>("api/documentos/actualizarDocumentoSolicitudInicial", solicinicial);
+        var httpResponse = await repository.Put<ExpedienteWrapper>("api/documentos/actualizarDocumentoSolicitudInicial", expedienteWrapper);
         if (httpResponse.Error)
         {
             Console.WriteLine("Algo Ocurrio");
