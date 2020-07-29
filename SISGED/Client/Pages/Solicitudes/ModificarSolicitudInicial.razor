@@ -184,11 +184,20 @@
         }
         else
         {
-            //docs[docs.FindIndex(ind => ind.id == usuario.id)] = usuario;
-            //listausuarios.Add(httpResponse.Response);
 
-            /*usuariodto = new UsuarioDTO();
-            _editContext = new EditContext(usuariodto);*/
+
+            //DocumentoADTO2 borrador = new DocumentoADTO2();
+            //borrador.id = solicinicialdto.id;
+            //borrador.estado = solicinicialdto.estado;
+            //borrador.contenido.titulo = solicinicialdto.contenidoDTO.titulo;
+            //borrador.historialcontenido = solicinicialdto.historialcontenido;
+            //borrador.tipo = "SolicitudInicial";
+
+            //docs[docs.FindIndex(ind => ind.id == borrador.id)] = borrador;
+            //docs.Add(httpResponse.Response);
+
+            solicinicialdto = new SolicitudInicialDTO();
+            _editContext = new EditContext(solicinicialdto);
             _editContext.MarkAsUnmodified();
             _editContext.NotifyValidationStateChanged();
             StateHasChanged();

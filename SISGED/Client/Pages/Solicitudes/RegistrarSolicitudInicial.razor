@@ -173,6 +173,8 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     [CascadingParameter]
     MainLayout layout { get; set; }
+    [Parameter] public List<DocumentoADTO2> docs { get; set; }
+    [Parameter] public EventCallback<bool> cerrarDialogoRegistro { get; set; }
     private bool loadprocess = false;
     List<string> nombres = new List<string>();
     private string imagenTemporal;
@@ -247,12 +249,11 @@
         var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoSIDTO>($"api/documentos/registrarsolicitudinicial", expedienteWrapper);
         if (!httpResponse.Error)
         {
-            
+
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
-
             SolicitudInicial solicitudinic = new SolicitudInicial();
-            solicitudinic = httpResponse.Response.solicitudI;
+
 
             expedientebandeja.documento = new DocumentoDTO();
             expedientebandeja.documentosobj = new List<DocumentoDTO>();
@@ -268,7 +269,14 @@
             expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
             await layout.Send("josue", expedientebandeja);
 
-            //StateHasChanged();
+
+            //docs.Add(solicitud);
+            solicitud = new SolicitudInicialDTO();
+            _editContext = new EditContext(solicitud);
+            _editContext.MarkAsUnmodified();
+            _editContext.NotifyValidationStateChanged();
+            StateHasChanged();
+            await cerrarDialogoRegistro.InvokeAsync(false);
             await swalfire.successMessage("Solicitud Registrada Correctamente");
         }
         else

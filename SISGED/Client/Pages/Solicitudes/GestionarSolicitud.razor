@@ -273,9 +273,9 @@
 </div>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-    <RegistrarSolicitudInicial></RegistrarSolicitudInicial>
+    <RegistrarSolicitudInicial docs="docs" cerrarDialogoRegistro="cerrarDialogoRegistro"></RegistrarSolicitudInicial>
     <MatDialogActions>
-        <MatButton OnClick="@OkClick">Cancelar</MatButton>
+        <MatButton OnClick="@OkClick" >Cancelar</MatButton>
     </MatDialogActions>
 </MatDialog>
 
@@ -397,6 +397,7 @@
         {
             await swalfire.errorMessage("Ocurrio un error al abrir el modal, intentelo más tarde");
         }
+        StateHasChanged();
     }
 
 
@@ -444,6 +445,10 @@
             var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/estadosolicitud", expedienteWrapper);
             if (!httpResponse.Error)
             {
+                //solicitud = new SolicitudInicialDTO();
+                //_editContext = new EditContext(solicitud);
+                //_editContext.MarkAsUnmodified();
+                //_editContext.NotifyValidationStateChanged();
                 StateHasChanged();
                 Console.WriteLine("cancelacion exitosa");
 
@@ -453,17 +458,18 @@
                 Console.WriteLine("Algo Mal en la cancelacion");
             }
             await swalfire.successMessage("Se canceló Satisfactoriamente");
-            StateHasChanged();
+
         }
         else
         {
             await swalfire.warningMessage($"Proceso de Modificacion de Estado Cancelado");
         }
+        StateHasChanged();
 
 
     }
 
-
+    public void cerrarDialogoRegistro(bool cerrar) => dialogIsOpen_Registrar = cerrar;
     public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
     public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
 
