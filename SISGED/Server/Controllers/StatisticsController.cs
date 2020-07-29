@@ -19,7 +19,7 @@ namespace SISGED.Server.Controllers
             _documentoservice = documentoservice;
         }
         //diagrama de documentos por area en un mes especifico
-        [HttpGet("docxmesxarea/id")]
+        [HttpGet("docxmesxarea")]
         public async Task<List<StatisticsDTOR>> estadisticaDocXMesXArea([FromQuery]int mes, [FromQuery]string area)
         {
             List<StatisticsDTOR> estadisticas = new List<StatisticsDTOR>();
@@ -27,14 +27,14 @@ namespace SISGED.Server.Controllers
             return estadisticas;
         }
         //diagrama de documentos procesados por mes
-        [HttpGet("docxmes/id")]
+        [HttpGet("docxmes")]
         public async Task<List<StatisticsDTOR>> estadisticaDocXMes([FromQuery]int mes)
         {
             List<StatisticsDTOR> estadisticas = new List<StatisticsDTOR>();
             estadisticas = await _documentoservice.estadisticasDocXMes(mes);
             return estadisticas;
         }
-        [HttpGet("docevaluadosxmes/id")]
+        [HttpGet("docevaluadosxmes")]
         public async Task<List<StatisticsDTO4R>> estadisticaDocAprobadosXMes([FromQuery]int mes)
         {
             List<StatisticsDTO4R> estadisticas = new List<StatisticsDTO4R>();

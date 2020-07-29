@@ -39,11 +39,55 @@
         color: black;
         width: inherit;
         flex-basis: 100%;
+        height: 800px;
     }
     .default-title-style {
         display: block;
         color: #808080;
     }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+
+
 </style>
 <div class="cont-chart">
     <h3>PruebaChratJS</h3>
@@ -53,7 +97,7 @@
         <MatOptionString Class="option-color" Value="estadistica1">Documentos Creados por Area y Mes</MatOptionString>
         <MatOptionString Class="option-color" Value="estadistica2">Documentos Creados por Mes</MatOptionString>
         <MatOptionString Class="option-color" Value="estadistica3">Documentos Caducados por Mes </MatOptionString>
-        <MatOptionString Class="option-color" Value="estadistica4">Documentos Aprobados por la Junta Directiva</MatOptionString>
+        <MatOptionString Class="option-color" Value="estadistica4">Documentos Evaluados por la Junta Directiva</MatOptionString>
     </MatSelect>
     <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="seleccionarEstadistica"
                Class="selector-button">Seleccionar Estadistica!!!</MatButton>
@@ -96,7 +140,7 @@
 
             else if (selector == "estadistica4")
             {
-                ChildContent = @<Estadistica1DocEvaluados></Estadistica1DocEvaluados>;
+                ChildContent = @<Estadistica1DocEvaluadoJuntaDirectiva></Estadistica1DocEvaluadoJuntaDirectiva>;
             }
         }
     }
