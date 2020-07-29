@@ -1344,7 +1344,7 @@ namespace SISGED.Server.Services
             {
                 titulo = doc.contenido.titulo,
                 descripcion = doc.contenido.descripcion,
-                fechacreacion = doc.contenido.fechacreacion
+                fechacreacion = doc.fechacreacion
             };
             return SIDTO;
         }

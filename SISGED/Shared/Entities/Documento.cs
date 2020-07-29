@@ -264,7 +264,6 @@ namespace SISGED.Shared.Entities
     {
         public string descripcion { get; set; }
         public string titulo { get; set; }
-        public DateTime fechacreacion { get; set; }
 
     }
 

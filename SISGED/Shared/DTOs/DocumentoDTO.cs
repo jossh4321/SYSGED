@@ -37,6 +37,7 @@ namespace SISGED.Shared.DTOs
         public Object contenido { get; set; }
         public Object estado { get; set; }
         public Object evaluacion { get; set; }
+        public DateTime fechacreacion { get; set; }
         public List<string> urlanexo { get; set; } = new List<string>();
     }
     public class DocumentoGenerarDTO

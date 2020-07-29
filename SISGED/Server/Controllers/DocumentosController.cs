@@ -425,7 +425,6 @@ namespace SISGED.Server.Controllers
             {
                 titulo = doc.contenidoDTO.titulo,
                 descripcion = doc.contenidoDTO.descripcion,
-                fechacreacion = DateTime.Now
             };
 
             SolicitudInicial soliInicial = new SolicitudInicial()
@@ -458,8 +457,8 @@ namespace SISGED.Server.Controllers
                     indice = 1,
                     iddocumento = soliInicial.id,
                     tipo  = "SolicitudInicial",
-                    fechacreacion = soliInicial.contenido.fechacreacion,
-                    fechaexceso=soliInicial.contenido.fechacreacion.AddDays(10),
+                    fechacreacion = DateTime.Now,
+                    fechaexceso= DateTime.Now.AddDays(10),
                     fechademora = null
                 }
             };
