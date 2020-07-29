@@ -150,8 +150,9 @@
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
         docs.idusuario = sesion.usuario.id;
+        docs.codigo = codigo;
+        docs.firma = imagen;
 
-        Console.WriteLine(docs.ToString());
 
         Console.WriteLine("Estoy el el API");
         var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);

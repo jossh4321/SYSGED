@@ -14,14 +14,14 @@ namespace SISGED.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DocumentosController: ControllerBase
+    public class DocumentosController : ControllerBase
     {
         private readonly DocumentoService _documentoservice;
         private readonly ExpedienteService _expedienteservice;
         private readonly BandejaService _bandejaService;
         private readonly EscriturasPublicasService _escrituraspublicasservice;
         private readonly IFileStorage _almacenadorDeDocs;
-        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs, 
+        public DocumentosController(DocumentoService documentoservice, IFileStorage almacenadorDeDocs,
             ExpedienteService expedienteservice, EscriturasPublicasService escrituraspublicasservice, BandejaService bandejaService)
         {
             _documentoservice = documentoservice;
@@ -33,7 +33,7 @@ namespace SISGED.Server.Controllers
         [HttpGet]
         public ActionResult<List<Documento>> Get()
         {
-             return _documentoservice.obtenerDocumentos();
+            return _documentoservice.obtenerDocumentos();
         }
 
         #region Registros de Documentos
@@ -55,7 +55,7 @@ namespace SISGED.Server.Controllers
                 }
             }
             OficioDesignacionNotario documentoODN = new OficioDesignacionNotario();
-             documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente, url2);
+            documentoODN = _documentoservice.registrarOficioDesignacionNotario(expediente, url2);
             return documentoODN;
         }
 
@@ -172,7 +172,7 @@ namespace SISGED.Server.Controllers
 
             SolicitudExpedicionFirma documentoSEF = new SolicitudExpedicionFirma();
             documentoSEF = _documentoservice.registrarSolicitudExpedicionFirma(expedientewrapper, url2, urlData);
-            
+
             return documentoSEF;
         }
 
@@ -427,7 +427,7 @@ namespace SISGED.Server.Controllers
             }
 
             ExpedienteDTO expedientePorConsultar = _expedienteservice.getById(expedientewrapper.idexpediente);
-            DocumentoExpediente documentosolicitud =  expedientePorConsultar.documentos.Find(x => x.tipo == "SolicitudBPN");
+            DocumentoExpediente documentosolicitud = expedientePorConsultar.documentos.Find(x => x.tipo == "SolicitudBPN");
 
             return _documentoservice.registrarResultadoBPN(resultadoBPNDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada, documentosolicitud.iddocumento);
         }
@@ -439,8 +439,14 @@ namespace SISGED.Server.Controllers
             return _documentoservice.modificarEstado(documento);
         }
         [HttpPut("generardocumento")]
-        public ActionResult<Documento> GenerarEstado(DocumentoGenerarDTO documento)
+        public async Task<ActionResult<Documento>> GenerarEstado(DocumentoGenerarDTO documento)
         {
+            if (!string.IsNullOrWhiteSpace(documento.firma))
+            {
+                var solicitudBytes2 = Convert.FromBase64String(documento.firma);
+                documento.firma = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "png", "resultadobpn");
+            }
+
             return _documentoservice.generarDocumento(documento);
         }
 
@@ -457,7 +463,7 @@ namespace SISGED.Server.Controllers
         {
             return await _documentoservice.ObtenerSolicitudesUsuario(numerodocumento);
         }
-       
+
         [HttpGet("documentoodn")]
         public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)
         {
@@ -519,7 +525,7 @@ namespace SISGED.Server.Controllers
         public async Task<ActionResult<SolicitudExpedienteNotarioDTO>> obtenerSolicitudExpedienteNot([FromQuery] string iddoc)
         {
             return _documentoservice.obtenerSolicitudExpedienteNotario(iddoc);
-            
+
         }
         [HttpGet("documentodto")]
         public async Task<ActionResult<DocumentoDTO>> obtenerDocumento([FromQuery] string iddoc)

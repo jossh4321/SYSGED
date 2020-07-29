@@ -133,6 +133,9 @@
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
         docs.idusuario = sesion.usuario.id;
+        docs.codigo = codigo;
+        docs.firma = imagen;
+
         var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);
         if (responseHttp.Error)
         {

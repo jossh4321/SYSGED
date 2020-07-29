@@ -140,6 +140,10 @@ namespace SISGED.Server.Services
             Expediente expediente = new Expediente();
             expediente.id = expedienteWrapper.idexpediente;
             expediente.tipo = "Busqueda Protocolo Notarial";
+            
+
+            _documentos.InsertOne(solicitudBPN);
+
             expediente.documentos = new List<DocumentoExpediente>()
             {
                 new DocumentoExpediente(){
@@ -152,9 +156,7 @@ namespace SISGED.Server.Services
                 }
             };
 
-            _documentos.InsertOne(solicitudBPN);
-
-             _expedienteservice.updateExpedientBySolicitudInitial(expediente);
+            _expedienteservice.updateExpedientBySolicitudInitial(expediente);
 
             var filter = Builders<Documento>.Filter.Eq("id", expedienteWrapper.documentoentrada);
             var update = Builders<Documento>.Update
@@ -266,6 +268,12 @@ namespace SISGED.Server.Services
             Expediente expediente = new Expediente();
             expediente.id = expedientewrapper.idexpediente;
             expediente.tipo = "Expedicion de Firmas";
+            
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+
+            _documentos.InsertOne(documentoSEF);
+
             expediente.documentos = new List<DocumentoExpediente>()
             {
                 new DocumentoExpediente(){
@@ -277,10 +285,6 @@ namespace SISGED.Server.Services
                     fechademora = null
                 }
             };
-            expediente.derivaciones = new List<Derivacion>();
-            expediente.estado = "solicitado";
-
-            _documentos.InsertOne(documentoSEF);
 
             _expedienteservice.updateExpedientBySolicitudInitial(expediente);
 
@@ -332,6 +336,12 @@ namespace SISGED.Server.Services
             Expediente expediente = new Expediente();
             expediente.id = expedientewrapper.idexpediente;
             expediente.tipo = "Denuncia";
+           
+            expediente.derivaciones = new List<Derivacion>();
+            expediente.estado = "solicitado";
+
+            _documentos.InsertOne(solicitudDenuncia);
+
             expediente.documentos = new List<DocumentoExpediente>()
             {
                 new DocumentoExpediente(){
@@ -343,10 +353,6 @@ namespace SISGED.Server.Services
                     fechademora = null
                 }
             };
-            expediente.derivaciones = new List<Derivacion>();
-            expediente.estado = "solicitado";
-
-            _documentos.InsertOne(solicitudDenuncia);
 
             _expedienteservice.updateExpedientBySolicitudInitial(expediente);
 
@@ -461,6 +467,20 @@ namespace SISGED.Server.Services
 
             UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             _bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
+
+            ContenidoVersion contenidoVersion = new ContenidoVersion();
+
+            contenidoVersion.version = 1;
+            contenidoVersion.url = DateTime.UtcNow.AddHours(-5).ToString();
+
+            var UpdateFilter = Builders<Documento>.Update
+                                                       .Set("contenido.codigo", documento.codigo)
+                                                       .Set("contenido.firma", documento.firma)
+                                                       .Push("historialcontenido", contenidoVersion);
+
+            var UpdateQuery = Builders<Documento>.Filter.Eq("id", documento.iddocumento);
+
+            _documentos.UpdateOne(UpdateQuery, UpdateFilter);
 
             return doc;
         }

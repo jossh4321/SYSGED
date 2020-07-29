@@ -102,7 +102,8 @@ namespace SISGED.Server.Services
             Proceso proceso = new Proceso();
             proceso.area = derivacion.areaprocedencia;
             proceso.fechaemision = DateTime.Now;
-            proceso.idemisor = userId;
+            proceso.idemisor = derivacion.usuarioemisor;
+            proceso.idreceptor = userId;
 	
             UpdateDefinition<Documento> updateDocumento = Builders<Documento>.Update.Push("historialproceso", proceso);
             _documentos.UpdateOne(doc => doc.id == bandejaDocumento.iddocumento, updateDocumento);
