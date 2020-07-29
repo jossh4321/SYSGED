@@ -121,6 +121,9 @@
         if (e.Value.ToString() == "Dictamen") ChildContent = @<RegistrarDictamen></RegistrarDictamen>;
         if (e.Value.ToString() == "Resolucion") ChildContent = @<RegistrarResolucion></RegistrarResolucion>;
         if (e.Value.ToString() == "Apelacion") ChildContent = @<RegistrarApelacion></RegistrarApelacion>;
+        if (e.Value.ToString() == "SolicitudBPN") ChildContent =@<RegistrarSolicBPN></RegistrarSolicBPN>;
+        if (e.Value.ToString() == "SolicitudExpedicionFirma") ChildContent = @<RegistrarSolicExpedicionF></RegistrarSolicExpedicionF>;
+        if(e.Value.ToString() == "SolicitudDenuncia") ChildContent = @<RegistrarSolicDenuncias></RegistrarSolicDenuncias>;
         StateHasChanged();
-}
+    }
 }

@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #A6A6A6;
@@ -89,6 +90,7 @@
         border-radius: 5px 5px 0px 0px;
         border-bottom: 1px solid black;
     }
+
     .base-icon {
         display: flex;
         flex-basis: 8%;
@@ -240,7 +242,7 @@
                                         <span class="good-msg">Correcto</span>
                                     </div>
                                 </div>
-                               @if (index>0)
+                                @if (index > 0)
                                 {
                                     <div class="base-icon" @onclick="@(() => removeparticipante(index))">
                                         <MatIcon Icon="remove_circle_outline"></MatIcon>
@@ -278,8 +280,8 @@
                                     </div>
                                 </div>
                             </div>-->
-                            
-                            
+
+
 
                         }
                         <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => solicitudbpn.contenidoDTO.otorganteslista)">
@@ -342,7 +344,7 @@
                         </MatTextField>
                     </div>
                 </MatTab>-->
-                
+
             </MatTabGroup>
         </div>
 
@@ -434,43 +436,28 @@
             usuario.id = sesion.usuario.id;
             ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
             expedienteWrapper.documento = solicitudbpn;
-            //expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+            expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
             //expedienteWrapper.idusuarioactual = sesion.usuario.id;
-            //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+            expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/documentosolicbpn", expedienteWrapper);
+            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudBPN>($"api/documentos/documentosolicbpn", expedienteWrapper);
             if (!httpResponse.Error)
             {
+
                 ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-                expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
+                expedientebandeja = workspace.expedienteseleccionado;
+
                 SolicitudBPN solicitudBPN = new SolicitudBPN();
-                solicitudBPN = httpResponse.Response.solicitduBPN;
-                expedientebandeja.documento = new DocumentoDTO();
-                expedientebandeja.documentosobj = new List<DocumentoDTO>();
-                expedientebandeja.cliente = new Cliente();
+                solicitudBPN = httpResponse.Response;
+
                 expedientebandeja.documento.id = solicitudBPN.id;
                 expedientebandeja.documento.tipo = solicitudBPN.tipo;
                 expedientebandeja.documento.historialcontenido = solicitudBPN.historialcontenido;
                 expedientebandeja.documento.historialproceso = solicitudBPN.historialproceso;
                 expedientebandeja.documento.contenido = solicitudBPN.contenido;
                 expedientebandeja.documento.estado = solicitudBPN.estado;
-                expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
-                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-                expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
-                await layout.Send("josue", expedientebandeja);
-                /*
-                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-                expedientebandeja = workspace.expedienteseleccionado;
-                OficioBPN oficiobpn = new OficioBPN();
-                oficiobpn = httpResponse.Response;
-                expedientebandeja.documento.id = oficiobpn.id;
-                expedientebandeja.documento.tipo = oficiobpn.tipo;
-                expedientebandeja.documento.historialcontenido = oficiobpn.historialcontenido;
-                expedientebandeja.documento.historialproceso = oficiobpn.historialproceso;
-                expedientebandeja.documento.contenido = oficiobpn.contenido;
-                expedientebandeja.documento.estado = oficiobpn.estado;
-                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
+                expedientebandeja.tipo = "Busqueda Protocolo Notarial";
 
                 Item itemSalida = new Item()
                 {
@@ -483,20 +470,25 @@
                     cliente = expedientebandeja.cliente,
                     itemstatus = "registrado"
                 };
-                //workspace.UpdateDocRegistrado(itemSalida);
-                //workspace.UpdateTools("Registrar Documento");
+
+                workspace.UpdateDocRegistrado(itemSalida);
+                workspace.UpdateTools("Registrar Documento");
+
                 DocumentoDTO documentoDTO = new DocumentoDTO();
-                documentoDTO.id = oficiobpn.id;
-                documentoDTO.tipo = oficiobpn.tipo;
-                documentoDTO.estado = oficiobpn.estado;
-                documentoDTO.contenido = oficiobpn.contenido;
-                documentoDTO.historialcontenido = oficiobpn.historialcontenido;
-                documentoDTO.historialproceso = oficiobpn.historialproceso;
-                documentoDTO.urlanexo = oficiobpn.urlanexo;
+                documentoDTO.id = solicitudBPN.id;
+                documentoDTO.tipo = solicitudBPN.tipo;
+                documentoDTO.estado = solicitudBPN.estado;
+                documentoDTO.contenido = JsonConvert.SerializeObject(solicitudBPN.contenido);
+                documentoDTO.historialcontenido = solicitudBPN.historialcontenido;
+                documentoDTO.historialproceso = solicitudBPN.historialproceso;
+                documentoDTO.urlanexo = solicitudBPN.urlanexo;
+
                 workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
                 workspace.expedienteseleccionado.documento = documentoDTO;
+                workspace.expedienteseleccionado.tipo = "Busqueda Protocolo Notarial";
 
-                StateHasChanged();*/
+                StateHasChanged();
+
                 await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
             }
             else
@@ -542,51 +534,4 @@
             return httpResponse.Response;
         }
     }
-    /*
-    public SolicitudBPNDTO docSolicitudBPNDTO = new SolicitudBPNDTO()
-    {
-        tipo = "SolicitudBPN",
-        estado = "Pendiente",
-        historialcontenido = new List<ContenidoVersion>()
-        {
-            new ContenidoVersion() { version = 1, url = "www.cnl/solicitud_BPN/1", fechamodificacion = new DateTime() }
-        },
-        historialproceso = new List<Proceso>(),
-        contenidoDTO = new ContenidoSolicitudBPNDTO()
-        {
-            idcliente = new Usuario()
-            {
-                id = "5eaba912d1768c4570dc1a80",
-                tipo = "Cliente",
-                usuario = "user1",
-                clave = "pass1",
-                datos = new Datos()
-                {
-                    nombre = "Juan Carlos",
-                    apellido = "Pillaca",
-                    tipodocumento = "D.N.I.",
-                    numerodocumento = "12345678",
-                    email = "jcPillaca@urp.edu.pe"
-                }
-            },
-            direccionoficio = "av. surco 123",
-            idnotario = new Notario()
-            {
-                id = "5ecb15b38e511a1d5cca29c4",
-                nombre = "Fernando Jose",
-                apellido = "Ezzpinoza Paredes",
-                dni = "4321",
-                colegiatura = "4H5H4K6K6V5J233O6HU6U676",
-                email = "fernandoparedes@cnl.gob.pe"
-            },
-            actojuridico = "Mancomunacion de vienes por casamiento civil",
-            tipoprotocolo = "minuta",
-            //Corregir
-            //otorgantes = new List<string>() { "jose olaya", "francisco bolognesi", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo", "alejandro toledo" },
-            fecharealizacion = DateTime.Now
-        }
-    };
-    */
-
-
 }

@@ -283,5 +283,20 @@ namespace SISGED.Server.Services
             return expedientes;            
         }
 
+        public Expediente updateExpedientBySolicitudInitial(Expediente expediente)
+        {
+
+            var updateExpediente = Builders<Expediente>.Update
+                                                            .Set("tipo", expediente.tipo)
+                                                            .Push("documentos", expediente.documentos.ElementAt(0));
+
+            var queryExpediente = Builders<Expediente>.Filter.Eq("id", expediente.id);
+
+            return _expedientes.FindOneAndUpdate(queryExpediente, updateExpediente, new FindOneAndUpdateOptions<Expediente> 
+            {
+                ReturnDocument = ReturnDocument.After
+            });
+        }
+
     }
 }

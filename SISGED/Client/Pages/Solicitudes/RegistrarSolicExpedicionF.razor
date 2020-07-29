@@ -2,6 +2,7 @@
 @inject IRepository repository
 @inject ISwalFireMessage swalfire
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .div-form {
         background-color: #a6a6a6;
@@ -68,22 +69,22 @@
             <MatTab Label="Datos Generales">
 
 
-                
 
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
-                    <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitud"
-                                  @oninput='@(e => KeyUp(e,"codigo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
 
-                    <div class="incorrecto">
-                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.codigo)" />
-                    </div>
-                    <div class="correcto">
-                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                        <span class="good-msg">Correcto</span>
-                    </div>
-                </div>
+                @*<div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.codigo)">
+                        <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.codigo" Class="text-field-style" Label="Código de solicitud"
+                                      @oninput='@(e => KeyUp(e,"codigo",solicitudexpedicionfirma.contenidoDTO))'></MatTextField>
+
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                            <ValidationMessage For="@(() => solicitudexpedicionfirma.contenidoDTO.codigo)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                            <span class="good-msg">Correcto</span>
+                        </div>
+                    </div>*@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitudexpedicionfirma.contenidoDTO.titulo)">
                     <MatTextField @bind-Value="@solicitudexpedicionfirma.contenidoDTO.titulo" Class="text-field-style" Label="Título del solicitud"
@@ -115,11 +116,11 @@
                 <InputFile Label="" ImagenSeleccionada="ImagenSeleccionada"></InputFile>
 
                 @*<div class="field-container">
-                    <MatButton type="submit"
-                               Disabled="@loadprocess"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
-                </div>*@
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar</MatButton>
+                    </div>*@
             </MatTab>
             <MatTab Label="Subir Anexo">
                 <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2" FileNames="FileName"></DragnDrop>
@@ -225,7 +226,10 @@
             //solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
             expedienteWrapper.documento = solicitudexpedicionfirma;
             expedienteWrapper.idusuarioactual = sesion.usuario.id;
-            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoEFDTO>("api/documentos/documentosef", expedienteWrapper);
+            expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+            expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+
+            var httpResponse = await repository.Post<ExpedienteWrapper, SolicitudExpedicionFirma>("api/documentos/documentosef", expedienteWrapper);
 
             if (httpResponse.Error)
             {
@@ -234,64 +238,55 @@
             else
             {
                 ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-                expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
-                SolicitudExpedicionFirma solicitudEF = new SolicitudExpedicionFirma();
-                solicitudEF = httpResponse.Response.solicitudEF;
-                expedientebandeja.documento = new DocumentoDTO();
-                expedientebandeja.documentosobj = new List<DocumentoDTO>();
-                expedientebandeja.cliente = new Cliente();
-                expedientebandeja.documento.id = solicitudEF.id;
-                expedientebandeja.documento.tipo = solicitudEF.tipo;
-                expedientebandeja.documento.historialcontenido = solicitudEF.historialcontenido;
-                expedientebandeja.documento.historialproceso = solicitudEF.historialproceso;
-                expedientebandeja.documento.contenido = solicitudEF.contenido;
-                expedientebandeja.documento.estado = solicitudEF.estado;
-                expedientebandeja.cliente = httpResponse.Response.expediente.cliente;
-                expedientebandeja.documentosobj.Add(expedientebandeja.documento);
-                expedientebandeja.tipo = httpResponse.Response.expediente.tipo;
-                await layout.Send("josue", expedientebandeja);
-                await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
-            }
-        }
-        else
-        {
-            await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
-        }
-        /*
-         * if (solicitudexpedicionfirma.contenidoDTO.data != "" && solicitudexpedicionfirma.contenidoDTO.data != null)
-        {
-            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
-            //solicitudexpedicionfirma.contenidoDTO.cliente = solicitudexpedicionfirma.nombrecliente;
-            expedienteWrapper.documento = solicitudexpedicionfirma;
-            expedienteWrapper.idusuarioactual = "gaa";
+                expedientebandeja = workspace.expedienteseleccionado;
 
-            var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteBandejaDTO>("api/documentos/documentosef", expedienteWrapper);
-            if (httpResponse.Error)
-            {
-                await swalfire.errorMessage("Error en el servidor 505, intentelo de nuevo");
-            }
-            else
-            {
-                ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
-                expedientebandeja = httpResponse.Response;
+                SolicitudExpedicionFirma solicitudExpedicionFirma = new SolicitudExpedicionFirma();
+                solicitudExpedicionFirma = httpResponse.Response;
+
+                expedientebandeja.documento.id = solicitudExpedicionFirma.id;
+                expedientebandeja.documento.tipo = solicitudExpedicionFirma.tipo;
+                expedientebandeja.documento.historialcontenido = solicitudExpedicionFirma.historialcontenido;
+                expedientebandeja.documento.historialproceso = solicitudExpedicionFirma.historialproceso;
+                expedientebandeja.documento.contenido = solicitudExpedicionFirma.contenido;
+                expedientebandeja.documento.estado = solicitudExpedicionFirma.estado;
+                expedientebandeja.tipo = "Expedicion de Firmas";
+
                 Item itemSalida = new Item()
                 {
                     nombre = expedientebandeja.tipo,
                     valor = expedientebandeja,
                     icono = "alarm_add",
                     descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
-                    currentPlace = "outputs",
-                    originPlace = "outputs",
-                    cliente = expedientebandeja.cliente
+                    currentPlace = "workspace",
+                    originPlace = "inputs",
+                    cliente = expedientebandeja.cliente,
+                    itemstatus = "registrado"
                 };
-                workspace.UpdateComponentBandeja(itemSalida);
+
+                workspace.UpdateDocRegistrado(itemSalida);
+                workspace.UpdateTools("Registrar Documento");
+
+                DocumentoDTO documentoDTO = new DocumentoDTO();
+                documentoDTO.id = solicitudExpedicionFirma.id;
+                documentoDTO.tipo = solicitudExpedicionFirma.tipo;
+                documentoDTO.estado = solicitudExpedicionFirma.estado;
+                documentoDTO.contenido = JsonConvert.SerializeObject(solicitudExpedicionFirma.contenido);
+                documentoDTO.historialcontenido = solicitudExpedicionFirma.historialcontenido;
+                documentoDTO.historialproceso = solicitudExpedicionFirma.historialproceso;
+                documentoDTO.urlanexo = solicitudExpedicionFirma.urlanexo;
+
+                workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+                workspace.expedienteseleccionado.documento = documentoDTO;
+                workspace.expedienteseleccionado.tipo = "Busqueda Protocolo Notarial";
+
                 await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
             }
         }
         else
         {
             await swalfire.errorMessage("Debe subir un PDF obligatoriamente");
-        }*/
+        }
+
         loadprocess = false;
     }
 
