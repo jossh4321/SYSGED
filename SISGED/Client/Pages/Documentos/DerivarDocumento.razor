@@ -197,7 +197,7 @@ else
                 usuarioemisor   = sesion.usuario.id,
                 tipo            =  ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo/*"OficioDesignacionNotario"*/,//workspace.expedienteseleccionado.tipo,
                 fechaderivacion = DateTime.Now.ToLocalTime(),
-                estado          = "pendiente"}
+                estado          = "pendiente"},
         };
         expediente.derivaciones = derivaciones;
         expediente.documentos = documentoExpediente;
@@ -213,6 +213,9 @@ else
             usu = listausuarios.Where(x => x.id == usuarioId).FirstOrDefault();
             ExpedienteBandejaDTO exp = new ExpedienteBandejaDTO();
             exp = (ExpedienteBandejaDTO)httpResponse.Response;
+
+            workspace.UpdateTools("Derivar Documento");
+
             await layout.Send(usu.usuario, exp);
             await swalfire.successMessage("Documento derivado correctamente");
         }

@@ -97,10 +97,13 @@
     private async Task ConfirmacionG()
     {
         DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
-        docs.iddocumentoAnterior = workspace.expedienteseleccionado.documentosobj.ElementAt(workspace.expedienteseleccionado.documentosobj.Count - 1).id;
+        docs.iddocumentoAnterior = workspace.expedienteseleccionado.documentosobj.ElementAt(workspace.expedienteseleccionado.documentosobj.Count - 2).id;
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
         docs.idusuario = sesion.usuario.id;
+        docs.codigo = codigo;
+        docs.firma = imagen;
+
         var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);
         if (responseHttp.Error)
         {
