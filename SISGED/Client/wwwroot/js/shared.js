@@ -20,6 +20,27 @@ async function SwalFireEliminacion(titlex,estado,nombreusuario) {
     });
     return res;
 }
+
+async function SwalFireEstado(titlex) {
+    var res = false;
+    await Swal.fire({
+        title: titlex,
+        type: "info",
+        html: "¿Desea cancelar la solicitud?",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Cancelar Solicitud',
+        cancelButtonText: "Volver"
+    }).then((result) => {
+        if (result.value) {
+            res = true;
+        } else {
+            res = false;
+        }
+    });
+    return res;
+}
 function gPDF(image, nombre, documento) {
     const doc = new jsPDF();
     var pageSize = doc.internal.pageSize;
