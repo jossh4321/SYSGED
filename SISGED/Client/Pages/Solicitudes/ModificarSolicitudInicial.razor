@@ -116,19 +116,23 @@
                         </div>
 
                     </div>
-
-                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => solicinicialdto.contenidoDTO.descripcion)">
-                        <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..."
-                                      @oninput='@(e => KeyUp(e,"descripcion",solicinicialdto.contenidoDTO))'></MatTextField>
-                        <div class="incorrecto">
-                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => solicinicialdto.contenidoDTO.descripcion)" />
-                        </div>
-                        <div class="correcto">
-                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                            <span class="good-msg">Correcto</span>
+                    <div class="field-container input-group-2">
+                        <div style="background-color:ghostwhite; margin-top:10px;border-radius:4px 4px;">
+                            <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => solicinicialdto.contenidoDTO.descripcion)">
+                                <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..." TextArea="true" FullWidth="true"
+                                              @oninput='@(e => KeyUp(e,"descripcion",solicinicialdto.contenidoDTO))'></MatTextField>
+                                <div class="incorrecto">
+                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                    <ValidationMessage For="@(() => solicinicialdto.contenidoDTO.descripcion)" />
+                                </div>
+                                <div class="correcto">
+                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                    <span class="good-msg">Correcto</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    
                 </MatTab>
                 <MatTab Label="Subir Anexo">
                     <div class="field-container">

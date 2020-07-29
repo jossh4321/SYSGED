@@ -237,12 +237,12 @@
                     <div class="button-container">
                         @if (activator == false)
                             {
-                            <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@OpenDialogCancelar" Style="width:100% !important">Cancelar</MatButton>
+                            <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@(()=>abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
 
                             }
                             else
                             {
-                            <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@OpenDialogCancelar" Style="width:100% !important">Cancelar</MatButton>
+                            <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@(e => abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
 
                             }
                     </div>
@@ -361,7 +361,7 @@
             dialogIsOpen_Registrar = true;
             //navigationManager.NavigateTo("solicitud/crear");
         }
-        
+
         public async Task OpenDialogVerDetalles(string id)
         {
 
@@ -394,12 +394,14 @@
                 solicinicialdto.contenidoDTO.descripcion = docadto.contenidoDTO.descripcion;
                 dialogIsOpen_Modificar = true;
                 Console.WriteLine("esto está bien la ptmre");
-
+                StateHasChanged();
             }
             else
             {
                 Console.WriteLine("Algo Mal");
             }
+            
+
         }
 
 
@@ -430,6 +432,33 @@
             var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
             navigationManager.NavigateTo(httpResponse.Response.url);
         }
+
+        public async Task abrirNotificacionEstado(string idsolic)
+        {
+            await js.InvokeAsync<bool>("SwalFireEliminacion", "Cancelación de Solicitud");
+            SolicitudInicialDTO docadto = new SolicitudInicialDTO();
+            docadto.id = idsolic;
+            docadto.estado = "cancelado";
+            ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+            expedienteWrapper.documento = docadto;
+
+
+            var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/estadosolicitud", expedienteWrapper);
+            if (!httpResponse.Error)
+            {
+                StateHasChanged();
+                Console.WriteLine("cancelacion exitosa");
+
+            }
+            else
+            {
+                Console.WriteLine("Algo Mal en la cancelacion");
+            }
+            await swalfire.successMessage("Se canceló Satisfactoriamente");
+            StateHasChanged();
+        }
+
+
         public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
         public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
 

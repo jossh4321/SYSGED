@@ -812,6 +812,8 @@ namespace SISGED.Server.Controllers
             }
             return _documentoservice.actualizarDocumentoResolucion(expedienteWrapper, urlData, url2);
         }
+        
+
         [HttpPut("actualizarDocumentoSEN")]
         public void modificarDocumentoSEN(ExpedienteWrapper expedienteWrapper)
         {
@@ -826,6 +828,12 @@ namespace SISGED.Server.Controllers
         public void modificarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoSolicitudInicial(expedienteWrapper);
+        }
+
+        [HttpPut("estadosolicitud")]
+        public void modificarEstadoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.modifyState(expedienteWrapper);
         }
     }
 }
