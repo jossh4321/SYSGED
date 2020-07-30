@@ -85,6 +85,7 @@
     private Notario notario;
     private bool generado = false;
     private bool faltaCargar = true;
+    int paso;
 
     private async Task Generar()
     {
@@ -143,6 +144,9 @@
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
         docs.idusuario = sesion.usuario.id;
+        docs.codigo = codigo;
+        docs.firma = imagen;
+
         var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);
         if (responseHttp.Error)
         {

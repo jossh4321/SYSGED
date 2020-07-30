@@ -102,7 +102,8 @@ namespace SISGED.Server.Services
             Proceso proceso = new Proceso();
             proceso.area = derivacion.areaprocedencia;
             proceso.fechaemision = DateTime.Now;
-            proceso.idemisor = userId;
+            proceso.idemisor = derivacion.usuarioemisor;
+            proceso.idreceptor = userId;
 	
             UpdateDefinition<Documento> updateDocumento = Builders<Documento>.Update.Push("historialproceso", proceso);
             _documentos.UpdateOne(doc => doc.id == bandejaDocumento.iddocumento, updateDocumento);
@@ -281,6 +282,21 @@ namespace SISGED.Server.Services
                 .Match(filtroDocumento)
                 .ToListAsync();
             return expedientes;            
+        }
+
+        public Expediente updateExpedientBySolicitudInitial(Expediente expediente)
+        {
+
+            var updateExpediente = Builders<Expediente>.Update
+                                                            .Set("tipo", expediente.tipo)
+                                                            .Push("documentos", expediente.documentos.ElementAt(0));
+
+            var queryExpediente = Builders<Expediente>.Filter.Eq("id", expediente.id);
+
+            return _expedientes.FindOneAndUpdate(queryExpediente, updateExpediente, new FindOneAndUpdateOptions<Expediente> 
+            {
+                ReturnDocument = ReturnDocument.After
+            });
         }
 
     }

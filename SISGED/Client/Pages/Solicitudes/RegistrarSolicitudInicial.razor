@@ -118,19 +118,23 @@
                         </div>
 
                     </div>
-
-                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitud.contenidoDTO.descripcion)">
-                        <MatTextField @bind-Value="@solicitud.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..."
-                                      @oninput='@(e => KeyUp(e,"descripcion",solicitud.contenidoDTO))'></MatTextField>
-                        <div class="incorrecto">
-                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() => solicitud.contenidoDTO.descripcion)" />
-                        </div>
-                        <div class="correcto">
-                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
-                            <span class="good-msg">Correcto</span>
+                    <div class="field-container input-group-2">
+                        <div style="background-color:ghostwhite; margin-top:10px;border-radius:4px 4px;">
+                            <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicitud.contenidoDTO.descripcion)">
+                                <MatTextField @bind-Value="@solicitud.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..." TextArea="true" FullWidth="true"
+                                              @oninput='@(e => KeyUp(e,"descripcion",solicitud.contenidoDTO))'></MatTextField>
+                                <div class="incorrecto">
+                                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                                    <ValidationMessage For="@(() => solicitud.contenidoDTO.descripcion)" />
+                                </div>
+                                <div class="correcto">
+                                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                                    <span class="good-msg">Correcto</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    
                 </MatTab>
                 <MatTab Label="Subir Anexo">
                     <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada" FileNames="FileName"></DragnDrop>
@@ -169,6 +173,8 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     [CascadingParameter]
     MainLayout layout { get; set; }
+    [Parameter] public List<DocumentoADTO2> docs { get; set; }
+    [Parameter] public EventCallback<bool> cerrarDialogoRegistro { get; set; }
     private bool loadprocess = false;
     List<string> nombres = new List<string>();
     private string imagenTemporal;
@@ -230,17 +236,6 @@
         solicitud.tipodocumento = sesion.usuario.datos.tipodocumento;
         solicitud.numerodocumento = sesion.usuario.datos.numerodocumento;
         loadprocess = true;
-        /*
-        solicitudbpn.contenidoDTO.idcliente = solicitudbpn.contenidoDTO.idcliente;
-        solicitudbpn.contenidoDTO.direccionoficio = solicitudbpn.contenidoDTO.direccionoficio;
-        solicitudbpn.contenidoDTO.idnotario = solicitudbpn.contenidoDTO.idnotario;
-        solicitudbpn.contenidoDTO.actojuridico = solicitudbpn.contenidoDTO.actojuridico;
-        solicitudbpn.contenidoDTO.tipoprotocolo = solicitudbpn.contenidoDTO.tipoprotocolo;
-        solicitudbpn.contenidoDTO.otorgantes = solicitudbpn.contenidoDTO.otorgantes;
-        solicitudbpn.contenidoDTO.fecharealizacion = DateTime.Now;
-        */
-
-        //solicitudbpn.contenidoDTO.otorganteslista.Count
 
         Usuario usuario = new Usuario();
         usuario.id = sesion.usuario.id;
@@ -251,19 +246,20 @@
         //expedienteWrapper.idusuarioactual = sesion.usuario.id;
         //expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoBPNDTO>($"api/documentos/registrarsolicitudinicial", expedienteWrapper);
+        var httpResponse = await repository.Post<ExpedienteWrapper, ExpedienteDocumentoSIDTO>($"api/documentos/registrarsolicitudinicial", expedienteWrapper);
         if (!httpResponse.Error)
         {
-            /*
+
             ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
             expedientebandeja.idexpediente = httpResponse.Response.expediente.id;
             SolicitudInicial solicitudinic = new SolicitudInicial();
-            solicitudinic = httpResponse.Response.solicitduBPN;
+
+
             expedientebandeja.documento = new DocumentoDTO();
             expedientebandeja.documentosobj = new List<DocumentoDTO>();
             expedientebandeja.cliente = new Cliente();
             expedientebandeja.documento.id = solicitudinic.id;
-            expedientebandeja.documento.tipo = "Solicitud";
+            expedientebandeja.documento.tipo = "SolicitudInicial";
             expedientebandeja.documento.historialcontenido = solicitudinic.historialcontenido;
             expedientebandeja.documento.historialproceso = solicitudinic.historialproceso;
             expedientebandeja.documento.contenido = solicitudinic.contenido;
@@ -274,8 +270,14 @@
             await layout.Send("josue", expedientebandeja);
 
 
-            //StateHasChanged();*/
-            await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
+            //docs.Add(solicitud);
+            solicitud = new SolicitudInicialDTO();
+            _editContext = new EditContext(solicitud);
+            _editContext.MarkAsUnmodified();
+            _editContext.NotifyValidationStateChanged();
+            StateHasChanged();
+            await cerrarDialogoRegistro.InvokeAsync(false);
+            await swalfire.successMessage("Solicitud Registrada Correctamente");
         }
         else
         {
@@ -289,20 +291,4 @@
         loadprocess = false;
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
     }
-
-
-    private async Task<IEnumerable<Notario>> match(string searchtext)
-    {
-        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
-        if (httpResponse.Error)
-        {
-            return new List<Notario>();
-        }
-        else
-        {
-            return httpResponse.Response;
-        }
-    }
-
-
 }

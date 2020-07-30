@@ -37,6 +37,7 @@ namespace SISGED.Shared.DTOs
         public Object contenido { get; set; }
         public Object estado { get; set; }
         public Object evaluacion { get; set; }
+        public DateTime fechacreacion { get; set; }
         public List<string> urlanexo { get; set; } = new List<string>();
     }
     public class DocumentoGenerarDTO
@@ -45,6 +46,8 @@ namespace SISGED.Shared.DTOs
         public string iddocumento { get; set; } = null;
         public string idexpediente { get; set; } = null;
         public string idusuario { get; set; } = null;
+        public string codigo { get; set; }
+        public string firma { get; set; }
     }
     public class DocumentoUsuarioDTO
     {

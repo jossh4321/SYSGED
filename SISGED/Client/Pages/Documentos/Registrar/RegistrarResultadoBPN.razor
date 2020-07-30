@@ -218,6 +218,8 @@
     List<string> nombres = new List<string>();
     private string imagenTemporal2;
     private bool loadprocess = false;
+    int paso = 0;
+    int subpaso = 0;
 
     private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
     {
@@ -260,6 +262,8 @@
         }
         _editContext = new EditContext(resultadoBPNDTO);
         StateHasChanged();
+        subpaso = 1;
+        //Enviar paso=0,subpaso=1,idexp
     }
 
     private void ImagenSeleccionada2(string imagenbase64)
@@ -340,6 +344,8 @@
 
             StateHasChanged();
             await swalfire.successMessage("Resolución registrada correctamente");
+            subpaso = 2;
+            //Enviar paso=0,subpaso=2,idexp
         }
         else
         {

@@ -100,6 +100,8 @@ else
     string dialogDerivar = null;
     string rolId;
     string usuarioId;
+    int paso=2;
+    int subpaso=0;
 
     public List<Usuario> listausuarios = new List<Usuario>();
     public List<Usuario> usuarios = new List<Usuario>();
@@ -111,6 +113,8 @@ else
     {
         await getRoles();
         await getUsuarioByStatus();
+        subpaso = 1;
+        //Enviar paso=2,subpaso=1,idexp
     }
 
     #region getsRegion
@@ -139,6 +143,8 @@ else
         else
         {
             listausuarios = httpResponse.Response;
+            subpaso = 2;
+            //Enviar paso=2,subpaso=2,idexp
         }
     }
 
@@ -197,7 +203,7 @@ else
                 usuarioemisor   = sesion.usuario.id,
                 tipo            =  ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo/*"OficioDesignacionNotario"*/,//workspace.expedienteseleccionado.tipo,
                 fechaderivacion = DateTime.Now.ToLocalTime(),
-                estado          = "pendiente"}
+                estado          = "pendiente"},
         };
         expediente.derivaciones = derivaciones;
         expediente.documentos = documentoExpediente;
@@ -213,8 +219,13 @@ else
             usu = listausuarios.Where(x => x.id == usuarioId).FirstOrDefault();
             ExpedienteBandejaDTO exp = new ExpedienteBandejaDTO();
             exp = (ExpedienteBandejaDTO)httpResponse.Response;
+
+            workspace.UpdateTools("Derivar Documento");
+
             await layout.Send(usu.usuario, exp);
             await swalfire.successMessage("Documento derivado correctamente");
+            subpaso = 3;
+            //Enviar paso=2,subpaso=3,idexp
         }
 
         ////logica para enviar con HUB
@@ -234,5 +245,4 @@ else
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados" + e);
         Console.WriteLine("Algo Mal");
     }
-
 }

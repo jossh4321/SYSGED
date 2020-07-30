@@ -64,10 +64,14 @@
     private DocumentoGenerarDTO generarD { get; set; }
     private ContenidoSolicitudExpedicionFirma documento { get; set; }
     private bool generado = false;
+    int paso = 1;
+    int subpaso = 0;
     private async Task Generar()
     {
         generado = true;
         await js.InvokeVoidAsync("gPDF", imagen, sesion.usuario.datos.nombre + " " + sesion.usuario.datos.apellido, sesion.usuario.datos.tipodocumento + " : " + sesion.usuario.datos.numerodocumento);
+        subpaso = 2;
+        //Enviar paso=1,subpaso=2,idexp
     }
     private async Task GenerarPDF()
     {
@@ -84,6 +88,8 @@
     {
         documento = JsonConvert.DeserializeObject<ContenidoSolicitudExpedicionFirma>(workspace.expedienteseleccionado.documento.contenido.ToString());
         Console.WriteLine(documento.titulo);
+        subpaso = 1;
+        //Enviar paso=1,subpaso=1,idexp
     }
     private async Task ConfirmacionGenerar()
     {
@@ -96,10 +102,13 @@
     private async Task ConfirmacionG()
     {
         DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
-        docs.iddocumentoAnterior = workspace.expedienteseleccionado.documentosobj.ElementAt(workspace.expedienteseleccionado.documentosobj.Count - 1).id;
+        docs.iddocumentoAnterior = workspace.expedienteseleccionado.documentosobj.ElementAt(workspace.expedienteseleccionado.documentosobj.Count - 2).id;
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
         docs.idexpediente = workspace.expedienteseleccionado.idexpediente;
         docs.idusuario = sesion.usuario.id;
+        docs.codigo = codigo;
+        docs.firma = imagen;
+
         var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);
         if (responseHttp.Error)
         {
@@ -108,6 +117,8 @@
         else
         {
             await swalfire.successMessage("Generado correctamente");
+            subpaso = 3;
+            //Enviar paso=1,subpaso=3,idexp
             generado = false;
             Item itemSalida = new Item()
             {

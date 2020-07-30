@@ -167,6 +167,8 @@
     private EditContext _editContext;
     private string imagenTemporal;
     private bool loadprocess = false;
+    int paso=0;
+    int subpaso = 0;
 
     protected override void OnInitialized()
     {
@@ -180,6 +182,8 @@
                 solicitudexpedientenotario.contenidoDTO.Urlanexo = null;
             }
         }
+        subpaso = 1;
+        //Enviar paso=0, subpaso=1, idex
     }
     private void ImagenSeleccionada(string imagenbase64)
     {
@@ -257,6 +261,8 @@
             StateHasChanged();
             //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Solicitud de expediente de notario registrado correctamente");
+            subpaso = 2;
+            //Enviar paso=0, subpaso=2, idexp
         }
         else
         {

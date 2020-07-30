@@ -174,6 +174,8 @@
     private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
     private EditContext _editContext;
     private bool loadprocess = false;
+    int paso = 1;
+    int subpaso = 0;
 
     protected override void OnInitialized()
     {
@@ -188,6 +190,8 @@
                 oficiodesignacion.contenidoDTO.Urlanexo = null;
             }
         }
+        subpaso = 1;
+        //Enviar paso=0,subpaso=1,idexp
     }
     private async Task<IEnumerable<Notario>> match(string searchtext)
     {
