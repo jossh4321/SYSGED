@@ -447,9 +447,9 @@ namespace SISGED.Server.Controllers
         #endregion
 
         [HttpPut("cambiarestado")]
-        public ActionResult<Documento> ModificarEstado(Evaluacion documento)
+        public ActionResult<Documento> ModificarEstado(Evaluacion documento, [FromQuery] string docId)
         {
-            return _documentoservice.modificarEstado(documento);
+            return _documentoservice.modificarEstado(documento, docId);
         }
         [HttpPut("generardocumento")]
         public async Task<ActionResult<Documento>> GenerarEstado(DocumentoGenerarDTO documento)
