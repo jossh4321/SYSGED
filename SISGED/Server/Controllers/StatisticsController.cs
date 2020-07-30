@@ -41,13 +41,22 @@ namespace SISGED.Server.Controllers
             estadisticas = await _documentoservice.statisticsDTO4EvaluadosJuntaDirectiva(mes);
             return estadisticas;
         }
-        [HttpGet("doccaducadosxmes/id")]
+        [HttpGet("doccaducadosxmes")]
         public async Task<List<StatisticsDTO3_group>> estadisticaDocCaducadosXMes([FromQuery]int mes)
         {
             List<StatisticsDTO3_group> estadisticas = new List<StatisticsDTO3_group>();
             estadisticas = await _documentoservice.estadisticasDocumentosCaducadosXMes(mes);
             return estadisticas;
         }
+
+        /*[HttpGet("ganttexpedientes")]
+        public async Task<List<Expediente_lookup>> ganttexpedientes([FromQuery]int mes)
+        {
+            List<Expediente_lookup> estadisticas = new List<Expediente_lookup>();
+            estadisticas = await _documentoservice.estadisticasDocumentosCaducadosXMes(mes);
+            return estadisticas;
+        }*/
+
 
     }
 }

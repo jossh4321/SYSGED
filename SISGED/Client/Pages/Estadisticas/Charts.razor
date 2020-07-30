@@ -93,12 +93,13 @@
     <h3>PruebaChratJS</h3>
     <h1>AMCharts 4 Demo In Blazor!</h1>
     <div class="statistics-selector">
-    <MatSelect Label="Seleccione la Estadistica a visualizar" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
-        <MatOptionString Class="option-color" Value="estadistica1">Documentos Creados por Area y Mes</MatOptionString>
-        <MatOptionString Class="option-color" Value="estadistica2">Documentos Creados por Mes</MatOptionString>
-        <MatOptionString Class="option-color" Value="estadistica3">Documentos Caducados por Mes </MatOptionString>
-        <MatOptionString Class="option-color" Value="estadistica4">Documentos Evaluados por la Junta Directiva</MatOptionString>
-    </MatSelect>
+        <MatSelect Label="Seleccione la Estadistica a visualizar" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
+            <MatOptionString Class="option-color" Value="estadistica1">Documentos Creados por Area y Mes</MatOptionString>
+            <MatOptionString Class="option-color" Value="estadistica2">Documentos Creados por Mes</MatOptionString>
+            <MatOptionString Class="option-color" Value="estadistica3">Documentos Caducados por Mes </MatOptionString>
+            <MatOptionString Class="option-color" Value="estadistica4">Documentos Evaluados por la Junta Directiva</MatOptionString>
+            <MatOptionString Class="option-color" Value="estadistica5">Expedientes por Cliente y Mes</MatOptionString>
+        </MatSelect>
     <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="seleccionarEstadistica"
                Class="selector-button">Seleccionar Estadistica!!!</MatButton>
     </div>
@@ -141,6 +142,10 @@
             else if (selector == "estadistica4")
             {
                 ChildContent = @<Estadistica1DocEvaluadoJuntaDirectiva></Estadistica1DocEvaluadoJuntaDirectiva>;
+            }
+            else if(selector == "estadistica5")
+            {
+                ChildContent = @<Estadistica1ExpedienteGantt></Estadistica1ExpedienteGantt>;
             }
         }
     }

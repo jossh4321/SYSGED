@@ -300,5 +300,57 @@ namespace SISGED.Server.Services
             });
         }
 
+        public async Task<List<Expediente_group>> listaexpedientegantt(string dnicliente)
+        {
+            var match1 = new BsonDocument("$match",
+             new BsonDocument("cliente.numerodocumento", dnicliente));
+
+            BsonArray embebedpipeline = new BsonArray();
+            embebedpipeline.Add(
+                    new BsonDocument("$match", new BsonDocument(
+                        "$expr", new BsonDocument(
+                            "$eq", new BsonArray{ "$_id", new BsonDocument(
+                                "$toObjectId", "$$iddoc")}
+                            ))));
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument("from", "documentos").
+                Add("let", new BsonDocument("iddoc", "$documentos.iddocumento")).
+                Add("pipeline", embebedpipeline).
+                Add("as", "documentoobj"));
+
+            var group = new BsonDocument("$group",
+                            new BsonDocument
+                                {
+                                    { "_id", "$_id" },
+                                    { "tipo",
+                            new BsonDocument("$first", "$tipo") },
+                                    { "cliente",
+                            new BsonDocument("$first", "$cliente") },
+                                    { "fechainicio",
+                            new BsonDocument("$first", "$fechainicio") },
+                                    { "fechafin",
+                            new BsonDocument("$first", "$fechafin") },
+                                    { "documentos",
+                            new BsonDocument("$push", "$documentos") },
+                                    { "derivaciones",
+                            new BsonDocument("$first", "$derivaciones") },
+                                    { "estado",
+                            new BsonDocument("$first", "$estado") },
+                                    { "documentoobj",
+                            new BsonDocument("$push", "$documentoobj") }
+                                });
+
+
+            List<Expediente_group> estadisticas = new List<Expediente_group>();
+            estadisticas = await _expedientes.Aggregate()
+                .AppendStage<Expediente>(match1)
+                .Unwind<Expediente, Expediente_unwind1>(x => x.documentos)
+                .AppendStage<Expediente_lookup>(lookup)
+                .Unwind<Expediente_lookup, Expediente_unwind2>(x => x.documentoobj)
+                .AppendStage<Expediente_group>(group)
+                .ToListAsync();
+            return estadisticas;
+        }
+
     }
 }

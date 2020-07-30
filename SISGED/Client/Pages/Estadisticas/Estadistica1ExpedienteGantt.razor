@@ -96,6 +96,21 @@
                     <span class="good-msg">Correcto</span>
                 </div>
             </div>
+            <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => estadistica.dni)">
+                <MatTextField @bind-Value="@estadistica.dni" Class="text-field-style" Label="Descripcion del documento"
+                              @oninput='@(e => KeyUp(e, "dni", estadistica))'></MatTextField>
+
+                <div class="incorrecto">
+                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                    <ValidationMessage For="@(() => estadistica.dni)" />
+                </div>
+                <div class="correcto">
+                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                    <span class="good-msg">Correcto</span>
+                </div>
+            </div>
+
+
             <div class="field-container">
                 <MatButton type="submit"
                            Icon="@MatBlazor.MatIconNames.Bar_chart"
@@ -107,7 +122,7 @@
     <div class="statistics-box">
         @if (resultadoEstadistica == 1)
         {
-            <div id="chartdivdoccaducadoxmes" style="height: 100%; width: 100%;"></div>
+            <div id="ganttsample" style="height: 100%; width: 100%;"></div>
         }
         else
         {
@@ -122,8 +137,8 @@
 </div>
 @code {
     private EditContext _editContext;
-    EstadisticaDocXMesDTO estadistica = new EstadisticaDocXMesDTO();
-    private int resultadoEstadistica = 0;
+    EstadisticaDocCaducados estadistica = new EstadisticaDocCaducados();
+    private int resultadoEstadistica = 1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -142,9 +157,11 @@
 
     public async Task generarGrafica()
     {
-        resultadoEstadistica = 1;
+        /*resultadoEstadistica = 1;
         resultadoEstadistica = await JS.InvokeAsync<int>("ServiceCallBack_DocCaducadosXMes", DotNetObjectReference.Create(this));
         Console.WriteLine(resultadoEstadistica);
+        StateHasChanged();*/
+        await JS.InvokeVoidAsync("ServiceCallBack_expedientesgant", DotNetObjectReference.Create(this));
         StateHasChanged();
     }
     [JSInvokable]
@@ -163,5 +180,11 @@
         }
         return statisticsSet;
     }
-
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
 }

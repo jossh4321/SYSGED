@@ -630,5 +630,12 @@ namespace SISGED.Server.Controllers
         {
             _documentoservice.modifyState(expedienteWrapper);
         }
+        [HttpGet("ganttexpediente")]
+        public async Task<List<Expediente_group>> listaexpedientesgantt([FromQuery] string dni)
+        {
+            List<Expediente_group> estadisticas = new List<Expediente_group>();
+            estadisticas = await _expedienteservice.listaexpedientegantt(dni);
+            return estadisticas;
+        }
     }
 }
