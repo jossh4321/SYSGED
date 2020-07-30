@@ -447,9 +447,9 @@ namespace SISGED.Server.Controllers
         #endregion
 
         [HttpPut("cambiarestado")]
-        public ActionResult<Documento> ModificarEstado(Evaluacion documento)
+        public ActionResult<Documento> ModificarEstado(Evaluacion documento, [FromQuery] string docId)
         {
-            return _documentoservice.modificarEstado(documento);
+            return _documentoservice.modificarEstado(documento, docId);
         }
         [HttpPut("generardocumento")]
         public async Task<ActionResult<Documento>> GenerarEstado(DocumentoGenerarDTO documento)
@@ -629,6 +629,13 @@ namespace SISGED.Server.Controllers
         public void modificarEstadoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.modifyState(expedienteWrapper);
+        }
+        [HttpGet("ganttexpediente")]
+        public async Task<List<Expediente_group>> listaexpedientesgantt([FromQuery] string dni)
+        {
+            List<Expediente_group> estadisticas = new List<Expediente_group>();
+            estadisticas = await _expedienteservice.listaexpedientegantt(dni);
+            return estadisticas;
         }
     }
 }

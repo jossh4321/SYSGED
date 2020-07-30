@@ -64,6 +64,7 @@ namespace SISGED.Client
             services.AddValidatorsFromAssemblyContaining<UsuarioValidator>();
             services.AddValidatorsFromAssemblyContaining<EstadisticaDocXMesDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<EstadisticaDocXAreaXMesValidator>();
+            services.AddValidatorsFromAssemblyContaining<EstadisticaDocCaducadosValidator>();
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();
             services.AddScoped<AuthenticationStateProvider, 

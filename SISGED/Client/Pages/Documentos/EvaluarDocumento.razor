@@ -83,7 +83,9 @@
     .sub-but {
         width: 49%;
     }
-
+    .sub-but-c {
+        width: 100%;
+    }
     .sub-but-a {
         width: 45%;
     }
@@ -181,6 +183,10 @@ else
                             </div>
 
                             <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales()" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
+
+                            <div class="field-container">
+                                <MatButton Class="sub-but-c" Outlined="true" OnClick="@EvaluacionPorJunta">Concluir evaluación</MatButton>
+                            </div>
                         }
 
                         <MatDialog @bind-IsOpen="@OpenDesaprobadovarios">
@@ -246,7 +252,7 @@ else
                         <MatDialog @bind-IsOpen="@OpenAprobado">
                             <MatDialogTitle>¿Desea aprobar este documento?</MatDialogTitle>
                             <MatDialogActions>
-                                <MatButton OnClick="@RealizarEvaluacion">Aceptar</MatButton>
+                                <MatButton OnClick="@EvaluacionIndividual">Aceptar</MatButton>
                                 <MatButton OnClick="@(e => { OpenAprobado = false; })">Cancelar</MatButton>
                             </MatDialogActions>
                         </MatDialog>
@@ -257,7 +263,7 @@ else
                                 <MatTextField Label="Motivo de la desaprobación del documento" @bind-Value="@observacion"></MatTextField>
                             </MatDialogContent>
                             <MatDialogActions>
-                                <MatButton OnClick="@RealizarEvaluacion">Aceptar</MatButton>
+                                <MatButton OnClick="@EvaluacionIndividual">Aceptar</MatButton>
                                 <MatButton OnClick="@(e => { OpenDesaprobado = false; })">Cancelar</MatButton>
                             </MatDialogActions>
                         </MatDialog>
@@ -293,7 +299,7 @@ else
         listadopaginacion = new List<UsuarioEvaluacionDTO>();
         participanteSeleccionado = new UsuarioEvaluacionDTO();
         evaluacion = new Evaluacion();
-        //Console.WriteLine(workspace.expedienteseleccionado.documento.tipo);
+        Console.WriteLine( 5 % 3+ "MIRAME");
         //string tipo = workspace.expedienteseleccionado.documento.tipo;
         //if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
         //{
@@ -314,9 +320,63 @@ else
         //}
     }
 
+    private async Task EvaluacionIndividual()
+    {
+        if (OpenAprobado)
+        {
+            evaluacion.resultado = "Aprobado";
+            EvaluacionIndividual evaluacionIndividual = new EvaluacionIndividual();
+            evaluacionIndividual.idparticipante = sesion.usuario.id;
+            evaluacionIndividual.descripcion = "Ninguna";
+            evaluacionIndividual.status = "Aprobado";
+            evaluacion.evaluaciones.Add(evaluacionIndividual);
+        }
+        else if(OpenDesaprobado)
+        {
+            evaluacion.resultado = "Desaprobado";
+            EvaluacionIndividual evaluacionIndividual = new EvaluacionIndividual();
+            evaluacionIndividual.idparticipante = sesion.usuario.id;
+            evaluacionIndividual.descripcion = observacion;
+            evaluacionIndividual.status = "Desaprobado";
+            evaluacion.evaluaciones.Add(evaluacionIndividual);
+        }
+        await RealizarEvaluacion();
+    }
+
+    private async Task EvaluacionPorJunta()
+    {
+        int cantidadAprobados = 0;
+        int cantidadDesaprobados = 0;
+        foreach(UsuarioEvaluacionDTO i in datosParticipantes)
+        {
+            EvaluacionIndividual evaluacionIndividual = new EvaluacionIndividual();
+            evaluacionIndividual.idparticipante = i.id;
+            evaluacionIndividual.descripcion = i.descripcion;
+            evaluacionIndividual.status = i.status;
+            evaluacion.evaluaciones.Add(evaluacionIndividual);
+            if(i.status == "Aprobado")
+            {
+                cantidadAprobados++;
+            }
+            else if (i.status == "Desaprobado")
+            {
+                cantidadDesaprobados++;
+            }
+        }
+        if(cantidadAprobados > cantidadDesaprobados)
+        {
+            evaluacion.resultado = "Aprobado";
+        }
+        else
+        {
+            evaluacion.resultado = "Desaprobado";
+        }
+        await RealizarEvaluacion();
+    }
+
     private async Task RealizarEvaluacion()
     {
-        var responseHttp = await repositorio.Put<Documento, Evaluacion>("api/Documentos/cambiarestado", evaluacion);
+        var responseHttp = await repositorio.Put<Documento, Evaluacion>($"api/documentos/cambiarestado?docId={workspace.expedienteseleccionado.documento.id}", evaluacion);
         if (responseHttp.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");
@@ -373,10 +433,22 @@ else
                 observacion = "";
                 participanteElegido = null;
 
-                if(datosParticipantes.Count < 4)
+                //if(datosParticipantes.Count < 4)
+                //{
+                //    paginaSeleccionada(1);
+                //}
+
+                if (datosParticipantes.Count % 3 == 0)
                 {
-                    listadopaginacion.Add(usuarioEva);
+                    int numeroActualizado = datosParticipantes.Count / 3;
+                    paginaSeleccionada(numeroActualizado);
                 }
+                else
+                {
+                    int numeroActualizado = (datosParticipantes.Count / 3) + 1;
+                    paginaSeleccionada(numeroActualizado);
+                }
+
                 await swalfire.successMessage("Participante ingresado");
             }
         }
@@ -411,7 +483,6 @@ else
                 listadopaginacion.Add(datosParticipantes.ElementAt(i));
             }
         }
-        Console.WriteLine("Esta es mi paginacion" + listadopaginacion.ElementAt(0).status);
     }
 
     private void ModificarParticipante(UsuarioEvaluacionDTO participanteSeleccionado)
@@ -432,6 +503,16 @@ else
     {
         datosParticipantes.RemoveAll(ind => ind.id.Equals(participanteSeleccionado.id));
         listadopaginacion.RemoveAll(ind => ind.id.Equals(participanteSeleccionado.id));
+        if (datosParticipantes.Count % 3 == 0)
+        {
+            int numeroActualizado = datosParticipantes.Count / 3;
+            paginaSeleccionada(numeroActualizado);
+        }
+        else
+        {
+            int numeroActualizado = (datosParticipantes.Count / 3) + 1;
+            paginaSeleccionada(numeroActualizado);
+        }
         OpenEliminar = false;
     }
 

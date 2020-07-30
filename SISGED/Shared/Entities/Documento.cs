@@ -21,7 +21,8 @@ namespace SISGED.Shared.Entities
         typeof(SolicitudExpedienteNotario),
         typeof(Dictamen),
         typeof(Resolucion),
-        typeof(Apelacion))]
+        typeof(Apelacion),
+        typeof(SolicitudInicial))]
     public class Documento
     {
         [BsonId]

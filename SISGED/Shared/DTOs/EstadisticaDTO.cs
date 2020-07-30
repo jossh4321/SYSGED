@@ -13,4 +13,9 @@ namespace SISGED.Shared.DTOs
         public string mes { get; set; } = "1";
         public string area { get; set; } = "MesaPartes";
     }
+    public class EstadisticaDocCaducados
+    {
+        public string mes { get; set; } = "1";
+        public string dni { get; set; }
+    }
 }
