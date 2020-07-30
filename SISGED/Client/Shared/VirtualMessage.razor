@@ -1,0 +1,57 @@
+﻿@inject IRepository repositorio
+@inject ISwalFireMessage swalFireMessage
+@inject NavigationManager navigationManager
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using System.Timers
+
+<link rel="stylesheet" href="css/estilosVM/virtualmessage.css" />
+
+@*<div class="message" data-text="Es un texto de prueba">
+            Es un texto de prueba
+    </div>*@
+
+<div class="message">
+    <h1>Bienvenido @workspace.miusuario.usuario,</h1>
+    <h1 class="typing">@letter</h1>
+</div>
+
+@code {
+    [Parameter]
+    public String message { get; set; }
+
+    [CascadingParameter]
+    public WorkEnvironment workspace { get; set; }
+
+    public String letter = "";
+    public Int32 index = 0;
+
+    [Parameter]
+    public Int32 count { get; set; }
+
+
+    public Boolean validator = false;
+    protected override void OnInitialized()
+    {
+        workspace.timer = new Timer();
+        workspace.timer.Interval = 100;
+        workspace.timer.Elapsed += TimerOnElapsed;
+        workspace.timer.Start();
+    }
+
+    private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+    {
+        letter = message.Substring(0, index);
+        count = 2;
+        if(letter.Length == message.Length)
+        {
+            index = 0;
+            workspace.timer.Stop();
+        }
+        else
+        {
+            index++;
+        }
+
+        StateHasChanged();
+    }
+}
