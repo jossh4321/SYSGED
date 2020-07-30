@@ -45,7 +45,7 @@
     background-color: lightblue;
     height: 100px;
     position: fixed;
-    bottom: 10px;
+    top: 65px;
     left: 10px;
     border-radius: 15px;
 }

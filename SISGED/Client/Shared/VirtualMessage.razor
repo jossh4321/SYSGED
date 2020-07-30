@@ -11,7 +11,7 @@
     </div>*@
 
 <div class="message">
-    <h1>Bienvenido @workspace.miusuario.usuario,</h1>
+    <h1>Bienvenido @sesion.usuario.usuario,</h1>
     <h1 class="typing">@letter</h1>
 </div>
 
@@ -21,6 +21,9 @@
 
     [CascadingParameter]
     public WorkEnvironment workspace { get; set; }
+
+    [CascadingParameter(Name = "SesionUsuario")] 
+    protected Sesion sesion { get; set; }
 
     public String letter = "";
     public Int32 index = 0;
