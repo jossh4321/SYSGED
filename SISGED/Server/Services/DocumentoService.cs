@@ -435,11 +435,13 @@ namespace SISGED.Server.Services
             return documentoCF;
         }*/
 
-        public Documento modificarEstado(Evaluacion documento)
+        public Documento modificarEstado(Evaluacion documento, string docId)
         {
-            var filter = Builders<Documento>.Filter.Eq("id", documento.resultado);
+            var filter = Builders<Documento>.Filter.Eq("id", docId);
             var update = Builders<Documento>.Update
-                .Set("evaluacion", documento.evaluaciones);
+                .Set("resultado", documento.resultado)
+                .Set("evaluaciones", documento.evaluaciones);
+            return _documentos.FindOneAndUpdate<Documento>(filter, update);
             //BandejaDocumento bandejaDocumento = new BandejaDocumento();
             //bandejaDocumento.idexpediente = documento.idexpediente;
             //bandejaDocumento.iddocumento = documento.id;
@@ -449,8 +451,6 @@ namespace SISGED.Server.Services
 
             //UpdateDefinition<Bandeja> updateBandejaI = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
             //_bandejas.UpdateOne(band => band.usuario == documento.idusuario, updateBandejaI);
-
-            return _documentos.FindOneAndUpdate<Documento>(filter, update);
         }
         public Documento generarDocumento(DocumentoGenerarDTO documento)
         {
