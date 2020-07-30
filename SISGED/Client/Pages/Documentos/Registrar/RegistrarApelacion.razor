@@ -146,6 +146,8 @@
     List<string> nombres = new List<string>();
     private string imagenTemporal2;
     private bool loadprocess = false;
+    int paso = 0;
+    int subpaso = 0;
 
     protected override void OnInitialized()
     {
@@ -164,6 +166,8 @@
             imagenTemporal = apelacion.contenidoDTO.data;
             apelacion.contenidoDTO.data = null;
         }
+        subpaso = 1;
+        //Enviar paso=0,subpaso=1,idexp
     }
 
     private void ArchivoSeleccionada(string imagenbase64)
@@ -249,6 +253,8 @@
             StateHasChanged();
             //workspace.UpdateComponentBandeja(itemSalida);
             await swalfire.successMessage("Apelación registrado correctamente");
+            subpaso = 2;
+            //Enviar paso=0,subpaso=2,idexp
         }
         else
         {

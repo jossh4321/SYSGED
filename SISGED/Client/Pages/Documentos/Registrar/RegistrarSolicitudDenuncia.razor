@@ -149,7 +149,7 @@
                 </div>
                 <div class="field-container">
                     <MatButton type="submit"
-                                Disabled="@loadprocess"
+                               Disabled="@loadprocess"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
                 </div>
@@ -165,6 +165,8 @@
     private string documentoTemporal { get; set; } = null;
     private string imagenTemporal;
     private bool loadprocess = false;
+    int paso=0;
+    int subpaso=0;
     protected override void OnInitialized()
     {
         _editContext = new EditContext(solicitudDenuncia);
@@ -173,6 +175,8 @@
             imagenTemporal = solicitudDenuncia.contenidoDTO.urldata;
             solicitudDenuncia.contenidoDTO.urldata = null;
         }
+        subpaso = 1;
+        //Enviar paso=0, subpaso=1, expediente
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -220,6 +224,8 @@
                 };
                 workspace.UpdateComponentBandeja(itemSalida);
                 await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
+                subpaso = 2;
+                //Enviar paso=0+0,subpaso=2,idexpediente
             }
         }
         else

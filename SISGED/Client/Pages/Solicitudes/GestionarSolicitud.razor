@@ -273,9 +273,9 @@
 </div>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-    <RegistrarSolicitudInicial></RegistrarSolicitudInicial>
+    <RegistrarSolicitudInicial docs="docs" cerrarDialogoRegistro="cerrarDialogoRegistro"></RegistrarSolicitudInicial>
     <MatDialogActions>
-        <MatButton OnClick="@OkClick">Cancelar</MatButton>
+        <MatButton OnClick="@OkClick" >Cancelar</MatButton>
     </MatDialogActions>
 </MatDialog>
 
@@ -397,6 +397,7 @@
         {
             await swalfire.errorMessage("Ocurrio un error al abrir el modal, intentelo más tarde");
         }
+        StateHasChanged();
     }
 
 
@@ -419,18 +420,21 @@
         TipoSolicitud = "nulo";
     }
 
-        private async Task Pagar(string code)
-        {
-            var exp = await repository.Get<ExpedienteDTO>($"api/expediente/getbynested?iddoc={code}");
-            DocumentoExpediente documentoExpediente = (DocumentoExpediente)(((ExpedienteDTO)exp.Response).documentos.Last());
-            DocumentoDTO resultado = (DocumentoDTO)(await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={documentoExpediente.iddocumento}")).Response;
-            var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
-            navigationManager.NavigateTo(httpResponse.Response.url);
-        }
+    private async Task Pagar(string code)
+    {
+        var exp = await repository.Get<ExpedienteDTO>($"api/expediente/getbynested?iddoc={code}");
+        DocumentoExpediente documentoExpediente = (DocumentoExpediente)(((ExpedienteDTO)exp.Response).documentos.Last());
+        DocumentoDTO resultado = (DocumentoDTO)(await repository.Get<DocumentoDTO>($"api/documentos/documentodto?iddoc={documentoExpediente.iddocumento}")).Response;
+        var httpResponse = await repository.Post<MercadoPagoRequest, MercadoPagoResponse>("api/mercadopago/request", new MercadoPagoRequest { aplicacion = "10", codigoreferencia = $"{code}-{documentoExpediente.iddocumento}", descripcion = "Solicitud Busqueda Protocolo Notarial", monto = $"{(resultado.tipo.Contains("BPN") ? System.Text.Json.JsonSerializer.Deserialize<ContenidoResultadoBPN>(resultado.contenido.ToString()).costo : System.Text.Json.JsonSerializer.Deserialize<ContenidoConclusionFirma>(resultado.contenido.ToString()).precio)}" });
+        navigationManager.NavigateTo(httpResponse.Response.url);
+    }
 
-        public async Task abrirNotificacionEstado(string idsolic)
+    public async Task abrirNotificacionEstado(string idsolic)
+    {
+        bool estado;
+        estado = await js.InvokeAsync<bool>("SwalFireEstado", "Cancelación de Solicitud");
+        if (estado == true)
         {
-            await js.InvokeAsync<bool>("SwalFireEliminacion", "Cancelación de Solicitud");
             SolicitudInicialDTO docadto = new SolicitudInicialDTO();
             docadto.id = idsolic;
             docadto.estado = "cancelado";
@@ -441,6 +445,10 @@
             var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/estadosolicitud", expedienteWrapper);
             if (!httpResponse.Error)
             {
+                //solicitud = new SolicitudInicialDTO();
+                //_editContext = new EditContext(solicitud);
+                //_editContext.MarkAsUnmodified();
+                //_editContext.NotifyValidationStateChanged();
                 StateHasChanged();
                 Console.WriteLine("cancelacion exitosa");
 
@@ -450,12 +458,20 @@
                 Console.WriteLine("Algo Mal en la cancelacion");
             }
             await swalfire.successMessage("Se canceló Satisfactoriamente");
-            StateHasChanged();
+
         }
+        else
+        {
+            await swalfire.warningMessage($"Proceso de Modificacion de Estado Cancelado");
+        }
+        StateHasChanged();
 
 
-        public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
-        public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
+    }
+
+    public void cerrarDialogoRegistro(bool cerrar) => dialogIsOpen_Registrar = cerrar;
+    public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
+    public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
 
 
 }
