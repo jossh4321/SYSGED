@@ -17,5 +17,6 @@ namespace SISGED.Shared.DTOs
         public Int32 paso { get; set; }
         public Int32 subpaso { get; set; }
         public String tipodocumento { get; set; }
+        public Int32 pasoantiguo { get; set; }
     }
 }

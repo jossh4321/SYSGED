@@ -279,6 +279,8 @@
                 workspace.expedienteseleccionado.documento = documentoDTO;
                 workspace.expedienteseleccionado.tipo = "Busqueda Protocolo Notarial";
 
+                StateHasChanged();
+
                 await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
             }
         }

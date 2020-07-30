@@ -33,43 +33,35 @@ namespace SISGED.Server.Controllers
         }
 
         [HttpPut("updateinicial")]
-        public async Task<ActionResult<Asistente>> UpdateSolicitudInicial()
+        public async Task<ActionResult<Asistente>> UpdateSolicitudInicial(Asistente asistente,[FromQuery] String nombreExpediente)
         {
-            Asistente asistente = new Asistente();
-            asistente.idexpediente = "gdfh45345436";
-            asistente.pasos = new PasoAsistente();
-            asistente.pasos.nombreexpediente = "Solicitud";
-
-            List<Paso> lstpasos = new List<Paso>();
-            lstpasos.Add(new Paso { fechainicio = DateTime.Now.ToString(), 
-                fechafin = DateTime.Now.AddDays(1).ToString(),
-                fechalimite = DateTime.Now.AddDays(2).ToString() });
-
-            asistente.pasos.documentos = new List<DocumentoPaso>();
-            asistente.pasos.documentos.Add(new DocumentoPaso { tipo = "Ejemplo", pasos= lstpasos});
-            asistente.paso = 0;
-            asistente.subpaso = 2;
-            asistente.tipodocumento = "SolicitudDenuncia";
-
-            return await asistenteService.UpdateSolicitudInicial(asistente, "Denuncia");
+            return await asistenteService.UpdateSolicitudInicial(asistente, nombreExpediente);
                 
         }
 
         [HttpPut("update")]
-        public async Task<ActionResult<Asistente>> Update()
+        public async Task<ActionResult<Asistente>> Update(PasoDTO paso)
         {
-            PasoDTO paso = new PasoDTO();
-
-            paso.paso = 1;
-            paso.subpaso = 1;
-            paso.tipodocumento = "SolicitudDenuncia";
-            paso.idexpediente = "gdfh45345436";
-            paso.fechainicio = DateTime.Now.ToString();
-            paso.fechafin = DateTime.Now.AddDays(1).ToString();
-            paso.fechalimite = DateTime.Now.AddDays(2).ToString();
-
             return await asistenteService.Update(paso);
+        }
 
+        [HttpGet("getbyexpedientID")]
+        public async Task<ActionResult<Asistente>> GetByExpedientID([FromQuery] String expedientID)
+        {
+            Asistente asistente = new Asistente();
+            asistente = await asistenteService.GetAsistente(expedientID);
+
+            return asistente;
+        }
+        [HttpPut("updateNormal")]
+        public async Task<ActionResult<Asistente>> UpdateNormal(PasoDTO paso)
+        {
+            return await asistenteService.UpdateNormal(paso);
+        }
+        [HttpPut("updateFinally")]
+        public async Task<ActionResult<Asistente>> UpdateFinally(PasoDTO paso)
+        {
+            return await asistenteService.UpdateFinally(paso);
         }
     }
 
