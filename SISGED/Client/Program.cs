@@ -21,6 +21,7 @@ using SISGED.Shared.Entities;
 using SISGED.Shared.Validators.DocumentosValidator.AperturamientoDisciplinario;
 using SISGED.Shared.Validators.FiltroEscrituraPublicaValidator;
 using SISGED.Shared.Validators.UsuarioValidator;
+using SISGED.Shared.Validators.EstadisticasValidator;
 
 namespace SISGED.Client
 {
@@ -61,6 +62,8 @@ namespace SISGED.Client
             services.AddValidatorsFromAssemblyContaining<SolicitudBPNDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<ContenidoSolicitudBPNDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<UsuarioValidator>();
+            services.AddValidatorsFromAssemblyContaining<EstadisticaDocXMesDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<EstadisticaDocXAreaXMesValidator>();
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();
             services.AddScoped<AuthenticationStateProvider, 

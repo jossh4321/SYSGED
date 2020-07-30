@@ -81,6 +81,7 @@ namespace SISGED.Server.Services
 
             Derivacion derivacion = new Derivacion();
             derivacion = expediente.derivaciones.FirstOrDefault();
+            derivacion.usuarioreceptor = userId;
 
             var filter = Builders<Expediente>.Filter.Eq(exp => exp.id, expediente.id);
             var update = Builders<Expediente>.Update.Push("derivaciones", derivacion);

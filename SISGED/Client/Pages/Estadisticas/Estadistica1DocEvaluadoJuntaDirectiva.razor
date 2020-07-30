@@ -10,15 +10,19 @@
         justify-content: center;
         color: #808080 !important;
     }
+
     .field-container {
         display: block;
         padding: 10px;
     }
+
     .formulario {
         display: flex;
         flex-direction: row;
         justify-content: center;
+        flex-wrap: wrap;
     }
+
     .selector-button-1 {
         color: green !important;
         border: 1px solid green !important;
@@ -27,21 +31,39 @@
         height: 57px !important;
         margin-bottom: 10px;
     }
+
     .field-selector {
         flex-basis: 80%;
     }
-    .statistics-box{
-        height:100%;
-        display:flex;
-        justify-content:center;
+
+    .statistics-box {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        flex-wrap:wrap;
     }
-    .no-result-found{
-        display:flex;
-        flex-direction:row;
-        justify-content:center
+
+    .no-result-found {
+        display: flex;
+        flex-direction: row;
+        justify-content: center
     }
-    .not-found{
-        margin-right:20px;
+
+    .not-found {
+        margin-right: 20px;
+    }
+    .chart-graph {
+        height: 45%;
+        width: 100%;
+        flex-basis: 45%;
+        background: #bfbfbf;
+        border: 1px solid black;
+        border-radius:5px;
+    }
+    .chart-title {
+        display: block;
+        color: black;
+        margin:7px;
     }
 </style>
 <div class="contenedor-est1">
@@ -83,13 +105,36 @@
     <div class="statistics-box">
         @if (resultadoEstadistica == 1)
         {
-            <div id="chartdivdocxmes" style="height: 100%;width: 100%;"></div>
+            <div class="chart-graph">
+                <h4 class="chart-title">Resoluciuones Evaluadas</h4>
+                <div id="Resolucion" style="height:70%"></div>
+            </div>
+            <div class="chart-graph">
+                <h4 class="chart-title">Apelaciones Evaluadas</h4>
+                <div id="Apelacion" style="height:70%"></div>
+            </div>
+            <div class="chart-graph">
+                <h4 class="chart-title">Designaciones Evaluadas</h4>
+                <div id="OficioDesignacionNotario" style="height:70%"></div>
+            </div>
+            <div class="chart-graph">
+                <h4 class="chart-title">Oficios de BPN Evaluadas</h4>
+                <div id="OficioBPN" style="height:70%"></div>
+            </div>
+        }
+        else if (resultadoEstadistica == 0)
+        {
+            <div class="no-result-found">
+                <div>
+                    <h3>Lo Sentimos No hemos encontrado resultados para Generar la Grafica</h3>
+                </div>
+            </div>
         }
         else
         {
             <div class="no-result-found">
                 <div>
-                    <h3>Lo Sentimos No hemos encontrado resultados para Generar la Grafica</h3>
+                    <h3>Seleccione un Mes para generar la grafica de Documentos Evaluados</h3>
                 </div>
             </div>
         }
@@ -99,16 +144,16 @@
 @code {
     private EditContext _editContext;
     EstadisticaDocXMesDTO estadistica = new EstadisticaDocXMesDTO();
-    private int resultadoEstadistica = 1;
+    private int resultadoEstadistica = 2;
 
     protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(estadistica);
     }
 
-    public void handleValidSubmit()
+    public async Task handleValidSubmit()
     {
-
+        await generarGrafica();
     }
 
     public void handleInvalidSubmit()
@@ -119,19 +164,19 @@
     public async Task generarGrafica()
     {
         resultadoEstadistica = 1;
-        resultadoEstadistica =  await JS.InvokeAsync<int>("ServiceCallBack_DocXMes", DotNetObjectReference.Create(this));
+        resultadoEstadistica = await JS.InvokeAsync<int>("ServiceCallBack_DocEvaluadoXMes", DotNetObjectReference.Create(this));
         Console.WriteLine(resultadoEstadistica);
         StateHasChanged();
     }
     [JSInvokable]
-    public async Task<List<StatisticsDTOR>> getDocxXMes()
+    public async Task<List<StatisticsDTO4R>> getDocEvaluadosXMes()
     {
-        List<StatisticsDTOR> statisticsSet = new List<StatisticsDTOR>();
-        var httpResponse = await repository.Get<List<StatisticsDTOR>>($"api/statistics/docxmes?mes={estadistica.mes}");
+        List<StatisticsDTO4R> statisticsSet = new List<StatisticsDTO4R>();
+        var httpResponse = await repository.Get<List<StatisticsDTO4R>>
+            ($"api/statistics/docevaluadosxmes?mes={estadistica.mes}");
         if (!httpResponse.Error)
         {
             statisticsSet = httpResponse.Response;
-
         }
         else
         {
