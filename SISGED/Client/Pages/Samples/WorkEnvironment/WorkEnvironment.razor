@@ -4,6 +4,7 @@
 @inject IRepository repository
 @inject IJSRuntime js
 @inject ISwalFireMessage swalfire
+@using System.Timers
 <style>
     div.input {
         flex-grow: 1;
@@ -233,29 +234,30 @@
                     }
                 </div>
             </div>
+            <VirtualMessage message="@messageSend" count="@count"></VirtualMessage>
         </div>
     </CascadingValue>
     @if (expedienteseleccionado != null)
     {
-    <MatDialog @bind-IsOpen="@abrirDialogo">
-        <div class="modal-info-solicitudBPN">
-            @if (expedienteseleccionado.documento.tipo.Equals("OficioDesignacionNotario"))
-            {
-                <VerOficioDesignacionNotario iddocumento="@expedienteseleccionado.documento.id"></VerOficioDesignacionNotario>
-            }
-            else if (expedienteseleccionado.documento.tipo.Equals("ConclusionFirma"))
-            {
-                <!--VerConclusionFirma iddocumento="expedienteseleccionado.documento.id"> </!--VerConclusionFirma-->
+        <MatDialog @bind-IsOpen="@abrirDialogo">
+            <div class="modal-info-solicitudBPN">
+                @if (expedienteseleccionado.documento.tipo.Equals("OficioDesignacionNotario"))
+                {
+                    <VerOficioDesignacionNotario iddocumento="@expedienteseleccionado.documento.id"></VerOficioDesignacionNotario>
+                }
+                else if (expedienteseleccionado.documento.tipo.Equals("ConclusionFirma"))
+                {
+                    <!--VerConclusionFirma iddocumento="expedienteseleccionado.documento.id"> </!--VerConclusionFirma-->
 
-            }
-            else
-            {
+                }
+                else
+                {
 
-                <div>En construccion...</div>
-            }
+                    <div>En construccion...</div>
+                }
 
-        </div>
-    </MatDialog>
+            </div>
+        </MatDialog>
     }
 
 </div>
@@ -269,6 +271,9 @@
     public Bandeja bandejaUsuario = new Bandeja();
     public Usuario miusuario = new Usuario();
     public List<Asistente> asistentes = new List<Asistente>();
+    public Timer timer;
+    public String messageSend = "Es un texto de prueba para el ayudante virtual que se encarga de ayudar a los demás para su futuro";
+    public Int32 count = 0;
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("INICIE: WorkEnvironment");
@@ -297,7 +302,7 @@
     public void closeDialog() { abrirDialogo = false; }
     public void UpdateDraggableComponents(string newCurrentPlace)
     {
-        if(currentItemDragged.originPlace == "tools")
+        if (currentItemDragged.originPlace == "tools")
         {
             var tool = sesion.herramientasutilizables.SingleOrDefault(x => x.nombre == currentItemDragged.nombre);
             if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
@@ -309,12 +314,13 @@
                 StateHasChanged();
             }
         }
-        else if(currentItemDragged.originPlace == "inputs")
+        else if (currentItemDragged.originPlace == "inputs")
         {
             var tool = sesion.listaentradas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
             if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
             {
-                if (newCurrentPlace == "workspace") {
+                if (newCurrentPlace == "workspace")
+                {
                     expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor;
                 }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
@@ -326,13 +332,13 @@
                 StateHasChanged();
             }
         }
-        else if(currentItemDragged.originPlace == "outputs")
+        else if (currentItemDragged.originPlace == "outputs")
         {
             var tool = sesion.listasalidas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
-            if(tool != null)
+            if (tool != null)
             {
-                if(newCurrentPlace == "workspace") { expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor; }
-                if(newCurrentPlace == "outputs") { expedienteseleccionado = null; }
+                if (newCurrentPlace == "workspace") { expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor; }
+                if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
                 tool.currentPlace = newCurrentPlace;
                 sesion.listasalidas[sesion.listasalidas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
@@ -348,8 +354,8 @@
     public void UpdateDocRegistrado(Item itemnuevo)
     {
         sesion.listaentradas[sesion.listaentradas.FindIndex(ind =>
-        ind.originPlace=="inputs" &&
-        ind.currentPlace== "workspace")] = itemnuevo;
+        ind.originPlace == "inputs" &&
+        ind.currentPlace == "workspace")] = itemnuevo;
         //sesion.herramientasutilizables[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "tools";
         StateHasChanged();
     }
@@ -371,68 +377,11 @@
         sesion.listasalidas.Add(itemsalida);
         StateHasChanged();
     }
-    /* 
-    public ExpedienteDTO expedientedto1 = new ExpedienteDTO()
-    {
-        id = "111",
-        tipo = "Denuncia",
-        cliente =
-        {
-            nombre="Pedro Paredes",
-            numerodocumento="",
-            tipodocumento="Pedro Paredes",
-        },
-        fechainicio = DateTime.Now,
-        fechafin = null,
-        documentos = new List<DocumentoExpediente>()
-        {
-            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
-        },
-        documentosobj = new List<Documento>(),
-        derivaciones = new List<Derivacion>(),
-        estado = "pendiente"
-    };
 
-    public ExpedienteDTO expedientedto2 = new ExpedienteDTO()
+    public void ChangeMessage()
     {
-        id = "222",
-        tipo = "Denuncia",
-        cliente =
-        {
-            nombre="Pedro Paredes",
-            numerodocumento="",
-            tipodocumento="Pedro Paredes",
-        },
-        fechainicio = DateTime.Now,
-        fechafin = null,
-        documentos = new List<DocumentoExpediente>()
-        {
-            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
-        },
-        documentosobj = new List<Documento>(),
-        derivaciones = new List<Derivacion>(),
-        estado = "pendiente"
-    };
-
-    public ExpedienteDTO expedientedto3 = new ExpedienteDTO()
-    {
-        id = "333",
-        tipo = "Denuncia",
-        cliente =
-        {
-            nombre="Pedro Paredes",
-            numerodocumento="",
-            tipodocumento="Pedro Paredes",
-        },
-        fechainicio = DateTime.Now,
-        fechafin = null,
-        documentos = new List<DocumentoExpediente>()
-        {
-            new DocumentoExpediente(){indice=1,iddocumento="1234",tipo="SolicitudDenuncia",fechacreacion=DateTime.Now,fechaexceso=DateTime.Now.AddDays(10),fechademora=null}
-        },
-        documentosobj = new List<Documento>(),
-        derivaciones = new List<Derivacion>(),
-        estado = "pendiente"
-    };
-    */
+        timer.Start();
+        messageSend = "Es un texto de prueba para el cambio de mensajes mientras el usuario interactura prueba 2";
+        count = 1;
+    }
 }
