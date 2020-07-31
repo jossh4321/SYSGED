@@ -412,6 +412,13 @@
             Console.WriteLine("Ocurrio un error");
         }
         subpaso = 1;
+
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        workspace.ChangeMessage(message);
+
+        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+
         //Enviar paso=0, subpas=1, idexp
     }
 
@@ -541,6 +548,19 @@
                 //workspace.UpdateComponentBandeja(itemSalida);
                 await swalfire.successMessage("Aperturamiento Disciplinario registrado correctamente");
                 subpaso = 2;
+
+                Int32 pasoAntiguo = paso;
+                paso = 1;
+                subpaso = 0;
+                //Enviar paso=0+0,subpaso=2,idexpediente
+                String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+
+                await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
+
+                String messageFinal = workspace.asistente.pasos.documentos
+                        .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
+
+                workspace.ChangeMessage(messageFinal);
                 //Enviar paso=0,subpaso=2, idexp
             }
             else
