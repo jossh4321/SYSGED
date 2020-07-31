@@ -235,6 +235,19 @@ else
 
             await layout.Send(usu.usuario, exp);
             await swalfire.successMessage("Documento derivado correctamente");
+            Item itemSalida = new Item()
+            {
+                nombre = workspace.expedienteseleccionado.tipo,
+                valor = workspace.expedienteseleccionado,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo,
+                currentPlace = "outputs",
+                originPlace = "outputs",
+                cliente = workspace.expedienteseleccionado.cliente,
+                itemstatus = "registrado"
+            };
+            workspace.UpdateTools("Derivar Documento");
+            workspace.RemoveExpedienteSeleccionadoBandejas(itemSalida);            
             subpaso = 3;
 
             Int32 pasoAntiguo = paso;

@@ -381,6 +381,16 @@
         sesion.listasalidas.Add(itemsalida);
         StateHasChanged();
     }
+    public void RemoveExpedienteSeleccionadoBandejas(Item itemsalida)
+    {
+        sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "inputs";
+
+        sesion.listaentradas.RemoveAll(ind => ind.nombre.Equals(itemsalida.nombre) &&
+        ind.cliente.tipodocumento.Equals(itemsalida.cliente.tipodocumento) &&
+        ind.cliente.numerodocumento.Equals(itemsalida.cliente.numerodocumento));
+
+        StateHasChanged();
+    }
 
     public void ChangeMessage(String messageSend)
     {
