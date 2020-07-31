@@ -101,7 +101,7 @@
 
         workspace.ChangeMessage(message);
 
-        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
 
         //Enviar paso=1,subpaso=1,idexp
     }
@@ -152,8 +152,8 @@
             paso = 2;
             subpaso = 0;
             //Enviar paso=0+0,subpaso=2,idexpediente
-
-            await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo);
+            String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+            await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
 
             String messageFinal = workspace.asistente.pasos.documentos
                         .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;

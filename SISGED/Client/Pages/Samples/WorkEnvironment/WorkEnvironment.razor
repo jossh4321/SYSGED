@@ -463,7 +463,7 @@
 
         var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/updateNormal", pasoDTO);
     }
-    public async Task UpdatePasoAndSubPasoFinnally(Int32 paso, Int32 subpaso, String tipodocumento, Int32 pasoantiguo)
+    public async Task UpdatePasoAndSubPasoFinnally(Int32 paso, Int32 subpaso, String tipodocumento, Int32 pasoantiguo, String tipoDocumentoAntiguo)
     {
 
         Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
@@ -475,6 +475,7 @@
         pasoDTO.idexpediente = asistente.idexpediente;
         pasoDTO.fechafin = DateTime.UtcNow.AddHours(-5).ToString();
         pasoDTO.pasoantiguo = pasoantiguo;
+        pasoDTO.tipodocumentoAntiguo = tipoDocumentoAntiguo;
 
         asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechafin = pasoDTO.fechafin;
         asistente.paso = paso;
