@@ -558,9 +558,29 @@ namespace SISGED.Server.Controllers
             _documentoservice.actualizarDocumentoODN(expedienteWrapper);
         }
         [HttpPut("actualizarDocumentoAPE")]
-        public void modificarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<Apelacion>> modificarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoApelacion(expedienteWrapper);
+            ApelacionDTO apelacionDTO = new ApelacionDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            apelacionDTO = JsonConvert.DeserializeObject<ApelacionDTO>(json);
+            string urlData = "";
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in apelacionDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "apelaciones");
+                    url2.Add(urlData2);
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(apelacionDTO.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(apelacionDTO.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "apelaciones");
+            }
+            return _documentoservice.actualizarDocumentoApelacion(expedienteWrapper, urlData, url2);
         }
         [HttpPut("actualizarDocumentoAD")]
         public void modificarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)

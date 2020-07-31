@@ -1150,6 +1150,7 @@ namespace SISGED.Server.Services
             apelacionDTO.estado = docApelacion.estado;
             apelacionDTO.contenidoDTO = new ContenidoApelacionDTO()
             {
+                Urlanexo = docApelacion.urlanexo.ToList(),
                 titulo = docApelacion.contenido.titulo,
                 descripcion = docApelacion.contenido.descripcion,
                 fechaapelacion = docApelacion.contenido.fechaapelacion,
@@ -1425,7 +1426,7 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
         }
 
-        public void actualizarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
+        public Apelacion actualizarDocumentoApelacion(ExpedienteWrapper expedienteWrapper, string urlData, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             ApelacionDTO apelacionDTO = new ApelacionDTO();
@@ -1436,14 +1437,20 @@ namespace SISGED.Server.Services
             ContenidoApelacion contenidoAPE = new ContenidoApelacion()
             {
                 titulo = apelacionDTO.contenidoDTO.titulo,
-                descripcion = apelacionDTO.contenidoDTO.descripcion
+                descripcion = apelacionDTO.contenidoDTO.descripcion,
+                url = urlData,
             };
+            Apelacion apelacion = new Apelacion();
 
             var filter = Builders<Documento>.Filter.Eq("id", apelacionDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.titulo", contenidoAPE.titulo)
-                .Set("contenido.descripcion", contenidoAPE.descripcion);
+                .Set("contenido.descripcion", contenidoAPE.descripcion)
+                .Set("contenido.url", contenidoAPE.url)
+                .Set("urlanexo", url2);
+
             _documentos.UpdateOne(filter, update);
+            return apelacion;
         }
 
         public void actualizarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
