@@ -36,6 +36,7 @@ namespace SISGED.Server.Controllers
 
             return _usuarioservice.Get();
         }
+
         [HttpPost]
         public async Task<ActionResult<Usuario>> Post(Usuario usuario)
         {
@@ -60,6 +61,14 @@ namespace SISGED.Server.Controllers
             usuario = _usuarioservice.GetById(id);
             return usuario;
         }
+        [HttpGet("username")]
+        public ActionResult<Usuario> GetByUsername([FromQuery] string username)
+        {
+            Usuario usuario = new Usuario();
+            usuario = _usuarioservice.GetByUsername(username);
+            return usuario;
+        }
+
         [HttpPut]
         public async Task<ActionResult<Usuario>> Put(Usuario usuario)
         {

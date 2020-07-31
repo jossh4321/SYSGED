@@ -85,7 +85,7 @@
                 <div id="myTabContent" class="tab-content">
                     <div class="tab-pane fade in active" id="login">
                         <!--login form-->
-                        <EditForm Model="userInfo" OnValidSubmit="LoginUsuario" OnInvalidSubmit="LoginUsuarioError">
+                        <EditForm Model="userInfo" OnValidSubmit="getDatosUsuario" OnInvalidSubmit="LoginUsuarioError">
                             <DataAnnotationsValidator />
                             <div class="col-lg-10 col-lg-offset-1 col-lg-offset-right-1 col-md-10 col-md-offset-1 col-md-offset-right-1 col-sm-12 col-xs-12 pull-right ">
                                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -97,14 +97,14 @@
 
                             <div class="col-lg-10 col-lg-offset-1 col-lg-offset-right-1 col-md-10 col-md-offset-1 col-md-offset-right-1 col-sm-12 col-xs-12 pull-right ">
                                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                    <MatTextField Type="password" @bind-Value="@userInfo.clave" FullWidth="true" Label="NUEVA CONTRASEÑA"></MatTextField>
+                                    <MatTextField Type="password" @bind-Value="@userInfo.clave" FullWidth="true" Label="ANTIGUA CONTRASEÑA"></MatTextField>
                                     <ValidationMessage For="(() => userInfo.clave)" />
                                 </div>
                             </div>
 
                             <div class="col-lg-10 col-lg-offset-1 col-lg-offset-right-1 col-md-10 col-md-offset-1 col-md-offset-right-1 col-sm-12 col-xs-12 pull-right ">
                                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                    <MatTextField Type="password" @bind-Value="@userInfo.clave" FullWidth="true" Label="REPETIR CONTRASEÑA"></MatTextField>
+                                    <MatTextField Type="password" @bind-Value="@nuevaClave" FullWidth="true" Label="NUEVA CONTRASEÑA"></MatTextField>
                                     <ValidationMessage For="(() => userInfo.clave)" />
                                 </div>
                             </div>
@@ -124,22 +124,40 @@
 </div>
 @code {
     private UserInfo userInfo = new UserInfo();
-    private async Task LoginUsuario()
+    private string nuevaClave;    
+    Usuario usuario = new Usuario();
+
+    public async Task getDatosUsuario()
     {
-        var httpResponse = await repositorio.Post<UserInfo, UserToken>("api/accounts/login", userInfo);
+
+        var httpResponse = await repositorio.Get<Usuario>($"api/usuarios/username?username={userInfo.usuario}");
         if (httpResponse.Error)
         {
             Console.WriteLine("Algo Mal");
-            await swalfire.errorMessage("Error al ingresar usuario o contraseña");
-            // await mostrarMensajes.MostrarMensajeError(await httpResponse.GetBody());
         }
         else
         {
-            Console.WriteLine("Algo Bien");
-            //logeando al usuarios cy mmandandolo a la pagina principal
-            await loginservice.Login(httpResponse.Response.Token);
-
-            navigationManager.NavigateTo("");
+            usuario = httpResponse.Response;
+            if (usuario.clave == userInfo.clave)
+            {
+                await updatePassword();
+            } else
+            {
+                LoginUsuarioError();
+            }
+        }
+    }
+    public async Task updatePassword()
+    {
+        usuario.clave = nuevaClave;
+        var httpResponse = await repositorio.Put<Usuario, Usuario>("api/usuarios", usuario);
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Algo Ocurrio");
+        }
+        else
+        {
+            await swalfire.successMessage("Contraseña actualizada correctamente");
         }
     }
 
@@ -148,3 +166,4 @@
         swalfire.errorMessage("Error al ingresar usuario o contraseña");
     }
 }
+
