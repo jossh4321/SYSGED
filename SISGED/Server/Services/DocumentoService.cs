@@ -439,8 +439,8 @@ namespace SISGED.Server.Services
         {
             var filter = Builders<Documento>.Filter.Eq("id", docId);
             var update = Builders<Documento>.Update
-                .Set("resultado", documento.resultado)
-                .Set("evaluaciones", documento.evaluaciones);
+                .Set("evaluacion.resultado", documento.resultado)
+                .Set("evaluacion.evaluaciones", documento.evaluaciones);
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
             //BandejaDocumento bandejaDocumento = new BandejaDocumento();
             //bandejaDocumento.idexpediente = documento.idexpediente;

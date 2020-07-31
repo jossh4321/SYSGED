@@ -108,7 +108,7 @@ namespace SISGED.Server.Services
             
             var arrayFilter = new List<ArrayFilterDefinition>();
 
-            arrayFilter.Add(new BsonDocumentArrayFilterDefinition<Asistente>(new BsonDocument("doc.tipo", pasoDTO.tipodocumento)));
+            arrayFilter.Add(new BsonDocumentArrayFilterDefinition<Asistente>(new BsonDocument("doc.tipo", pasoDTO.tipodocumentoAntiguo)));
             arrayFilter.Add(new BsonDocumentArrayFilterDefinition<Asistente>(new BsonDocument("pas.indice", pasoDTO.pasoantiguo)));
 
             Asistente asistenteActualizado = await _asistentes.FindOneAndUpdateAsync(queryUpdate, updateAsistente, new FindOneAndUpdateOptions<Asistente>
