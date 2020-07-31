@@ -362,6 +362,8 @@
     private string imagenTemporal;
     private SolicitudBPNDTO solicitudbpn = new SolicitudBPNDTO();
     private EditContext _editContext;
+    int paso = 0;
+    int subpaso = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -376,6 +378,14 @@
                 solicitudbpn.contenidoDTO.Urlanexo = null;
             }
         }
+        subpaso = 1;
+
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        workspace.ChangeMessage(message);
+
+        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        //Enviar paso=0, subpaso=1, expediente
     }
 
     /* Reemplazado por el OnInitializedAsync()
@@ -487,7 +497,17 @@
                 workspace.expedienteseleccionado.documento = documentoDTO;
                 workspace.expedienteseleccionado.tipo = "Busqueda Protocolo Notarial";
 
+                Int32 pasoAntiguo = paso;
+                paso = 1;
+                subpaso = 0;
+                //Enviar paso=0+0,subpaso=2,idexpediente
+
+                String messageFinal = await workspace.UpdateSolicitudInitial(paso, subpaso, expedientebandeja.documento.tipo, expedientebandeja.tipo, pasoAntiguo);
+
+                workspace.ChangeMessage(messageFinal);
+
                 StateHasChanged();
+
 
                 await swalfire.successMessage("Oficio de Busqueda de Protocolo Notarial Registrada Correctamente");
             }

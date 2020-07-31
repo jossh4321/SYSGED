@@ -14,7 +14,7 @@ namespace SISGED.Shared.Validators.DocumentosValidator.DesignacionNotario
         {
             RuleFor(x => x.titulo).NotEmpty().WithMessage("Debe Ingresar un titulo obligatoriamente");
             RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe Ingresar una descripcion obligatoriamente");
-            RuleFor(x => x.codigo).NotEmpty().WithMessage("Debe Ingresar un código obligatoriamente");
+            //RuleFor(x => x.codigo).NotEmpty().WithMessage("Debe Ingresar un código obligatoriamente");
             //RuleFor(x => x.cliente).NotEmpty().WithMessage("Debe Ingresar un cliente obligatoriamente");
         }
     }

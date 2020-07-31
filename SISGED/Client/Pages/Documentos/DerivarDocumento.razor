@@ -114,6 +114,12 @@ else
         await getRoles();
         await getUsuarioByStatus();
         subpaso = 1;
+
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        workspace.ChangeMessage(message);
+
+        await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
         //Enviar paso=2,subpaso=1,idexp
     }
 
@@ -143,7 +149,6 @@ else
         else
         {
             listausuarios = httpResponse.Response;
-            subpaso = 2;
             //Enviar paso=2,subpaso=2,idexp
         }
     }
@@ -170,6 +175,12 @@ else
     {
         rolId = e.Value.ToString();
         usuarios = listausuarios.Where(l => l.rol == rolId).ToList();
+        subpaso = 2;
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        workspace.ChangeMessage(message);
+
+        workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
     public void userChanged(ChangeEventArgs e)
     {
@@ -225,7 +236,25 @@ else
             await layout.Send(usu.usuario, exp);
             await swalfire.successMessage("Documento derivado correctamente");
             subpaso = 3;
+
+            Int32 pasoAntiguo = paso;
+            paso = 0;
+            subpaso = 0;
+
+            Int32 index = workspace.asistente.pasos.documentos.FindIndex(x => x.tipo == workspace.asistente.tipodocumento);
+
+            String tipoDocumento = workspace.asistente.pasos.documentos.ElementAt(index + 1).tipo;
+
             //Enviar paso=2,subpaso=3,idexp
+
+            String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+
+            await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, tipoDocumento, pasoAntiguo,tipodocumentoantiguo);
+
+            String messageFinal = "Seleccione un expediente de la bandeja de entrada al área de trabajo para procesarlo";
+
+            workspace.ChangeMessage(messageFinal);
+
         }
 
         ////logica para enviar con HUB

@@ -156,7 +156,9 @@
     List<string> nombres = new List<string>();
     private string imagenTemporal2;
     private bool loadprocess = false;
-    protected override void OnInitialized()
+    int paso = 0;
+    int subpaso = 0;
+    protected override async Task OnInitializedAsync()
     {
 
         solicitudDenuncia.contenidoDTO.Urlanexo = new List<string>();
@@ -175,6 +177,13 @@
             imagenTemporal = solicitudDenuncia.contenidoDTO.urldata;
             solicitudDenuncia.contenidoDTO.urldata = null;
         }
+        subpaso = 1;
+
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        workspace.ChangeMessage(message);
+
+        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -270,6 +279,17 @@
                 workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
                 workspace.expedienteseleccionado.documento = documentoDTO;
                 workspace.expedienteseleccionado.tipo = "Denuncia";
+
+                Int32 pasoAntiguo = paso;
+                paso = 1;
+                subpaso = 0;
+                //Enviar paso=0+0,subpaso=2,idexpediente
+
+                String messageFinal = await workspace.UpdateSolicitudInitial(paso, subpaso, expedientebandeja.documento.tipo, expedientebandeja.tipo, pasoAntiguo);
+
+                workspace.ChangeMessage(messageFinal);
+
+                StateHasChanged();
 
                 await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
             }

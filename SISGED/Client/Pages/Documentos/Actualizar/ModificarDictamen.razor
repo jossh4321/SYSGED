@@ -276,6 +276,33 @@
                             </div>
                         </div>
                     </div>
+                    @*<div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
+                    </div>*@
+                </MatTab>
+                <MatTab Label="Subir Anexo">
+                    <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2" FileNames="FileName" ImagenTemporal="@(imagenTemporal2)"></DragnDrop>
+
+                    @if (nombres != null && nombres.Count > 0)
+                    {
+                        @for (int i = 0; i < nombres.Count; i++)
+                        {
+                            int index = i;
+                            string a = nombres[i];
+                            <div>
+
+                                @nombres[i]
+
+                                <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                        @onclick="@(e => RemoveFile(a,index))">
+                                    <small class="RedText">Eliminar</small>
+                                </button>
+                            </div>
+                        }
+                    }
                     <div class="field-container">
                         <MatButton type="submit"
                                    Disabled="@loadprocess"
@@ -298,6 +325,8 @@
     private DictamenDTO dictamen = new DictamenDTO();
     private EditContext _editContext;
     private string imagenTemporal;
+    private List<string> imagenTemporal2 = new List<string>();
+    List<string> nombres = new List<string>();
     private bool loadprocess = false;
     private bool firstLoad = true;
 
@@ -305,6 +334,7 @@
     {
         //dictamen.contenidoDTO.observaciones = new List<Observaciones>() { new Observaciones() { index = 0, descripcion = "" } };
         //dictamen.contenidoDTO.recomendaciones = new List<Recomendaciones>() { new Recomendaciones() { index = 0, descripcion = "" } };
+        dictamen.contenidoDTO.Urlanexo = new List<string>();
         firstLoad = true;
         _editContext = new EditContext(dictamen);
         var httpResponse = await repository.Get<DictamenDTO>($"api/documentos/documentod?iddoc={workspace.expedienteseleccionado.documento.id}");
@@ -316,6 +346,14 @@
         else
         {
         }
+        foreach (string u in dictamen.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2.Add(u);
+            }
+        }
+        dictamen.contenidoDTO.Urlanexo.Clear();
         firstLoad = false;
     }
     private void addObservaciones()
@@ -336,6 +374,22 @@
     private void removeRecomendaciones(int index)
     {
         dictamen.contenidoDTO.recomendaciones.RemoveAt(index);
+        StateHasChanged();
+    }
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        dictamen.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+
+    private async Task RemoveFile(string file, int imagen64)
+    {
+        nombres.Remove(file);
+        dictamen.contenidoDTO.Urlanexo.RemoveAt(imagen64);
         StateHasChanged();
     }
 

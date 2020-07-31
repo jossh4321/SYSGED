@@ -28,9 +28,6 @@
     public String letter = "";
     public Int32 index = 0;
 
-    [Parameter]
-    public Int32 count { get; set; }
-
 
     public Boolean validator = false;
     protected override void OnInitialized()
@@ -44,7 +41,6 @@
     private void TimerOnElapsed(object sender, ElapsedEventArgs e)
     {
         letter = message.Substring(0, index);
-        count = 2;
         if(letter.Length == message.Length)
         {
             index = 0;

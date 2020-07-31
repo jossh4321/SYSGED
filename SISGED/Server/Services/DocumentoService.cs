@@ -439,8 +439,8 @@ namespace SISGED.Server.Services
         {
             var filter = Builders<Documento>.Filter.Eq("id", docId);
             var update = Builders<Documento>.Update
-                .Set("resultado", documento.resultado)
-                .Set("evaluaciones", documento.evaluaciones);
+                .Set("evaluacion.resultado", documento.resultado)
+                .Set("evaluacion.evaluaciones", documento.evaluaciones);
             return _documentos.FindOneAndUpdate<Documento>(filter, update);
             //BandejaDocumento bandejaDocumento = new BandejaDocumento();
             //bandejaDocumento.idexpediente = documento.idexpediente;
@@ -1049,6 +1049,7 @@ namespace SISGED.Server.Services
             dictamenDto.tipo = docDictamen.tipo;
             dictamenDto.contenidoDTO = new ContenidoDictamenDTO()
             {
+                Urlanexo = docDictamen.urlanexo.ToList(),
                 descripcion = docDictamen.contenido.descripcion,
                 nombredenunciante = docDictamen.contenido.nombredenunciante,
                 titulo = docDictamen.contenido.titulo,
@@ -1149,6 +1150,7 @@ namespace SISGED.Server.Services
             apelacionDTO.estado = docApelacion.estado;
             apelacionDTO.contenidoDTO = new ContenidoApelacionDTO()
             {
+                Urlanexo = docApelacion.urlanexo.ToList(),
                 titulo = docApelacion.contenido.titulo,
                 descripcion = docApelacion.contenido.descripcion,
                 fechaapelacion = docApelacion.contenido.fechaapelacion,
@@ -1424,7 +1426,7 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
         }
 
-        public void actualizarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
+        public Apelacion actualizarDocumentoApelacion(ExpedienteWrapper expedienteWrapper, string urlData, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             ApelacionDTO apelacionDTO = new ApelacionDTO();
@@ -1435,14 +1437,20 @@ namespace SISGED.Server.Services
             ContenidoApelacion contenidoAPE = new ContenidoApelacion()
             {
                 titulo = apelacionDTO.contenidoDTO.titulo,
-                descripcion = apelacionDTO.contenidoDTO.descripcion
+                descripcion = apelacionDTO.contenidoDTO.descripcion,
+                url = urlData,
             };
+            Apelacion apelacion = new Apelacion();
 
             var filter = Builders<Documento>.Filter.Eq("id", apelacionDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.titulo", contenidoAPE.titulo)
-                .Set("contenido.descripcion", contenidoAPE.descripcion);
+                .Set("contenido.descripcion", contenidoAPE.descripcion)
+                .Set("contenido.url", contenidoAPE.url)
+                .Set("urlanexo", url2);
+
             _documentos.UpdateOne(filter, update);
+            return apelacion;
         }
 
         public void actualizarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
@@ -1525,7 +1533,7 @@ namespace SISGED.Server.Services
         }
 
 
-        public void actualizarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
+        public Dictamen actualizarDocumentoDictamen(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             DictamenDTO dictamenDTO = new DictamenDTO();
@@ -1556,6 +1564,7 @@ namespace SISGED.Server.Services
                 observaciones = listaObservaciones,
                 recomendaciones = listaRecomendaciones
             };
+            Dictamen dictamen = new Dictamen();
 
             var filter = Builders<Documento>.Filter.Eq("id", dictamenDTO.id);
             var update = Builders<Documento>.Update
@@ -1564,10 +1573,13 @@ namespace SISGED.Server.Services
                 .Set("contenido.nombredenunciante", contenidoD.nombredenunciante)
                 .Set("contenido.conclusion", contenidoD.conclusion)
                 .Set("contenido.observaciones", contenidoD.observaciones)
-                .Set("contenido.recomendaciones", contenidoD.recomendaciones);
+                .Set("contenido.recomendaciones", contenidoD.recomendaciones)
+                .Set("urlanexo", url2);
             _documentos.UpdateOne(filter, update);
+            return dictamen;
+
         }
-        
+
         public void actualizarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper)
         {
             //Deserealizacion de Obcject a tipo DTO

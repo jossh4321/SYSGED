@@ -44,13 +44,13 @@ namespace SISGED.Server.Services
             Pasos pasos = await pasoService.GetPasoByNombreExpediente(nombreexpediente);
 
             pasos.documentos.Find(x => x.tipo == asistente.tipodocumento)
-                .pasos.Find(x => x.indice == asistente.paso).fechainicio = asistente.pasos.documentos.ElementAt(0).pasos.ElementAt(0).fechainicio;
+                .pasos.Find(x => x.indice == asistente.paso - 1).fechainicio = asistente.pasos.documentos.ElementAt(0).pasos.ElementAt(0).fechainicio;
 
             pasos.documentos.Find(x => x.tipo == asistente.tipodocumento)
-                .pasos.Find(x => x.indice == asistente.paso).fechafin = asistente.pasos.documentos.ElementAt(0).pasos.ElementAt(0).fechafin;
+                .pasos.Find(x => x.indice == asistente.paso - 1).fechafin = asistente.pasos.documentos.ElementAt(0).pasos.ElementAt(0).fechafin;
 
                 pasos.documentos.Find(x => x.tipo == asistente.tipodocumento)
-                .pasos.Find(x => x.indice == asistente.paso).fechalimite = asistente.pasos.documentos.ElementAt(0).pasos.ElementAt(0).fechalimite;
+                .pasos.Find(x => x.indice == asistente.paso - 1).fechalimite = asistente.pasos.documentos.ElementAt(0).pasos.ElementAt(0).fechalimite;
 
             FilterDefinition<Asistente> queryUpdate = Builders<Asistente>.Filter.Eq("idexpediente", asistente.idexpediente);
 
@@ -79,7 +79,6 @@ namespace SISGED.Server.Services
                                                                                 .Set("subpaso", pasoDTO.subpaso)
                                                                                 .Set("tipodocumento", pasoDTO.tipodocumento)
                                                                                 .Set("pasos.documentos.$[doc].pasos.$[pas].fechainicio", pasoDTO.fechainicio)
-                                                                                .Set("pasos.documentos.$[doc].pasos.$[pas].fechafin", pasoDTO.fechafin)
                                                                                 .Set("pasos.documentos.$[doc].pasos.$[pas].fechalimite", pasoDTO.fechalimite);
 
 
@@ -92,6 +91,47 @@ namespace SISGED.Server.Services
             {
                 ReturnDocument = ReturnDocument.After,
                 ArrayFilters = arrayFilter
+            });
+
+            return asistenteActualizado;
+        }
+
+        public async Task<Asistente> UpdateFinally(PasoDTO pasoDTO)
+        {
+            FilterDefinition<Asistente> queryUpdate = Builders<Asistente>.Filter.Eq("idexpediente", pasoDTO.idexpediente);
+
+            UpdateDefinition<Asistente> updateAsistente = Builders<Asistente>.Update
+                                                                                .Set("paso", pasoDTO.paso)
+                                                                                .Set("subpaso", pasoDTO.subpaso)
+                                                                                .Set("tipodocumento", pasoDTO.tipodocumento)
+                                                                                .Set("pasos.documentos.$[doc].pasos.$[pas].fechafin", pasoDTO.fechafin);
+            
+            var arrayFilter = new List<ArrayFilterDefinition>();
+
+            arrayFilter.Add(new BsonDocumentArrayFilterDefinition<Asistente>(new BsonDocument("doc.tipo", pasoDTO.tipodocumentoAntiguo)));
+            arrayFilter.Add(new BsonDocumentArrayFilterDefinition<Asistente>(new BsonDocument("pas.indice", pasoDTO.pasoantiguo)));
+
+            Asistente asistenteActualizado = await _asistentes.FindOneAndUpdateAsync(queryUpdate, updateAsistente, new FindOneAndUpdateOptions<Asistente>
+            {
+                ReturnDocument = ReturnDocument.After,
+                ArrayFilters = arrayFilter
+            });
+
+            return asistenteActualizado;
+        }
+
+        public async Task<Asistente> UpdateNormal(PasoDTO pasoDTO)
+        {
+            FilterDefinition<Asistente> queryUpdate = Builders<Asistente>.Filter.Eq("idexpediente", pasoDTO.idexpediente);
+
+            UpdateDefinition<Asistente> updateAsistente = Builders<Asistente>.Update
+                                                                                .Set("paso", pasoDTO.paso)
+                                                                                .Set("subpaso", pasoDTO.subpaso)
+                                                                                .Set("tipodocumento", pasoDTO.tipodocumento);
+
+            Asistente asistenteActualizado = await _asistentes.FindOneAndUpdateAsync(queryUpdate, updateAsistente, new FindOneAndUpdateOptions<Asistente>
+            {
+                ReturnDocument = ReturnDocument.After,
             });
 
             return asistenteActualizado;

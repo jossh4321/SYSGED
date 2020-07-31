@@ -234,7 +234,7 @@
                     }
                 </div>
             </div>
-            <VirtualMessage message="@messageSend" count="@count"></VirtualMessage>
+            <VirtualMessage message="@messageSend"></VirtualMessage>
         </div>
     </CascadingValue>
     @if (expedienteseleccionado != null)
@@ -270,9 +270,9 @@
     public Item currentItemDragged;
     public Bandeja bandejaUsuario = new Bandeja();
     public Usuario miusuario = new Usuario();
-    public List<Asistente> asistentes = new List<Asistente>();
+    public Asistente asistente = new Asistente();
     public Timer timer;
-    public String messageSend = "Es un texto de prueba para el ayudante virtual que se encarga de ayudar a los demás para su futuro";
+    public String messageSend = "Seleccione un expediente de la bandeja de entrada al área de trabajo para procesarlo";
     public Int32 count = 0;
     protected override async Task OnInitializedAsync()
     {
@@ -300,7 +300,7 @@
     }
     public void openDialog() { abrirDialogo = true; StateHasChanged(); }
     public void closeDialog() { abrirDialogo = false; }
-    public void UpdateDraggableComponents(string newCurrentPlace)
+    public async Task UpdateDraggableComponents(string newCurrentPlace)
     {
         if (currentItemDragged.originPlace == "tools")
         {
@@ -325,8 +325,11 @@
                 }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
                 if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
+
                 Console.WriteLine("Es de la  entrada papu");
                 Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
+
+                await GetAsistenteByExpedientId(expedienteseleccionado.idexpediente);
 
                 tool.currentPlace = newCurrentPlace;
                 sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
@@ -379,10 +382,106 @@
         StateHasChanged();
     }
 
-    public void ChangeMessage()
+    public void ChangeMessage(String messageSend)
     {
         timer.Start();
-        messageSend = "Es un texto de prueba para el cambio de mensajes mientras el usuario interactura prueba 2";
-        count = 1;
+        this.messageSend = messageSend;
+        StateHasChanged();
+    }
+
+    public async Task GetAsistenteByExpedientId(String expedienteId)
+    {
+        var httpResponse = await repository.Get<Asistente>($"api/Asistente/getbyexpedientID?expedientID={expedienteId}");
+        if (!httpResponse.Error)
+        {
+            asistente = httpResponse.Response;
+            String message = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).subpaso.ElementAt(asistente.subpaso).descripcion;
+            String submessage = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
+
+            ChangeMessage(submessage);
+
+            await UpdatePasoAndSubPaso(asistente.paso,asistente.subpaso, asistente.tipodocumento);
+        }
+    }
+
+    public async Task UpdatePasoAndSubPaso(Int32 paso, Int32 subpaso, String tipodocumento)
+    {
+
+        Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
+
+        PasoDTO pasoDTO = new PasoDTO();
+        pasoDTO.paso =  paso;
+        pasoDTO.subpaso = subpaso;
+        pasoDTO.tipodocumento = tipodocumento;
+        pasoDTO.idexpediente = asistente.idexpediente;
+        pasoDTO.fechainicio = DateTime.UtcNow.AddHours(-5).ToString();
+        pasoDTO.fechafin = "";
+        pasoDTO.fechalimite = DateTime.UtcNow.AddHours(-5).AddDays(dias).ToString();
+
+        asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechainicio = pasoDTO.fechainicio;
+        asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechalimite = pasoDTO.fechalimite;
+        asistente.paso = paso;
+        asistente.subpaso = subpaso;
+        asistente.tipodocumento = tipodocumento;
+
+        var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/update", pasoDTO);
+    }
+
+    public async Task<String> UpdateSolicitudInitial(Int32 paso, Int32 subpaso, String tipodocumento, String nombreExpediente, Int32 pasoAntiguo)
+    {
+        String messageCambio = "";
+        asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(pasoAntiguo).fechafin = DateTime.UtcNow.AddHours(-5).ToString();
+        asistente.paso = paso;
+        asistente.subpaso = subpaso;
+        asistente.tipodocumento = tipodocumento;
+
+        var httpResponse = await repository.Put<Asistente, Asistente>($"api/Asistente/updateinicial?nombreExpediente={nombreExpediente}", asistente);
+        if(!httpResponse.Error)
+        {
+
+            asistente = httpResponse.Response;
+            messageCambio = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
+
+        }
+        return messageCambio;
+    }
+
+    public async Task UpdatePasoAndSubPasoNormal(Int32 paso, Int32 subpaso, String tipodocumento)
+    {
+
+        Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
+
+        PasoDTO pasoDTO = new PasoDTO();
+        pasoDTO.paso = paso;
+        pasoDTO.subpaso = subpaso;
+        pasoDTO.tipodocumento = tipodocumento;
+        pasoDTO.idexpediente = asistente.idexpediente;
+
+        asistente.paso = paso;
+        asistente.subpaso = subpaso;
+        asistente.tipodocumento = tipodocumento;
+
+        var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/updateNormal", pasoDTO);
+    }
+    public async Task UpdatePasoAndSubPasoFinnally(Int32 paso, Int32 subpaso, String tipodocumento, Int32 pasoantiguo, String tipoDocumentoAntiguo)
+    {
+
+        Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
+
+        PasoDTO pasoDTO = new PasoDTO();
+        pasoDTO.paso = paso;
+        pasoDTO.subpaso = subpaso;
+        pasoDTO.tipodocumento = tipodocumento;
+        pasoDTO.idexpediente = asistente.idexpediente;
+        pasoDTO.fechafin = DateTime.UtcNow.AddHours(-5).ToString();
+        pasoDTO.pasoantiguo = pasoantiguo;
+        pasoDTO.tipodocumentoAntiguo = tipoDocumentoAntiguo;
+
+        asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechafin = pasoDTO.fechafin;
+        asistente.paso = paso;
+        asistente.subpaso = subpaso;
+        asistente.tipodocumento = tipodocumento;
+
+        var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/updateFinally", pasoDTO);
     }
 }
