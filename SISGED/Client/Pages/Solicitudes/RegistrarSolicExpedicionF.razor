@@ -162,7 +162,9 @@
     List<string> nombres = new List<string>();
     private string imagenTemporal2;
     private bool loadprocess = false;
-    protected override void OnInitialized()
+    int paso = 0;
+    int subpaso = 0;
+    protected override async Task OnInitializedAsync()
     {
         Usuario usuario = new Usuario();
         usuario.id = sesion.usuario.id;
@@ -181,6 +183,17 @@
             imagenTemporal = solicitudexpedicionfirma.contenidoDTO.data;
             solicitudexpedicionfirma.contenidoDTO.data = null;
         }
+        subpaso = 1;
+
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        Task voiceMessage = workspace.VoiceMessage(message);
+
+        workspace.ChangeMessage(message);
+
+        await voiceMessage;
+
+        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
 
     private void ImagenSeleccionada(string imagenbase64)
@@ -277,11 +290,26 @@
 
                 workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
                 workspace.expedienteseleccionado.documento = documentoDTO;
-                workspace.expedienteseleccionado.tipo = "Busqueda Protocolo Notarial";
+                workspace.expedienteseleccionado.tipo = "Expedicion de Firmas";
 
                 StateHasChanged();
 
                 await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
+
+                subpaso = 2;
+
+                Int32 pasoAntiguo = paso;
+                paso = 1;
+                subpaso = 0;
+                //Enviar paso=0+0,subpaso=2,idexpediente
+
+                String messageFinal = await workspace.UpdateSolicitudInitial(paso, subpaso, expedientebandeja.documento.tipo, expedientebandeja.tipo, pasoAntiguo);
+
+                Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
+                workspace.ChangeMessage(messageFinal);
+
+                await voiceMessage;
             }
         }
         else
