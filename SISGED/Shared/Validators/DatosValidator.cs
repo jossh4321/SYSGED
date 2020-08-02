@@ -12,11 +12,11 @@ namespace SISGED.Shared.Validators
         {
             RuleFor(x => x.nombre).NotEmpty()
                 .WithMessage("Debe Ingresar un Nombre");
-            RuleFor(x => x.nombre).Matches(@"^[A-aZ-z0-9áéíóú. ]*[A-aZ-z0-9áéíóú.]$")
+            RuleFor(x => x.nombre).Matches(@"^[A-aZ-z0-9ñáéíóú. ]*[A-aZ-z0-9ñáéíóú.]$")
                 .WithMessage("Debe ingresar un nombre válido").When(x => x.nombre != null && x.nombre != "");
             RuleFor(x => x.apellido).NotEmpty()
                 .WithMessage("Debe Ingresar un Apellido");
-            RuleFor(x => x.apellido).Matches(@"^[A-aZ-z0-9áéíóú. ]*[A-aZ-z0-9áéíóú.]$")
+            RuleFor(x => x.apellido).Matches(@"^[A-aZ-z0-9ñáéíóú. ]*[A-aZ-z0-9ñáéíóú.]$")
                 .WithMessage("Debe ingresar un apellido válido").When(x => x.apellido != null && x.apellido != "");
             RuleFor(x => x.fechanacimiento).NotEmpty()
                 .WithMessage("Debe Ingresar una Fecha de Nacimiento");
@@ -29,7 +29,7 @@ namespace SISGED.Shared.Validators
             RuleFor(x => x.numerodocumento).Matches(@"^[0-9]{8}$").WithMessage("Debe ingresar un número de doc válido").When(x => x.numerodocumento != null && x.numerodocumento != "");
             RuleFor(x => x.direccion).NotEmpty()
                 .WithMessage("Debe Ingresar una Direccion");
-            RuleFor(x => x.direccion).Matches(@"^[A-aZ-z0-9áéíóú. ]*[A-aZ-z0-9áéíóú.]$")
+            RuleFor(x => x.direccion).Matches(@"^[A-aZ-z0-9ñáéíóú. ]*[A-aZ-z0-9ñáéíóú.]$")
                 .WithMessage("Debe ingresar una dirección válida").When(x => x.direccion != null && x.direccion != "");
             RuleFor(x => x.email).NotEmpty()
                 .WithMessage("Debe Ingresar un email");

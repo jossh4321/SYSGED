@@ -326,6 +326,14 @@
 
     protected override async Task OnInitializedAsync()
     {
+        cargatabla = true;
+        await MostrarTabla();
+        cargatabla = false;
+    }
+
+
+    public async Task MostrarTabla()
+    {
 
         var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
         if (!httpResponse.Error)
@@ -345,7 +353,7 @@
         {
             Console.WriteLine("Ocurrio un error");
         }
-        cargatabla = false;
+
     }
 
     void CancelButton()
@@ -449,8 +457,10 @@
                 //_editContext = new EditContext(solicitud);
                 //_editContext.MarkAsUnmodified();
                 //_editContext.NotifyValidationStateChanged();
-                StateHasChanged();
                 Console.WriteLine("cancelacion exitosa");
+                await MostrarTabla();
+                StateHasChanged();
+
 
             }
             else
