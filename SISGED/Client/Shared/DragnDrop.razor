@@ -59,64 +59,31 @@
     [Parameter] public EventCallback<string> ImagenSeleccionada { get; set; }
     [Parameter] public EventCallback<string> FileNames { get; set; }
     private string imagenBase64;
-    ElementReference dropTargetElement;
+
     ElementReference dropTargetInput;
-    IFileReaderRef dropReference;
+
     IFileReaderRef ipReference;
-    bool Additive { get; set; }
+
 
     const string dropTargetDragClass = "droptarget-drag";
     const string dropTargetClass = "droptarget";
 
-    private List<string> _dropClasses = new List<string>() { dropTargetClass };
     private List<string> _ipdropClasses = new List<string>() { dropTargetClass };
 
-    string DropClass => string.Join(" ", _dropClasses);
+
     string IpDropClass => string.Join(" ", _ipdropClasses);
 
-    string Output { get; set; }
-    List<IFileInfo> DropFileList { get; } = new List<IFileInfo>();
     List<IFileInfo> IpFileList { get; } = new List<IFileInfo>();
 
     protected override async Task OnAfterRenderAsync(bool isFirstRender)
     {
         if (isFirstRender)
         {
-            dropReference = fileReaderService.CreateReference(dropTargetElement);
+
             ipReference = fileReaderService.CreateReference(dropTargetInput);
-            await dropReference.RegisterDropEventsAsync();
         }
     }
 
-    public async Task OnAdditiveChange(ChangeEventArgs e)
-    {
-        Additive = (bool)e.Value;
-        StateHasChanged();
-        await dropReference.UnregisterDropEventsAsync();
-        await dropReference.RegisterDropEventsAsync(Additive);
-    }
-
-    public async Task ClearDrop()
-    {
-        await dropReference.ClearValue();
-        await this.RefreshDropFileList();
-    }
-
-    public async Task ClearClick()
-    {
-        await ipReference.ClearValue();
-        await this.RefreshIpFileList();
-    }
-
-    public void OnDragEnter(EventArgs e)
-    {
-        _dropClasses.Add(dropTargetDragClass);
-    }
-
-    public void OnDragLeave(EventArgs e)
-    {
-        _dropClasses.Remove(dropTargetDragClass);
-    }
 
     public void OnIpDragEnter(EventArgs e)
     {
@@ -128,25 +95,13 @@
         _ipdropClasses.Remove(dropTargetDragClass);
     }
 
-    public async Task OnDrop(EventArgs e)
-    {
-        Output += "Dropped a file.";
-        _dropClasses.Remove(dropTargetDragClass);
-        this.StateHasChanged();
-        await this.RefreshDropFileList();
-    }
 
     public async Task OnInputChange(EventArgs e)
     {
-        Output += "Dropped a file on the Clickable.";
+        
         _ipdropClasses.Remove(dropTargetDragClass);
         this.StateHasChanged();
         await this.RefreshIpFileList();
-    }
-
-    private Task RefreshDropFileList()
-    {
-        return RefreshFileList(dropReference, DropFileList);
     }
 
     private Task RefreshIpFileList()
@@ -160,16 +115,11 @@
         foreach (var file in await reader.EnumerateFilesAsync())
         {
             var fileInfo = await file.ReadFileInfoAsync();
-            //list.Add(fileInfo);
         }
         await ReadFile(ipReference);
         this.StateHasChanged();
     }
 
-    public async Task ReadDrop(EventArgs e)
-    {
-        await ReadFile(dropReference);
-    }
     public async Task ReadClick()
     {
         await ReadFile(ipReference);
@@ -179,9 +129,6 @@
 
     public async Task ReadFile(IFileReaderRef list)
     {
-        //_dropClasses.Add(dropTargetDragClass);
-        //dropReference = fileReaderService.CreateReference(dropTargetElement);
-        //await dropReference.RegisterDropEventsAsync();
 
         this.StateHasChanged();
         var nl = Environment.NewLine;
