@@ -79,6 +79,18 @@ namespace SISGED.Server.Services
             return usuario;
         }
 
+        public Usuario modifyPassword(Usuario usuario)
+        {
+            var filter = Builders<Usuario>.Filter.Eq("id", usuario.id);            
+            var update = Builders<Usuario>.Update
+                .Set("clave", usuario.clave);
+            usuario = _usuarios.FindOneAndUpdate<Usuario>(filter, update, new FindOneAndUpdateOptions<Usuario>
+            {
+                ReturnDocument = ReturnDocument.After
+            });
+            return usuario;
+        }
+
         public List<Usuario> GetByStatus(string status)
         {
             List<Usuario> usuarios = new List<Usuario>();

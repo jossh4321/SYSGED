@@ -97,6 +97,13 @@ namespace SISGED.Server.Controllers
             return usuario;
         }
 
+        [HttpPut("password")]
+        public ActionResult<Usuario> ModifyPassword(Usuario usuario)
+        {
+            usuario = _usuarioservice.modifyPassword(usuario);
+            return usuario;
+        }
+
         [HttpGet("estado")]
         public ActionResult<List<Usuario>> GetByStatus([FromQuery] string status)
         {
