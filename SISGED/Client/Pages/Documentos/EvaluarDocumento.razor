@@ -11,6 +11,14 @@
         padding: 10px;
     }
 
+    .alineacion-a {
+        text-align: left !important;
+    }
+    .alineacion-b {
+        display: flex;
+        justify-content: center;
+    }
+
     .text-field-style {
         display: block !important;
     }
@@ -170,11 +178,11 @@ else
 
                         @if (datosParticipantes.Count != 0)
                         {
-                            <div class="mat-layout-grid">
+                            <div class="mat-layout-grid alineacion-b">
                                 <div class="mat-layout-grid-inner">
                                     @foreach (var participante in listadopaginacion)
                                     {
-                                        <div class="mat-layout-grid-cell-span-4">
+                                        <div class="mat-layout-grid-cell-span-4 alineacion-a">
                                             <UsuarioParticipanteC usuarioParticipanteEvaluacion="participante" @key="participante.id"
                                                                   mostrarDatosParticipante="ModificarParticipante" eliminarParticipante="EliminarParticipante"></UsuarioParticipanteC>
                                         </div>
@@ -299,24 +307,24 @@ else
         listadopaginacion = new List<UsuarioEvaluacionDTO>();
         participanteSeleccionado = new UsuarioEvaluacionDTO();
         evaluacion = new Evaluacion();
-        string tipo = workspace.expedienteseleccionado.documento.tipo;
-        if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
-        {
-            Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
-            if (evaluacion.resultado == "pendiente")
-            {
-                DocumentoRevisado = false;
-            }
-            else
-            {
-                DocumentoRevisado = true;
-            }
+        //string tipo = workspace.expedienteseleccionado.documento.tipo;
+        //if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
+        //{
+        //    Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
+        //    if (evaluacion.resultado == "pendiente")
+        //    {
+        //        DocumentoRevisado = false;
+        //    }
+        //    else
+        //    {
+        //        DocumentoRevisado = true;
+        //    }
 
-        }
-        else
-        {
-            DocumentoRevisado = true;
-        }
+        //}
+        //else
+        //{
+        //    DocumentoRevisado = true;
+        //}
     }
 
     private async Task EvaluacionIndividual()
@@ -521,7 +529,7 @@ else
         participanteSeleccionado.descripcion = observacionModificada;
         datosParticipantes[datosParticipantes.FindIndex(ind => ind.id.Equals(participanteSeleccionado.id))] = participanteSeleccionado;
         listadopaginacion[listadopaginacion.FindIndex(ind => ind.id.Equals(participanteSeleccionado.id))] = participanteSeleccionado;
-        OpenEliminar = false;
+        OpenModificar = false;
         estadoModificado = "";
         observacionModificada = "";
     }

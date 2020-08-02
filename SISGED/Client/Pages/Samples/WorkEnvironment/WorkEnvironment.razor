@@ -403,9 +403,9 @@
             String message = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).subpaso.ElementAt(asistente.subpaso).descripcion;
             String submessage = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
 
-            Task voiceMessage = VoiceMessage(message);
+            Task voiceMessage = VoiceMessage(submessage);
 
-            ChangeMessage(message);
+            ChangeMessage(submessage);
 
             await voiceMessage;
 
