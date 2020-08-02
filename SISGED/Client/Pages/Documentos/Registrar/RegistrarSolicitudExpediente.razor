@@ -186,7 +186,11 @@
         //Enviar paso=0, subpaso=1, idex
         String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
+        Task voiceMessage = workspace.VoiceMessage(message);
+
         workspace.ChangeMessage(message);
+
+        await voiceMessage;
 
         await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
@@ -252,6 +256,7 @@
 
             workspace.UpdateDocRegistrado(itemSalida);
             workspace.UpdateTools("Registrar Documento");
+
             DocumentoDTO documentoDTO = new DocumentoDTO();
             documentoDTO.id = solicitudExpedienteNotarioAct.id;
             documentoDTO.tipo = solicitudExpedienteNotarioAct.tipo;
@@ -260,6 +265,7 @@
             documentoDTO.historialcontenido = solicitudExpedienteNotarioAct.historialcontenido;
             documentoDTO.historialproceso = solicitudExpedienteNotarioAct.historialproceso;
             documentoDTO.urlanexo = solicitudExpedienteNotarioAct.urlanexo;
+
             workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
             workspace.expedienteseleccionado.documento = documentoDTO;
 
@@ -279,7 +285,11 @@
             String messageFinal = workspace.asistente.pasos.documentos
                     .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
 
+            Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
             workspace.ChangeMessage(messageFinal);
+
+            await voiceMessage;
         }
         else
         {

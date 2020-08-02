@@ -415,7 +415,12 @@
 
         String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
+        Task voiceMessage = workspace.VoiceMessage(message);
+
         workspace.ChangeMessage(message);
+
+        await voiceMessage;
+
 
         await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
 
@@ -560,7 +565,11 @@
                 String messageFinal = workspace.asistente.pasos.documentos
                         .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
 
+                Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
                 workspace.ChangeMessage(messageFinal);
+
+                await voiceMessage;
                 //Enviar paso=0,subpaso=2, idexp
             }
             else

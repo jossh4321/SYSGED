@@ -113,3 +113,9 @@ function gPDF(image, nombre, documento) {
 
     $('#docpdf').attr('src', doc.output('datauristring'));
 }
+
+function textSpeak(message) {
+    var text = message;
+    responsiveVoice.setDefaultVoice("Spanish Female");
+    responsiveVoice.speak(text);
+}

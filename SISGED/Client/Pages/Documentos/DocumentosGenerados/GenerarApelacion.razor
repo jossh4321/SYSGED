@@ -70,6 +70,15 @@
         await js.InvokeVoidAsync("gPDF", imagen, sesion.usuario.datos.nombre+" "+sesion.usuario.datos.apellido, sesion.usuario.datos.tipodocumento+" : "+sesion.usuario.datos.numerodocumento);
         subpaso = 2;
         //Enviar paso=1,subpaso=2,idexp
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        Task voiceMessage = workspace.VoiceMessage(message);
+
+        workspace.ChangeMessage(message);
+
+        await voiceMessage;
+
+        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
     private async Task GenerarPDF()
     {
@@ -82,12 +91,21 @@
             await Generar();
         }
     }
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
         documento = JsonConvert.DeserializeObject<ContenidoApelacion>(workspace.expedienteseleccionado.documento.contenido.ToString());
         Console.WriteLine(documento.titulo);
         subpaso = 1;
         //Enviar paso=1,subpaso=1,idexp
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        Task voiceMessage = workspace.VoiceMessage(message);
+
+        workspace.ChangeMessage(message);
+
+        await voiceMessage;
+
+        await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
 
     private async Task ConfirmacionGenerar()
@@ -132,6 +150,22 @@
             };
             workspace.UpdateTools("Generar Documento");
             workspace.RemoveExpedienteSeleccionado(itemSalida);
+
+            Int32 pasoAntiguo = paso;
+            paso = 2;
+            subpaso = 0;
+            //Enviar paso=0+0,subpaso=2,idexpediente
+            String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+            await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
+
+            String messageFinal = workspace.asistente.pasos.documentos
+                        .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
+
+            Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
+            workspace.ChangeMessage(messageFinal);
+
+            await voiceMessage;
         }
     }
 }

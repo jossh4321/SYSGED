@@ -36,36 +36,68 @@
     }
 }*/
 
+.user-bubble {
+    display: flex;
+}
+
+.user {
+    display: block;
+    position: fixed;
+    bottom: 10px;
+    left: 5px;
+    width: 50px;
+    height: 50px;
+    border-radius:50px;
+}
 
 .message {
     font-family: sans-serif;
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     width: 30%;
     background-color: lightblue;
     height: 100px;
     position: fixed;
-    top: 65px;
-    left: 10px;
+    bottom: 30px;
+    left: 60px;
     border-radius: 15px;
 }
 
 .message h1 {
-   font-size: 15px !important;
-   color: black !important;
+        font-size: 15px !important;
+        color: #222 !important;
+        font-weight: bolder;
 }
 
 .typing {
     margin-left: 1px;
+    font-weight: bolder;
+}
+
+.bubble {
+    padding: 15px;
+}
+
+.bubble:after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 10px;
+        margin-left: -30px;
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-right: 15px solid lightblue;
 }
 
 .typing::after {
-   content: "";
-   position: absolute;
-   width: 1px;
-   height: 18px;
-   border-right: 2px solid white;
-   animation: blink 0.5s infinite ease;
+    content: "";
+    position: absolute;
+    width: 1px;
+    height: 18px;
+    border-right: 2px solid #222;
+    animation: blink 0.5s infinite ease;
 }
 
 @keyframes blink

@@ -117,7 +117,11 @@ else
 
         String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
+        Task voiceMessage = workspace.VoiceMessage(message);
+
         workspace.ChangeMessage(message);
+
+        await voiceMessage;
 
         await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
         //Enviar paso=2,subpaso=1,idexp
@@ -180,6 +184,8 @@ else
 
         workspace.ChangeMessage(message);
 
+        workspace.VoiceMessage(message);
+
         workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
     public void userChanged(ChangeEventArgs e)
@@ -231,8 +237,6 @@ else
             ExpedienteBandejaDTO exp = new ExpedienteBandejaDTO();
             exp = (ExpedienteBandejaDTO)httpResponse.Response;
 
-            workspace.UpdateTools("Derivar Documento");
-
             await layout.Send(usu.usuario, exp);
             await swalfire.successMessage("Documento derivado correctamente");
             Item itemSalida = new Item()
@@ -247,7 +251,7 @@ else
                 itemstatus = "registrado"
             };
             workspace.UpdateTools("Derivar Documento");
-            workspace.RemoveExpedienteSeleccionadoBandejas(itemSalida);            
+            workspace.RemoveExpedienteSeleccionadoBandejas(itemSalida);
             subpaso = 3;
 
             Int32 pasoAntiguo = paso;
@@ -266,8 +270,11 @@ else
 
             String messageFinal = "Seleccione un expediente de la bandeja de entrada al área de trabajo para procesarlo";
 
+            Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
             workspace.ChangeMessage(messageFinal);
 
+            await voiceMessage;
         }
 
         ////logica para enviar con HUB

@@ -276,7 +276,6 @@
     public Int32 count = 0;
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("INICIE: WorkEnvironment");
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
         List<Expediente_group> lista = new List<Expediente_group>();
@@ -284,19 +283,8 @@
         if (!httpResponse.Error)
         {
             lista = httpResponse.Response;
+            await VoiceMessage(messageSend);
         }
-        /*List<Documento> documentos = new List<Documento>();
-
-        var httpResponse = await repository.Get<List<Documento>>($"api/documentos");
-        if (!httpResponse.Error)
-        {
-            documentos = httpResponse.Response;
-        }*/
-        /*var httpResponse = await repository.Get<List<Asistente>>($"api/asistente/getasistentes");
-        if(!httpResponse.Error)
-        {
-            asistentes = httpResponse.Response;
-        }*/
     }
     public void openDialog() { abrirDialogo = true; StateHasChanged(); }
     public void closeDialog() { abrirDialogo = false; }
@@ -383,11 +371,13 @@
     }
     public void RemoveExpedienteSeleccionadoBandejas(Item itemsalida)
     {
-        sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "inputs";
+        Int32 index = sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace");
 
-        sesion.listaentradas.RemoveAll(ind => ind.nombre.Equals(itemsalida.nombre) &&
-        ind.cliente.tipodocumento.Equals(itemsalida.cliente.tipodocumento) &&
-        ind.cliente.numerodocumento.Equals(itemsalida.cliente.numerodocumento));
+        sesion.listasalidas.RemoveAt(index);
+
+        //sesion.listasalidas.RemoveAll(ind => ind.nombre.Equals(itemsalida.nombre) &&
+        //ind.cliente.tipodocumento.Equals(itemsalida.cliente.tipodocumento) &&
+        //ind.cliente.numerodocumento.Equals(itemsalida.cliente.numerodocumento));
 
         StateHasChanged();
     }
@@ -399,6 +389,11 @@
         StateHasChanged();
     }
 
+    public async Task VoiceMessage(String messageSend)
+    {
+        await js.InvokeVoidAsync("textSpeak", messageSend);
+    }
+
     public async Task GetAsistenteByExpedientId(String expedienteId)
     {
         var httpResponse = await repository.Get<Asistente>($"api/Asistente/getbyexpedientID?expedientID={expedienteId}");
@@ -408,7 +403,11 @@
             String message = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).subpaso.ElementAt(asistente.subpaso).descripcion;
             String submessage = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
 
-            ChangeMessage(submessage);
+            Task voiceMessage = VoiceMessage(message);
+
+            ChangeMessage(message);
+
+            await voiceMessage;
 
             await UpdatePasoAndSubPaso(asistente.paso,asistente.subpaso, asistente.tipodocumento);
         }

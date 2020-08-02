@@ -3,17 +3,19 @@
 @inject NavigationManager navigationManager
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 @using System.Timers
-
 <link rel="stylesheet" href="css/estilosVM/virtualmessage.css" />
 
 @*<div class="message" data-text="Es un texto de prueba">
             Es un texto de prueba
     </div>*@
-
-<div class="message">
-    <h1>Bienvenido @sesion.usuario.usuario,</h1>
-    <h1 class="typing">@letter</h1>
+<div class="user-bubble">
+    <img class="user" src="/images/user-2.jpg" />
+    <div class="message bubble">
+        <h1>Bienvenido @sesion.usuario.usuario,</h1>
+        <h1 class="typing">@letter</h1>
+    </div>
 </div>
+
 
 @code {
     [Parameter]
@@ -33,7 +35,7 @@
     protected override void OnInitialized()
     {
         workspace.timer = new Timer();
-        workspace.timer.Interval = 100;
+        workspace.timer.Interval = 70;
         workspace.timer.Elapsed += TimerOnElapsed;
         workspace.timer.Start();
     }

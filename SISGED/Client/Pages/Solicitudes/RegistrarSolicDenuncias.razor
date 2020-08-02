@@ -181,7 +181,11 @@
 
         String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
+        Task voiceMessage = workspace.VoiceMessage(message);
+
         workspace.ChangeMessage(message);
+
+        await voiceMessage;
 
         await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
@@ -280,6 +284,12 @@
                 workspace.expedienteseleccionado.documento = documentoDTO;
                 workspace.expedienteseleccionado.tipo = "Denuncia";
 
+                StateHasChanged();
+
+                await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
+
+                subpaso = 2;
+
                 Int32 pasoAntiguo = paso;
                 paso = 1;
                 subpaso = 0;
@@ -287,11 +297,11 @@
 
                 String messageFinal = await workspace.UpdateSolicitudInitial(paso, subpaso, expedientebandeja.documento.tipo, expedientebandeja.tipo, pasoAntiguo);
 
+                Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
                 workspace.ChangeMessage(messageFinal);
 
-                StateHasChanged();
-
-                await swalfire.successMessage("Solicitud de Denuncia Registrada Correctamente");
+                await voiceMessage;
             }
         }
         else
