@@ -85,9 +85,9 @@ namespace SISGED.Shared.DTOs
         public string tipo { get; set; }
         public List<ContenidoVersion> historialcontenido { get; set; } = new List<ContenidoVersion>();
         public List<Proceso> historialproceso { get; set; } = new List<Proceso>();
-        public ContenidoSolicitudInicial contenido { get; set; }
+        public ContenidoSolicitudInicial contenido { get; set; } = new ContenidoSolicitudInicial();
         public string estado { get; set; }
-        public Object evaluacion { get; set; }
+        public Object evaluacion { get; set; } = new Object();
         public List<string> urlanexo { get; set; } = new List<string>();
     }
 }
