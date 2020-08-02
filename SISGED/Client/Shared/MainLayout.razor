@@ -108,17 +108,17 @@
                                 <Authorized>
                                     <div Class="bar-menu-user-shrink" @onclick:stopPropagation="true" @onclick="showUserMenu">
                                         <div style="display:inline-block">
-                                            <span class="profile-name-text">@context.User.Identity.Name</span>
+                                            <span class="profile-name-text">@context.User.Identity.Name</span>                                            
                                         </div>
                                         <div class="img-profile-container">
                                             <img class="profile-img" src="images/default_profile_pic.jpg" />
                                         </div>
                                     </div>
-
+                                    
                                     <div Class="profile-card-menu @valueclass"
                                          Style="background-color:rgb(68, 68, 68);margin-top:58px;
                                             position:absolute; top:5px;">
-                                        <UserMenu valueclass="@valueclass"></UserMenu>
+                                        <UserMenu valueclass="@valueclass" sesion="@sesion"></UserMenu>
                                     </div>
                                 </Authorized>
                             </AuthorizeView>

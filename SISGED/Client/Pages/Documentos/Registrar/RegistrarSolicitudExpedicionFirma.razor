@@ -172,7 +172,7 @@
     private bool loadprocess = false;
     int paso = 0;
     int subpaso = 0;
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(solicitudexpedicionfirma);
         if (!string.IsNullOrEmpty(solicitudexpedicionfirma.contenidoDTO.data))
@@ -182,6 +182,14 @@
         }
         subpaso = 1;
         //Enviar paso=0,subpaso=1,idexp
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+        Task voiceMessage = workspace.VoiceMessage(message);
+
+        workspace.ChangeMessage(message);
+
+        await voiceMessage;
+        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        Console.WriteLine("Reconoceme rctmr");
     }
 
     private void ImagenSeleccionada(string imagenbase64)
@@ -231,6 +239,22 @@
                 await swalfire.successMessage("Solicitud de Expedicion de Firma Registrada Correctamente");
                 subpaso = 2;
                 //Enviar paso=0,subpaso=2,idexp
+                Int32 pasoAntiguo = paso;
+                paso = 1;
+                subpaso = 0;
+                //Enviar paso=0+0,subpaso=2,idexpediente
+                String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+
+                await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
+
+                String messageFinal = workspace.asistente.pasos.documentos
+                        .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
+
+                Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
+                workspace.ChangeMessage(messageFinal);
+
+                await voiceMessage;
             }
         }
         else

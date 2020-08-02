@@ -8,8 +8,8 @@
             <img class="profile-img" style="display:block" src="images/default_profile_pic.jpg" />
         </div>
         <div style="display:inline-block">
-            <span style="display:block;font-size:16px;color:rgb(255,255,255);font-family:sans-serif">Christian Frias</span>
-            <span style="display:block;font-size:14px;color:rgba(255, 255, 255, 0.54);font-family:sans-serif">christian.frias@urp.edu.pe</span>
+            <span style="display:block;font-size:16px;color:rgb(255,255,255);font-family:sans-serif"> @sesion.usuario.datos.nombre @sesion.usuario.datos.apellido</span>
+            <span style="display:block;font-size:14px;color:rgba(255, 255, 255, 0.54);font-family:sans-serif">@sesion.usuario.datos.email</span>
         </div>
     </div>
     <MatDivider></MatDivider>
@@ -36,14 +36,16 @@
     </MatListItem>
 </MatCard>
 
-@code {
+@code {        
     [Parameter] public string valueclass { get; set; }
+    [Parameter] public Sesion sesion { get; set; }
     public async Task salir()
     {
         valueclass = "non-show";
         await loginservice.Logout();
         navigationManager.NavigateTo("");
     }
-    
+
+
 
 }
