@@ -371,7 +371,7 @@
     }
     public void RemoveExpedienteSeleccionadoBandejas(Item itemsalida)
     {
-        Int32 index = sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace");
+        Int32 index = sesion.listasalidas.FindIndex(ind => ind.currentPlace == "workspace");
 
         sesion.listasalidas.RemoveAt(index);
 
