@@ -145,6 +145,33 @@
                         </div>
                     </div>
 
+                    @*<div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Edit"
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
+                    </div>*@
+                </MatTab>
+                <MatTab Label="Subir Anexo">
+                    <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada" FileNames="FileName" ImagenTemporal="@(imagenTemporal2)"></DragnDrop>
+
+                    @if (nombres != null && nombres.Count > 0)
+                    {
+                        @for (int i = 0; i < nombres.Count; i++)
+                        {
+                            int index = i;
+                            string a = nombres[i];
+                            <div>
+
+                                @nombres[i]
+
+                                <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                        @onclick="@(e => RemoveFile(a,index))">
+                                    <small class="RedText">Eliminar</small>
+                                </button>
+                            </div>
+                        }
+                    }
                     <div class="field-container">
                         <MatButton type="submit"
                                    Disabled="@loadprocess"
@@ -241,6 +268,7 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
     public bool abrirDialogo = false;
+    List<string> nombres = new List<string>();
     public void openDialog() { abrirDialogo = true; }
     public void closeDialog() { abrirDialogo = false; }
     private bool firstLoad = true;
@@ -289,9 +317,11 @@
     };
 
     private OficioBPNDTO documento = new OficioBPNDTO();
+    private List<string> imagenTemporal2 = new List<string>();
     private EditContext _editContext;
     protected override async Task OnInitializedAsync()
     {
+        documento.contenidoDTO.Urlanexo = new List<string>();
         firstLoad = true;
         _editContext = new EditContext(documento);
         List<OficioBPNDTO> listaexpediente = new List<OficioBPNDTO>();
@@ -306,7 +336,32 @@
         {
             Console.WriteLine("Ocurrio un Error");
         }
+        foreach (string u in documento.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2.Add(u);
+            }
+        }
+        documento.contenidoDTO.Urlanexo.Clear();
         firstLoad = false;
+    }
+
+    private void ImagenSeleccionada(string imagenbase64)
+    {
+        documento.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+
+    private async Task RemoveFile(string file, int imagen64)
+    {
+        nombres.Remove(file);
+        documento.contenidoDTO.Urlanexo.RemoveAt(imagen64);
+        StateHasChanged();
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
