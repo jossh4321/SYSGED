@@ -1504,7 +1504,7 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
         }
         
-        public void actualizarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
+        public ConclusionFirma actualizarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             ConclusionFirmaDTO conclusionFirmaDTO = new ConclusionFirmaDTO();
@@ -1521,15 +1521,17 @@ namespace SISGED.Server.Services
                   cantidadfoja = conclusionFirmaDTO.contenidoDTO.cantidadfoja,
                   precio = conclusionFirmaDTO.contenidoDTO.cantidadfoja*30
             };
-
+            ConclusionFirma conclusionFirma = new ConclusionFirma();
             var filter = Builders<Documento>.Filter.Eq("id", conclusionFirmaDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica)
                 .Set("contenido.idnotario", contenidoCF.idnotario)
                 .Set("contenido.idcliente", contenidoCF.idcliente)
                 .Set("contenido.cantidadfoja",contenidoCF.cantidadfoja)
-                .Set("contenido.precio", contenidoCF.precio);
-             _documentos.UpdateOne(filter, update);
+                .Set("contenido.precio", contenidoCF.precio)
+                .Set("urlanexo", url2);
+            _documentos.UpdateOne(filter, update);
+            return conclusionFirma;
         }
 
 
