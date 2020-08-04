@@ -444,6 +444,28 @@ namespace SISGED.Server.Controllers
 
             return _documentoservice.registrarResultadoBPN(resultadoBPNDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada, documentosolicitud.iddocumento);
         }
+
+        [HttpPost("documentoEntregaExpedienteNotario")]
+        public async Task<ActionResult<EntregaExpedienteNotario>> RegistrarDocumentoEntregaExpedienteNotario(ExpedienteWrapper expedientewrapper)
+        {
+            //Deserealizacion de objeto de tipo C
+            EntregaExpedienteNotarioDTO entregaExpedienteNotarioDTO = new EntregaExpedienteNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            entregaExpedienteNotarioDTO = JsonConvert.DeserializeObject<EntregaExpedienteNotarioDTO>(json);
+
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in entregaExpedienteNotarioDTO.contenidoDTO.urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "entregaexpedientenotario");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.registrarEntregaExpedienteNotario(entregaExpedienteNotarioDTO, expedientewrapper, url2);
+        }
         #endregion
 
         [HttpPut("cambiarestado")]
@@ -549,6 +571,11 @@ namespace SISGED.Server.Controllers
         public async Task<ActionResult<SolicitudInicialDTO>> obtenerSolicitudInicial([FromQuery] string iddoc)
         {
             return _documentoservice.obtenerSolicitudInicial(iddoc);
+        }
+        [HttpGet("obtenerdocumentoEEN")]
+        public async Task<ActionResult<EntregaExpedienteNotarioDTO>> obtenerEntregaExpedienteNotario([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerEntregaExpedienteNotarioDTO(iddoc);
         }
 
         //Actualizaciones
@@ -686,6 +713,11 @@ namespace SISGED.Server.Controllers
         public void modificarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoSolicitudInicial(expedienteWrapper);
+        }
+        [HttpPut("actualizarDocumentoEEN")]
+        public void modificarDocumentoEEN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoEEN(expedienteWrapper);
         }
 
         [HttpPut("estadosolicitud")]
