@@ -279,9 +279,11 @@
 </div>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-    <RegistrarSolicitudInicial cerrarDialogoRegistro="cerrarDialogoRegistro"></RegistrarSolicitudInicial>
+    <CascadingValue Value="this">
+        <RegistrarSolicitudInicial cerrarDialogoRegistro="cerrarDialogoRegistro"></RegistrarSolicitudInicial>
+    </CascadingValue>
     <MatDialogActions>
-        <MatButton OnClick="@OkClick" >Cancelar</MatButton>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
     </MatDialogActions>
 </MatDialog>
 
