@@ -1443,7 +1443,7 @@ namespace SISGED.Server.Services
             };
             return SIDTO;
         }
-
+        //
         public EntregaExpedienteNotarioDTO obtenerEntregaExpedienteNotarioDTO(string id)
         {
             var match = new BsonDocument("$match",
@@ -1476,7 +1476,8 @@ namespace SISGED.Server.Services
                                             new BsonArray{ "$notario", 0 })}
                     }},
                     { "historialproceso", "$historialproceso" },
-                    { "historialcontenido", "$historialcontenido" }
+                    { "historialcontenido", "$historialcontenido" },
+                    { "urlanexo", "$urlanexo" }
                 });
 
             EntregaExpedienteNotarioDTO entregaExpedienteNotario = new EntregaExpedienteNotarioDTO();
