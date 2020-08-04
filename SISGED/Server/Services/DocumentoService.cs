@@ -1595,7 +1595,7 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
         }
         
-        public void actualizarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
+        public ConclusionFirma actualizarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             ConclusionFirmaDTO conclusionFirmaDTO = new ConclusionFirmaDTO();
@@ -1612,15 +1612,17 @@ namespace SISGED.Server.Services
                   cantidadfoja = conclusionFirmaDTO.contenidoDTO.cantidadfoja,
                   precio = conclusionFirmaDTO.contenidoDTO.cantidadfoja*30
             };
-
+            ConclusionFirma conclusionFirma = new ConclusionFirma();
             var filter = Builders<Documento>.Filter.Eq("id", conclusionFirmaDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.idescriturapublica", contenidoCF.idescriturapublica)
                 .Set("contenido.idnotario", contenidoCF.idnotario)
                 .Set("contenido.idcliente", contenidoCF.idcliente)
                 .Set("contenido.cantidadfoja",contenidoCF.cantidadfoja)
-                .Set("contenido.precio", contenidoCF.precio);
-             _documentos.UpdateOne(filter, update);
+                .Set("contenido.precio", contenidoCF.precio)
+                .Set("urlanexo", url2);
+            _documentos.UpdateOne(filter, update);
+            return conclusionFirma;
         }
 
 
@@ -1671,7 +1673,7 @@ namespace SISGED.Server.Services
 
         }
 
-        public void actualizarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper)
+        public OficioBPN actualizarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
@@ -1696,7 +1698,7 @@ namespace SISGED.Server.Services
                 tipoprotocolo = oficioBPNDTO.contenidoDTO.tipoprotocolo,
                 otorgantes = oficioBPNDTO.contenidoDTO.otorgantes,
             };
-
+            OficioBPN oficioBPN = new OficioBPN();
             var filter = Builders<Documento>.Filter.Eq("id", oficioBPNDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.titulo", contenidoOficioBPN.titulo)
@@ -1706,8 +1708,10 @@ namespace SISGED.Server.Services
                 .Set("contenido.idnotario", contenidoOficioBPN.idnotario)
                 .Set("contenido.actojuridico", contenidoOficioBPN.actojuridico)
                 .Set("contenido.tipoprotocolo", contenidoOficioBPN.tipoprotocolo)
-                .Set("contenido.otorgantes", contenidoOficioBPN.otorgantes);
+                .Set("contenido.otorgantes", contenidoOficioBPN.otorgantes)
+                .Set("urlanexo", url2);
             _documentos.UpdateOne(filter, update);
+            return oficioBPN;
         }
 
         public Resolucion actualizarDocumentoResolucion(ExpedienteWrapper expedienteWrapper, string urlData, List<string> url2)
@@ -1734,6 +1738,7 @@ namespace SISGED.Server.Services
                 fechafinaudiencia = resolucionDTO.contenidoDTO.fechafinaudiencia,
                 url = urlData,
                 participantes = listaParticipantes
+                
             };
             Resolucion resolucion = new Resolucion();
             var filter = Builders<Documento>.Filter.Eq("id", resolucionDTO.id);
