@@ -91,6 +91,7 @@
         if (workspace.expedienteseleccionado.documento.tipo == "Dictamen") ChildContent = @<GenerarDictamen></GenerarDictamen>;
         if (workspace.expedienteseleccionado.documento.tipo == "Resolucion") ChildContent = @<GenerarResolucion></GenerarResolucion>;
         if (workspace.expedienteseleccionado.documento.tipo == "Apelacion") ChildContent = @<GenerarApelacion></GenerarApelacion>;
+        if (workspace.expedienteseleccionado.documento.tipo == "EntregaExpedienteNotario") ChildContent = @<GenerarEntregaExpedienteNotario></GenerarEntregaExpedienteNotario>;
     }
     private void GenerarCodigo()
     {
