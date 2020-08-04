@@ -710,6 +710,52 @@ namespace SISGED.Server.Services
             return resultadoBPN;
         }
 
+        public EntregaExpedienteNotario registrarEntregaExpedienteNotario(EntregaExpedienteNotarioDTO entregaExpedienteNotarioDTO, ExpedienteWrapper expedientewrapper, List<string> url2)
+        {
+            //Obtenemos los datos del expedientewrapper
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            entregaExpedienteNotarioDTO = JsonConvert.DeserializeObject<EntregaExpedienteNotarioDTO>(json);
+
+            //creacion del Objeto
+            ContenidoEntregaExpedienteNotario contenidoEntregaExpedienteNotario = new ContenidoEntregaExpedienteNotario()
+            {
+                titulo = entregaExpedienteNotarioDTO.contenidoDTO.titulo,
+                descripcion = entregaExpedienteNotarioDTO.contenidoDTO.descripcion,
+                idnotario = entregaExpedienteNotarioDTO.contenidoDTO.idnotario.id
+            };
+
+            EntregaExpedienteNotario entregaExpedienteNotario = new EntregaExpedienteNotario()
+            {
+                tipo = "EntregaExpedienteNotario",
+                contenido = contenidoEntregaExpedienteNotario,
+                historialcontenido = new List<ContenidoVersion>(),
+                historialproceso = new List<Proceso>(),
+                estado = "creado",
+                urlanexo = url2
+            };
+
+            _documentos.InsertOne(entregaExpedienteNotario);
+
+            //actualizacion de expediente
+            Expediente expediente = new Expediente();
+            DocumentoExpediente documentoExpediente = new DocumentoExpediente();
+            documentoExpediente.indice = 7;
+            documentoExpediente.iddocumento = entregaExpedienteNotario.id;
+            documentoExpediente.tipo = "EntregaExpedienteNotario";
+            documentoExpediente.fechacreacion = DateTime.Now;
+            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechademora = null;
+            expediente = actualizarExpediente(documentoExpediente, expedientewrapper.idexpediente);
+
+            //Actulizar el documento anterior a revisado
+            var filter = Builders<Documento>.Filter.Eq("id", expedientewrapper.documentoentrada);
+            var update = Builders<Documento>.Update
+                .Set("estado", "revisado");
+            _documentos.UpdateOne(filter, update);
+
+            return entregaExpedienteNotario;
+        }
+
         public Expediente actualizarExpediente(DocumentoExpediente documentoExpediente, string idexpediente)
         {
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
@@ -1398,6 +1444,50 @@ namespace SISGED.Server.Services
             return SIDTO;
         }
 
+        public EntregaExpedienteNotarioDTO obtenerEntregaExpedienteNotarioDTO(string id)
+        {
+            var match = new BsonDocument("$match",
+                new BsonDocument("_id", new ObjectId(id)));
+
+            var pipeline = new BsonArray {
+                new BsonDocument("$match",
+                    new BsonDocument("$expr",
+                        new BsonDocument("$eq", new BsonArray{ "$_id",
+                            new BsonDocument("$toObjectId", "$$idnot") })))
+            };
+
+            var lookup = new BsonDocument("$lookup",
+                new BsonDocument {
+                    { "from","notarios"},
+                    { "let",new BsonDocument("idnot","$contenido.idnotario")},
+                    { "pipeline",pipeline},
+                    { "as","notario"}
+                });
+
+            var project = new BsonDocument("$project",
+                new BsonDocument {
+                    { "_id", "$_id" },
+                    { "estado", "$estado" },
+                    { "tipo", "$tipo" },
+                    { "contenidoDTO",new BsonDocument{
+                        { "titulo","$contenido.titulo"},
+                        { "descripcion","$contenido.descripcion"},
+                        { "idnotario", new BsonDocument("$arrayElemAt",
+                                            new BsonArray{ "$notario", 0 })}
+                    }},
+                    { "historialproceso", "$historialproceso" },
+                    { "historialcontenido", "$historialcontenido" }
+                });
+
+            EntregaExpedienteNotarioDTO entregaExpedienteNotario = new EntregaExpedienteNotarioDTO();
+            entregaExpedienteNotario = _documentos.Aggregate()
+                .AppendStage<EntregaExpedienteNotario>(match)
+                .AppendStage<EntregaExpedienteNotario_lookup>(lookup)
+                .AppendStage<EntregaExpedienteNotarioDTO>(project).First();
+
+            return entregaExpedienteNotario;
+        }
+        //
 
         public void actualizarDocumentoODN(ExpedienteWrapper expedienteWrapper)
         {
@@ -1926,6 +2016,23 @@ namespace SISGED.Server.Services
                 .Set("estado", "modificado")
                 .Set("contenido.titulo", SIDTO.contenidoDTO.titulo)
                 .Set("contenido.descripcion", SIDTO.contenidoDTO.descripcion);
+            _documentos.UpdateOne(filter, update);
+        }
+
+        public void actualizarDocumentoEEN(ExpedienteWrapper expedienteWrapper)
+        {
+            //Deserealizacion de Obcject a tipo DTO
+            EntregaExpedienteNotarioDTO EENDTO = new EntregaExpedienteNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            EENDTO = JsonConvert.DeserializeObject<EntregaExpedienteNotarioDTO>(json);
+
+            var filter = Builders<Documento>.Filter.Eq("id", EENDTO.id);
+            var update = Builders<Documento>.Update
+                .Set("estado", "modificado")
+                .Set("contenido.titulo", EENDTO.contenidoDTO.titulo)
+                .Set("contenido.descripcion", EENDTO.contenidoDTO.descripcion)
+                .Set("contenido.idnotario", EENDTO.contenidoDTO.idnotario.id);
+
             _documentos.UpdateOne(filter, update);
         }
         public void modifyState(ExpedienteWrapper expedienteWrapper)

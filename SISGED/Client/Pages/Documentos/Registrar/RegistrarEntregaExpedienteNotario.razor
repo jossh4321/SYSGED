@@ -119,3 +119,246 @@
     }
 </style>
 
+
+<div class="div-form">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <FluentValidator></FluentValidator>
+        <MatTabGroup>
+            <MatTab Label="General">
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => entregaExpNotario.contenidoDTO.titulo)">
+                    <MatTextField @bind-Value="@entregaExpNotario.contenidoDTO.titulo" Class="text-field-style"
+                                  Label="Titulo de la entrega de expediente notario" @oninput='@(e => KeyUp(e,"titulo",entregaExpNotario.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => entregaExpNotario.contenidoDTO.titulo)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => entregaExpNotario.contenidoDTO.descripcion)">
+                    <MatTextField @bind-Value="@entregaExpNotario.contenidoDTO.descripcion" Class="text-field-style"
+                                  Label="Descripcion de la entrega de expediente notario" @oninput='@(e => KeyUp(e,"descripcion",entregaExpNotario.contenidoDTO))'></MatTextField>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => entregaExpNotario.contenidoDTO.descripcion)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => entregaExpNotario.contenidoDTO.idnotario)">
+                    <BlazoredTypeahead SearchMethod="match" @bind-Value="@entregaExpNotario.contenidoDTO.idnotario"
+                                       Placeholder="Ingrese el Nombre del Notario">
+                        <SelectedTemplate>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                        </SelectedTemplate>
+                        <ResultTemplate>
+                            <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
+                        </ResultTemplate>
+                        <NotFoundTemplate>
+                            <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
+                        </NotFoundTemplate>
+                    </BlazoredTypeahead>
+                    <div class="incorrecto">
+                        <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                        <ValidationMessage For="@(() => entregaExpNotario.contenidoDTO.idnotario)" />
+                    </div>
+                    <div class="correcto">
+                        <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                        <span class="good-msg">Correcto</span>
+                    </div>
+                </div>
+            </MatTab>
+
+            <MatTab Label="Subir Anexo">
+                <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2" FileNames="FileName"></DragnDrop>
+                @if (nombres != null && nombres.Count > 0)
+                {
+                    @for (int i = 0; i < nombres.Count; i++)
+                    {
+                        int index = i;
+                        string a = nombres[i];
+                        <div>
+                            @nombres[i]
+
+                            <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                    @onclick="@(e => RemoveFile(a,index))">
+                                <small class="RedText">Eliminar</small>
+                            </button>
+                        </div>
+                    }
+                }
+                <div class="field-container">
+                    <MatButton type="submit"
+                               Disabled="@loadprocess"
+                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                </div>
+            </MatTab>
+        </MatTabGroup>
+    </EditForm>
+</div>
+
+@code {
+    //Variables de sesion
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+
+    //Datos del formulario
+    [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
+    private EntregaExpedienteNotarioDTO entregaExpNotario = new EntregaExpedienteNotarioDTO();
+
+    private EditContext _editContext;
+    List<string> nombres = new List<string>();
+    private string imagenTemporal2;
+    private bool loadprocess = false;
+    int paso = 0;
+    int subpaso = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        entregaExpNotario.contenidoDTO.urlanexo = new List<string>();
+        _editContext = new EditContext(entregaExpNotario);
+        foreach (string u in entregaExpNotario.contenidoDTO.urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2 = u;
+                entregaExpNotario.contenidoDTO.urlanexo = null;
+            }
+        }
+
+        //subpaso = 1;
+        //Enviar paso=0, subpaso=1, idexp
+        //String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        //Task voiceMessage = workspace.VoiceMessage(message);
+
+        //workspace.ChangeMessage(message);
+
+        //await voiceMessage;
+
+        //await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        entregaExpNotario.contenidoDTO.urlanexo.Add(imagenbase64);
+    }
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+
+    private async Task<IEnumerable<Notario>> match(string searchtext)
+    {
+        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
+        if (httpResponse.Error)
+        {
+            return new List<Notario>();
+        }
+        else
+        {
+            return httpResponse.Response;
+        }
+    }
+
+    private async Task RemoveFile(string file, int imagen64)
+    {
+        nombres.Remove(file);
+        entregaExpNotario.contenidoDTO.urlanexo.RemoveAt(imagen64);
+        StateHasChanged();
+
+    }
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        var property = val.GetType().GetProperty(memberName);
+        property.SetValue(val, e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        ExpedienteWrapper expedienteWrapper = new ExpedienteWrapper();
+        expedienteWrapper.documento = entregaExpNotario;
+        expedienteWrapper.idexpediente = workspace.expedienteseleccionado.idexpediente;
+        expedienteWrapper.idusuarioactual = sesion.usuario.id;
+        expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
+        var httpResponse = await repository.Post<ExpedienteWrapper, EntregaExpedienteNotario>("api/documentos/documentoEntregaExpedienteNotario", expedienteWrapper);
+        if (!httpResponse.Error)
+        {
+            ExpedienteBandejaDTO expedientebandeja = new ExpedienteBandejaDTO();
+            expedientebandeja = workspace.expedienteseleccionado;
+            EntregaExpedienteNotario documentoEEN = new EntregaExpedienteNotario();
+            documentoEEN = httpResponse.Response;
+            expedientebandeja.documento.id = documentoEEN.id;
+            expedientebandeja.documento.tipo = documentoEEN.tipo;
+            expedientebandeja.documento.historialcontenido = documentoEEN.historialcontenido;
+            expedientebandeja.documento.historialproceso = documentoEEN.historialproceso;
+            expedientebandeja.documento.contenido = documentoEEN.contenido;
+            expedientebandeja.documento.estado = documentoEEN.estado;
+
+            Item itemSalida = new Item()
+            {
+                nombre = expedientebandeja.tipo,
+                valor = expedientebandeja,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)expedientebandeja.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = expedientebandeja.cliente,
+                itemstatus = "registrado"
+            };
+
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Registrar Documento");
+            DocumentoDTO documentoDTO = new DocumentoDTO();
+            documentoDTO.id = documentoEEN.id;
+            documentoDTO.tipo = documentoEEN.tipo;
+            documentoDTO.estado = documentoEEN.estado;
+            documentoDTO.contenido = JsonConvert.SerializeObject(documentoEEN.contenido);
+            documentoDTO.historialcontenido = documentoEEN.historialcontenido;
+            documentoDTO.historialproceso = documentoEEN.historialproceso;
+            documentoDTO.urlanexo = documentoEEN.urlanexo;
+            workspace.expedienteseleccionado.documentosobj.Add(documentoDTO);
+            workspace.expedienteseleccionado.documento = documentoDTO;
+
+            StateHasChanged();
+            await swalfire.successMessage("Entrega de Expediente Notario registrado correctamente");
+            //subpaso = 2;
+            //Enviar paso=0, subpaso=2, idexp
+            //Int32 pasoAntiguo = paso;
+            //paso = 1;
+            //subpaso = 0;
+            //Enviar paso=0+0,subpaso=2,idexpediente
+            //String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+
+            //await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
+
+            //String messageFinal = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
+
+            //Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
+            //workspace.ChangeMessage(messageFinal);
+
+            //await voiceMessage;
+        }
+        else
+        {
+            await swalfire.errorMessage("Error en el Servidor[505]");
+        }
+    }
+
+    public void handleInvalidSubmit()
+    {
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+    }
+}
