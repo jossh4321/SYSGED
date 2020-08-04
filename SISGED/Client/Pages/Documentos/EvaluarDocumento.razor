@@ -13,6 +13,8 @@
 
     .alineacion-a {
         text-align: left !important;
+        padding-left: 25px;
+        padding-right: 25px;
     }
     .alineacion-b {
         display: flex;
@@ -189,9 +191,7 @@ else
                                     }
                                 </div>
                             </div>
-
                             <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales()" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
-
                             <div class="field-container">
                                 <MatButton Class="sub-but-c" Outlined="true" OnClick="@EvaluacionPorJunta">Concluir evaluación</MatButton>
                             </div>
@@ -307,24 +307,24 @@ else
         listadopaginacion = new List<UsuarioEvaluacionDTO>();
         participanteSeleccionado = new UsuarioEvaluacionDTO();
         evaluacion = new Evaluacion();
-        //string tipo = workspace.expedienteseleccionado.documento.tipo;
-        //if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
-        //{
-        //    Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
-        //    if (evaluacion.resultado == "pendiente")
-        //    {
-        //        DocumentoRevisado = false;
-        //    }
-        //    else
-        //    {
-        //        DocumentoRevisado = true;
-        //    }
+        string tipo = workspace.expedienteseleccionado.documento.tipo;
+        if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
+        {
+            Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());
+            if (evaluacion.resultado == "pendiente")
+            {
+                DocumentoRevisado = false;
+            }
+            else
+            {
+                DocumentoRevisado = true;
+            }
 
-        //}
-        //else
-        //{
-        //    DocumentoRevisado = true;
-        //}
+        }
+        else
+        {
+            DocumentoRevisado = true;
+        }
     }
 
     private async Task EvaluacionIndividual()
@@ -373,12 +373,18 @@ else
         if(cantidadAprobados > cantidadDesaprobados)
         {
             evaluacion.resultado = "Aprobado";
+            await RealizarEvaluacion();
+        }
+        else if (cantidadAprobados == cantidadDesaprobados){
+
+            await swalfire.errorMessage("El numero de participantes que aprobaron y desaprobaron deben ser diferentes");
+            evaluacion = new Evaluacion();
         }
         else
         {
             evaluacion.resultado = "Desaprobado";
+            await RealizarEvaluacion();
         }
-        await RealizarEvaluacion();
     }
 
     private async Task RealizarEvaluacion()

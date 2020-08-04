@@ -17,8 +17,8 @@ else
         </MatCardContent>
         <MatCardActions>
             <MatCardActionButtons Class="mat-card-actions-modificado">
-                <MatButton Raised="true" Icon="@MatIconNames.Search" Class="mat-color" @onclick="(() => mostrarDatosParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Modificar</MatButton>
-                <MatButton Raised="true" Icon="@MatIconNames.Select_all" Class="mat-color-green" @onclick="(() => eliminarParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Eliminar</MatButton>
+                <MatButton Raised="true" Icon="@MatIconNames.Create" Class="mat-color-green" @onclick="(() => mostrarDatosParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Modificar</MatButton>
+                <MatButton Raised="true" Icon="@MatIconNames.Delete_outline" Class="mat-color" @onclick="(() => eliminarParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Eliminar</MatButton>
             </MatCardActionButtons>
         </MatCardActions>
     </MatCard>
