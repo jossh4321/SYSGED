@@ -154,5 +154,13 @@ namespace SISGED.Server.Controllers
             listanotario = _usuarioservice.filtroEvaluar(term);
             return listanotario;
         }
+        //obtenerUsuariosAutoComplete
+        [HttpGet("autocompleteusuario")]
+        public async Task<ActionResult<List<usuario_unwind>>> autocompleteUsuarios([FromQuery] string term)
+        {
+            List<usuario_unwind> listanotario = new List<usuario_unwind>();
+            listanotario = await _usuarioservice.obtenerUsuariosAutoComplete(term.ToLower());
+            return listanotario;
+        }
     }
 }

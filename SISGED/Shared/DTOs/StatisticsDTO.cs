@@ -109,4 +109,22 @@ namespace SISGED.Shared.DTOs
         public List<DocumentoExpediente> documentos { get; set; } = new List<DocumentoExpediente>();
         public List<Documento> documentoobj { get; set; } = new List<Documento>();
     }
+    ///ESTADISTICAS NUEVAS
+    public class estadistica1_proyect1
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public int mes { get; set; }
+        public string estado { get; set; }
+        public string tipo { get; set; }
+    }
+    public class estadistica1_group
+    {
+        
+        public string id { get; set; }
+        public Int32 caducados { get; set; }
+        public Int32 procesados { get; set; }
+        public Int32 pendientes { get; set; }
+    }
 }

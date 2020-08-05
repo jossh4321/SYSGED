@@ -195,17 +195,6 @@ namespace SISGED.Server.Services
         }
          */
 
-
-
-
-
-
-
-
-
-
-
-
         public List<Usuario> filtroEvaluar(string term)
         {
             string regex = "\\b" + term.ToLower() + ".*";
@@ -213,5 +202,62 @@ namespace SISGED.Server.Services
             var filter2 = Builders<Usuario>.Filter.Eq("tipo", "administracion");
             return _usuarios.Find(filter & filter2).ToList();
         }
+
+
+        public async Task<List<usuario_unwind>> obtenerUsuariosAutoComplete(string val)
+        {
+
+            var project1 = new BsonDocument("$project",
+                                new BsonDocument
+                                    {
+                                        { "_id", "$_id" },
+                                        { "tipo", "$tipo" },
+                                        { "datos", "$datos" },
+                                        { "rol", "$rol" },
+                                        { "nombre",
+                                new BsonDocument("$toLower", "$datos.nombre") }
+                                    });
+            var match = new BsonDocument("$match",
+                            new BsonDocument
+                                {
+                                    { "tipo", "administracion" },
+                                    { "nombre",
+                            new BsonDocument("$regex", val) }
+                                });
+            var lookup = new BsonDocument("$lookup",
+                                new BsonDocument
+                                    {
+                                        { "from", "roles" },
+                                        { "let",
+                                new BsonDocument("idrol", "$rol") },
+                                        { "pipeline",
+                                new BsonArray
+                                        {
+                                            new BsonDocument("$match",
+                                            new BsonDocument("$expr",
+                                            new BsonDocument("$and",
+                                            new BsonArray
+                                                        {
+                                                            new BsonDocument("$eq",
+                                                            new BsonArray
+                                                                {
+                                                                    "$_id",
+                                                                    new BsonDocument("$toObjectId", "$$idrol")
+                                                                })
+                                                        })))
+                                        } },
+                                        { "as", "rolobj" }
+                                    });
+
+            List<usuario_unwind> usuarios = new List<usuario_unwind>();
+            usuarios = await _usuarios.Aggregate()
+                .AppendStage<usuario_project1>(project1)
+                .AppendStage<usuario_project1>(match)
+                .AppendStage<usuario_lookup1>(lookup)
+                .Unwind<usuario_lookup1, usuario_unwind>(p => p.rolobj)
+                .ToListAsync();
+            return usuarios;
+        }
+
     }
 }

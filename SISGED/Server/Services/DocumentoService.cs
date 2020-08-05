@@ -1946,7 +1946,262 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
         }
 
-        
+        //Nuevas estadisticas recomendadas por el profesor Linarez
+        //docs caducados, procesados y pendientes para los 12 tipos de docs por mes
+        public async Task<List<estadistica1_group>> obtenecionEstadistica1(int mes)
+        {
+            var match1 = new BsonDocument("$match",
+                new BsonDocument
+                    {
+                        { "estado",
+                new BsonDocument("$in",
+                new BsonArray
+                            {"caducado", "procesado","pendiente"}) },
+                        { "tipo",
+                            new BsonDocument("$nin",
+                            new BsonArray
+                                        {
+                                            "SolicitudInicial"
+                                        }) }
+                    });
 
+           var project1 =  new BsonDocument("$project",
+                    new BsonDocument
+                        {
+                                { "mes",
+                        new BsonDocument("$month", "$fechacreacion") },
+                                { "estado", "$estado" },
+                                { "tipo", "$tipo" }
+                        });
+
+            var match2 = new BsonDocument("$match",
+                                new BsonDocument("mes", mes));
+
+            var group = new BsonDocument("$group",
+    new BsonDocument
+        {
+            { "_id", "$tipo" },
+            { "caducados",
+                    new BsonDocument("$sum",
+                    new BsonDocument("$cond",
+                    new BsonArray{new BsonDocument("$eq",
+                                        new BsonArray
+                                            { "$estado",
+                                                "caducado"
+                                            }), 0, 1})) },
+                            { "procesados",
+                                    new BsonDocument("$sum",
+                                    new BsonDocument("$cond",
+                                    new BsonArray
+                                    {
+                                        new BsonDocument("$eq",
+                                        new BsonArray
+                                            {
+                                                "$estado",
+                                                "procesado"
+                                            }),
+                                        0,
+                                        1
+                                    })) },
+                            { "pendientes",
+                                    new BsonDocument("$sum",
+                                    new BsonDocument("$cond",
+                                    new BsonArray
+                                                    {
+                                                        new BsonDocument("$eq",
+                                                        new BsonArray
+                                                            {
+                                                                "$estado",
+                                                                "pendiente"
+                                                            }),
+                                                        0,
+                                                        1
+                                                    })) }
+                                        });
+
+            List<estadistica1_group> estadistica1 = new List<estadistica1_group>();
+            estadistica1 = _documentos.Aggregate()
+                                        .AppendStage<Documento>(match1)
+                                        .AppendStage<estadistica1_proyect1>(project1)
+                                        .AppendStage<estadistica1_proyect1>(match2)
+                                        .AppendStage<estadistica1_group>(group)
+                                        .ToList();
+            return estadistica1;
+        }
+
+        //docs caducados, procesados y pendientes para los 12 tipos de docs por mes y por areas
+        public async Task<List<estadistica1_group>> obtenecionEstadistica2(int mes, string area)
+        {
+            var match1 = new BsonDocument("$match",
+                                new BsonDocument
+                                    {
+                                        { "estado",
+                                new BsonDocument("$in",
+                                new BsonArray
+                                            {
+                                                "caducado",
+                                                "procesado",
+                                                "pendiente"
+                                            }) },
+                                        { "tipo",
+                                new BsonDocument("$nin",
+                                new BsonArray
+                                            {
+                                                "SolicitudInicial"
+                                            }) },
+                                        { "historialproceso.area", area }
+                                    });
+
+
+            var project1 = new BsonDocument("$project",
+                     new BsonDocument
+                         {
+                                { "mes",
+                        new BsonDocument("$month", "$fechacreacion") },
+                                { "estado", "$estado" },
+                                { "tipo", "$tipo" }
+                         });
+
+            var match2 = new BsonDocument("$match",
+                                new BsonDocument("mes", mes));
+
+            var group = new BsonDocument("$group",
+    new BsonDocument
+        {
+            { "_id", "$tipo" },
+            { "caducados",
+                    new BsonDocument("$sum",
+                    new BsonDocument("$cond",
+                    new BsonArray{new BsonDocument("$eq",
+                                        new BsonArray
+                                            { "$estado",
+                                                "caducado"
+                                            }), 0, 1})) },
+                            { "procesados",
+                                    new BsonDocument("$sum",
+                                    new BsonDocument("$cond",
+                                    new BsonArray
+                                    {
+                                        new BsonDocument("$eq",
+                                        new BsonArray
+                                            {
+                                                "$estado",
+                                                "procesado"
+                                            }),
+                                        0,
+                                        1
+                                    })) },
+                            { "pendientes",
+                                    new BsonDocument("$sum",
+                                    new BsonDocument("$cond",
+                                    new BsonArray
+                                                    {
+                                                        new BsonDocument("$eq",
+                                                        new BsonArray
+                                                            {
+                                                                "$estado",
+                                                                "pendiente"
+                                                            }),
+                                                        0,
+                                                        1
+                                                    })) }
+                                        });
+
+            List<estadistica1_group> estadistica1 = new List<estadistica1_group>();
+            estadistica1 = _documentos.Aggregate()
+                                        .AppendStage<Documento>(match1)
+                                        .AppendStage<estadistica1_proyect1>(project1)
+                                        .AppendStage<estadistica1_proyect1>(match2)
+                                        .AppendStage<estadistica1_group>(group)
+                                        .ToList();
+            return estadistica1;
+        }
+
+        public async Task<List<estadistica1_group>> obtenecionEstadistica3(int mes, string idusuario)
+        {
+            var match1 = new BsonDocument("$match",
+                                new BsonDocument
+                                    {
+                                        { "estado",
+                                            new BsonDocument("$in",
+                                            new BsonArray
+                                                        {
+                                                            "caducado",
+                                                            "procesado",
+                                                            "pendiente"
+                                                        }) },
+                                        { "tipo",
+                                                new BsonDocument("$nin",
+                                                new BsonArray
+                                                            {
+                                                                "SolicitudInicial"
+                                                            }) },
+                                                        { "historialproceso.idemisor", idusuario }
+                                    });
+
+
+            var project1 = new BsonDocument("$project",
+                     new BsonDocument
+                         {
+                                { "mes",
+                        new BsonDocument("$month", "$fechacreacion") },
+                                { "estado", "$estado" },
+                                { "tipo", "$tipo" }
+                         });
+
+            var match2 = new BsonDocument("$match",
+                                new BsonDocument("mes", mes));
+
+            var group = new BsonDocument("$group",
+    new BsonDocument
+        {
+            { "_id", "$tipo" },
+            { "caducados",
+                    new BsonDocument("$sum",
+                    new BsonDocument("$cond",
+                    new BsonArray{new BsonDocument("$eq",
+                                        new BsonArray
+                                            { "$estado",
+                                                "caducado"
+                                            }), 0, 1})) },
+                            { "procesados",
+                                    new BsonDocument("$sum",
+                                    new BsonDocument("$cond",
+                                    new BsonArray
+                                    {
+                                        new BsonDocument("$eq",
+                                        new BsonArray
+                                            {
+                                                "$estado",
+                                                "procesado"
+                                            }),
+                                        0,
+                                        1
+                                    })) },
+                            { "pendientes",
+                                    new BsonDocument("$sum",
+                                    new BsonDocument("$cond",
+                                    new BsonArray
+                                                    {
+                                                        new BsonDocument("$eq",
+                                                        new BsonArray
+                                                            {
+                                                                "$estado",
+                                                                "pendiente"
+                                                            }),
+                                                        0,
+                                                        1
+                                                    })) }
+                                        });
+
+            List<estadistica1_group> estadistica1 = new List<estadistica1_group>();
+            estadistica1 = _documentos.Aggregate()
+                                        .AppendStage<Documento>(match1)
+                                        .AppendStage<estadistica1_proyect1>(project1)
+                                        .AppendStage<estadistica1_proyect1>(match2)
+                                        .AppendStage<estadistica1_group>(group)
+                                        .ToList();
+            return estadistica1;
+        }
     }
 }
