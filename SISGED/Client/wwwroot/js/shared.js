@@ -51,10 +51,11 @@ function gPDF(image, nombre, documento) {
         theme: 'plain',
         didParseCell: function (data) {
             if (data.row.index === 0) {
-                data.cell.styles.fontSize = 10;
-            } else if (data.row.index === 2){
                 data.cell.styles.fontSize = 20;
                 data.cell.styles.halign = 'center';
+            } else if (data.row.index === 2){
+                data.cell.styles.fontSize = 13;
+                data.cell.styles.fontStyle = 'bold';
             }else{
                 data.cell.styles.fontSize = 12;
             }
