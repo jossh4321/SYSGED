@@ -42,12 +42,11 @@
 <div style="display: none">
     <table id="convertirPDF">
         <tbody>
-            <tr><td colspan="7">Código: @codigo</td></tr>
-            <tr><td colspan="7"> </td></tr>
             <tr>
                 <th colspan="7">@documento.titulo</th>
             </tr>
             <tr><td colspan="7"> </td></tr>
+            <tr><td colspan="7">Código: @codigo</td></tr>
             <tr><td colspan="7">Descripción: </td></tr>
             <tr><td colspan="7">@documento.descripcion</td></tr>
             <tr><td colspan="7">Datos del notario: </td></tr>
@@ -63,7 +62,7 @@
     [CascadingParameter(Name = "imagen")] string imagen { get; set; }
     [CascadingParameter(Name = "codigo")] string codigo { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-    private ContenidoEntregaExpedienteNotarioDTO documento { get; set; }
+    private ContenidoEntregaExpedienteNotario documento { get; set; }
     private DocumentoGenerarDTO generarD { get; set; }
     private Notario notario;
     private bool generado = false;
@@ -92,7 +91,7 @@
     }
     protected async override Task OnInitializedAsync()
     {
-        documento = JsonConvert.DeserializeObject<ContenidoEntregaExpedienteNotarioDTO>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        documento = JsonConvert.DeserializeObject<ContenidoEntregaExpedienteNotario>(workspace.expedienteseleccionado.documento.contenido.ToString());
         generarD = new DocumentoGenerarDTO();
         notario = new Notario();
         await getNotario();

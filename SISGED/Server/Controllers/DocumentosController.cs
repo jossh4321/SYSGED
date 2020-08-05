@@ -444,6 +444,28 @@ namespace SISGED.Server.Controllers
 
             return _documentoservice.registrarResultadoBPN(resultadoBPNDTO, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada, documentosolicitud.iddocumento);
         }
+
+        [HttpPost("documentoEntregaExpedienteNotario")]
+        public async Task<ActionResult<EntregaExpedienteNotario>> RegistrarDocumentoEntregaExpedienteNotario(ExpedienteWrapper expedientewrapper)
+        {
+            //Deserealizacion de objeto de tipo C
+            EntregaExpedienteNotarioDTO entregaExpedienteNotarioDTO = new EntregaExpedienteNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedientewrapper.documento);
+            entregaExpedienteNotarioDTO = JsonConvert.DeserializeObject<EntregaExpedienteNotarioDTO>(json);
+
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in entregaExpedienteNotarioDTO.contenidoDTO.urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "entregaexpedientenotario");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.registrarEntregaExpedienteNotario(entregaExpedienteNotarioDTO, expedientewrapper, url2);
+        }
         #endregion
 
         [HttpPut("cambiarestado")]
@@ -550,12 +572,31 @@ namespace SISGED.Server.Controllers
         {
             return _documentoservice.obtenerSolicitudInicial(iddoc);
         }
+        [HttpGet("obtenerdocumentoEEN")]
+        public async Task<ActionResult<EntregaExpedienteNotarioDTO>> obtenerEntregaExpedienteNotario([FromQuery] string iddoc)
+        {
+            return _documentoservice.obtenerEntregaExpedienteNotarioDTO(iddoc);
+        }
 
         //Actualizaciones
         [HttpPut("actualizarDocumentoODN")]
-        public void modificarDocumentoODN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<OficioDesignacionNotario>> modificarDocumentoODN(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoODN(expedienteWrapper);
+            OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            oficioDesignacionNotarioDTO = JsonConvert.DeserializeObject<OficioDesignacionNotarioDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in oficioDesignacionNotarioDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "oficiodesignacionnotario");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.actualizarDocumentoODN(expedienteWrapper, url2);
         }
         [HttpPut("actualizarDocumentoAPE")]
         public async Task<ActionResult<Apelacion>> modificarDocumentoApelacion(ExpedienteWrapper expedienteWrapper)
@@ -583,14 +624,42 @@ namespace SISGED.Server.Controllers
             return _documentoservice.actualizarDocumentoApelacion(expedienteWrapper, urlData, url2);
         }
         [HttpPut("actualizarDocumentoAD")]
-        public void modificarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<AperturamientoDisciplinario>> modificarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoAperturamientoDisciplinario(expedienteWrapper);
+            AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO = new AperturamientoDisciplinarioDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            aperturamientoDisciplinarioDTO = JsonConvert.DeserializeObject<AperturamientoDisciplinarioDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in aperturamientoDisciplinarioDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "aperturamientodiciplinario");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.actualizarDocumentoAperturamientoDisciplinario(expedienteWrapper, url2);
         }
         [HttpPut("actualizarDocumentoCF")]
-        public void modificarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<ConclusionFirma>> modificarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoConclusionFirma(expedienteWrapper);
+            ConclusionFirmaDTO conclusionFirmaDTO = new ConclusionFirmaDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            conclusionFirmaDTO = JsonConvert.DeserializeObject<ConclusionFirmaDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in conclusionFirmaDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "dictamen");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.actualizarDocumentoConclusionFirma(expedienteWrapper, url2);
         }
         [HttpPut("actualizarDocumentoD")]
         public async Task<ActionResult<Dictamen>> modificarDocumentoDictamen(ExpedienteWrapper expedienteWrapper)
@@ -613,9 +682,23 @@ namespace SISGED.Server.Controllers
             return _documentoservice.actualizarDocumentoDictamen(expedienteWrapper, url2);
         }
         [HttpPut("actualizarDocumentoOficioBPN")]
-        public void modificarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<OficioBPN>> modificarDocumentoOficioBPN(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoOficioBPN(expedienteWrapper);
+            OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            oficioBPNDTO = JsonConvert.DeserializeObject<OficioBPNDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in oficioBPNDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "oficiobpn");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.actualizarDocumentoOficioBPN(expedienteWrapper, url2);
         }
         [HttpPut("actualizarDocumentoR")]
         public async Task<ActionResult<Resolucion>> modificarDocumentoResolucion(ExpedienteWrapper expedienteWrapper)
@@ -650,14 +733,33 @@ namespace SISGED.Server.Controllers
             _documentoservice.actualizarDocumentoSEN(expedienteWrapper);
         }
         [HttpPut("actualizarDocumentoResultadoBPN")]
-        public void modificarrDocumentoResultadoBPN(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<ResultadoBPN>> modificarrDocumentoResultadoBPN(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoResultadoBPN(expedienteWrapper);
+            ResultadoBPNDTO resultadoBPNDTO = new ResultadoBPNDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            resultadoBPNDTO = JsonConvert.DeserializeObject<ResultadoBPNDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in resultadoBPNDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resultadobpn");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.actualizarDocumentoResultadoBPN(expedienteWrapper, url2);
         }
         [HttpPut("actualizarDocumentoSolicitudInicial")]
         public void modificarDocumentoSolicitudInicial(ExpedienteWrapper expedienteWrapper)
         {
             _documentoservice.actualizarDocumentoSolicitudInicial(expedienteWrapper);
+        }
+        [HttpPut("actualizarDocumentoEEN")]
+        public void modificarDocumentoEEN(ExpedienteWrapper expedienteWrapper)
+        {
+            _documentoservice.actualizarDocumentoEEN(expedienteWrapper);
         }
 
         [HttpPut("estadosolicitud")]
