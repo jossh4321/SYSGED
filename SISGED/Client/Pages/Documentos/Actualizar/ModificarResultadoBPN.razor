@@ -189,6 +189,33 @@
                         }
                     </div>
 
+                    @*<div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
+                    </div>*@
+                </MatTab>
+                <MatTab Label="Subir Anexo">
+                    <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2" FileNames="FileName" ImagenTemporal="@(imagenTemporal2)"></DragnDrop>
+
+                    @if (nombres != null && nombres.Count > 0)
+                    {
+                        @for (int i = 0; i < nombres.Count; i++)
+                        {
+                            int index = i;
+                            string a = nombres[i];
+                            <div>
+
+                                @nombres[i]
+
+                                <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                        @onclick="@(e => RemoveFile(a,index))">
+                                    <small class="RedText">Eliminar</small>
+                                </button>
+                            </div>
+                        }
+                    }
                     <div class="field-container">
                         <MatButton type="submit"
                                    Disabled="@loadprocess"
@@ -196,7 +223,6 @@
                                    Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
                     </div>
                 </MatTab>
-
             </MatTabGroup>
         </EditForm>
     }
@@ -211,6 +237,8 @@
     [Parameter] public EventCallback<ExpedienteBandejaDTO> AumentarBandeja { get; set; }
     private ResultadoBPNDTO resultadoBPNDTO = new ResultadoBPNDTO();
     private EditContext _editContext;
+    private List<string> imagenTemporal2 = new List<string>();
+    List<string> nombres = new List<string>();
     private bool loadprocess = false;
     private bool firstLoad = true;
 
@@ -243,6 +271,14 @@
         {
 
         }
+        foreach (string u in resultadoBPNDTO.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2.Add(u);
+            }
+        }
+        resultadoBPNDTO.contenidoDTO.Urlanexo.Clear();
         firstLoad = false;
     }
 
@@ -252,6 +288,23 @@
         property.SetValue(val, e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        resultadoBPNDTO.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+
+    private async Task RemoveFile(string file, int imagen64)
+    {
+        nombres.Remove(file);
+        resultadoBPNDTO.contenidoDTO.Urlanexo.RemoveAt(imagen64);
+        StateHasChanged();
     }
 
     public async Task handleValidSubmit()

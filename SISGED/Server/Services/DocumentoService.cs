@@ -1780,7 +1780,7 @@ namespace SISGED.Server.Services
             _documentos.UpdateOne(filter, update);
         }
 
-        public void actualizarDocumentoResultadoBPN(ExpedienteWrapper expedienteWrapper)
+        public ResultadoBPN actualizarDocumentoResultadoBPN(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             ResultadoBPNDTO resultadoBPNDTO = new ResultadoBPNDTO();
@@ -1794,13 +1794,16 @@ namespace SISGED.Server.Services
                 costo = resultadoBPNDTO.contenidoDTO.costo,
                 idescriturapublica = resultadoBPNDTO.contenidoDTO.idescriturapublica.id
             };
+            ResultadoBPN resultadoBPN = new ResultadoBPN();
 
             var filter = Builders<Documento>.Filter.Eq("id", resultadoBPNDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.cantidadfoja", contenidoResultadoBPN.cantidadfoja)
                 .Set("contenido.costo", contenidoResultadoBPN.costo)
-                .Set("contenido.idescriturapublica", contenidoResultadoBPN.idescriturapublica);
+                .Set("contenido.idescriturapublica", contenidoResultadoBPN.idescriturapublica)
+                .Set("urlanexo", url2);
             _documentos.UpdateOne(filter, update);
+            return resultadoBPN;
         }
         public async Task<List<DocumentoADTO2>> ObtenerSolicitudesUsuario(string numerodocumento)
         {
