@@ -1,0 +1,166 @@
+﻿@page "/newcharts"
+@layout MainLayout
+@inject IJSRuntime JS
+@inject IRepository repository
+<h3>Charts</h3>
+<style>
+    .cont-chart {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 700px;
+    }
+
+    .statistics-selector {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        align-items: center;
+    }
+
+    .selector-button {
+        color: #ff3333 !important;
+        border: 1px solid #ff3333 !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+        height: 57px !important;
+        margin-bottom: 10px;
+    }
+
+    div.mdc-select__anchor {
+        width: 100%
+    }
+
+    .window {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #1a1a1a;
+        border: none;
+        text-align: center;
+        color: black;
+        width: inherit;
+        flex-basis: 100%;
+        height: 800px;
+    }
+
+    .default-title-style {
+        display: block;
+        color: #808080;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+</style>
+<div class="cont-chart">
+    <h1 style="color:white">Generador de Estadisticas</h1>
+    <div class="statistics-selector">
+        @if (sesion.rol == "JuntaDirectiva")
+        {
+            <MatSelect Label="Seleccione la Estadistica a visualizar para la Junta Directiva" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
+                <MatOptionString Class="option-color" Value="estadistica1">Estado de Documentos por Mes</MatOptionString>
+                <MatOptionString Class="option-color" Value="estadistica2">Estado de Documentos Por Mes Y Area</MatOptionString>
+                <MatOptionString Class="option-color" Value="estadistica3">Documentos Caducados por Mes y Usuario </MatOptionString>
+                <!--MatOptionString Class="option-color" Value="estadistica4">Documentos Evaluados por la Junta Directiva</MatOptionString-->
+            </MatSelect>
+        }
+        else
+        {
+            //para el usuario
+            <MatSelect Label="Seleccione la Estadistica a visualizar para la Junta Directiva" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
+                <MatOptionString Class="option-color" Value="estadistica4">Estado de Mis Documentos  por Mes</MatOptionString>
+                <MatOptionString Class="option-color" Value="estadistica5">Estado de Documentos de mi Area</MatOptionString>
+                <!--MatOptionString Class="option-color" Value="estadistica4">Documentos Evaluados por la Junta Directiva</MatOptionString-->
+            </MatSelect>
+        }
+        <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="seleccionarEstadistica"
+                   Class="selector-button">Seleccionar Estadistica!!!</MatButton>
+    </div>
+    <div class="window">
+        @if (ChildContent != null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            <h4 class="default-title-style">Ingrese los datos</h4>
+        }
+    </div>
+
+    <!--button onclick="GenerateColumnChart" class="btn btn-info">Show Column Chart</button-->
+    <!--div id="chartdiv"></!--div-->
+</div>
+@code {
+    public string selector = "estadistica1";
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    public RenderFragment ChildContent = null;
+    private async Task GenerateColumnChart()
+    {
+        await JS.InvokeVoidAsync("CreateColumnChart");
+    }
+    public void seleccionarEstadistica()
+    {
+        if (selector == "estadistica1")
+        {
+            ChildContent =@<EstadisticaEstadoDocs></EstadisticaEstadoDocs>;
+        }
+        else if (selector == "estadistica2")
+        {
+            ChildContent = @<EstadisticaEstadoDocsArea></EstadisticaEstadoDocsArea>;
+        }
+        else if (selector == "estadistica3")
+        {
+            ChildContent = @<EstadisticaEstadoDocsUsuario></EstadisticaEstadoDocsUsuario>;
+        }
+
+
+
+        else if (selector == "estadistica4")
+        {
+        ChildContent = @<EstadisticaEstadoDocsUsuarioADM></EstadisticaEstadoDocsUsuarioADM>;
+        }
+        else if (selector == "estadistica5")
+        {
+        ChildContent = @<Estadistica1ExpedienteGantt></Estadistica1ExpedienteGantt>;
+        }
+}
+}

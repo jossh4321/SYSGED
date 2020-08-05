@@ -193,7 +193,7 @@
 </style>
 <div style="flex-basis:100%">
     <div class="work-box-title-style">
-        <span>Área de Trabajo Especializada - Usuario: @sesion.usuario.datos.nombre @sesion.usuario.datos.apellido</span>
+        <span>Área de Trabajo Especializada - Usuario: @sesion.usuario.datos.nombre @sesion.usuario.datos.apellido </span>
     </div>
     <CascadingValue Value="this">
         <div class="wfe-container">
@@ -247,8 +247,15 @@
                 }
                 else if (expedienteseleccionado.documento.tipo.Equals("ConclusionFirma"))
                 {
-                    <!--VerConclusionFirma iddocumento="expedienteseleccionado.documento.id"> </!--VerConclusionFirma-->
+                    <VerConclusionFirma iddocumento="@expedienteseleccionado.documento.id">
 
+                    </VerConclusionFirma>
+                }
+                else if (expedienteseleccionado.documento.tipo.Equals("AperturamientoDisciplinario"))
+                {
+                    <VerAperturamientoDisciplinario iddocumento="@expedienteseleccionado.documento.id">
+
+                    </VerAperturamientoDisciplinario>
                 }
                 else
                 {
@@ -276,6 +283,7 @@
     public Int32 count = 0;
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine(sesion.rol);
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
         List<Expediente_group> lista = new List<Expediente_group>();

@@ -19,6 +19,7 @@ namespace SISGED.Shared.Entities
         typeof(ConclusionFirma),
         typeof(AperturamientoDisciplinario),
         typeof(SolicitudExpedienteNotario),
+        typeof(EntregaExpedienteNotario),
         typeof(Dictamen),
         typeof(Resolucion),
         typeof(Apelacion),

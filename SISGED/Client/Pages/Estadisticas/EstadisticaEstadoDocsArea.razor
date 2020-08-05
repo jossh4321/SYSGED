@@ -1,0 +1,174 @@
+﻿@layout MainLayout
+@inject IJSRuntime JS
+@inject IRepository repository
+<style>
+    .contenedor-est1 {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        color: #808080 !important;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .formulario {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .selector-button-1 {
+        color: green !important;
+        border: 1px solid green !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+        height: 57px !important;
+        margin-bottom: 10px;
+    }
+
+    .field-selector {
+        flex-basis: 40%;
+    }
+
+    .statistics-box {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .no-result-found {
+        display: flex;
+        flex-direction: row;
+        justify-content: center
+    }
+
+    .not-found {
+        margin-right: 20px;
+    }
+    .container-chart {
+        height: 100%;
+        background: white;
+        width: 100%;
+        border-radius: 0px 0px 7px 7px;
+    }
+</style>
+<div class="contenedor-est1">
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+              OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+        <div class="formulario">
+            <div class="field-container input-group-2 field-selector @CurrentEditContext.FieldCssClass( () => estadistica.mes)">
+                <InputSelect @bind-Value="@estadistica.mes" TValue="string" class="text-field-style  custom-select">
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Dicciembre</option>
+                </InputSelect>
+                <div class="incorrecto">
+                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                    <ValidationMessage For="@(() => estadistica.mes)" />
+                </div>
+                <div class="correcto">
+                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                    <span class="good-msg">Correcto</span>
+                </div>
+            </div>
+            <div class="field-container input-group-2 field-selector @CurrentEditContext.FieldCssClass( () => estadistica.area)">
+                <InputSelect @bind-Value="@estadistica.area" TValue="string" class="text-field-style  custom-select">
+                    <option value="MesaPartes">Mesa de Partes</option>
+                    <option value="ArchivosExNotarios">Archivos Ex-Notarios</option>
+                    <option value="JuntaDirectiva">Junta Directiva</option>
+                    <option value="SecretariaGeneral">Secretaria General</option>
+                    <option value="TribunalHonor">Tribunal de Honor</option>
+                    <option value="TramiteDocumentario">Tramite Documentario</option>
+                </InputSelect>
+                <div class="incorrecto">
+                    <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
+                    <ValidationMessage For="@(() => estadistica.area)" />
+                </div>
+                <div class="correcto">
+                    <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
+                    <span class="good-msg">Correcto</span>
+                </div>
+            </div>
+            <div class="field-container">
+                <MatButton type="submit"
+                           Icon="@MatBlazor.MatIconNames.Bar_chart"
+                           OnClick="generarGrafica"
+                           Class="selector-button-1">Generar Grafica</MatButton>
+            </div>
+        </div>
+    </EditForm>
+    <div class="statistics-box">
+        @if (resultadoEstadistica == 1)
+        {
+            <div id="chartdivdocestadoxarea" class="container-chart"></div>
+        }
+        else
+        {
+            <div class="no-result-found">
+                <div>
+                    <h3>Lo Sentimos No hemos encontrado resultados para Generar la Grafica</h3>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+@code {
+    private EditContext _editContext;
+    EstadisticaDocXMesXAreaDTO estadistica = new EstadisticaDocXMesXAreaDTO();
+    private int resultadoEstadistica = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _editContext = new EditContext(estadistica);
+    }
+
+    public async Task handleValidSubmit()
+    {
+        await generarGrafica();
+    }
+
+    public void handleInvalidSubmit()
+    {
+
+    }
+
+    public async Task generarGrafica()
+    {
+        resultadoEstadistica = 1;
+        resultadoEstadistica = await JS.InvokeAsync<int>("ServiceCallBack_DocEstadoXMesXArea_EN", DotNetObjectReference.Create(this));
+        Console.WriteLine(resultadoEstadistica);
+        StateHasChanged();
+    }
+    [JSInvokable]
+    public async Task<List<estadistica1_group>> getDocsEstadoxMesxArea()
+    {
+        List<estadistica1_group> statisticsSet = new List<estadistica1_group>();
+        var httpResponse = await repository.Get<List<estadistica1_group>>
+            ($"api/statistics/estadistica2?mes={estadistica.mes}&area={estadistica.area}");
+        if (!httpResponse.Error)
+        {
+            statisticsSet = httpResponse.Response;
+        }
+        else
+        {
+            Console.WriteLine("un error");
+        }
+        return statisticsSet;
+    }
+
+}
