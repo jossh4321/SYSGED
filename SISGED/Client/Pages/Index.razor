@@ -1,7 +1,7 @@
 ﻿@page "/"
 @inject HttpClient Http
 @inject IRepository  repository
-@attribute [Authorize(Roles = "admin,orientacionlegal,archivosexnotarios,mesapartes,secretariageneral,juntadirectiva,tramitedocumentario")]
+@attribute [Authorize(Roles = "admin,OrientacionLegal,ArchivosExnotarios,MesaPartes,SecretariaGeneral,JuntaDirectiva,TramiteDocumentario")]
 @layout MainLayout
 
 @if (layout.cargasesion == true)

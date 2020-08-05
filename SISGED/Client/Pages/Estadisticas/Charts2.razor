@@ -94,7 +94,7 @@
 <div class="cont-chart">
     <h1 style="color:white">Generador de Estadisticas</h1>
     <div class="statistics-selector">
-        @if (sesion.rol == "juntadirectiva")
+        @if (sesion.rol == "JuntaDirectiva")
         {
             <MatSelect Label="Seleccione la Estadistica a visualizar para la Junta Directiva" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
                 <MatOptionString Class="option-color" Value="estadistica1">Estado de Documentos por Mes</MatOptionString>
