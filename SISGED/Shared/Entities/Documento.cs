@@ -19,6 +19,7 @@ namespace SISGED.Shared.Entities
         typeof(ConclusionFirma),
         typeof(AperturamientoDisciplinario),
         typeof(SolicitudExpedienteNotario),
+        typeof(EntregaExpedienteNotario),
         typeof(Dictamen),
         typeof(Resolucion),
         typeof(Apelacion),
@@ -293,5 +294,18 @@ namespace SISGED.Shared.Entities
     public class SolicitudInicial : Documento
     {
         public ContenidoSolicitudInicial contenido { get; set; }
+    }
+
+    public class ContenidoEntregaExpedienteNotario
+    {
+        public string descripcion { get; set; }
+        public string titulo { get; set; }
+        public string idnotario { get; set; }
+
+    }
+
+    public class EntregaExpedienteNotario : Documento
+    {
+        public ContenidoEntregaExpedienteNotario contenido { get; set; }
     }
 }

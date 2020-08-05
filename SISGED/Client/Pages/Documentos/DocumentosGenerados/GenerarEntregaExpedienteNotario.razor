@@ -3,6 +3,7 @@
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 @using Newtonsoft.Json
 @inject IRepository repositorio
+
 <style>
     * {
         color: black;
@@ -27,14 +28,14 @@
         height: 800px !important;
     }
 </style>
-<MatButton OnClick="@GenerarPDF" Class="mat-success-c"> Generar Documento</MatButton>
+<MatButton Disabled="@faltaCargar" OnClick="@GenerarPDF" Class="mat-success-c"> Generar Documento</MatButton>
 <MatDialog @bind-IsOpen="@generado" Class="dialogo">
     <MatDialogTitle>Previsualizar Documento</MatDialogTitle>
     <MatDialogContent Class="contenedor-PDF">
         <iframe id="docpdf" style="background-color:#EEE; height:650px; width:500px"></iframe>
     </MatDialogContent>
     <MatDialogActions>
-        <MatButton @onclick="@(()=>ConfirmacionGenerar())">Generar</MatButton>
+        <MatButton @onclick="@(()=>ConfirmacionGenerar())" Raised="true">Generar</MatButton>
         <MatButton @onclick="@((e) => { generado = false; })">Volver</MatButton>
     </MatDialogActions>
 </MatDialog>
@@ -47,32 +48,25 @@
             <tr><td colspan="7"> </td></tr>
             <tr><td colspan="7">Código: @codigo</td></tr>
             <tr><td colspan="7">Descripción: </td></tr>
-            <tr><td colspan="7"> @documento.descripcion</td></tr>
-            <tr><td colspan="7"> Nombre del denunciante: </td></tr>
-            <tr><td colspan="7"> @documento.nombredenunciante</td></tr>
-            <tr><td colspan="7"> Observación: </td></tr>
-            @foreach (string i in documento.observaciones)
-            {
-                <tr><td></td><td>- @i </td><td></td><td></td><td></td><td></td><td></td></tr>
-            }
-            <tr><td colspan="7"> Recomendación: </td></tr>
-            @foreach (string i in documento.recomendaciones)
-            {
-                <tr><td></td><td>- @i </td><td></td><td></td><td></td><td></td><td></td></tr>
-            }
-            <tr><td colspan="7"> Conclusión: </td></tr>
-            <tr><td colspan="7"> @documento.conclusion </td></tr>
+            <tr><td colspan="7">@documento.descripcion</td></tr>
+            <tr><td colspan="7">Datos del notario: </td></tr>
+            <tr><td></td><td>- Nombre: @notario.nombre</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td>- Apellidos: @notario.apellido</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td></td><td>- DNI: @notario.dni</td><td></td><td></td><td></td><td></td><td></td></tr>
         </tbody>
     </table>
 </div>
+
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     [CascadingParameter(Name = "imagen")] string imagen { get; set; }
     [CascadingParameter(Name = "codigo")] string codigo { get; set; }
-    private ContenidoDictamen documento { get; set; }
-    private bool generado = false;
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    private ContenidoEntregaExpedienteNotario documento { get; set; }
     private DocumentoGenerarDTO generarD { get; set; }
+    private Notario notario;
+    private bool generado = false;
+    private bool faltaCargar = true;
     int paso = 1;
     int subpaso = 0;
 
@@ -82,16 +76,8 @@
         await js.InvokeVoidAsync("gPDF", imagen, sesion.usuario.datos.nombre + " " + sesion.usuario.datos.apellido, sesion.usuario.datos.tipodocumento + " : " + sesion.usuario.datos.numerodocumento);
         subpaso = 2;
         //Enviar paso=1,subpaso=2,idexp
-        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
-
-        Task voiceMessage = workspace.VoiceMessage(message);
-
-        workspace.ChangeMessage(message);
-
-        await voiceMessage;
-
-        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
+
     private async Task GenerarPDF()
     {
         if (imagen == null)
@@ -105,20 +91,29 @@
     }
     protected async override Task OnInitializedAsync()
     {
-        documento = JsonConvert.DeserializeObject<ContenidoDictamen>(workspace.expedienteseleccionado.documento.contenido.ToString());
-        Console.WriteLine(documento.titulo);
+        documento = JsonConvert.DeserializeObject<ContenidoEntregaExpedienteNotario>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        generarD = new DocumentoGenerarDTO();
+        notario = new Notario();
+        await getNotario();
+        faltaCargar = false;
         subpaso = 1;
         //Enviar paso=1,subpaso=1,idexp
-        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+        //String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
-        Task voiceMessage = workspace.VoiceMessage(message);
+        //Task voiceMessage = workspace.VoiceMessage(message);
 
-        workspace.ChangeMessage(message);
+        //workspace.ChangeMessage(message);
 
-        await voiceMessage;
+        //await voiceMessage;
 
-        await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        //await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
+    private async Task getNotario()
+    {
+        var responseHttp = await repositorio.Get<Notario>($"api/notarios/id?id={documento.idnotario}");
+        notario = responseHttp.Response;
+    }
+
     private async Task ConfirmacionGenerar()
     {
         /*generarD.iddocumento = workspace.expedienteseleccionado.documento.id;
@@ -127,8 +122,10 @@
         await ConfirmacionG();
 
     }
+
     private async Task ConfirmacionG()
     {
+        Console.WriteLine("Metodo: ConfirmacionG");
         DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
         docs.iddocumentoAnterior = workspace.expedienteseleccionado.documentosobj.ElementAt(workspace.expedienteseleccionado.documentosobj.Count - 2).id;
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
@@ -145,8 +142,6 @@
         else
         {
             await swalfire.successMessage("Generado correctamente");
-            subpaso = 3;
-            //Enviar paso=3,subpaso=1,idexp
             generado = false;
             Item itemSalida = new Item()
             {
@@ -161,23 +156,6 @@
             };
             workspace.UpdateTools("Generar Documento");
             workspace.RemoveExpedienteSeleccionado(itemSalida);
-            Int32 pasoAntiguo = paso;
-            paso = 2;
-            subpaso = 0;
-            //Enviar paso=0+0,subpaso=2,idexpediente
-            String tipodocumentoantiguo = workspace.asistente.tipodocumento;
-            await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
-
-            String messageFinal = workspace.asistente.pasos.documentos
-                        .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
-
-            Task voiceMessage = workspace.VoiceMessage(messageFinal);
-
-            workspace.ChangeMessage(messageFinal);
-
-            await voiceMessage;
         }
     }
-    //  doc.save('conversion.pdf');
-    // await js.InvokeVoidAsync("gPDF");
 }
