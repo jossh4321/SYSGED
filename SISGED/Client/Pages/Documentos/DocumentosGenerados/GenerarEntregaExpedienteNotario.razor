@@ -63,7 +63,7 @@
     [CascadingParameter(Name = "imagen")] string imagen { get; set; }
     [CascadingParameter(Name = "codigo")] string codigo { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-    private ContenidoEntregaExpedienteNotarioDTO documento { get; set; }
+    private ContenidoEntregaExpedienteNotario documento { get; set; }
     private DocumentoGenerarDTO generarD { get; set; }
     private Notario notario;
     private bool generado = false;
@@ -92,7 +92,7 @@
     }
     protected async override Task OnInitializedAsync()
     {
-        documento = JsonConvert.DeserializeObject<ContenidoEntregaExpedienteNotarioDTO>(workspace.expedienteseleccionado.documento.contenido.ToString());
+        documento = JsonConvert.DeserializeObject<ContenidoEntregaExpedienteNotario>(workspace.expedienteseleccionado.documento.contenido.ToString());
         generarD = new DocumentoGenerarDTO();
         notario = new Notario();
         await getNotario();
