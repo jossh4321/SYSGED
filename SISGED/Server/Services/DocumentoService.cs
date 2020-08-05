@@ -1490,7 +1490,7 @@ namespace SISGED.Server.Services
         }
         //
 
-        public void actualizarDocumentoODN(ExpedienteWrapper expedienteWrapper)
+        public OficioDesignacionNotario actualizarDocumentoODN(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo OficioDesignacionNotarioDTO
             OficioDesignacionNotarioDTO oficioDesignacionNotarioDTO = new OficioDesignacionNotarioDTO();
@@ -1506,15 +1506,17 @@ namespace SISGED.Server.Services
                 idusuario = oficioDesignacionNotarioDTO.contenidoDTO.idusuario,
                 idnotario = oficioDesignacionNotarioDTO.contenidoDTO.idnotario.id,
             };
-
+            OficioDesignacionNotario oficioDesignacionNotario = new OficioDesignacionNotario();
             var filter = Builders<Documento>.Filter.Eq("id", oficioDesignacionNotarioDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.titulo", contenidoODN.titulo)
                 .Set("contenido.descripcion", contenidoODN.descripcion)
                 .Set("contenido.lugaroficionotarial", contenidoODN.lugaroficionotarial)
                 .Set("contenido.idusuario", contenidoODN.idusuario)
-                .Set("contenido.idnotario", contenidoODN.idnotario);
+                .Set("contenido.idnotario", contenidoODN.idnotario)
+                .Set("urlanexo", url2);
             _documentos.UpdateOne(filter, update);
+            return oficioDesignacionNotario;
         }
 
         public Apelacion actualizarDocumentoApelacion(ExpedienteWrapper expedienteWrapper, string urlData, List<string> url2)
