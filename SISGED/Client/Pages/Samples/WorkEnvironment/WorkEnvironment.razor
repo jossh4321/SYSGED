@@ -279,12 +279,13 @@
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
         List<Expediente_group> lista = new List<Expediente_group>();
-        var httpResponse = await repository.Get<List<Expediente_group>>($"api/documentos/ganttexpediente?dni=70477724");
-        if (!httpResponse.Error)
-        {
-            lista = httpResponse.Response;
-            await VoiceMessage(messageSend);
-        }
+        //var httpResponse = await repository.Get<List<Expediente_group>>($"api/documentos/ganttexpediente?dni=70477724");
+        //if (!httpResponse.Error)
+        //{
+        //    lista = httpResponse.Response;
+
+        //}
+        await VoiceMessage(messageSend);
     }
     public void openDialog() { abrirDialogo = true; StateHasChanged(); }
     public void closeDialog() { abrirDialogo = false; }
