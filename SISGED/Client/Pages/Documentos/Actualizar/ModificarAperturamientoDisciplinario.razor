@@ -249,6 +249,7 @@
                                 <option value="@fiscal.id">@fiscal.datos.nombre  @fiscal.datos.apellido</option>
                                 }
                             /**/
+                            /**/
                         </InputSelect>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
@@ -346,6 +347,33 @@
                             </div>
                         </div>
                     </div>
+                    @*<div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
+                    </div>*@
+                </MatTab>
+                <MatTab Label="Subir Anexo">
+                    <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2" FileNames="FileName" ImagenTemporal="@(imagenTemporal2)"></DragnDrop>
+
+                    @if (nombres != null && nombres.Count > 0)
+                    {
+                        @for (int i = 0; i < nombres.Count; i++)
+                        {
+                            int index = i;
+                            string a = nombres[i];
+                            <div>
+
+                                @nombres[i]
+
+                                <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                        @onclick="@(e => RemoveFile(a,index))">
+                                    <small class="RedText">Eliminar</small>
+                                </button>
+                            </div>
+                        }
+                    }
                     <div class="field-container">
                         <MatButton type="submit"
                                    Disabled="@loadprocess"
@@ -366,6 +394,8 @@
     private AperturamientoDisciplinarioDTO aperturamientodisciplinario = new AperturamientoDisciplinarioDTO();
     private EditContext _editContext;
     private string imagenTemporal;
+    private List<string> imagenTemporal2 = new List<string>();
+    List<string> nombres = new List<string>();
     private bool loadprocess = false;
     private bool firstLoad = true;
 
@@ -373,6 +403,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        aperturamientodisciplinario.contenidoDTO.Urlanexo = new List<string>();
         firstLoad = true;
         aperturamientodisciplinario.contenidoDTO.participantes = new List<Participante>() { new Participante() { index = 0, nombre = "" } };
         aperturamientodisciplinario.contenidoDTO.hechosimputados = new List<Hecho>() { new Hecho() { index = 0, descripcion = "" } };
@@ -403,6 +434,14 @@
         {
             Console.WriteLine("Algo Mal");
         }
+        foreach (string u in aperturamientodisciplinario.contenidoDTO.Urlanexo)
+        {
+            if (!string.IsNullOrWhiteSpace(u))
+            {
+                imagenTemporal2.Add(u);
+            }
+        }
+        aperturamientodisciplinario.contenidoDTO.Urlanexo.Clear();
         firstLoad = false;
     }
 
@@ -453,6 +492,23 @@
         property.SetValue(val, e.Value.ToString());
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
+    }
+
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        aperturamientodisciplinario.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+
+    private async Task RemoveFile(string file, int imagen64)
+    {
+        nombres.Remove(file);
+        aperturamientodisciplinario.contenidoDTO.Urlanexo.RemoveAt(imagen64);
+        StateHasChanged();
     }
 
     public async Task handleValidSubmit()

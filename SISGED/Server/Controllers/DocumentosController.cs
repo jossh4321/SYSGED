@@ -610,9 +610,23 @@ namespace SISGED.Server.Controllers
             return _documentoservice.actualizarDocumentoApelacion(expedienteWrapper, urlData, url2);
         }
         [HttpPut("actualizarDocumentoAD")]
-        public void modificarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
+        public async Task<ActionResult<AperturamientoDisciplinario>> modificarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
         {
-            _documentoservice.actualizarDocumentoAperturamientoDisciplinario(expedienteWrapper);
+            AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO = new AperturamientoDisciplinarioDTO();
+            var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
+            aperturamientoDisciplinarioDTO = JsonConvert.DeserializeObject<AperturamientoDisciplinarioDTO>(json);
+            List<string> url2 = new List<string>();
+            string urlData2 = "";
+            foreach (string u in aperturamientoDisciplinarioDTO.contenidoDTO.Urlanexo)
+            {
+                if (!string.IsNullOrWhiteSpace(u))
+                {
+                    var solicitudBytes2 = Convert.FromBase64String(u);
+                    urlData2 = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "aperturamientodiciplinario");
+                    url2.Add(urlData2);
+                }
+            }
+            return _documentoservice.actualizarDocumentoAperturamientoDisciplinario(expedienteWrapper, url2);
         }
         [HttpPut("actualizarDocumentoCF")]
         public async Task<ActionResult<ConclusionFirma>> modificarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper)
