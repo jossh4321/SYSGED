@@ -20,6 +20,7 @@ namespace SISGED.Client.Repo
                     new OpcionDocumento() { label = "Documento de Solicitud de Denuncia",value="SolicitudDenuncia" },
                     new OpcionDocumento() { label = "Documento de Aperturamiento Disciplinario",value="AperturamientoDisciplinario" },
                     new OpcionDocumento() { label = "Documento de Solicitud de Expediente de Notario",value="SolicitudExpedienteNotario" },
+                    new OpcionDocumento() { label = "Documento de Entrega de Expediente de Notario",value="EntregaExpedienteNotario" },
                     new OpcionDocumento() { label = "Documento de Dictamen",value="Dictamen" },
                     new OpcionDocumento() { label = "Documento de Resolucion",value="Resolucion" },
                     new OpcionDocumento() { label = "Documento de Apelacion",value="Apelacion" }};
