@@ -1544,7 +1544,7 @@ namespace SISGED.Server.Services
             return apelacion;
         }
 
-        public void actualizarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper)
+        public AperturamientoDisciplinario actualizarDocumentoAperturamientoDisciplinario(ExpedienteWrapper expedienteWrapper, List<string> url2)
         {
             //Deserealizacion de Obcject a tipo DTO
             AperturamientoDisciplinarioDTO aperturamientoDisciplinarioDTO = new AperturamientoDisciplinarioDTO();
@@ -1579,7 +1579,7 @@ namespace SISGED.Server.Services
                 fechainicioaudiencia = aperturamientoDisciplinarioDTO.contenidoDTO.fechainicioaudiencia,
                 fechafinaudiencia = aperturamientoDisciplinarioDTO.contenidoDTO.fechafinaudiencia
             };
-
+            AperturamientoDisciplinario aperturamientoDisciplinario = new AperturamientoDisciplinario();
             var filter = Builders<Documento>.Filter.Eq("id", aperturamientoDisciplinarioDTO.id);
             var update = Builders<Documento>.Update
                 .Set("contenido.titulo", contenidoAD.titulo)
@@ -1591,8 +1591,10 @@ namespace SISGED.Server.Services
                 .Set("contenido.participantes", contenidoAD.participantes)
                 .Set("contenido.hechosimputados", contenidoAD.hechosimputados)
                 .Set("contenido.fechainicioaudiencia", contenidoAD.fechainicioaudiencia)
-                .Set("contenido.fechafinaudiencia", contenidoAD.fechafinaudiencia);
+                .Set("contenido.fechafinaudiencia", contenidoAD.fechafinaudiencia)
+                .Set("urlanexo", url2);
             _documentos.UpdateOne(filter, update);
+            return aperturamientoDisciplinario;
         }
         
         public ConclusionFirma actualizarDocumentoConclusionFirma(ExpedienteWrapper expedienteWrapper, List<string> url2)
