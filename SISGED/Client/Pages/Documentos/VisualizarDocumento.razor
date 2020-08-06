@@ -72,17 +72,17 @@
 	}
 
 	.mat-info-c {
-		color: #3333ff !important;
-		border: 1px solid #3333ff !important;
+		color: #3f7cff !important;
+		border: 1px solid #3f7cff !important;
 		border-radius: 15px !important;
 		font-size: 13px !important;
 		transition: all 300ms !important;
 	}
 
-	.mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover, .mat-dark-c:hover {
-		background-color: none !important;
-		transform: scale(1.07,1.07) !important;
-	}
+		.mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover, .mat-dark-c:hover {
+			background-color: none !important;
+			transform: scale(1.07,1.07) !important;
+		}
 
 	.button-container {
 		display: block;
@@ -124,26 +124,7 @@
 		align-items: center;
 	}
 </style>
-	
-<div class="form-inline">
-	<div class="form-group mb-2">
-		<label for="coddoc" class="sr-only">codigodocumento</label>
-		<input @bind-value="coddoc" @bind-value:event="oninput"
-			   @onkeypress="@((KeyboardEventArgs e) => DocumentoKeyPress(e))"
-			   type="text" class="form-control" id="titulo" placeholder="Código del documento" />
-	</div>
-	<div class="form-group mx-sm-3 mb-2">
-		<select class="form-control" @bind="tiposeleccionado">
-			<option value="0">--Seleccione tipo de documento--</option>
-			@foreach (Documento opcion in listadocumentos)
-			{
-				
-			}
-		</select>
-	</div>
-	<button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="FiltrarDocumento">Filtrar</button>	
-</div>
-	
+
 <div class="container-c" style=" width: auto;">
 	@if (cargatabla == true)
 	{
@@ -161,13 +142,16 @@
 					<span class="table-header">Código del documento</span>
 				</th>
 				<th>
-					<span class="table-header">Tipo</span>
+					<span class="table-header">Fecha de regitro</span>
 				</th>
 				<th>
 					<span class="table-header">Estado</span>
 				</th>
 				<th>
-					<span class="table-header">Opciones</span>
+					<span class="table-header">Descripción</span>
+				</th>
+				<th>
+					<span class="table-header">Opción</span>
 				</th>
 			</MatTableHeader>
 			<MatTableRow>
@@ -175,57 +159,38 @@
 					<span class="table-row">@context.id</span>
 				</td>
 				<td>
-					<span class="table-row">@context.tipo</span>
+					<span class="table-row">@context.fechacreacion</span>
 				</td>
 				<td>
 					<span class="table-row">@context.estado</span>
+				</td>
+				<td>
+					<span class="table-row">@context.tipo</span>
 				</td>
 				<td>
 					<div class="button-container-lvl">
 						<div class="button-container">
 							<MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
 									   Class="mat-warning-c" @onclick="@(e => Visualizar(context.id))" Style="width:100% !important">Ver Documento</MatButton>
-						</div>							
+						</div>
 					</div>
 				</td>
 			</MatTableRow>
 		</MatTable>
 	}
+	
 </div>
 
 @code {
-	public RenderFragment ChildContent = null;
-	string coddoc = "";
-	string tiposeleccionado = "";
 	public List<Documento> listadocumentos = new List<Documento>();
 	public DocumentoDTO documentodto = new DocumentoDTO();
 	private bool Ver = false;
-	public string imagenTemporalMod { get; set; }
-	public bool rendermod { get; set; } = false;
 	public bool cargatabla { get; set; } = false;
-
-	private void DocumentoKeyPress(KeyboardEventArgs e)
-	{
-		if (e.Key == "Enter")
-		{
-			FiltrarDocumento();
-		}
-	}
-
-	private void FiltrarDocumento()
-	{
-
-	}
-
-	private void CerrarDocumento()
-	{
-
-	}
 
 	protected override async Task OnInitializedAsync()
 	{
 		cargatabla = true;
-		var httpResponse = await repository.Get<List<Documento>>("api/documentos/todo");
+		var httpResponse = await repository.Get<List<Documento>>("api/documentos/tododoc");
 		if (!httpResponse.Error)
 		{
 			listadocumentos = httpResponse.Response;
@@ -241,8 +206,7 @@
 	public async Task Visualizar(string id)
 	{
 		Documento documento = new Documento();
-		Console.WriteLine("inicio");
-		var httpResponse = await repository.Get<Documento>($"api/documentos/id?id={id}");
+		var httpResponse = await repository.Get<Documento>($"api/documentos/tododoc?tododoc={id}");
 		if (httpResponse.Error)
 		{
 			Console.WriteLine("Algo Mal");
@@ -252,11 +216,13 @@
 			documento = httpResponse.Response;
 
 		}
-		documento.id = documento.id;
+		documentodto.id = documento.id;
 		documentodto.tipo = documento.tipo;
+		documentodto.urlanexo = documento.urlanexo;
+		documentodto.fechacreacion = documento.fechacreacion;
 		documentodto.estado = documento.estado;
-		rendermod = true;
-		StateHasChanged();
 		Ver = true;
 	}
+
+	public void cerrarDialogo(bool cerrar) => Ver = cerrar;
 }

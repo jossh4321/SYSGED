@@ -34,7 +34,7 @@ namespace SISGED.Server.Controllers
             _bandejaService = bandejaService;
             this.asistenteService = asistenteService;
         }
-        [HttpGet]
+        [HttpGet("tododoc")]
         public ActionResult<List<Documento>> Get()
         {
             return _documentoservice.obtenerDocumentos();

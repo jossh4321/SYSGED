@@ -268,7 +268,7 @@
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
 
-        var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoODN", expedienteWrapper);
+        var httpResponse = await repository.Put<OficioDesignacionNotario, ExpedienteWrapper>($"api/documentos/actualizarDocumentoODN", expedienteWrapper);
         if (!httpResponse.Error)
         {
             ContenidoOficioDesignacionNotario contodn = new ContenidoOficioDesignacionNotario();
