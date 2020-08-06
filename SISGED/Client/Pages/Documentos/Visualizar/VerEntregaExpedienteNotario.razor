@@ -2,7 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
-@using Newtonsoft.Json;
+@using Newtonsoft.Json
 <style>
     .field-container {
         display: block;
@@ -12,7 +12,6 @@
     .modal-info-designacion-notario {
         display: flex;
         flex-direction: column;
-        /*height: 700px;*/
         width: 500px;
         background-color: #808080;
     }
@@ -47,6 +46,7 @@
         color: #595959;
     }
 </style>
+
 <div class="div-form">
     @if (firstLoad == true)
     {
@@ -64,32 +64,12 @@
     {
         <div class=".modal-info-designacion-notario">
             <MatTabGroup>
-                <MatTab Label="Escritura Publica">
+                <MatTab Label="Entrega Expediente Notario">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@escriturapublica.titulo" ReadOnly="true" Class="text-field-style" Label="Titulo"></MatTextField>
+                        <MatTextField @bind-Value="@contenido.titulo" ReadOnly="true" Class="text-field-style" Label="Titulo"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@escriturapublica.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio Notarial"></MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatDatePicker @bind-Value="@escriturapublica.fechaescriturapublica" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
-                    </div>
-                    <div class="otorgantes">
-                        <p class="title-ot">OTORGANTES REGISTRADOS</p>
-
-                        <MatChipSet>
-                            @foreach (ActoJuridico actjur in escriturapublica.actosjuridicos)
-                            {
-                                <MatChip Label="@actjur.titulo" LeadingIcon="@MatIconNames.Supervised_user_circle"></MatChip>
-                            }
-                        </MatChipSet>
-
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@contenido.cantidadfoja" ReadOnly="true" Class="text-field-style" Label="Cantidad de Fojas"></MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@contenido.precio" ReadOnly="true" Class="text-field-style" Label="Precio Total"></MatTextField>
+                        <MatTextField @bind-Value="@contenido.descripcion" ReadOnly="true" Class="text-field-style" Label="Descripcion"></MatTextField>
                     </div>
                 </MatTab>
                 <MatTab Label="Notario">
@@ -118,51 +98,22 @@
                         </MatTextField>
                     </div>
                 </MatTab>
-                <MatTab Label="Cliente">
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@usuario.datos.nombre" ReadOnly="true" Class="text-field-style" Label="Nombres del Cliente">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@usuario.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellidos del Cliente">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@usuario.datos.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@usuario.datos.direccion" ReadOnly="true" Class="text-field-style" Label="Direccion">
-                        </MatTextField>
-                    </div>
-                    <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@usuario.datos.fechanacimiento" ReadOnly="true" Class="text-field-style" Label="Fecha Nacimiento">
-                        </MatTextField>
-                    </div>
-                </MatTab>
             </MatTabGroup>
         </div>
     }
 </div>
 
 @code {
-    ContenidoConclusionFirma contenido = new ContenidoConclusionFirma();
-    private Usuario usuario;
+    ContenidoEntregaExpedienteNotario contenido = new ContenidoEntregaExpedienteNotario();
     private Notario notario;
-    private EscrituraPublica escriturapublica;
     [Parameter] public DocumentoDTO documento { get; set; }
     private bool firstLoad = true;
-
     protected override async Task OnInitializedAsync()
     {
         firstLoad = true;
-        contenido = JsonConvert.DeserializeObject<ContenidoConclusionFirma>(documento.contenido.ToString());
+        contenido = JsonConvert.DeserializeObject<ContenidoEntregaExpedienteNotario>(documento.contenido.ToString());
         notario = new Notario();
-        usuario = new Usuario();
-        escriturapublica = new EscrituraPublica();
         await getNotario();
-        await getUsuario();
-        await getEscrituraPublica();
         StateHasChanged();
         firstLoad = false;
     }
@@ -170,15 +121,5 @@
     {
         var responseHttp = await repository.Get<Notario>($"api/notarios/id?id={contenido.idnotario}");
         notario = responseHttp.Response;
-    }
-    private async Task getUsuario()
-    {
-        var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={contenido.idcliente}");
-        usuario = responseHttp.Response;
-    }
-    private async Task getEscrituraPublica()
-    {
-        var responseHttp = await repository.Get<EscrituraPublica>($"api/escrituraspublicas/id?id={contenido.idescriturapublica}");
-        escriturapublica = responseHttp.Response;
     }
 }
