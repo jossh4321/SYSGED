@@ -73,6 +73,19 @@
     .mlt-content{
         border-radius: 12px;
     }
+
+    .item {
+        background-color: #20a270;
+    }
+
+    .lt-register-btn {
+        background-color: #20a270;
+    }
+
+    .mlt-content .nav-tabs > li.active > a {
+        border-bottom: 2px solid #20a270;
+        color: #20a270;
+    }
 </style>
 <div class="container">
     <div class="center-block">
@@ -124,7 +137,7 @@
 </div>
 @code {
     private UserInfo userInfo = new UserInfo();
-    private string nuevaClave;    
+    private string nuevaClave;
     Usuario usuario = new Usuario();
 
     public async Task getDatosUsuario()
@@ -140,7 +153,9 @@
             usuario = httpResponse.Response;
             if (usuario.clave == userInfo.clave)
             {
+                usuario.clave = nuevaClave;
                 await updatePassword();
+
             } else
             {
                 LoginUsuarioError();
@@ -149,15 +164,16 @@
     }
     public async Task updatePassword()
     {
-        usuario.clave = nuevaClave;
-        var httpResponse = await repositorio.Put<Usuario, Usuario>("api/usuarios", usuario);
+
+        var httpResponse = await repositorio.Put<Usuario,Usuario>("api/usuarios/password", usuario);
         if (httpResponse.Error)
         {
             Console.WriteLine("Algo Ocurrio");
         }
         else
         {
-            await swalfire.successMessage("Contraseña actualizada correctamente");
+            await swalfire.successMessage("Contraseña actualizada correctamente");            
+            navigationManager.NavigateTo("");
         }
     }
 

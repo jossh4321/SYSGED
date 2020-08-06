@@ -56,7 +56,31 @@ namespace SISGED.Server.Controllers
             estadisticas = await _documentoservice.estadisticasDocumentosCaducadosXMes(mes);
             return estadisticas;
         }*/
-
+        ///////Nuevas Estadisticas/////////////
+        //[documentos caducado, procesado y pendiente] => para los 12 tipos de documentos
+        [HttpGet("estadistica1")]
+        public async Task<List<estadistica1_group>> obtenecionEstadistica1([FromQuery]int mes)
+        {
+            List<estadistica1_group> estadisticas = new List<estadistica1_group>();
+            estadisticas = await _documentoservice.obtenecionEstadistica1(mes);
+            return estadisticas;
+        }
+        //[documentos caducado, procesado y pendiente] => para los 12 tipos de documentos por areas
+        [HttpGet("estadistica2")]
+        public async Task<List<estadistica1_group>> obtenecionEstadistica2([FromQuery]int mes, [FromQuery]string area)
+        {
+            List<estadistica1_group> estadisticas = new List<estadistica1_group>();
+            estadisticas = await _documentoservice.obtenecionEstadistica2(mes,area);
+            return estadisticas;
+        }
+        //[documentos caducado, procesado y pendiente] => para los 12 tipos de documentos por  usuario espeficio
+        [HttpGet("estadistica3")]
+        public async Task<List<estadistica1_group>> obtenecionEstadistica3([FromQuery]int mes, [FromQuery]string usuario)
+        {
+            List<estadistica1_group> estadisticas = new List<estadistica1_group>();
+            estadisticas = await _documentoservice.obtenecionEstadistica3(mes, usuario);
+            return estadisticas;
+        }
 
     }
 }

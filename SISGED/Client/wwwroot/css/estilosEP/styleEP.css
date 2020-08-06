@@ -6,8 +6,18 @@
     max-width: 200px;
 }
 
+.demo-mat-card-a {
+    max-height: 420px;
+    height: 420px;
+}
+
 .demo-mat-card-content {
     padding: 1rem;
+}
+
+.demo-mat-card-content-a {
+    max-height: 190px;
+    height: 190px;
 }
 
 .demo-mat-card-clean-margin {

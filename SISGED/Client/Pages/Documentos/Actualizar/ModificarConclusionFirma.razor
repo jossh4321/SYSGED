@@ -188,13 +188,40 @@
 
                     <!---->
 
+                    @*<div class="field-container">
+                        <MatButton type="submit"
+                                   Disabled="@loadprocess"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
+                    </div>*@
+
+                </MatTab>
+                <MatTab Label="Subir Anexo">
+                    <DragnDrop Label="" ImagenSeleccionada="ImagenSeleccionada2" FileNames="FileName" ImagenTemporal="@(imagenTemporal2)"></DragnDrop>
+
+                    @if (nombres != null && nombres.Count > 0)
+                    {
+                        @for (int i = 0; i < nombres.Count; i++)
+                        {
+                            int index = i;
+                            string a = nombres[i];
+                            <div>
+
+                                @nombres[i]
+
+                                <button class="btn btn-link text-danger p-0 pl-1" type="button"
+                                        @onclick="@(e => RemoveFile(a,index))">
+                                    <small class="RedText">Eliminar</small>
+                                </button>
+                            </div>
+                        }
+                    }
                     <div class="field-container">
                         <MatButton type="submit"
                                    Disabled="@loadprocess"
                                    Icon="@MatBlazor.MatIconNames.Check_circle_outline"
                                    Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
                     </div>
-
                 </MatTab>
             </MatTabGroup>
         </EditForm>
@@ -206,12 +233,15 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
     private EditContext _editContext;
+    private List<string> imagenTemporal2 = new List<string>();
+    List<string> nombres = new List<string>();
     private bool loadprocess = false;
     private bool firstLoad = true;
     public List<EscrituraPublica> escriturapublicasseleccionados = new List<EscrituraPublica>();
     public EscrituraPublica escriturapublicaselect;
     private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
     {
+        conclusionFirma.contenidoDTO.Urlanexo = new List<string>();
         var httpResponse = await repository.Get<List<EscrituraPublica>>($"api/escrituraspublicas/filter?term={searchtext}");
         if (httpResponse.Error)
         {
@@ -276,6 +306,23 @@
         _editContext.NotifyFieldChanged(fi);
     }
 
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        conclusionFirma.contenidoDTO.Urlanexo.Add(imagenbase64);
+    }
+
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+
+    private async Task RemoveFile(string file, int imagen64)
+    {
+        nombres.Remove(file);
+        conclusionFirma.contenidoDTO.Urlanexo.RemoveAt(imagen64);
+        StateHasChanged();
+    }
+
     public async Task handleValidSubmit()
     {
         loadprocess = true;
@@ -286,7 +333,7 @@
         expedienteWrapper.documentoentrada = workspace.expedienteseleccionado.documento.id;
         expedienteWrapper.idusuarioactual = sesion.usuario.id;
 
-        var httpResponse = await repository.Put<ExpedienteWrapper>($"api/documentos/actualizarDocumentoCF", expedienteWrapper);
+        var httpResponse = await repository.Put<ConclusionFirma, ExpedienteWrapper>($"api/documentos/actualizarDocumentoCF", expedienteWrapper);
         if (httpResponse.Error)
         {
             await swalfire.errorMessage("Error en el servidor, intentelo de nuevo");

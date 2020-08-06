@@ -5,7 +5,7 @@
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
-        background-color: #A6A6A6;
+        background-color: #fff;
         flex-basis: 100%;
         border-radius: 15px 15px 15px 15px;
         width: 100%;
@@ -72,7 +72,7 @@
         flex-direction: column;
         /*height: 700px;*/
         width: 100%;
-        background-color: #A6A6A6;
+        background-color: #fff;
         border-radius: 15px 15px 15px 15px;
     }
 
@@ -117,7 +117,7 @@
 
                     </div>
                     <div class="field-container input-group-2">
-                        <div style="background-color:ghostwhite; margin-top:10px;border-radius:4px 4px;">
+                        <div style="background-color:#F5F5F5; margin-top:10px;border-radius:4px 4px;">
                             <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => solicinicialdto.contenidoDTO.descripcion)">
                                 <MatTextField @bind-Value="@solicinicialdto.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..." TextArea="true" FullWidth="true"
                                               @oninput='@(e => KeyUp(e,"descripcion",solicinicialdto.contenidoDTO))'></MatTextField>
@@ -151,8 +151,10 @@
     private EditContext _editContext;
     private bool carga = false;
     //[Parameter] public Usuario { get; set; }
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    [CascadingParameter] GestionarSolicitud solicitudpadre { get; set; }
     [Parameter] public SolicitudInicialDTO solicinicialdto { get; set; } //Data a editar
-    [Parameter] public List<DocumentoADTO2> docs { get; set; }
+    //[Parameter] public List<DocumentoADTO2> docs { get; set; }
     [Parameter] public EventCallback<bool> cerrarDialogoModificacion { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -186,6 +188,8 @@
         {
 
 
+
+
             //DocumentoADTO2 borrador = new DocumentoADTO2();
             //borrador.id = solicinicialdto.id;
             //borrador.estado = solicinicialdto.estado;
@@ -196,16 +200,33 @@
             //docs[docs.FindIndex(ind => ind.id == borrador.id)] = borrador;
             //docs.Add(httpResponse.Response);
 
-            solicinicialdto = new SolicitudInicialDTO();
-            _editContext = new EditContext(solicinicialdto);
-            _editContext.MarkAsUnmodified();
-            _editContext.NotifyValidationStateChanged();
+            await ActualizarTabla();
             StateHasChanged();
+            //solicinicialdto = new SolicitudInicialDTO();
+            //_editContext = new EditContext(solicinicialdto);
+            //_editContext.MarkAsUnmodified();
+            //_editContext.NotifyValidationStateChanged();
+            //StateHasChanged();
             carga = false;
             await cerrarDialogoModificacion.InvokeAsync(false);
             Console.WriteLine("Todo Bien");
         }
         await swalfire.successMessage("Usuario Modificado Correctamente");
+    }
+
+    public async Task ActualizarTabla()
+    {
+        var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
+        if (!httpResponse.Error)
+        {
+            solicitudpadre.docs = httpResponse.Response;
+            Console.WriteLine("Actualización de tabla satisfactoria");
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un error al actualizar tabla");
+        }
+        StateHasChanged();
     }
 
     public void handleInvalidSubmit()

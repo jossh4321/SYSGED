@@ -193,7 +193,7 @@
 </style>
 <div style="flex-basis:100%">
     <div class="work-box-title-style">
-        <span>Area de Trabajo Especializada - Usuario: @sesion.usuario.datos.nombre @sesion.usuario.datos.apellido</span>
+        <span>Área de Trabajo Especializada - Usuario: @sesion.usuario.datos.nombre @sesion.usuario.datos.apellido </span>
     </div>
     <CascadingValue Value="this">
         <div class="wfe-container">
@@ -241,21 +241,20 @@
     {
         <MatDialog @bind-IsOpen="@abrirDialogo">
             <div class="modal-info-solicitudBPN">
-                @if (expedienteseleccionado.documento.tipo.Equals("OficioDesignacionNotario"))
+                @if (ChildContent != null)
                 {
-                    <VerOficioDesignacionNotario iddocumento="@expedienteseleccionado.documento.id"></VerOficioDesignacionNotario>
+                    @ChildContent
                 }
-                else if (expedienteseleccionado.documento.tipo.Equals("ConclusionFirma"))
+                else if (expedienteseleccionado.documento.tipo.Equals("EntregaExpedienteNotario"))
                 {
-                    <!--VerConclusionFirma iddocumento="expedienteseleccionado.documento.id"> </!--VerConclusionFirma-->
+                    <VerEntregaExpedienteNotario iddocumento="@expedienteseleccionado.documento.id">
 
+                    </VerEntregaExpedienteNotario>
                 }
                 else
-                {
-
+                { 
                     <div>En construccion...</div>
                 }
-
             </div>
         </MatDialog>
     }
@@ -274,19 +273,38 @@
     public Timer timer;
     public String messageSend = "Seleccione un expediente de la bandeja de entrada al área de trabajo para procesarlo";
     public Int32 count = 0;
+    public RenderFragment ChildContent = null;
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine(sesion.rol);
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
         List<Expediente_group> lista = new List<Expediente_group>();
-        var httpResponse = await repository.Get<List<Expediente_group>>($"api/documentos/ganttexpediente?dni=70477724");
-        if (!httpResponse.Error)
-        {
-            lista = httpResponse.Response;
-            await VoiceMessage(messageSend);
-        }
+        //var httpResponse = await repository.Get<List<Expediente_group>>($"api/documentos/ganttexpediente?dni=70477724");
+        //if (!httpResponse.Error)
+        //{
+        //    lista = httpResponse.Response;
+
+        //}
+        await VoiceMessage(messageSend);
     }
-    public void openDialog() { abrirDialogo = true; StateHasChanged(); }
+    public void openDialog() { 
+        abrirDialogo = true; 
+        if (expedienteseleccionado.documento.tipo == "SolicitudDenuncia") ChildContent = @<VerSolicitudDenuncia documento="@expedienteseleccionado.documento"></VerSolicitudDenuncia>;
+        @*if (expedienteseleccionado.documento.tipo == "OficioBPN") ChildContent = @<GenerarOficioBPN></GenerarOficioBPN>;*@
+        if (expedienteseleccionado.documento.tipo == "SolicitudBPN") ChildContent = @<VerSolicitudBPN documento="@expedienteseleccionado.documento"></VerSolicitudBPN>;
+        @*if (expedienteseleccionado.documento.tipo == "ResultadoBPN") ChildContent = @<GenerarResultadoBPN></GenerarResultadoBPN>;*@
+        if (expedienteseleccionado.documento.tipo == "SolicitudExpedicionFirma") ChildContent = @<VerSolicitudExpedicionFirma documento="@expedienteseleccionado.documento"></VerSolicitudExpedicionFirma>;
+        if (expedienteseleccionado.documento.tipo == "OficioDesignacionNotario") ChildContent = @<VerOficioDesignacionNotario iddocumento="@expedienteseleccionado.documento.id"></VerOficioDesignacionNotario>;
+        if (expedienteseleccionado.documento.tipo == "ConclusionFirma") ChildContent = @<VerConclusionFirma iddocumento="@expedienteseleccionado.documento.id"></VerConclusionFirma>;
+        @*if (expedienteseleccionado.documento.tipo == "AperturamientoDisciplinario") ChildContent = @<GenerarAperturamientoDisciplinario></GenerarAperturamientoDisciplinario>;
+        if (expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario") ChildContent = @<GenerarSolicitudExpediente></GenerarSolicitudExpediente>;
+        if (expedienteseleccionado.documento.tipo == "Dictamen") ChildContent = @<GenerarDictamen></GenerarDictamen>;
+        if (expedienteseleccionado.documento.tipo == "Resolucion") ChildContent = @<GenerarResolucion></GenerarResolucion>;
+        if (expedienteseleccionado.documento.tipo == "Apelacion") ChildContent = @<GenerarApelacion></GenerarApelacion>;
+        if (expedienteseleccionado.documento.tipo == "EntregaExpedienteNotario") ChildContent = @<GenerarEntregaExpedienteNotario></GenerarEntregaExpedienteNotario>;*@
+        StateHasChanged(); 
+    }
     public void closeDialog() { abrirDialogo = false; }
     public async Task UpdateDraggableComponents(string newCurrentPlace)
     {
@@ -371,7 +389,7 @@
     }
     public void RemoveExpedienteSeleccionadoBandejas(Item itemsalida)
     {
-        Int32 index = sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace");
+        Int32 index = sesion.listasalidas.FindIndex(ind => ind.currentPlace == "workspace");
 
         sesion.listasalidas.RemoveAt(index);
 
@@ -403,9 +421,9 @@
             String message = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).subpaso.ElementAt(asistente.subpaso).descripcion;
             String submessage = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
 
-            Task voiceMessage = VoiceMessage(message);
+            Task voiceMessage = VoiceMessage(submessage);
 
-            ChangeMessage(message);
+            ChangeMessage(submessage);
 
             await voiceMessage;
 

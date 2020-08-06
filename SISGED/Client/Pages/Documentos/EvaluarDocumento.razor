@@ -11,6 +11,16 @@
         padding: 10px;
     }
 
+    .alineacion-a {
+        text-align: left !important;
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+    .alineacion-b {
+        display: flex;
+        justify-content: center;
+    }
+
     .text-field-style {
         display: block !important;
     }
@@ -170,20 +180,18 @@ else
 
                         @if (datosParticipantes.Count != 0)
                         {
-                            <div class="mat-layout-grid">
+                            <div class="mat-layout-grid alineacion-b">
                                 <div class="mat-layout-grid-inner">
                                     @foreach (var participante in listadopaginacion)
                                     {
-                                        <div class="mat-layout-grid-cell-span-4">
+                                        <div class="mat-layout-grid-cell-span-4 alineacion-a">
                                             <UsuarioParticipanteC usuarioParticipanteEvaluacion="participante" @key="participante.id"
                                                                   mostrarDatosParticipante="ModificarParticipante" eliminarParticipante="EliminarParticipante"></UsuarioParticipanteC>
                                         </div>
                                     }
                                 </div>
                             </div>
-
                             <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales()" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
-
                             <div class="field-container">
                                 <MatButton Class="sub-but-c" Outlined="true" OnClick="@EvaluacionPorJunta">Concluir evaluación</MatButton>
                             </div>
@@ -365,12 +373,18 @@ else
         if(cantidadAprobados > cantidadDesaprobados)
         {
             evaluacion.resultado = "Aprobado";
+            await RealizarEvaluacion();
+        }
+        else if (cantidadAprobados == cantidadDesaprobados){
+
+            await swalfire.errorMessage("El numero de participantes que aprobaron y desaprobaron deben ser diferentes");
+            evaluacion = new Evaluacion();
         }
         else
         {
             evaluacion.resultado = "Desaprobado";
+            await RealizarEvaluacion();
         }
-        await RealizarEvaluacion();
     }
 
     private async Task RealizarEvaluacion()
@@ -521,7 +535,7 @@ else
         participanteSeleccionado.descripcion = observacionModificada;
         datosParticipantes[datosParticipantes.FindIndex(ind => ind.id.Equals(participanteSeleccionado.id))] = participanteSeleccionado;
         listadopaginacion[listadopaginacion.FindIndex(ind => ind.id.Equals(participanteSeleccionado.id))] = participanteSeleccionado;
-        OpenEliminar = false;
+        OpenModificar = false;
         estadoModificado = "";
         observacionModificada = "";
     }

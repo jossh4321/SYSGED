@@ -1,17 +1,9 @@
 ﻿@page "/"
 @inject HttpClient Http
 @inject IRepository  repository
-@attribute [Authorize(Roles = "admin,orientacionlegal,archivosexnotarios,mesapartes,secretariageneral,juntadirectiva,tramitedocumentario")]
+@attribute [Authorize(Roles = "admin,OrientacionLegal,ArchivosExnotarios,MesaPartes,SecretariaGeneral,JuntaDirectiva,TramiteDocumentario")]
 @layout MainLayout
-<style>
-    * {
-        color: white
-    }
 
-    h1 {
-        color: white;
-    }
-</style>
 @if (layout.cargasesion == true)
 {
     @if (layout.sesion.usuario.tipo.Equals("cliente"))
@@ -20,6 +12,15 @@
     }
     else
     {
+        <style>
+            * {
+                color: white
+            }
+
+            h1 {
+                color: white;
+            }
+        </style>
         <SISGED.Client.Pages.Samples.WorkEnvironment.WorkEnvironment></SISGED.Client.Pages.Samples.WorkEnvironment.WorkEnvironment>
     }
 

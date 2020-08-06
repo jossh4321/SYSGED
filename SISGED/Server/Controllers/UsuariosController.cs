@@ -97,6 +97,13 @@ namespace SISGED.Server.Controllers
             return usuario;
         }
 
+        [HttpPut("password")]
+        public ActionResult<Usuario> ModifyPassword(Usuario usuario)
+        {
+            usuario = _usuarioservice.modifyPassword(usuario);
+            return usuario;
+        }
+
         [HttpGet("estado")]
         public ActionResult<List<Usuario>> GetByStatus([FromQuery] string status)
         {
@@ -145,6 +152,14 @@ namespace SISGED.Server.Controllers
         {
             List<Usuario> listanotario = new List<Usuario>();
             listanotario = _usuarioservice.filtroEvaluar(term);
+            return listanotario;
+        }
+        //obtenerUsuariosAutoComplete
+        [HttpGet("autocompleteusuario")]
+        public async Task<ActionResult<List<usuario_unwind>>> autocompleteUsuarios([FromQuery] string term)
+        {
+            List<usuario_unwind> listanotario = new List<usuario_unwind>();
+            listanotario = await _usuarioservice.obtenerUsuariosAutoComplete(term.ToLower());
             return listanotario;
         }
     }

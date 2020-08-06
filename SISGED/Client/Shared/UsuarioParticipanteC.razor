@@ -4,10 +4,10 @@
 }
 else
 {
-    <MatCard class="demo-mat-card">
+    <MatCard class="demo-mat-card demo-mat-card-a">
         <MatCardContent>
             <MatCardMedia Wide="true" ImageUrl="@usuarioParticipanteEvaluacion.datos.imagen"></MatCardMedia>
-            <div class="demo-mat-card-content">
+            <div class="demo-mat-card-content demo-mat-card-content-a">
                 <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Nombres: @usuarioParticipanteEvaluacion.datos.nombre</MatSubtitle2>
                 <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">Apellidos: @usuarioParticipanteEvaluacion.datos.apellido</MatSubtitle2>
                 <MatSubtitle2 class="demo-mat-card-clean-margin demo-mat-card-text">DNI: @usuarioParticipanteEvaluacion.datos.numerodocumento</MatSubtitle2>
@@ -17,8 +17,8 @@ else
         </MatCardContent>
         <MatCardActions>
             <MatCardActionButtons Class="mat-card-actions-modificado">
-                <MatButton Raised="true" Icon="@MatIconNames.Search" Class="mat-color" @onclick="(() => mostrarDatosParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Modificar</MatButton>
-                <MatButton Raised="true" Icon="@MatIconNames.Select_all" Class="mat-color-green" @onclick="(() => eliminarParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Eliminar</MatButton>
+                <MatButton Raised="true" Icon="@MatIconNames.Create" Class="mat-color-green" @onclick="(() => mostrarDatosParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Modificar</MatButton>
+                <MatButton Raised="true" Icon="@MatIconNames.Delete_outline" Class="mat-color" @onclick="(() => eliminarParticipante.InvokeAsync(usuarioParticipanteEvaluacion))">Eliminar</MatButton>
             </MatCardActionButtons>
         </MatCardActions>
     </MatCard>

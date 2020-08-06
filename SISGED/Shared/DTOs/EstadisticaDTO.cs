@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SISGED.Shared.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,5 +18,11 @@ namespace SISGED.Shared.DTOs
     {
         public string mes { get; set; } = "1";
         public string dni { get; set; }
+    }
+
+    public class EstadisticaEstDocsUsuario
+    {
+        public string mes { get; set; } = "1";
+        public usuario_unwind usuario { get; set; }
     }
 }

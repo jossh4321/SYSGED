@@ -5,7 +5,7 @@
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
-        background-color: #A6A6A6;
+        background-color: #fff;
         flex-basis: 100%;
         border-radius: 15px 15px 15px 15px;
         width: 100%;
@@ -72,7 +72,7 @@
         flex-direction: column;
         /*height: 700px;*/
         width: 100%;
-        background-color: #A6A6A6;
+        background-color: #fff;
         border-radius: 15px 15px 15px 15px;
     }
 
@@ -115,7 +115,7 @@
 
                     </div>
                     <div class="field-container input-group-2">
-                        <div style="background-color:ghostwhite; margin-top:10px;border-radius:4px 4px;">
+                        <div style="background-color:#F5F5F5; margin-top:10px;border-radius:4px 4px;">
                             <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => solicinicialdto.contenidoDTO.descripcion)">
                                 <MatTextField rows="6" @bind-Value="@solicinicialdto.contenidoDTO.descripcion" Class="text-field-style" Label="Descripción..." Disabled="false" TextArea="true" FullWidth="true"></MatTextField>
                                 <div class="incorrecto">

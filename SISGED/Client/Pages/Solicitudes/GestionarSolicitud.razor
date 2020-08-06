@@ -173,117 +173,124 @@
     else
     {
 
+<CascadingValue Value="this">
+    <MatTable Items="docs" class="mat-elevation-z5" Style="width:auto">
+        <MatTableHeader>
+            <th>
+                <span class="table-header">Titulo</span>
+            </th>
+            <th>
+                <span class="table-header">Tipo</span>
+            </th>
+            <th>
+                <span class="table-header">Estado</span>
+            </th>
+            <th>
+                <span class="table-header">Fecha</span>
+            </th>
+            <th>
+                <span class="table-header">Funciones</span>
+            </th>
+        </MatTableHeader>
+        <MatTableRow>
 
-        <MatTable Items="docs" class="mat-elevation-z5" Style="width:auto">
-            <MatTableHeader>
-                <th>
-                    <span class="table-header">Titulo</span>
-                </th>
-                <th>
-                    <span class="table-header">Tipo</span>
-                </th>
-                <th>
-                    <span class="table-header">Estado</span>
-                </th>
-                <th>
-                    <span class="table-header">Fecha</span>
-                </th>
-                <th>
-                    <span class="table-header">Funciones</span>
-                </th>
-            </MatTableHeader>
-            <MatTableRow>
+            @{
+                int index = context.historialcontenido.Count;
 
-                @{
-                        int index = context.historialcontenido.Count;
-
+                <td>
+                    <span class="table-row">@context.contenido.titulo</span>
+                </td>
+                <td>
+                    <span class="table-row">@context.tipo</span>
+                </td>
+                <td>
+                    <span class="table-row">@context.estado</span>
+                </td>
+                @if (index > 0)
+                {
                     <td>
-                        <span class="table-row">@context.contenido.titulo</span>
+                        <span class="table-row">@context.historialcontenido[index - 1].fechamodificacion</span>
                     </td>
+                }
+                else
+                {
                     <td>
-                        <span class="table-row">@context.tipo</span>
+                        <span class="table-row">No hay historial disponible</span>
                     </td>
-                    <td>
-                        <span class="table-row">@context.estado</span>
-                    </td>
-                    @if (index > 0)
-                        {
-                        <td>
-                            <span class="table-row">@context.historialcontenido[index - 1].fechamodificacion</span>
-                        </td>
-                        }
-                        else
-                        {
-                        <td>
-                            <span class="table-row">No hay historial disponible</span>
-                        </td>
-                        }
-                    /**/
-                    <td>
-                        @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido") { activator = true; }
-                            else { activator = false; }
-                        <div class="button-container-lvl">
-                            <div class="button-container">
-                                <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
-                            </div>
-                            <div class="button-container">
-                                @if (activator == false)
-                                    {
-                                    <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
-
-                                    }
-                                    else
-                                    {
-                                    <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
-
-                            }
-                    </div>
-                    <div class="button-container">
-                        @if (activator == false)
+                }
+                /**/
+                /**/
+                <td>
+                    @if (context.estado == "revisado" || context.estado == "cancelado" || context.estado == "finalizado" || context.estado == "emitido") { activator = true; }
+                    else { activator = false; }
+                    <div class="button-container-lvl">
+                        <div class="button-container">
+                            <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
+                        </div>
+                        <div class="button-container">
+                            @if (activator == false)
                             {
-                            <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@(()=>abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
+                                <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
 
                             }
                             else
                             {
-                            <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@(e => abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
+                                <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
 
-                                    }
-                            </div>
-                            <div class="button-container">
-                                @if (context.estado == "emitido")
-                                    {
-                                    <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
-                                    }
-                            </div>
+                            }
+                            
+                        </div>
+                        <div class="button-container">
+                            @if (activator == false)
+                            {
+                                <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@(()=>abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
 
+                            }
+                            else
+                            {
+                                <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@(e => abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
 
+                            }
+                            
+                        </div>
+                        <div class="button-container">
+                            @if (context.estado == "emitido")
+                            {
+                                <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
+                            }
+                           
                         </div>
 
 
-                    </td>
-                }
+                    </div>
+
+
+                </td>
+            }
 
 
 
-            </MatTableRow>
-        </MatTable>
+        </MatTableRow>
+    </MatTable>
+</CascadingValue>
+        
 
     }
 </div>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
-    <RegistrarSolicitudInicial docs="docs" cerrarDialogoRegistro="cerrarDialogoRegistro"></RegistrarSolicitudInicial>
+    <CascadingValue Value="this">
+        <RegistrarSolicitudInicial cerrarDialogoRegistro="cerrarDialogoRegistro"></RegistrarSolicitudInicial>
+    </CascadingValue>
     <MatDialogActions>
-        <MatButton OnClick="@OkClick" >Cancelar</MatButton>
+        <MatButton OnClick="@OkClick">Cancelar</MatButton>
     </MatDialogActions>
 </MatDialog>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Modificar">
     <MatDialogTitle>Modificar Solicitud</MatDialogTitle>
     <CascadingValue Value="this">
-        <ModificarSolicitudInicial docs="docs"
-                                   cerrarDialogoModificacion="cerrarDialogoModificacion"
+        <ModificarSolicitudInicial cerrarDialogoModificacion="cerrarDialogoModificacion"
                                    solicinicialdto="solicinicialdto" />
     </CascadingValue>
     <MatDialogActions>
@@ -320,11 +327,19 @@
     [CascadingParameter]
     MainLayout layout { get; set; }
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
-
+    [CascadingParameter] GestionarSolicitud solicitudpadre { get; set; }
     public SolicitudInicialDTO solicinicialdto = new SolicitudInicialDTO();
     public List<DocumentoADTO2> docs { get; set; } = new List<DocumentoADTO2>();
 
     protected override async Task OnInitializedAsync()
+    {
+        cargatabla = true;
+        await MostrarTabla();
+        cargatabla = false;
+    }
+
+
+    public async Task MostrarTabla()
     {
 
         var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
@@ -345,7 +360,7 @@
         {
             Console.WriteLine("Ocurrio un error");
         }
-        cargatabla = false;
+
     }
 
     void CancelButton()
@@ -449,8 +464,10 @@
                 //_editContext = new EditContext(solicitud);
                 //_editContext.MarkAsUnmodified();
                 //_editContext.NotifyValidationStateChanged();
-                StateHasChanged();
                 Console.WriteLine("cancelacion exitosa");
+                await MostrarTabla();
+                StateHasChanged();
+
 
             }
             else

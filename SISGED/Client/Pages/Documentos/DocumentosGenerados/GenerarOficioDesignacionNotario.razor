@@ -42,12 +42,11 @@
 <div style="display: none">
     <table id="convertirPDF">
         <tbody>
-            <tr><td colspan="7">Código: @codigo</td></tr>
-            <tr><td colspan="7"> </td></tr>
             <tr>
                 <th colspan="7">@documento.titulo</th>
             </tr>
             <tr><td colspan="7"> </td></tr>
+            <tr><td colspan="7">Código: @codigo</td></tr>
             <tr><td colspan="7">Descripción: </td></tr>
             <tr><td colspan="7">@documento.descripcion</td></tr>
             <tr><td colspan="7">Fecha de realización: @documento.fecharealizacion.ToString("dd-MM-yy")</td></tr>
@@ -109,6 +108,15 @@
         faltaCargar = false;
         subpaso = 1;
         //Enviar paso=1,subpaso=1,idexp
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        Task voiceMessage = workspace.VoiceMessage(message);
+
+        workspace.ChangeMessage(message);
+
+        await voiceMessage;
+
+        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
 
     private async Task getUsuario()
@@ -166,6 +174,22 @@
             };
             workspace.UpdateTools("Generar Documento");
             workspace.RemoveExpedienteSeleccionado(itemSalida);
+
+            Int32 pasoAntiguo = paso;
+            paso = 2;
+            subpaso = 0;
+            //Enviar paso=0+0,subpaso=2,idexpediente
+            String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+            await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
+
+            String messageFinal = workspace.asistente.pasos.documentos
+                        .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
+
+            Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
+            workspace.ChangeMessage(messageFinal);
+
+            await voiceMessage;
         }
     }
 }
