@@ -257,10 +257,21 @@
 
                     </VerAperturamientoDisciplinario>
                 }
-                else
-                {
+                else if (expedienteseleccionado.documento.tipo.Equals("Solicitud"))
 
-                    <div>En construccion...</div>
+
+                { <VerSolicitudExpediente iddocumento="@expedienteseleccionado.documento.id">
+
+                  </VerSolicitudExpediente>}
+
+                else if (expedienteseleccionado.documento.tipo.Equals("ResultadoBPN"))
+
+                {
+                <VerResultadoBPN   iddocumento ="@expedienteseleccionado.documento.id" >
+                </VerResultadoBPN>}
+                else  
+                {
+                    <div>En construccion..</div>
                 }
 
             </div>
