@@ -163,9 +163,26 @@
 </div>
 @code {
     [CascadingParameter] WorkEnvironment workspace { get; set; }
-    protected override void OnInitialized()
+    String typePass = "Actualizar Documento";
+    String typePassDocument = "";
+
+
+    protected async override Task OnInitializedAsync()
     {
-        
+        string tipo = workspace.expedienteseleccionado.documento.tipo;
+
+        typePassDocument = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(workspace.asistente.paso).nombre;
+
+        if (!typePass.Equals(typePassDocument))
+        {
+            String message = "Debe elegir la herramienta " + typePassDocument + " para continuar con el flujo";
+
+            Task voiceMessage = workspace.VoiceMessage(message);
+
+            workspace.ChangeMessage(message);
+
+            await voiceMessage;
+        }
     }
 
 }

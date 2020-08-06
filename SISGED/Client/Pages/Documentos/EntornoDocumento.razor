@@ -91,9 +91,25 @@
     public RenderFragment ChildContent = null;
     [CascadingParameter] WorkEnvironment workspace { get; set; }
     List<OpcionDocumento> tiposdocumentos = new List<OpcionDocumento>();
-    protected override void OnInitialized()
+    String typePass = "Registrar Documento";
+    String typePassDocument = "";
+    protected override async Task OnInitializedAsync()
     {
         tiposdocumentos = documentRepository.ObtenerTiposDocsSinExp();
+
+        typePassDocument = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(workspace.asistente.paso).nombre;
+
+        if(!typePass.Equals(typePassDocument))
+        {
+            String message = "Debe elegir la herramienta " + typePassDocument + " para continuar con el flujo";
+
+            Task voiceMessage = workspace.VoiceMessage(message);
+
+            workspace.ChangeMessage(message);
+
+            await voiceMessage;
+        }
+
     }
     protected override void OnParametersSet()
     {

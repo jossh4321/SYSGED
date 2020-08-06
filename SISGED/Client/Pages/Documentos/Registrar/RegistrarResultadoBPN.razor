@@ -220,6 +220,7 @@
     private bool loadprocess = false;
     int paso = 0;
     int subpaso = 0;
+    String typeDocument = "ResultadoBPN";
 
     private async Task<IEnumerable<EscrituraPublica>> match(string searchtext)
     {
@@ -235,7 +236,7 @@
         }
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _editContext = new EditContext(resultadoBPNDTO);
         resultadoBPNDTO.contenidoDTO.Urlanexo = new List<string>();
@@ -261,9 +262,31 @@
             }
         }
         _editContext = new EditContext(resultadoBPNDTO);
-        StateHasChanged();
+
         subpaso = 1;
         //Enviar paso=0,subpaso=1,idexp
+        String message = "";
+
+        if (typeDocument != workspace.asistente.tipodocumento)
+        {
+            message = "El documento que ha elegido no es el indicado para el expediente";
+        }
+        else
+        {
+            message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+            await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        }
+
+        Task voiceMessage = workspace.VoiceMessage(message);
+
+        workspace.ChangeMessage(message);
+
+        await voiceMessage;
+
+        StateHasChanged();
+
+
     }
 
     private void ImagenSeleccionada2(string imagenbase64)

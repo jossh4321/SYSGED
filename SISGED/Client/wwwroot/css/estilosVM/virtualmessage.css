@@ -56,11 +56,19 @@
     flex-direction: column;
     width: 30%;
     background-color: lightblue;
-    height: 100px;
+    height: 115px;
     position: fixed;
     bottom: 30px;
     left: 60px;
     border-radius: 15px;
+    opacity: 1;
+    transition: 300ms all;
+}
+
+.message-none {
+    opacity: 0;
+    display: none;
+    transition: 300ms all;
 }
 
 .message h1 {
@@ -108,4 +116,24 @@
     100% {
         opacity: 1;
     }
+}
+
+.message-audio {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.message-audio button {
+    margin-top: 0px;
+    color: black !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    height: 15px;
+    margin-right: 10px;
+    margin-bottom: 2px;
+}
+
+.message-audio button i {
+      color: black !important;
 }

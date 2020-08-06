@@ -380,6 +380,7 @@
     private bool loadprocess = false;
     int paso=0;
     int subpaso=0;
+    String typeDocument = "AperturamientoDisciplinario";
 
     List<UsuarioRDTO> fiscales { get; set; } = new List<UsuarioRDTO>();
 
@@ -412,8 +413,18 @@
             Console.WriteLine("Ocurrio un error");
         }
         subpaso = 1;
+        String message = "";
 
-        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+        if (typeDocument != workspace.asistente.tipodocumento)
+        {
+            message = "El documento que ha elegido no es el indicado para el expediente";
+        }
+        else
+        {
+            message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+            await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        }
 
         Task voiceMessage = workspace.VoiceMessage(message);
 
@@ -422,9 +433,6 @@
         await voiceMessage;
 
 
-        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
-
-        //Enviar paso=0, subpas=1, idexp
     }
 
     private void addparticipante()

@@ -69,16 +69,32 @@
     public RenderFragment ChildContent = null;
     public string codigo = "";
     private string imagen = null;
+    String typePass = "Generar Documento";
+    String typePassDocument = "";
+
     private void imagenSeleccionada(string imagenBase64)
     {
         imagen = imagenBase64;
         Console.WriteLine(imagen);
         StateHasChanged();
     }
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        Console.WriteLine(workspace.expedienteseleccionado.cliente.numerodocumento);
         GenerarCodigo();
+
+        typePassDocument = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(workspace.asistente.paso).nombre;
+
+        if (!typePass.Equals(typePassDocument))
+        {
+            String message = "Debe elegir la herramienta " + typePassDocument +  " para continuar con el flujo";
+
+            Task voiceMessage = workspace.VoiceMessage(message);
+
+            workspace.ChangeMessage(message);
+
+            await voiceMessage;
+        }
+
         if (workspace.expedienteseleccionado.documento.tipo == "SolicitudDenuncia") ChildContent = @<GenerarSolicitudDenuncia></GenerarSolicitudDenuncia>;
         if (workspace.expedienteseleccionado.documento.tipo == "OficioBPN") ChildContent = @<GenerarOficioBPN></GenerarOficioBPN>;
         if (workspace.expedienteseleccionado.documento.tipo == "SolicitudBPN") ChildContent = @<GenerarSolicitudBPN></GenerarSolicitudBPN>;

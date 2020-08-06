@@ -176,6 +176,7 @@
     private bool loadprocess = false;
     int paso = 1;
     int subpaso = 0;
+    String typeDocument = "OficioDesignacionNotario";
 
     protected override async Task OnInitializedAsync()
     {
@@ -192,7 +193,18 @@
         }
         subpaso = 1;
         //Enviar paso=0,subpaso=1,idexp
-        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+        String message = "";
+
+        if (typeDocument != workspace.asistente.tipodocumento)
+        {
+            message = "El documento que ha elegido no es el indicado para el expediente";
+        }
+        else
+        {
+            message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+            await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        }
 
         Task voiceMessage = workspace.VoiceMessage(message);
 
@@ -200,7 +212,7 @@
 
         await voiceMessage;
 
-        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+
     }
     private async Task<IEnumerable<Notario>> match(string searchtext)
     {

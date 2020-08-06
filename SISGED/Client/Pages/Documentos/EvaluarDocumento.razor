@@ -300,14 +300,31 @@ else
     private bool OpenModificar = false;
     private bool DocumentoRevisado;
     public int paginaactual = 1;
+    String typePass = "Evaluar Documento";
+    String typePassDocument = "";
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
         datosParticipantes = new List<UsuarioEvaluacionDTO>();
         listadopaginacion = new List<UsuarioEvaluacionDTO>();
         participanteSeleccionado = new UsuarioEvaluacionDTO();
         evaluacion = new Evaluacion();
         string tipo = workspace.expedienteseleccionado.documento.tipo;
+
+        typePassDocument = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(workspace.asistente.paso).nombre;
+
+        if (!typePass.Equals(typePassDocument))
+        {
+            String message = "Debe elegir la herramienta " + typePassDocument + " para continuar con el flujo";
+
+            Task voiceMessage = workspace.VoiceMessage(message);
+
+            workspace.ChangeMessage(message);
+
+            await voiceMessage;
+        }
+
+
         if (tipo == "OficioDesignacionNotario" || tipo == "Resolucion" || tipo == "Apelacion" || tipo == "OficioBPN")
         {
             Evaluacion evaluacion = JsonConvert.DeserializeObject<Evaluacion>(workspace.expedienteseleccionado.documento.evaluacion.ToString());

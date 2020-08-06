@@ -1,17 +1,22 @@
 ﻿@inject IRepository repositorio
 @inject ISwalFireMessage swalFireMessage
 @inject NavigationManager navigationManager
+@inject IJSRuntime js
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 @using System.Timers
+
 <link rel="stylesheet" href="css/estilosVM/virtualmessage.css" />
 
 @*<div class="message" data-text="Es un texto de prueba">
             Es un texto de prueba
     </div>*@
 <div class="user-bubble">
-    <img class="user" src="/images/user-2.jpg" />
-    <div class="message bubble">
-        <h1>Bienvenido @sesion.usuario.usuario,</h1>
+    <img class="user" src="/images/user-2.jpg" @onclick="ShowMessage" />
+    <div class="@css">
+        <div class="message-audio">
+            <h1>Bienvenido @sesion.usuario.usuario,</h1>
+            <MatIconButton Icon="@MatIconNames.Mic_none" ToggleIcon="@MatIconNames.Mic_off" @bind-Toggled="@Music" @onclick="MusicValid"></MatIconButton>
+        </div>
         <h1 class="typing">@letter</h1>
     </div>
 </div>
@@ -24,12 +29,15 @@
     [CascadingParameter]
     public WorkEnvironment workspace { get; set; }
 
-    [CascadingParameter(Name = "SesionUsuario")] 
+    [CascadingParameter(Name = "SesionUsuario")]
     protected Sesion sesion { get; set; }
 
     public String letter = "";
     public Int32 index = 0;
 
+    public bool Music;
+    public bool MessageImage = true;
+    public String css = "message bubble";
 
     public Boolean validator = false;
     protected override void OnInitialized()
@@ -43,7 +51,7 @@
     private void TimerOnElapsed(object sender, ElapsedEventArgs e)
     {
         letter = message.Substring(0, index);
-        if(letter.Length == message.Length)
+        if (letter.Length == message.Length)
         {
             index = 0;
             workspace.timer.Stop();
@@ -54,5 +62,34 @@
         }
 
         StateHasChanged();
+    }
+
+    public async Task MusicValid()
+    {
+        if(Music)
+        {
+            Console.WriteLine("Se va a silenciar");
+            await js.InvokeVoidAsync("pauseAsistent");
+        }
+        else
+        {
+            Console.WriteLine("Se a continuar");
+            await js.InvokeVoidAsync("continueAsistent", message);
+        }
+    }
+
+    public void ShowMessage()
+    {
+        if(MessageImage)
+        {
+            css = "message-none";
+        }
+        else
+        {
+            css = "message bubble";
+
+        }
+        MessageImage = !MessageImage;
+
     }
 }

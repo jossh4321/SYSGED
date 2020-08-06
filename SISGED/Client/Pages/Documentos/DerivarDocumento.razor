@@ -102,9 +102,10 @@ else
     string usuarioId;
     int paso=2;
     int subpaso=0;
-    
+    String typePass = "Derivar Documento";
+    String typePassDocument = "";
     //comentario
-    
+
     public List<Usuario> listausuarios = new List<Usuario>();
     public List<Usuario> usuarios = new List<Usuario>();
     private List<Rol> roles = new List<Rol>();
@@ -117,15 +118,25 @@ else
         await getUsuarioByStatus();
         subpaso = 1;
 
-        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+        typePassDocument = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(workspace.asistente.paso).nombre;
+        String message = "";
+        if (!typePass.Equals(typePassDocument))
+        {
+            message = "Debe elegir la herramienta " + typePassDocument + " para continuar con el flujo";
 
+        }
+        else
+        {
+            message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+            await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        }
         Task voiceMessage = workspace.VoiceMessage(message);
 
         workspace.ChangeMessage(message);
 
         await voiceMessage;
 
-        await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
         //Enviar paso=2,subpaso=1,idexp
     }
 

@@ -1,4 +1,5 @@
-﻿
+﻿var identificadorVoz = 0;
+
 async function SwalFireEliminacion(titlex,estado,nombreusuario) {
     var res = false;
     var texto = estado==="activo"?"Bloquear":"Desbloquear"
@@ -118,5 +119,18 @@ function gPDF(image, nombre, documento) {
 function textSpeak(message) {
     var text = message;
     responsiveVoice.setDefaultVoice("Spanish Female");
-    responsiveVoice.speak(text);
+    if (identificadorVoz === 0) {
+        responsiveVoice.speak(text);
+    }
+   
+}
+
+function pauseAsistent() {
+    identificadorVoz = 1;
+    responsiveVoice.cancel();
+}
+
+function continueAsistent(message) {
+    identificadorVoz =  0;
+    responsiveVoice.speak(message);
 }

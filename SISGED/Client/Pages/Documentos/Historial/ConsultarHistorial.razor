@@ -236,6 +236,7 @@ else
 }
 
 @code {
+    [CascadingParameter] WorkEnvironment workspace { get; set; }
     public bool dialogoDocumentos = false;
     public bool dialogoderivaciones = false;
     bool carga;
@@ -249,6 +250,10 @@ else
     private EditContext _editContext;
     public int paginaactual = 1;
     public int paginastotales;
+    String typePass = "Consultar Historial";
+    String typePassDocument = "";
+
+
 
     protected async override Task OnInitializedAsync()
     {
@@ -257,6 +262,20 @@ else
         parametrosFiltros = new ParametrosBusquedaExpedienteDTO();
         _editContext = new EditContext(parametrosFiltros);
         await consultarExpedientes("");
+
+        typePassDocument = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(workspace.asistente.paso).nombre;
+
+        if (!typePass.Equals(typePassDocument))
+        {
+            String message = "Debe elegir la herramienta " + typePassDocument + " para continuar con el flujo";
+
+            Task voiceMessage = workspace.VoiceMessage(message);
+
+            workspace.ChangeMessage(message);
+
+            await voiceMessage;
+        }
+
         //await getExpedientes();
     }
 
@@ -327,8 +346,8 @@ else
         diccionariostrings["pagina"] = paginaactual.ToString();
         string primerJoin = string.Join("&",
             diccionariostrings
-                 .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());       
-        return primerJoin; 
+                 .Select(x => $"{x.Key}={System.Web.HttpUtility.UrlEncode(x.Value)}").ToArray());
+        return primerJoin;
     }
 
     public void ValidacionFiltros()
