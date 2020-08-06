@@ -14,9 +14,11 @@ namespace SISGED.Server.Controllers
     public class StatisticsController : ControllerBase
     {
         private readonly DocumentoService _documentoservice;
-        public StatisticsController(DocumentoService documentoservice)
+        private readonly ExpedienteService _expedienteservice;
+        public StatisticsController(DocumentoService documentoservice, ExpedienteService expedienteservice)
         {
             _documentoservice = documentoservice;
+            _expedienteservice = expedienteservice;
         }
         //diagrama de documentos por area en un mes especifico
         [HttpGet("docxmesxarea")]
@@ -49,13 +51,13 @@ namespace SISGED.Server.Controllers
             return estadisticas;
         }
 
-        /*[HttpGet("ganttexpedientes")]
-        public async Task<List<Expediente_lookup>> ganttexpedientes([FromQuery]int mes)
+        [HttpGet("ganttexpedientes")]
+        public async Task<List<ExpedienteDTO_group1>> ganttexpedientes([FromQuery]string dni)
         {
-            List<Expediente_lookup> estadisticas = new List<Expediente_lookup>();
-            estadisticas = await _documentoservice.estadisticasDocumentosCaducadosXMes(mes);
+            List<ExpedienteDTO_group1> estadisticas = new List<ExpedienteDTO_group1>();
+            estadisticas = await _expedienteservice.estadisticaGantt(dni);
             return estadisticas;
-        }*/
+        }
         ///////Nuevas Estadisticas/////////////
         //[documentos caducado, procesado y pendiente] => para los 12 tipos de documentos
         [HttpGet("estadistica1")]
@@ -79,6 +81,15 @@ namespace SISGED.Server.Controllers
         {
             List<estadistica1_group> estadisticas = new List<estadistica1_group>();
             estadisticas = await _documentoservice.obtenecionEstadistica3(mes, usuario);
+            return estadisticas;
+        }
+
+        //API PARA EL DIAGRAMA DE GANTT 2
+        [HttpGet("ganttexpedientes2")]
+        public async Task<List<expediente_project>> ganttestadistica([FromQuery]string dni)
+        {
+            List<expediente_project> estadisticas = new List<expediente_project>();
+            estadisticas = await _expedienteservice.agregacioGantt2(dni);
             return estadisticas;
         }
 

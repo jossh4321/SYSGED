@@ -103,13 +103,18 @@
                 <!--MatOptionString Class="option-color" Value="estadistica4">Documentos Evaluados por la Junta Directiva</MatOptionString-->
             </MatSelect>
         }
+        else if (sesion.rol == "cliente")
+        {
+            <MatSelect Label="Selecciones las graficas que desea visualizar" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
+                <MatOptionString Class="option-color" Value="estadistica6">Diagrama Gantt de Expedientes</MatOptionString>            </MatSelect>
+        }
         else
         {
             //para el usuario
-            <MatSelect Label="Seleccione la Estadistica a visualizar para la Junta Directiva" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
+            <MatSelect Label="Seleccione la Estadistica a visualizar" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
                 <MatOptionString Class="option-color" Value="estadistica4">Estado de Mis Documentos  por Mes</MatOptionString>
                 <MatOptionString Class="option-color" Value="estadistica5">Estado de Documentos de mi Area</MatOptionString>
-                <!--MatOptionString Class="option-color" Value="estadistica4">Documentos Evaluados por la Junta Directiva</MatOptionString-->
+                <MatOptionString Class="option-color" Value="estadistica6">Diagrama Gantt de Expedientes</MatOptionString>
             </MatSelect>
         }
         <MatButton Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="seleccionarEstadistica"
@@ -133,6 +138,17 @@
     public string selector = "estadistica1";
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public RenderFragment ChildContent = null;
+    protected  override async Task OnInitializedAsync()
+    {
+        List<ExpedienteDTO_group1> lista = new List<ExpedienteDTO_group1>();
+        var httpResponse = await repository.Get<List<ExpedienteDTO_group1>>($"api/statistics/ganttexpedientes?dni=70477724");
+        if (!httpResponse.Error)
+        {
+            lista = httpResponse.Response;
+            Console.WriteLine(lista);
+        }
+    }
+
     private async Task GenerateColumnChart()
     {
         await JS.InvokeVoidAsync("CreateColumnChart");
@@ -151,16 +167,17 @@
         {
             ChildContent = @<EstadisticaEstadoDocsUsuario></EstadisticaEstadoDocsUsuario>;
         }
-
-
-
         else if (selector == "estadistica4")
         {
-        ChildContent = @<EstadisticaEstadoDocsUsuarioADM></EstadisticaEstadoDocsUsuarioADM>;
+            ChildContent = @<EstadisticaEstadoDocsUsuarioADM></EstadisticaEstadoDocsUsuarioADM>;
         }
         else if (selector == "estadistica5")
         {
-        ChildContent = @<Estadistica1ExpedienteGantt></Estadistica1ExpedienteGantt>;
+            ChildContent = @<EstadisticaEstadoDocsUsuarioAreaADM></EstadisticaEstadoDocsUsuarioAreaADM>;
+        } 
+        else if (selector == "estadistica6")
+        {
+            ChildContent = @<EstadisticaGanttCliente></EstadisticaGanttCliente>;
         }
-}
+     }
 }

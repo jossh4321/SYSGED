@@ -189,4 +189,73 @@ namespace SISGED.Shared.DTOs
         public Expediente expediente { get; set; }
         public SolicitudInicial solicitudI { get; set; }
     }
+    //Clases DTO del diagrama GANTT
+    public class ExpedineteDTO_unwind1
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; } = new DocumentoExpediente();
+        public List<Derivacion> derivaciones { get; set; }
+        public string estado { get; set; }
+    }
+    public class ExpedienteDTO_lookup
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; } = new DocumentoExpediente();
+        public List<Derivacion> derivaciones { get; set; }
+        public List<DocumentoDTO> documentosobj { get; set; } = new List<DocumentoDTO>();
+        public string estado { get; set; }
+    }
+    public class ExpedienteDTO_unwind2
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; } = new DocumentoExpediente();
+        public List<Derivacion> derivaciones { get; set; }
+        public DocumentoDTO documentosobj { get; set; } = new DocumentoDTO();
+        public string estado { get; set; }
+    }
+
+    public class ExpedienteDTO_group1
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public List<DocumentoExpediente> documentos { get; set; } = new List<DocumentoExpediente>();
+        public List<Derivacion> derivaciones { get; set; }
+        public List<DocumentoDTO> documentosobj { get; set; } = new List<DocumentoDTO>();
+        public string estado { get; set; }
+    }
+
+    //objetos gantt 2
+
+    public class expediente_project
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipoexpediente { get; set; }
+        public string iddocumento { get; set; }
+        public string tipodocumento { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechacreacion { get; set; }
+        public DateTime? fechademora { get; set; }
+        public DateTime fechaexceso { get; set; }
+        public string estado { get; set; }
+    }
 }
