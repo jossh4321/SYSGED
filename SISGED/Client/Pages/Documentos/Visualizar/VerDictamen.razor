@@ -1,0 +1,232 @@
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+@using Blazored.Typeahead
+@using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
+<style>
+    .modal-info-designacion-notario {
+        display: flex;
+        flex-direction: column;
+        /*height: 700px;*/
+        width: 500px;
+        background-color: #808080;
+    }
+
+    .div-form {
+        background-color: #a6a6a6;
+        flex-basis: 100%;
+        border-radius: 5px 5px 0px 0px;
+        width: 100%;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+    /*validacion*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red !important;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .good-msg, div.correcto i.good-icon {
+        color: green !important;
+    }
+
+    div.incorrecto i.bad-icon {
+        color: red !important;
+    }
+
+    div.mat-date-picker {
+        width: 100% !important;
+    }
+
+    .contenedor-participantes {
+        padding-top: 10px;
+        margin: 20px;
+        border: 2px solid #666666;
+        border-radius: 5px;
+    }
+
+    .titulo-paticipantes {
+        border: 1px solid black;
+        margin: 0px 5px 0px 5px;
+        border-radius: 5px 5px 0px 0px;
+        background-color: #404040;
+        color: white;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .titulo {
+        color: #d9d9d9;
+    }
+
+    .icono {
+        margin-left: 20px;
+    }
+
+        .icono i {
+            margin: 5px;
+        }
+
+    .single-textfield-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .base-field {
+        flex-basis: 90%;
+    }
+
+    .base-icon {
+        display: flex;
+        flex-basis: 8%;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 2px;
+        background: #ff1a1a;
+        border-radius: 3px;
+        border: 1px solid #800000
+    }
+</style>
+
+<div class="div-form">
+
+    @if (firstLoad == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border spin" style="        width: 7rem;
+        height: 7rem;
+        color: #ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+
+            <span style="color:white">CARGANDO...</span>
+        </div>
+    }
+    else
+    {
+        <div class=".modal-info-designacion-notario">
+            <MatTabGroup>
+                <MatTab Label="General">
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@contenido.titulo" Class="text-field-style" ReadOnly="true" Label="Titulo del dictamen"></MatTextField>
+                    </div>
+
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@contenido.descripcion" Class="text-field-style" ReadOnly="true" Label="Descripcion del dictamen"></MatTextField>
+                    </div>
+
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@contenido.nombredenunciante" Class="text-field-style" ReadOnly="true" Label="Nombre del denunciante"></MatTextField>
+                    </div>
+
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@contenido.conclusion" Class="text-field-style" ReadOnly="true" Label="Conclusion"></MatTextField>
+                    </div>
+                </MatTab>
+                <MatTab Label="Observaciones y Recomendaciones">
+                    <div class="contenedor-participantes">
+                        <div class="titulo-paticipantes">
+                            <div><span class="titulo">Observaciones</span></div>
+                        </div>
+                        @for (int i = 0; i < contenido.observaciones.Count; i++)
+                        {
+                            int index = i;
+                            <div class="single-textfield-container">
+                                <div class="field-container base-field input-group-2">
+                                    <MatTextField @bind-Value="@contenido.observaciones[index]" Class="text-field-style" ReadOnly="true" Label="Ingrese una observación"></MatTextField>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="contenedor-participantes">
+                        <div class="titulo-paticipantes">
+                            <div><span class="titulo">Recomendaciones</span></div>
+                        </div>
+                        @for (int i = 0; i < contenido.recomendaciones.Count; i++)
+                        {
+                            int index = i;
+                            <div class="single-textfield-container">
+                                <div class="field-container base-field input-group-2">
+                                    <MatTextField @bind-Value="@contenido.recomendaciones[index]" Class="text-field-style" ReadOnly="true" Label="Contenido de la recomendación"></MatTextField>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    @*<div class="field-container">
+                            <MatButton type="submit"
+                                       Disabled="@loadprocess"
+                                       Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                       Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
+                        </div>*@
+                </MatTab>
+            </MatTabGroup>
+        </div>
+    }
+</div>
+
+@code {
+    //Datos del formulario
+    [Parameter] public DocumentoDTO documento { get; set; }
+    ContenidoDictamen contenido = new ContenidoDictamen();
+    private List<string> imagenTemporal2 = new List<string>();
+    List<string> nombres = new List<string>();
+    private bool firstLoad = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        firstLoad = true;
+        contenido = JsonConvert.DeserializeObject<ContenidoDictamen>(documento.contenido.ToString());
+        StateHasChanged();
+        firstLoad = false;
+    }
+    /*
+    private void ImagenSeleccionada2(string imagenbase64)
+    {
+        contenido.Urlanexo.Add(imagenbase64);
+    }
+
+    private void FileName(string imagenbase64)
+    {
+        nombres.Add(imagenbase64);
+    }
+    */
+
+}
