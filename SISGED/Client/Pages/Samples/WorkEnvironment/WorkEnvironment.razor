@@ -296,8 +296,8 @@ if (expedienteseleccionado.documento.tipo == "ConclusionFirma") ChildContent = @
 if (expedienteseleccionado.documento.tipo == "EntregaExpedienteNotario") ChildContent = @<VerEntregaExpedienteNotario documento="@expedienteseleccionado.documento"></VerEntregaExpedienteNotario>;
 if (expedienteseleccionado.documento.tipo == "Dictamen") ChildContent = @<VerDictamen documento="@expedienteseleccionado.documento"></VerDictamen>;
 if (expedienteseleccionado.documento.tipo == "Apelacion") ChildContent = @<VerApelacion documento="@expedienteseleccionado.documento"></VerApelacion>;
-@*if (expedienteseleccionado.documento.tipo == "AperturamientoDisciplinario") ChildContent = @<GenerarAperturamientoDisciplinario></GenerarAperturamientoDisciplinario>;
-    if (expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario") ChildContent = @<GenerarSolicitudExpediente></GenerarSolicitudExpediente>;
+if (expedienteseleccionado.documento.tipo == "AperturamientoDisciplinario") ChildContent = @<VerAperturamientoDisciplinario documento="@expedienteseleccionado.documento"></VerAperturamientoDisciplinario>;
+@*if (expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario") ChildContent = @<GenerarSolicitudExpediente></GenerarSolicitudExpediente>;
 
 
     if (expedienteseleccionado.documento.tipo == "EntregaExpedienteNotario") ChildContent = @<GenerarEntregaExpedienteNotario></GenerarEntregaExpedienteNotario>;*@
