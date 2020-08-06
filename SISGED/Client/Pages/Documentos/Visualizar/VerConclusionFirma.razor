@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json;
 <style>
     .field-container {
         display: block;
@@ -27,6 +28,7 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+
     .otorgantes {
         border: 1px solid #ccc;
         background: #f2f2f2;
@@ -64,19 +66,19 @@
             <MatTabGroup>
                 <MatTab Label="Escritura Publica">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica.titulo" ReadOnly="true" Class="text-field-style" Label="Titulo"></MatTextField>
+                        <MatTextField @bind-Value="@escriturapublica.titulo" ReadOnly="true" Class="text-field-style" Label="Titulo"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio Notarial"></MatTextField>
+                        <MatTextField @bind-Value="@escriturapublica.direccionoficio" ReadOnly="true" Class="text-field-style" Label="Direccion de Oficio Notarial"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatDatePicker @bind-Value="@conclusionFirma.contenidoDTO.idescriturapublica.fechaescriturapublica" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
+                        <MatDatePicker @bind-Value="@escriturapublica.fechaescriturapublica" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
                     </div>
                     <div class="otorgantes">
                         <p class="title-ot">OTORGANTES REGISTRADOS</p>
 
                         <MatChipSet>
-                            @foreach (ActoJuridico actjur in conclusionFirma.contenidoDTO.idescriturapublica.actosjuridicos)
+                            @foreach (ActoJuridico actjur in escriturapublica.actosjuridicos)
                             {
                                 <MatChip Label="@actjur.titulo" LeadingIcon="@MatIconNames.Supervised_user_circle"></MatChip>
                             }
@@ -84,57 +86,57 @@
 
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.cantidadfoja" ReadOnly="true" Class="text-field-style" Label="Cantidad de Fojas"></MatTextField>
+                        <MatTextField @bind-Value="@contenido.cantidadfoja" ReadOnly="true" Class="text-field-style" Label="Cantidad de Fojas"></MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatDatePicker @bind-Value="@conclusionFirma.contenidoDTO.precio" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Precio Total" ReadOnly="true"></MatDatePicker>
+                        <MatDatePicker @bind-Value="@contenido.precio" ReadOnly="true" Class="text-field-style" Label="Precio Total"></MatDatePicker>
                     </div>
                 </MatTab>
                 <MatTab Label="Notario">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idnotario.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del Notario">
+                        <MatTextField @bind-Value="@notario.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del Notario">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idnotario.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del Notario">
+                        <MatTextField @bind-Value="@notario.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del Notario">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idnotario.dni" ReadOnly="true" Class="text-field-style" Label="N° D.N.I.">
+                        <MatTextField @bind-Value="@notario.dni" ReadOnly="true" Class="text-field-style" Label="N° D.N.I.">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idnotario.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
+                        <MatTextField @bind-Value="@notario.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idnotario.direccion" ReadOnly="true" Class="text-field-style" Label="Direccion actual">
+                        <MatTextField @bind-Value="@notario.direccion" ReadOnly="true" Class="text-field-style" Label="Direccion actual">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idnotario.colegiatura" ReadOnly="true" Class="text-field-style" Label="Codigo de Colegiatura">
+                        <MatTextField @bind-Value="@notario.colegiatura" ReadOnly="true" Class="text-field-style" Label="Codigo de Colegiatura">
                         </MatTextField>
                     </div>
                 </MatTab>
                 <MatTab Label="Cliente">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idcliente.datos.nombre" ReadOnly="true" Class="text-field-style" Label="Nombres del Cliente">
+                        <MatTextField @bind-Value="@usuario.datos.nombre" ReadOnly="true" Class="text-field-style" Label="Nombres del Cliente">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idcliente.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellidos del Cliente">
+                        <MatTextField @bind-Value="@usuario.datos.apellido" ReadOnly="true" Class="text-field-style" Label="Apellidos del Cliente">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idcliente.datos.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
+                        <MatTextField @bind-Value="@usuario.datos.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idcliente.datos.direccion" ReadOnly="true" Class="text-field-style" Label="Direccion">
+                        <MatTextField @bind-Value="@usuario.datos.direccion" ReadOnly="true" Class="text-field-style" Label="Direccion">
                         </MatTextField>
                     </div>
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@conclusionFirma.contenidoDTO.idcliente.datos.fechanacimiento" ReadOnly="true" Class="text-field-style" Label="Fecha Nacimiento">
+                        <MatTextField @bind-Value="@usuario.datos.fechanacimiento" ReadOnly="true" Class="text-field-style" Label="Fecha Nacimiento">
                         </MatTextField>
                     </div>
                 </MatTab>
@@ -144,23 +146,39 @@
 </div>
 
 @code {
-    ConclusionFirmaDTO conclusionFirma = new ConclusionFirmaDTO();
-    [CascadingParameter] WorkEnvironment workspace { get; set; }
-    [Parameter] public string iddocumento { get; set; }
+    ContenidoConclusionFirma contenido = new ContenidoConclusionFirma();
+    private Usuario usuario;
+    private Notario notario;
+    private EscrituraPublica escriturapublica;
+    [Parameter] public DocumentoDTO documento { get; set; }
     private bool firstLoad = true;
+
     protected override async Task OnInitializedAsync()
     {
         firstLoad = true;
-        var httpResponse = await repository.Get<ConclusionFirmaDTO>($"api/documentos/documentocf?iddoc={workspace.expedienteseleccionado.documento.id}");
-        if (!httpResponse.Error)
-        {
-            conclusionFirma = (ConclusionFirmaDTO)httpResponse.Response;
-            StateHasChanged();
-        }
-        else
-        {
-            Console.WriteLine("Algo Mal");
-        }
+        contenido = JsonConvert.DeserializeObject<ContenidoConclusionFirma>(documento.contenido.ToString());
+        notario = new Notario();
+        usuario = new Usuario();
+        escriturapublica = new EscrituraPublica();
+        await getNotario();
+        await getUsuario();
+        await getEscrituraPublica();
+        StateHasChanged();
         firstLoad = false;
+    }
+    private async Task getNotario()
+    {
+        var responseHttp = await repository.Get<Notario>($"api/notarios/id?id={contenido.idnotario}");
+        notario = responseHttp.Response;
+    }
+    private async Task getUsuario()
+    {
+        var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={contenido.idcliente}");
+        usuario = responseHttp.Response;
+    }
+    private async Task getEscrituraPublica()
+    {
+        var responseHttp = await repository.Get<EscrituraPublica>($"api/escrituraspublicas/id?id={contenido.idescriturapublica}");
+        escriturapublica = responseHttp.Response;
     }
 }
