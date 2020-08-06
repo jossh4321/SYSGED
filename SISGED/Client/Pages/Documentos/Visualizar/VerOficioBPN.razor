@@ -116,8 +116,6 @@
         <div class=".modal-info-designacion-notario">
             <MatTabGroup>
                 <MatTab Label="Informacion Descriptiva">
-
-
                     <div class="field-container input-group-2">
                         <MatTextField @bind-Value="@contenido.titulo" Class="text-field-style" ReadOnly="true" Label="Titulo de documento"></MatTextField>
                     </div>
@@ -125,13 +123,6 @@
                     <div class="field-container input-group-2">
                         <MatTextField @bind-Value="@contenido.descripcion" Class="text-field-style" ReadOnly="true" Label="Descripcion del documento"></MatTextField>
                     </div>
-
-                    @*<div class="field-container">
-                <MatButton type="submit"
-                           Disabled="@loadprocess"
-                           Icon="@MatBlazor.MatIconNames.Edit"
-                           Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
-            </div>*@
                 </MatTab>
                 <MatTab Label="Solicitud">
                     <div class="field-container input-group-2">
@@ -214,40 +205,20 @@
 
 </div>
 @code {
-    private bool loadprocess = false;
-    public bool abrirDialogo = false;
-    List<string> nombres = new List<string>();
+    private ContenidoOficioBPN contenido = new ContenidoOficioBPN();
     private bool firstLoad = true;
     private Usuario usuario;
     private Notario notario;
-    public void openDialog() { abrirDialogo = true; }
-    public void closeDialog() { abrirDialogo = false; }
-    private List<string> imagenTemporal2 = new List<string>();
-
-    ContenidoOficioBPN contenido = new ContenidoOficioBPN();
     [Parameter] public DocumentoDTO documento { get; set; }
     protected override async Task OnInitializedAsync()
     {
-
         firstLoad = true;
-        /*
-        List<OficioBPNDTO> listaexpediente = new List<OficioBPNDTO>();
-        contenido.Urlanexo = new List<string>();
-        foreach (string u in contenido.Urlanexo)
-        {
-            if (!string.IsNullOrWhiteSpace(u))
-            {
-                imagenTemporal2.Add(u);
-            }
-        }
-        contenido.Urlanexo.Clear();
-        */
-
+        contenido = JsonConvert.DeserializeObject<ContenidoOficioBPN>(documento.contenido.ToString());
+        Console.WriteLine(contenido.descripcion);
         usuario = new Usuario();
         notario = new Notario();
         await getUsuario();
         await getNotario();
-        contenido = JsonConvert.DeserializeObject<ContenidoOficioBPN>(documento.contenido.ToString());
         StateHasChanged();
         firstLoad = false;
     }
@@ -262,15 +233,4 @@
         var responseHttp = await repository.Get<Notario>($"api/notarios/id?id={contenido.idnotario}");
         notario = responseHttp.Response;
     }
-    /*
-    private void ImagenSeleccionada(string imagenbase64)
-    {
-        contenido.Urlanexo.Add(imagenbase64);
-    }
-    */
-    private void FileName(string imagenbase64)
-    {
-        nombres.Add(imagenbase64);
-    }
-
 }
