@@ -2,6 +2,7 @@
 @inject ISwalFireMessage swalfire
 @using Blazored.Typeahead
 @using SISGED.Client.Pages.Samples.WorkEnvironment
+@using Newtonsoft.Json
 <style>
     .field-container {
         display: block;
@@ -65,28 +66,36 @@
             <MatTabGroup>
                 <MatTab Label="Entrega Expediente Notario">
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@entregaExpNotario.contenidoDTO.titulo" Class="text-field-style"
-                                      Label="Titulo de la entrega de expediente notario" ReadOnly="true"></MatTextField>
+                        <MatTextField @bind-Value="@contenido.titulo" ReadOnly="true" Class="text-field-style" Label="Titulo"></MatTextField>
                     </div>
-
                     <div class="field-container input-group-2">
-                        <MatTextField @bind-Value="@entregaExpNotario.contenidoDTO.descripcion" Class="text-field-style"
-                                      Label="Descripcion de la entrega de expediente notario" ReadOnly="true"></MatTextField>
+                        <MatTextField @bind-Value="@contenido.descripcion" ReadOnly="true" Class="text-field-style" Label="Descripcion"></MatTextField>
                     </div>
-
+                </MatTab>
+                <MatTab Label="Notario">
                     <div class="field-container input-group-2">
-                        <BlazoredTypeahead SearchMethod="match" @bind-Value="@entregaExpNotario.contenidoDTO.idnotario"
-                                           Placeholder="Nombre del Notario" ReadOnly="true">
-                            <SelectedTemplate>
-                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
-                            </SelectedTemplate>
-                            <ResultTemplate>
-                                <strong>Notario: @context.nombre @context.apellido  -  N° DNI: @context.dni</strong>
-                            </ResultTemplate>
-                            <NotFoundTemplate>
-                                <span style="color:red;font-size:20px">NO SE ENCONTRARON RESULTADOS</span>
-                            </NotFoundTemplate>
-                        </BlazoredTypeahead>
+                        <MatTextField @bind-Value="@notario.nombre" ReadOnly="true" Class="text-field-style" Label="Nombre del Notario">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@notario.apellido" ReadOnly="true" Class="text-field-style" Label="Apellido del Notario">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@notario.dni" ReadOnly="true" Class="text-field-style" Label="N° D.N.I.">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@notario.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@notario.direccion" ReadOnly="true" Class="text-field-style" Label="Direccion actual">
+                        </MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@notario.colegiatura" ReadOnly="true" Class="text-field-style" Label="Codigo de Colegiatura">
+                        </MatTextField>
                     </div>
                 </MatTab>
             </MatTabGroup>
@@ -95,35 +104,22 @@
 </div>
 
 @code {
-    EntregaExpedienteNotarioDTO entregaExpNotario = new EntregaExpedienteNotarioDTO();
-    [CascadingParameter] WorkEnvironment workspace { get; set; }
-    [Parameter] public string iddocumento { get; set; }
+    ContenidoEntregaExpedienteNotario contenido = new ContenidoEntregaExpedienteNotario();
+    private Notario notario;
+    [Parameter] public DocumentoDTO documento { get; set; }
     private bool firstLoad = true;
     protected override async Task OnInitializedAsync()
     {
         firstLoad = true;
-        var httpResponse = await repository.Get<EntregaExpedienteNotarioDTO>($"api/documentos/obtenerdocumentoEEN?iddoc={workspace.expedienteseleccionado.documento.id}");
-        if (!httpResponse.Error)
-        {
-            entregaExpNotario = (EntregaExpedienteNotarioDTO)httpResponse.Response;
-            StateHasChanged();
-        }
-        else
-        {
-            Console.WriteLine("Algo Mal");
-        }
+        contenido = JsonConvert.DeserializeObject<ContenidoEntregaExpedienteNotario>(documento.contenido.ToString());
+        notario = new Notario();
+        await getNotario();
+        StateHasChanged();
         firstLoad = false;
     }
-    private async Task<IEnumerable<Notario>> match(string searchtext)
+    private async Task getNotario()
     {
-        var httpResponse = await repository.Get<List<Notario>>($"api/notarios/filter?term={searchtext}");
-        if (httpResponse.Error)
-        {
-            return new List<Notario>();
-        }
-        else
-        {
-            return httpResponse.Response;
-        }
+        var responseHttp = await repository.Get<Notario>($"api/notarios/id?id={contenido.idnotario}");
+        notario = responseHttp.Response;
     }
 }
