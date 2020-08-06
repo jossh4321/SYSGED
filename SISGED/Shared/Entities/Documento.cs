@@ -298,9 +298,11 @@ namespace SISGED.Shared.Entities
 
     public class ContenidoEntregaExpedienteNotario
     {
+        public string codigo { get; set; }
         public string descripcion { get; set; }
         public string titulo { get; set; }
         public string idnotario { get; set; }
+        public string firma { get; set; }
 
     }
 
