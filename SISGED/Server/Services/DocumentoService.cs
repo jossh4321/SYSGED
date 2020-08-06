@@ -2323,5 +2323,8 @@ namespace SISGED.Server.Services
                                         .ToList();
             return estadistica1;
         }
+
+
+       
     }
 }
