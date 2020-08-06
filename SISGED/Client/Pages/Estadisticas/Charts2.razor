@@ -147,6 +147,9 @@
             lista = httpResponse.Response;
             Console.WriteLine(lista);
         }
+        if (sesion.rol == "JuntaDirectiva") { selector = "estadistica1"; }
+        else if (sesion.rol == "cliente") { selector = "estadistica6"; }
+        else { selector = "estadistica4"; }
     }
 
     private async Task GenerateColumnChart()
