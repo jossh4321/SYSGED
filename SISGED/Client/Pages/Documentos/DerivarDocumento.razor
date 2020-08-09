@@ -297,7 +297,18 @@ else
 
             Int32 index = workspace.asistente.pasos.documentos.FindIndex(x => x.tipo == workspace.asistente.tipodocumento);
 
-            String tipoDocumento = workspace.asistente.pasos.documentos.ElementAt(index + 1).tipo;
+            String tipoDocumento = "";
+
+            if (workspace.asistente.pasos.documentos.Equals("Resolucion"))
+            {
+                tipoDocumento = workspace.asistente.tipodocumento;
+                paso = workspace.asistente.paso;
+                subpaso = workspace.asistente.subpaso + 1;
+            }
+            else
+            {
+                tipoDocumento = workspace.asistente.pasos.documentos.ElementAt(index + 1).tipo;
+            }
 
             //Enviar paso=2,subpaso=3,idexp
 
