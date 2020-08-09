@@ -82,8 +82,6 @@
         await js.InvokeVoidAsync("gPDF", imagen, sesion.usuario.datos.nombre + " " + sesion.usuario.datos.apellido, sesion.usuario.datos.tipodocumento + " : " + sesion.usuario.datos.numerodocumento);
         subpaso = 2;
         //Enviar paso=1,subpaso=2,idexp
-        subpaso = 2;
-        //Enviar paso=1,subpaso=2,idexp
         String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
         Task voiceMessage = workspace.VoiceMessage(message);
