@@ -608,7 +608,7 @@ namespace SISGED.Server.Services
         }
 
         public Resolucion registrarResolucion(ResolucionDTO resolucionDTO,
-            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada)
+            string urldata, List<string> url2, string idusuario, string idexpediente, string iddocentrada, string iddocumentoSolicitud)
         {
             //Creacionde le objeto de AperturamientoDisciplinario y registro en la coleccion documentos
             ContenidoResolucion contenidoResolucion = new ContenidoResolucion()
@@ -654,6 +654,16 @@ namespace SISGED.Server.Services
             var update = Builders<Documento>.Update
                 .Set("estado", "revisado");
             _documentos.UpdateOne(filter, update);
+
+            //Actualizar el documento de solicitud inicial a finalizado
+            if(!String.IsNullOrEmpty(iddocumentoSolicitud))
+            {
+                var filterS = Builders<Documento>.Filter.Eq("id", iddocumentoSolicitud);
+                var updateS = Builders<Documento>.Update
+                       .Set("estado", "finalizado");
+
+                _documentos.UpdateOne(filter, update);
+            }
             return resolucion;
         }
 
