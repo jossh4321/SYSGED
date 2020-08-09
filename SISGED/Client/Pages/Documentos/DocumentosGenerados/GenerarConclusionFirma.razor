@@ -79,7 +79,7 @@
     private Usuario usuario;
     private bool generado = false;
     private bool faltaCargar = true;
-    int paso=1;
+    int paso=2;
     int subpaso = 0;
 
     private async Task Generar()
@@ -88,6 +88,15 @@
         await js.InvokeVoidAsync("gPDF", imagen, sesion.usuario.datos.nombre + " " + sesion.usuario.datos.apellido, sesion.usuario.datos.tipodocumento + " : " + sesion.usuario.datos.numerodocumento);
         subpaso = 2;
         //Enviar paso=1,subpaso=2,idexp
+        String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+        Task voiceMessage = workspace.VoiceMessage(message);
+
+        workspace.ChangeMessage(message);
+
+        await voiceMessage;
+
+        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
 
     private async Task GenerarPDF()
@@ -146,7 +155,7 @@
             workspace.RemoveExpedienteSeleccionado(itemSalida);
 
             Int32 pasoAntiguo = paso;
-            paso = 2;
+            paso = 3;
             subpaso = 0;
             //Enviar paso=0+0,subpaso=2,idexpediente
             String tipodocumentoantiguo = workspace.asistente.tipodocumento;
@@ -176,6 +185,8 @@
         faltaCargar = false;
         subpaso = 1;
         //Enviar paso=1,subpaso=1,idexp
+        subpaso = 1;
+        //Enviar paso=1,subpaso=1,idexp
         String message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
         Task voiceMessage = workspace.VoiceMessage(message);
@@ -184,7 +195,7 @@
 
         await voiceMessage;
 
-        await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+        await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
     }
 
     private async Task getEscritura()
