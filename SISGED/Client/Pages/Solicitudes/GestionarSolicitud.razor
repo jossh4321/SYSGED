@@ -227,9 +227,7 @@
                         <div class="button-container">
                             <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
                         </div>
-                        @if (context.estado != "finalizado")
-                        {
-                            <div class="button-container">
+                         <div class="button-container">
                                 @if (activator == false)
                                 {
                                     <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
@@ -260,17 +258,13 @@
                                 {
                                     <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
                                 }
+                                @if (context.estado == "finalizado")
+                                {
+                                    <MatButton Icon="@MatIconNames.Picture_as_pdf" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Visualizar Documento </MatButton>
+                                }
+
 
                             </div>
-                        }
-                        else
-                        {
-                            <div class="button-container">
-                                <MatButton Icon="@MatIconNames.Picture_as_pdf" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Visualizar Docuemtno </MatButton>
-                            </div>
-                        }
-
-
                     </div>
 
 
