@@ -71,7 +71,15 @@ else
                                         <table border="0" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                                                    <a href="gestionarsolicitud" style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Redirigirse al Solicitudes</a>
+                                                    <button @onclick="Redireccion" style="        background-color: #1a82e2; display: inline-block;
+        padding: 16px 36px;
+        font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 6px;">
+                                                        Redirigirse al Solicitudes
+                                                    </button>
                                                 </td>
                                             </tr>
                                         </table>
@@ -158,7 +166,6 @@ else
                 {
                     resultado = (DocumentoDTO)httpResponse2.Response;
                     resultado.estado = SolicitudEstado.Finalizado.Value;
-                    Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(resultado));
                     //UltimoPaso: Actualizar Estado Resultado
                     var httpResponse3 = await repository.Put<DocumentoDTO, DocumentoDTO>("api/documentos/cambiarestadodocumento", resultado);
                 }
@@ -173,5 +180,10 @@ else
             //Rechazado papi
         }
         firstLoad = false;
+    }
+
+    public void Redireccion()
+    {
+        navigationManager.NavigateTo("");
     }
 }

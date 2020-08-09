@@ -227,41 +227,44 @@
                         <div class="button-container">
                             <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerDetalles(context.id))" Style="width:100% !important">Ver Detalles</MatButton>
                         </div>
-                        <div class="button-container">
-                            @if (activator == false)
-                            {
-                                <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
+                         <div class="button-container">
+                                @if (activator == false)
+                                {
+                                    <MatButton Icon="@MatIconNames.Build" Class="mat-warning-c" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
 
-                            }
-                            else
-                            {
-                                <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
+                                }
+                                else
+                                {
+                                    <MatButton Icon="@MatIconNames.Build" Class="mat-disabled-c" Disabled="true" OnClick="@(()=>OpenDialogModificar(context.id))" Style="width:100% !important">Modificar</MatButton>
 
-                            }
-                            
-                        </div>
-                        <div class="button-container">
-                            @if (activator == false)
-                            {
-                                <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@(()=>abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
+                                }
 
-                            }
-                            else
-                            {
-                                <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@(e => abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
+                            </div>
+                            <div class="button-container">
+                                @if (activator == false)
+                                {
+                                    <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-danger-c" OnClick="@(()=>abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
 
-                            }
-                            
-                        </div>
-                        <div class="button-container">
-                            @if (context.estado == "emitido")
-                            {
-                                <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
-                            }
-                           
-                        </div>
+                                }
+                                else
+                                {
+                                    <MatButton Icon="@MatIconNames.Cancel_presentation" Class="mat-disabled-c" Disabled="true" OnClick="@(e => abrirNotificacionEstado(context.id))" Style="width:100% !important">Cancelar</MatButton>
+
+                                }
+
+                            </div>
+                            <div class="button-container">
+                                @if (context.estado == "emitido")
+                                {
+                                    <MatButton Icon="@MatIconNames.Payment" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Pagar</MatButton>
+                                }
+                                @if (context.estado == "finalizado")
+                                {
+                                    <MatButton Icon="@MatIconNames.Picture_as_pdf" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Visualizar Documento </MatButton>
+                                }
 
 
+                            </div>
                     </div>
 
 
