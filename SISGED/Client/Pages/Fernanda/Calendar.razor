@@ -2,46 +2,58 @@
     <div class="row">
         <div class="col-sm-12 col-lg-2">
             <select name="" id="" class="fluent-input" @onchange="SelectYear">
-                @for (int i = 2010; i < 2022; i++)
+                @for (int i = actualyear-2; i < actualyear + 1; i++)
                 {
-                    <option>@i</option>
+                    @if(i  == actualyear)
+                    {
+                        <option selected>@i</option>
+                    }
+                    else
+                    {
+                        <option>@i</option>
+                    }
                 }
             </select>
         </div>
         <div class="col-sm-12 col-lg-2">
             <select name="" id="" class="fluent-input" @onchange="SelectMonth">
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">Sepetemper</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
+                @foreach (CalendarMonth I in months)
+                {
+                    @if (I.indexMes == actualmonth)
+                    {
+                        <option value="@I.indexMes" selected>@I.nombreMes</option>
+                    }
+                    else
+                    {
+                        <option value="@I.indexMes">@I.nombreMes</option>
+                    }
+                }
+                <option value="1">Enero</option>
             </select>
         </div>
     </div>
     <table class="calendar-table">
         <thead>
             <tr>
-                <td>Sun</td>
-                <td>Mon</td>
-                <td>Tue</td>
-                <td>Wed</td>
-                <td>Thu</td>
-                <td>Fri</td>
-                <td>Sat</td>
+                <td>Dom</td>
+                <td>Lun</td>
+                <td>Mar</td>
+                <td>Mie</td>
+                <td>Jue</td>
+                <td>Vie</td>
+                <td>Sab</td>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>
-                </td>
-            </tr>
+            @for (int r = 0; r < rowsCount; r++)
+             {
+                <tr>
+                    @foreach (var item in days.Skip(r * 7).Take(7))
+                    {
+                        <td>@DayTemplate(item)</td>
+                    }
+                </tr>
+             }
         </tbody>
     </table>
 </div>
@@ -49,9 +61,33 @@
     [Parameter]
     public RenderFragment<CalendarDay> DayTemplate { get; set; }
     private List<CalendarDay> days = new List<CalendarDay>();
-    private int year = 2020;
-    private int month = 05;
+    private List<CalendarMonth> months = new List<CalendarMonth>();
+    private int year;
+    private int actualyear;
+    private int month;
+    private int actualmonth;
     private int rowsCount = 0;
+
+    protected override void OnInitialized()
+    {
+        actualmonth = Convert.ToInt32(DateTime.Now.Month.ToString());
+        actualyear = Convert.ToInt32(DateTime.Now.Year.ToString());
+        year = actualyear;
+        month = actualmonth;
+        months.Add(new CalendarMonth() {indexMes = 1, nombreMes ="Enero"});
+        months.Add(new CalendarMonth() { indexMes = 2, nombreMes = "Febrero" });
+        months.Add(new CalendarMonth() { indexMes = 3, nombreMes = "Marzo" });
+        months.Add(new CalendarMonth() { indexMes = 4, nombreMes = "Abril" });
+        months.Add(new CalendarMonth() { indexMes = 5, nombreMes = "Mayo" });
+        months.Add(new CalendarMonth() { indexMes = 6, nombreMes = "Junio" });
+        months.Add(new CalendarMonth() { indexMes = 7, nombreMes = "Julio" });
+        months.Add(new CalendarMonth() { indexMes = 8, nombreMes = "Agosto" });
+        months.Add(new CalendarMonth() { indexMes = 9, nombreMes = "Setiembre" });
+        months.Add(new CalendarMonth() { indexMes = 10, nombreMes = "Octubre" });
+        months.Add(new CalendarMonth() { indexMes = 11, nombreMes = "Noviembre" });
+        months.Add(new CalendarMonth() { indexMes = 12, nombreMes = "Diciembre" });
+        UpdateCalendar();
+    }
 
     void SelectYear(ChangeEventArgs e)
     {
