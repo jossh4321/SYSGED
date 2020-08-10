@@ -156,9 +156,12 @@
                 <MatTab Label="Anexos">
                     @if (documento.urlanexo.Count > 0)
                     {
+                        int OH = 0;
                         @foreach (string urlanexos in documento.urlanexo)
                         {
-                            <p>@urlanexos</p>
+                            string textito = "Anexo " + OH + " de la Solicitud Inicial.pdf";
+                            <a href="@urlanexos" download="textito">Descargar Anexo @OH</a>
+                            OH++;
                         }
                     }
                     else
@@ -171,6 +174,22 @@
     }
 </div>
 
+<MatDialog @bind-IsOpen="@dialogIsOpen_VerAnexo">
+    <MatDialogTitle>Visualización del anexo</MatDialogTitle>
+    <CascadingValue Value="this">
+        <VerAnexos urlAnexo="@anexoPorVer" cerrarDialogoAnexo="cerrarDialogoAnexo" />
+    </CascadingValue>
+</MatDialog>
+
+@*
+    <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerAnexo(urlanexos))" Style="width:50% !important">Ver Anexo n°@OH</MatButton>
+    <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerAnexo(urlanexos))" Style="width:100px !important">Ver Anexo n°@urlanexos</MatButton>
+
+    @for (int a = 1; a < documento.urlanexo.Count + 1; a++)
+    {
+        <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" download="@documento.urlanexo[a-1]" Style="width:100px !important">Ver Anexo n°@a</MatButton>
+    }*@
+
 @code {
     //Datos del formulario
     [Parameter] public DocumentoDTO documento { get; set; }
@@ -181,6 +200,9 @@
     List<string> nombres = new List<string>();
     private bool firstLoad = true;
 
+    private bool dialogIsOpen_VerAnexo = false;
+    string anexoPorVer;
+
     protected override async Task OnInitializedAsync()
     {
         firstLoad = true;
@@ -189,4 +211,12 @@
         StateHasChanged();
         firstLoad = false;
     }
+
+    public async Task OpenDialogVerAnexo(string url)
+    {
+        anexoPorVer = url;
+        dialogIsOpen_VerAnexo = true;
+    }
+
+    public void cerrarDialogoAnexo(bool cerrar) => dialogIsOpen_VerAnexo = cerrar;
 }
