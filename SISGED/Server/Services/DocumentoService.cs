@@ -43,7 +43,7 @@ namespace SISGED.Server.Services
                 codigo = "",
                 titulo = oficioDesignacionNotarioDTO.contenidoDTO.titulo,
                 descripcion = oficioDesignacionNotarioDTO.contenidoDTO.descripcion,
-                fecharealizacion = DateTime.Now,
+                fecharealizacion = DateTime.UtcNow.AddHours(-5),
                 lugaroficionotarial = oficioDesignacionNotarioDTO.contenidoDTO.lugaroficionotarial,
                 idusuario = oficioDesignacionNotarioDTO.contenidoDTO.idusuario,
                 idnotario = oficioDesignacionNotarioDTO.contenidoDTO.idnotario.id,
@@ -70,8 +70,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 2;
             documentoExpediente.iddocumento = documentoODN.id;
             documentoExpediente.tipo = "OficioDesignacionNotario";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
             Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);
@@ -123,7 +123,7 @@ namespace SISGED.Server.Services
                 actojuridico = documento.contenidoDTO.actojuridico,
                 tipoprotocolo = documento.contenidoDTO.tipoprotocolo,
                 otorgantes = listadeotorgantes,
-                fecharealizacion = DateTime.Now,
+                fecharealizacion = DateTime.UtcNow.AddHours(-5),
                 firma = ""
             };
 
@@ -216,8 +216,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 2;
             documentoExpediente.iddocumento = documentoBPN.id;
             documentoExpediente.tipo = "OficioBPN";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
@@ -242,7 +242,7 @@ namespace SISGED.Server.Services
             {
                 titulo = solicitudExpedicionFirmasDTO.contenidoDTO.titulo,
                 descripcion = solicitudExpedicionFirmasDTO.contenidoDTO.descripcion,
-                fecharealizacion = DateTime.Now,
+                fecharealizacion = DateTime.UtcNow.AddHours(-5),
                 cliente = solicitudExpedicionFirmasDTO.nombrecliente,
                 codigo = solicitudExpedicionFirmasDTO.contenidoDTO.codigo,
                 url = urlData
@@ -312,7 +312,7 @@ namespace SISGED.Server.Services
                 titulo = documento.contenidoDTO.titulo,
                 descripcion = documento.contenidoDTO.descripcion,
                 nombrecliente = documento.nombrecliente,
-                fechaentrega = DateTime.Now,
+                fechaentrega = DateTime.UtcNow.AddHours(-5),
                 url = urlData
             };
 
@@ -397,8 +397,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 8;
             documentoExpediente.iddocumento = documentoDF.id;
             documentoExpediente.tipo = "ConclusionFirma";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
@@ -524,8 +524,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 8;
             documentoExpediente.iddocumento = aperturamientodisciplinario.id;
             documentoExpediente.tipo = "AperturamientoDisciplinario";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 
@@ -574,8 +574,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 8;
             documentoExpediente.iddocumento = dictamen.id;
             documentoExpediente.tipo = "Dictamen";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
             expediente = actualizarExpediente(documentoExpediente, expedientewrapper.idexpediente);
 
@@ -637,8 +637,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 8;
             documentoExpediente.iddocumento = resolucion.id;
             documentoExpediente.tipo = "Resolucion";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 
@@ -690,8 +690,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 8;
             documentoExpediente.iddocumento = resultadoBPN.id;
             documentoExpediente.tipo = "ResultadoBPN";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 
@@ -745,8 +745,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 7;
             documentoExpediente.iddocumento = entregaExpedienteNotario.id;
             documentoExpediente.tipo = "EntregaExpedienteNotario";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
             expediente = actualizarExpediente(documentoExpediente, expedientewrapper.idexpediente);
 
@@ -775,7 +775,7 @@ namespace SISGED.Server.Services
                 codigo = "",
                 titulo = apelacionDTO.contenidoDTO.titulo,
                 descripcion = apelacionDTO.contenidoDTO.descripcion,
-                fechaapelacion = DateTime.Now,
+                fechaapelacion = DateTime.UtcNow.AddHours(-5),
                 url = urldata,
                 firma = ""
             };
@@ -801,8 +801,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 9;
             documentoExpediente.iddocumento = apelacion.id;
             documentoExpediente.tipo = "Apelacion";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 
@@ -825,7 +825,7 @@ namespace SISGED.Server.Services
                 titulo = solicitudExpedienteNotarioDTO.contenidoDTO.titulo,
                 descripcion = solicitudExpedienteNotarioDTO.contenidoDTO.descripcion,
                 idnotario = solicitudExpedienteNotarioDTO.contenidoDTO.idnotario.id,
-                fechaemision = DateTime.Now,
+                fechaemision = DateTime.UtcNow.AddHours(-5),
                 firma = ""
             };
             SolicitudExpedienteNotario solicitudExpedienteNotarioAct = new SolicitudExpedienteNotario()
@@ -845,8 +845,8 @@ namespace SISGED.Server.Services
             documentoExpediente.indice = 10;
             documentoExpediente.iddocumento = solicitudExpedienteNotarioAct.id;
             documentoExpediente.tipo = "SolicitudExpedienteNotario";
-            documentoExpediente.fechacreacion = DateTime.Now;
-            documentoExpediente.fechaexceso = DateTime.Now.AddDays(5);
+            documentoExpediente.fechacreacion = DateTime.UtcNow.AddHours(-5);
+            documentoExpediente.fechaexceso = DateTime.UtcNow.AddHours(-5).AddDays(5);
             documentoExpediente.fechademora = null;
             expediente = actualizarExpediente(documentoExpediente, idexpediente);
 

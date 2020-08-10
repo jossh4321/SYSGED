@@ -323,7 +323,7 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private bool loadprocess = false;
     List<string> nombres = new List<string>();
-    int paso = 1;
+    int paso = 0;
     int subpaso = 0;
     String typeDocument = "OficioBPN";
 
@@ -484,7 +484,7 @@
             subpaso = 2;
             //Enviar paso=0,subpaso=2,idexp
             Int32 pasoAntiguo = paso;
-            paso = 2;
+            paso = 1;
             subpaso = 0;
             //Enviar paso=0+0,subpaso=2,idexpediente
             String tipodocumentoantiguo = workspace.asistente.tipodocumento;

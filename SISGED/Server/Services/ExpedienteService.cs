@@ -536,7 +536,14 @@ namespace SISGED.Server.Services
                                    .Unwind<Expediente, ExpedineteDTO_unwind1>(x => x.documentos)
                                    .AppendStage<expediente_project>(project).ToListAsync();
             return listaexpediente;
-        } 
+        }
+
+        public Expediente GetById(string id)
+        {
+            Expediente expe = new Expediente();
+            expe = _expedientes.Find(exped => exped.id == id).FirstOrDefault();
+            return expe;
+        }
 
     }
 }

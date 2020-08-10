@@ -235,7 +235,7 @@ namespace SISGED.Server.Controllers
             Expediente expediente = new Expediente();
             expediente.tipo = "Solicitud";
             expediente.cliente = cliente;
-            expediente.fechainicio = DateTime.Now;
+            expediente.fechainicio = DateTime.UtcNow.AddHours(-5);
             expediente.fechafin = null;
             expediente.documentos = new List<DocumentoExpediente>()
             {
@@ -243,8 +243,8 @@ namespace SISGED.Server.Controllers
                     indice = 1,
                     iddocumento = soliInicial.id,
                     tipo  = "SolicitudInicial",
-                    fechacreacion = DateTime.Now,
-                    fechaexceso= DateTime.Now.AddDays(10),
+                    fechacreacion = DateTime.UtcNow.AddHours(-5),
+                    fechaexceso= DateTime.UtcNow.AddHours(-5).AddDays(10),
                     fechademora = null
                 }
             };

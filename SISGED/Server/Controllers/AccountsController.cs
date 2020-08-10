@@ -139,7 +139,7 @@ namespace SISGED.Server.Controllers
             var creds = new SigningCredentials(key, 
                 SecurityAlgorithms.HmacSha256);
 
-            var expiration = DateTime.UtcNow.AddYears(1);
+            var expiration = DateTime.UtcNow.AddHours(-5).AddYears(1);
 
             JwtSecurityToken token = new JwtSecurityToken(
                issuer: null,

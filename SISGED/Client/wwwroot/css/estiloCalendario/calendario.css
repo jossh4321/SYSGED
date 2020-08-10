@@ -38,7 +38,7 @@
 }
 
 .calendar-table {
-    width: 100%;
+    width: 100% ;
     background-color: #f3f2f1;
     text-align: center;
 }
@@ -79,12 +79,10 @@
     padding: 5px;
 }
 
-
 @media (max-width: 900px) {
     .calendar-table .day {
         width: 100%;
         height: 50px;
-        min-width: auto;
     }
 
     .day .day-event {
@@ -147,18 +145,6 @@
     }
 
 /* Input Style */
-.fluent-input {
-    display: block;
-    width: 100%;
-    padding: 3 7px;
-    margin: 10px 0;
-    border: 1px solid #3b3a39;
-}
-
-    .fluent-input:focus {
-        outline: none;
-        border: 2px dashed #0078d4;
-    }
 
 .card-content {
     padding: 10px;
@@ -166,7 +152,7 @@
 
 .event {
     border-radius: 5px;
-    margin: 10 5px;
+    margin: 10px;
     padding: 5px;
 }
 
