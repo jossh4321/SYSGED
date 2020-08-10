@@ -1,7 +1,23 @@
-﻿<div class="calendar">
+﻿@inject IRepository repository
+
+<style>
+    .entradasSelect {
+        display: block !important;
+        width: 110px !important;
+        padding: 3px !important;
+        margin: 10px 0;
+        border: 1px solid #3b3a39 !important;
+    }
+    .entradasSelect:focus {
+        outline: none;
+        border: 2px dashed #0078d4;
+    }
+
+</style>
+<div class="calendar">
     <div class="row">
         <div class="col-sm-12 col-lg-2">
-            <select name="" id="" class="fluent-input" @onchange="SelectYear">
+            <select name="" id="" class="entradasSelect" @onchange="SelectYear">
                 @for (int i = actualyear-2; i < actualyear + 1; i++)
                 {
                     @if(i  == actualyear)
@@ -16,7 +32,7 @@
             </select>
         </div>
         <div class="col-sm-12 col-lg-2">
-            <select name="" id="" class="fluent-input" @onchange="SelectMonth">
+            <select name="" id="" class="entradasSelect" @onchange="SelectMonth">
                 @foreach (CalendarMonth I in months)
                 {
                     @if (I.indexMes == actualmonth)
@@ -28,7 +44,6 @@
                         <option value="@I.indexMes">@I.nombreMes</option>
                     }
                 }
-                <option value="1">Enero</option>
             </select>
         </div>
     </div>
@@ -62,14 +77,27 @@
     public RenderFragment<CalendarDay> DayTemplate { get; set; }
     private List<CalendarDay> days = new List<CalendarDay>();
     private List<CalendarMonth> months = new List<CalendarMonth>();
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    private List<string> idexpedientes = new List<string>();
+    private List<Expediente> expedientes = new List<Expediente>();
+    private List<Derivacion> derivaciones = new List<Derivacion>();
     private int year;
     private int actualyear;
     private int month;
     private int actualmonth;
     private int rowsCount = 0;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        foreach(Item i in sesion.listaentradas)
+        {
+            ExpedienteBandejaDTO expedienteEntrada = (ExpedienteBandejaDTO)i.valor;
+            idexpedientes.Add(expedienteEntrada.idexpediente);
+        }
+        foreach(string o in idexpedientes)
+        {
+            await getExpediente(o);
+        }
         actualmonth = Convert.ToInt32(DateTime.Now.Month.ToString());
         actualyear = Convert.ToInt32(DateTime.Now.Year.ToString());
         year = actualyear;
@@ -86,7 +114,17 @@
         months.Add(new CalendarMonth() { indexMes = 10, nombreMes = "Octubre" });
         months.Add(new CalendarMonth() { indexMes = 11, nombreMes = "Noviembre" });
         months.Add(new CalendarMonth() { indexMes = 12, nombreMes = "Diciembre" });
+        foreach (Expediente ex in expedientes)
+        {
+            derivaciones.Add(ex.derivaciones.ElementAt(ex.derivaciones.Count - 1));
+        }
         UpdateCalendar();
+    }
+
+    public async Task getExpediente(string idExpediente)
+    {
+        var responseHttp = await repository.Get<Expediente>($"api/expediente/id?id={idExpediente}");
+        expedientes.Add(responseHttp.Response);
     }
 
     void SelectYear(ChangeEventArgs e)
@@ -128,13 +166,18 @@
 
         for (int i = 0; i < numberOfDaysInMonth; i++)
         {
-            days.Add(new CalendarDay
+            CalendarDay diaNuevo = new CalendarDay();
+            diaNuevo.DayNumber = i + 1;
+            diaNuevo.IsEmpty = false;
+            diaNuevo.Date = new DateTime(year, month, i + 1);
+            foreach (Derivacion deri in derivaciones)
             {
-                DayNumber = i + 1,
-                IsEmpty = false,
-                Date = new DateTime(year, month, i + 1),
-                Events = new List<CalendarEvent>()
-            });
+                if(diaNuevo.Date.ToString("dd-MM-yy") == deri.fechaderivacion.ToString("dd-MM-yy"))
+                {
+                    diaNuevo.Events.Add(deri);
+                }
+            }
+            days.Add(diaNuevo);
         }
 
         // 2- Calcualte the number of rows 

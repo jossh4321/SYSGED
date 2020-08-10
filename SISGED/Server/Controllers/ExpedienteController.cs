@@ -63,5 +63,13 @@ namespace SISGED.Server.Controllers
         {
             return _expedienteService.obtenerExpedienteBandeja(id);
         }
+
+        [HttpGet("id")]
+        public ActionResult<Expediente> GetById([FromQuery] string id)
+        {
+            Expediente expe = new Expediente();
+            expe = _expedienteService.GetById(id);
+            return expe;
+        }
     }
 }

@@ -1,26 +1,71 @@
 ﻿@page "/visualizarAgenda"
-
+@layout MainLayout
 <link rel="stylesheet" href="css/estiloCalendario/calendario.css" />
-
- <div class="row">
-
-        <!-- Calendar -->
-        <div class="col-sm-12 col-md-12 col-lg-9">
-            <Calendar>
-                <DayTemplate Context="day">
-                    @{
-                        string currentDayClass = day.Date == DateTime.Now.Date ? "current-day" : "";
-                    }
-                    @if(!day.IsEmpty)
-                    {
-                        <div class="day shadow-effect @currentDayClass">
-                            <h3 class="ms-fontSize-24 ms-fontWeight-regular">@day.DayNumber</h3>
-                        </div>
-                    }
-                </DayTemplate>
-            </Calendar>
+<style>
+    .cont-chart {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 700px;
+    }
+    .window {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        text-align: center;
+        color: black;
+        width: inherit;
+        flex-basis: 100%;
+        height: 800px;
+    }
+    .textPadding{
+        padding-left : 40px;
+    }
+</style>
+<div class="cont-chart">
+    <h1 style="color:white" class="textPadding">Visualizar Agenda</h1>
+    <div class="window">
+        <div class="row">
+            <!-- Calendar -->
+            <div class="col-sm-12 col-md-12 col-lg-9">
+                <Calendar>
+                    <DayTemplate Context="day">
+                        @{
+                            string currentDayClass = day.Date == horaPeru.Date ? "current-day" : "";
+                            string selectedDayClass = day == selectedDay ? "selected-day" : "";
+                        }
+                        @if (!day.IsEmpty)
+                        {
+                            <div class="day shadow-effect @currentDayClass  @selectedDayClass" @onclick="() => selectedDay = day">
+                                <h3 class="ms-fontSize-24 ms-fontWeight-regular">@day.DayNumber</h3>
+                                @if (day.Events != null && day.Events.Count != 0)
+                                {
+                                    var firstEvent = day.Events.FirstOrDefault();
+                                    <div class="day-event magenta">
+                                        Seleccione para ver más información
+                                    </div>}
+                            </div>
+                        }
+                    </DayTemplate>
+                </Calendar>
+            </div>
         </div>
+    </div>
 </div>
-@code {
+    @code {
+        private DateTime horaPeru = new DateTime();
+        private CalendarDay selectedDay;
 
+        protected override void OnInitialized()
+        {
+            horaPeru = DateTime.Now;
+            horaPeru = horaPeru.AddHours(-5);
+            Console.WriteLine("Mi hora en Peru es: " + horaPeru);
+            selectedDay = new CalendarDay
+            {
+                Date = horaPeru
+            };
+        }
 }
