@@ -294,7 +294,7 @@
                 conclusionFirma.contenidoDTO.Urlanexo = null;
             }
         }
-
+        StateHasChanged();
         subpaso = 1;
         //Enviar paso=0,subpaso=1,idexp
         String message = "";
@@ -305,9 +305,11 @@
         }
         else
         {
+            Console.WriteLine("He llegado al conclusión de firma");
+
             message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
-            await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.asistente.tipodocumento);
+            await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.asistente.tipodocumento);
         }
 
         Task voiceMessage = workspace.VoiceMessage(message);
@@ -315,9 +317,6 @@
         workspace.ChangeMessage(message);
 
         await voiceMessage;
-
-        StateHasChanged();
-
 
     }
 
