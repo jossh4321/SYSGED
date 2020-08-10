@@ -302,6 +302,8 @@ else
     public int paginaactual = 1;
     String typePass = "Evaluar Documento";
     String typePassDocument = "";
+    int paso = 3;
+    int subpaso = 0;
 
     protected async override Task OnInitializedAsync()
     {
@@ -313,15 +315,23 @@ else
 
         typePassDocument = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(workspace.asistente.paso).nombre;
 
+        String message = "";
+
+        subpaso = 1;
+
         if (!typePass.Equals(typePassDocument))
         {
-            String message = "Debe elegir la herramienta " + typePassDocument + " para continuar con el flujo";
+            message = "Debe elegir la herramienta " + typePassDocument + " para continuar con el flujo";
 
-            Task voiceMessage = workspace.VoiceMessage(message);
+        }
 
-            workspace.ChangeMessage(message);
+        else
+        {
 
-            await voiceMessage;
+            //Enviar paso=1,subpaso=1,idexp
+            message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
+
+            await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
         }
 
 
@@ -342,6 +352,14 @@ else
         {
             DocumentoRevisado = true;
         }
+
+        Task voiceMessage = workspace.VoiceMessage(message);
+
+        workspace.ChangeMessage(message);
+
+        await voiceMessage;
+
+
     }
 
     private async Task EvaluacionIndividual()
@@ -418,6 +436,22 @@ else
             OpenDesaprobado = false;
             observacion = null;
             DocumentoRevisado = true;
+
+            Int32 pasoAntiguo = paso;
+            paso = 4;
+            subpaso = 0;
+            //Enviar paso=0+0,subpaso=2,idexpediente
+            String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+            await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
+
+            String messageFinal = workspace.asistente.pasos.documentos
+                        .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
+
+            Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
+            workspace.ChangeMessage(messageFinal);
+
+            await voiceMessage;
         }
     }
 
