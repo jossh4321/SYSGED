@@ -1,0 +1,149 @@
+﻿<div class="calendar">
+    <div class="row">
+        <div class="col-sm-12 col-lg-2">
+            <select name="" id="" class="fluent-input" @onchange="SelectYear">
+                @for (int i = actualyear-2; i < actualyear + 1; i++)
+                {
+                    @if(i  == actualyear)
+                    {
+                        <option selected>@i</option>
+                    }
+                    else
+                    {
+                        <option>@i</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-sm-12 col-lg-2">
+            <select name="" id="" class="fluent-input" @onchange="SelectMonth">
+                @foreach (CalendarMonth I in months)
+                {
+                    @if (I.indexMes == actualmonth)
+                    {
+                        <option value="@I.indexMes" selected>@I.nombreMes</option>
+                    }
+                    else
+                    {
+                        <option value="@I.indexMes">@I.nombreMes</option>
+                    }
+                }
+                <option value="1">Enero</option>
+            </select>
+        </div>
+    </div>
+    <table class="calendar-table">
+        <thead>
+            <tr>
+                <td>Dom</td>
+                <td>Lun</td>
+                <td>Mar</td>
+                <td>Mie</td>
+                <td>Jue</td>
+                <td>Vie</td>
+                <td>Sab</td>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int r = 0; r < rowsCount; r++)
+             {
+                <tr>
+                    @foreach (var item in days.Skip(r * 7).Take(7))
+                    {
+                        <td>@DayTemplate(item)</td>
+                    }
+                </tr>
+             }
+        </tbody>
+    </table>
+</div>
+@code {
+    [Parameter]
+    public RenderFragment<CalendarDay> DayTemplate { get; set; }
+    private List<CalendarDay> days = new List<CalendarDay>();
+    private List<CalendarMonth> months = new List<CalendarMonth>();
+    private int year;
+    private int actualyear;
+    private int month;
+    private int actualmonth;
+    private int rowsCount = 0;
+
+    protected override void OnInitialized()
+    {
+        actualmonth = Convert.ToInt32(DateTime.Now.Month.ToString());
+        actualyear = Convert.ToInt32(DateTime.Now.Year.ToString());
+        year = actualyear;
+        month = actualmonth;
+        months.Add(new CalendarMonth() {indexMes = 1, nombreMes ="Enero"});
+        months.Add(new CalendarMonth() { indexMes = 2, nombreMes = "Febrero" });
+        months.Add(new CalendarMonth() { indexMes = 3, nombreMes = "Marzo" });
+        months.Add(new CalendarMonth() { indexMes = 4, nombreMes = "Abril" });
+        months.Add(new CalendarMonth() { indexMes = 5, nombreMes = "Mayo" });
+        months.Add(new CalendarMonth() { indexMes = 6, nombreMes = "Junio" });
+        months.Add(new CalendarMonth() { indexMes = 7, nombreMes = "Julio" });
+        months.Add(new CalendarMonth() { indexMes = 8, nombreMes = "Agosto" });
+        months.Add(new CalendarMonth() { indexMes = 9, nombreMes = "Setiembre" });
+        months.Add(new CalendarMonth() { indexMes = 10, nombreMes = "Octubre" });
+        months.Add(new CalendarMonth() { indexMes = 11, nombreMes = "Noviembre" });
+        months.Add(new CalendarMonth() { indexMes = 12, nombreMes = "Diciembre" });
+        UpdateCalendar();
+    }
+
+    void SelectYear(ChangeEventArgs e)
+    {
+        year = Convert.ToInt32(e.Value.ToString());
+        UpdateCalendar();
+    }
+    void SelectMonth(ChangeEventArgs e)
+    {
+        month = Convert.ToInt32(e.Value.ToString());
+        UpdateCalendar();
+    }
+    void UpdateCalendar()
+    {
+        days = new List<CalendarDay>();
+        var firstDayDate = new DateTime(year, month, 1);
+        int weekDayNumber = (int)firstDayDate.DayOfWeek;
+        int numberOfEmptyDays = 0;
+        if (weekDayNumber == 7) // Sunday 
+        {
+            numberOfEmptyDays = 0;
+        }
+        else
+        {
+            numberOfEmptyDays = weekDayNumber;
+        }
+
+        // Add the empty days 
+        for (int i = 0; i < numberOfEmptyDays; i++)
+        {
+            days.Add(new CalendarDay
+            {
+                DayNumber = 0,
+                IsEmpty = true
+            });
+        }
+        // Add the month days 
+        int numberOfDaysInMonth = DateTime.DaysInMonth(year, month);
+
+        for (int i = 0; i < numberOfDaysInMonth; i++)
+        {
+            days.Add(new CalendarDay
+            {
+                DayNumber = i + 1,
+                IsEmpty = false,
+                Date = new DateTime(year, month, i + 1),
+                Events = new List<CalendarEvent>()
+            });
+        }
+
+        // 2- Calcualte the number of rows 
+        int remaning = days.Count % 7;
+        if (remaning == 0)
+            rowsCount = days.Count / 7;
+        else
+            rowsCount = Convert.ToInt32(days.Count / 7) + 1;
+
+        Console.WriteLine($"Total Rows: {rowsCount} | Number of Empty Days {numberOfEmptyDays} | Month Days {numberOfDaysInMonth}");
+    }
+}

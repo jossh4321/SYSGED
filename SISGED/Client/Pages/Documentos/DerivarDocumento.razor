@@ -55,8 +55,7 @@ else
                     <option Value="0" selected>Seleccione rol...</option>
                     @foreach (Rol rol in roles)
                     {
-                        <option class="text-black-50" Value="@rol.id">@rol.label</option>
-
+                        <option class="text-black-50" Value="@rol.id">@rol.label</option>                        
                     }
                 </select>
 
@@ -99,6 +98,8 @@ else
     bool dialogIsOpen = false;
     string dialogDerivar = null;
     string rolId;
+    string rolNombreDestino;
+    string rolNombreProcedencia;
     string usuarioId;
     int paso=2;
     int subpaso=0;
@@ -110,6 +111,7 @@ else
     public List<Usuario> usuarios = new List<Usuario>();
     private List<Rol> roles = new List<Rol>();
     public Derivacion derivacion;
+    public Rol rol;
     #endregion
 
     protected async override Task OnInitializedAsync()
@@ -127,6 +129,8 @@ else
         }
         else
         {
+            paso = workspace.asistente.paso;
+
             message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
             await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
@@ -154,6 +158,20 @@ else
         {
             carga = true;
             roles = httpResponse.Response;
+        }
+    }
+    public async Task getRol(String rolId)
+    {
+
+        var httpResponse = await repository.Get<Rol>($"api/roles/id?id={rolId}");
+        if (httpResponse.Error)
+        {
+
+            Console.WriteLine("Ha ocurrido un error al traer el rol");
+        }
+        else
+        {
+            rol = httpResponse.Response;
         }
     }
     public async Task getUsuarioByStatus()
@@ -211,6 +229,12 @@ else
     {
         dialogIsOpen = false;
 
+        //Trae el nombre del rol
+        await getRol(rolId);
+        rolNombreDestino = rol.nombre;
+        await getRol(sesion.usuario.rol);
+        rolNombreProcedencia = rol.nombre;
+
         if (usuarioId == sesion.usuario.id)
         {
             await swalfire.errorMessage("No te puedes derivar el documento a ti mismo");
@@ -228,8 +252,8 @@ else
         List<Derivacion> derivaciones = new List<Derivacion>()
         {
             new Derivacion(){
-                areadestino     = rolId,
-                areaprocedencia = sesion.usuario.rol,
+                areadestino     = rolNombreDestino,
+                areaprocedencia = rolNombreProcedencia,
                 usuarioemisor   = sesion.usuario.id,
                 tipo            =  ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo/*"OficioDesignacionNotario"*/,//workspace.expedienteseleccionado.tipo,
                 fechaderivacion = DateTime.Now.ToLocalTime(),
@@ -251,7 +275,7 @@ else
             exp = (ExpedienteBandejaDTO)httpResponse.Response;
 
             await layout.Send(usu.usuario, exp);
-            await swalfire.successMessage("Documento derivado correctamente");
+            await swalfire.successMessage("Documento derivado correctamente ");
             Item itemSalida = new Item()
             {
                 nombre = workspace.expedienteseleccionado.tipo,
@@ -273,7 +297,18 @@ else
 
             Int32 index = workspace.asistente.pasos.documentos.FindIndex(x => x.tipo == workspace.asistente.tipodocumento);
 
-            String tipoDocumento = workspace.asistente.pasos.documentos.ElementAt(index + 1).tipo;
+            String tipoDocumento = "";
+
+            if (workspace.asistente.pasos.documentos.Equals("Resolucion"))
+            {
+                tipoDocumento = workspace.asistente.tipodocumento;
+                paso = workspace.asistente.paso;
+                subpaso = workspace.asistente.subpaso + 1;
+            }
+            else
+            {
+                tipoDocumento = workspace.asistente.pasos.documentos.ElementAt(index + 1).tipo;
+            }
 
             //Enviar paso=2,subpaso=3,idexp
 

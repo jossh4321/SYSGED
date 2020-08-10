@@ -218,7 +218,7 @@
     List<string> nombres = new List<string>();
     private string imagenTemporal2;
     private bool loadprocess = false;
-    int paso = 0;
+    int paso = 1;
     int subpaso = 0;
     String typeDocument = "ResultadoBPN";
 
@@ -275,7 +275,7 @@
         {
             message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
-            await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+            await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.asistente.tipodocumento);
         }
 
         Task voiceMessage = workspace.VoiceMessage(message);
@@ -369,6 +369,22 @@
             await swalfire.successMessage("Resolución registrada correctamente");
             subpaso = 2;
             //Enviar paso=0,subpaso=2,idexp
+            Int32 pasoAntiguo = paso;
+            paso = 2;
+            subpaso = 0;
+            //Enviar paso=0+0,subpaso=2,idexpediente
+            String tipodocumentoantiguo = workspace.asistente.tipodocumento;
+
+            await workspace.UpdatePasoAndSubPasoFinnally(paso, subpaso, workspace.asistente.tipodocumento, pasoAntiguo, tipodocumentoantiguo);
+
+            String messageFinal = workspace.asistente.pasos.documentos
+                    .Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).descripcion;
+
+            Task voiceMessage = workspace.VoiceMessage(messageFinal);
+
+            workspace.ChangeMessage(messageFinal);
+
+            await voiceMessage;
         }
         else
         {

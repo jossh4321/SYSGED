@@ -15,21 +15,9 @@
     <MatDivider></MatDivider>
     <MatListItem Class="profile-item-style">
         <MatIcon Icon="@MatIconNames.Account_circle" Class="icons-style-user-menu"></MatIcon>
-        <span Class="text-user-menu">Datos del Perfil</span>
-    </MatListItem>
-    <MatListItem Class="profile-item-style">
-        <MatIcon Icon="@MatIconNames.Check_box" Class="icons-style-user-menu"></MatIcon>
-        <span Class="text-user-menu">Tareas y Pendientes</span>
-    </MatListItem>
-    <MatListItem Class="profile-item-style">
-        <MatIcon Icon="@MatIconNames.Event_note" Class="icons-style-user-menu"></MatIcon>
-        <span Class="text-user-menu">Eventos</span>
-    </MatListItem>
-    <MatDivider></MatDivider>
-    <MatListItem Class="profile-item-style">
-        <MatIcon Icon="@MatIconNames.Settings" Class="icons-style-user-menu"></MatIcon>
-        <span Class="text-user-menu">Opciones y Configuraciones</span>
-    </MatListItem>
+        <a href="/ModificarPerfil" type="" Class="text-user-menu" role="textbox">Datos del Perfil</a>
+        @*<span Class="text-user-menu">Datos del Perfil</span>*@
+    </MatListItem>   
     <MatListItem Class="profile-item-style exit" @onclick="salir">
         <MatIcon Icon="@MatIconNames.Exit_to_app" Class="icons-style-user-menu"></MatIcon>
         <span Class="text-user-menu">Salir</span>

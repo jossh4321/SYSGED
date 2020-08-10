@@ -7,6 +7,12 @@
         display: flex;
         flex-direction: column;
     }
+    .div-view {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 100%;
+        overflow : hidden;
+    }
 
     .txt-area {
         background: #f2f2f2;
@@ -20,10 +26,10 @@
         transition: all 300ms !important;
     }
 
-        .mat-success-c:hover, .mat-info-c:hover /*.mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover, .mat-dark-c:hover*/ {
-            background-color: none !important;
-            transform: scale(1.04,1.04) !important;
-        }
+    .mat-success-c:hover, .mat-info-c:hover {
+        background-color: none !important;
+        transform: scale(1.04,1.04) !important;
+    }
 
     * {
         color: black;
@@ -63,6 +69,8 @@
     select.custom-select {
         background: #f2f2f2;
     }
+
+    
 </style>
 
 <div class="tool-content-style">
@@ -130,20 +138,20 @@
         //if (tipoSeleccionado.value == "SolicitudBPN") ChildContent =@<RegistrarSolicitudBPN></RegistrarSolicitudBPN>;
         if (e.Value.ToString() == "nada") ChildContent = null;
         if (e.Value.ToString() == "OficioBPN") ChildContent =@<RegistrarOficioBPN></RegistrarOficioBPN>;
-if (e.Value.ToString() == "ResultadoBPN") ChildContent = @<RegistrarResultadoBPN></RegistrarResultadoBPN>;
-if (e.Value.ToString() == "SolicitudExpedicionFirma") ChildContent = @<RegistrarSolicitudExpedicionFirma></RegistrarSolicitudExpedicionFirma>;
-if (e.Value.ToString() == "OficioDesignacionNotario") ChildContent = @<RegistrarOficioDesignacionNotario></RegistrarOficioDesignacionNotario>;
-if (e.Value.ToString() == "ConclusionFirma") ChildContent = @<RegistrarConclusionFirma></RegistrarConclusionFirma>;
-if (e.Value.ToString() == "SolicitudDenuncia") ChildContent = @<RegistrarSolicitudDenuncia></RegistrarSolicitudDenuncia>;
-if (e.Value.ToString() == "AperturamientoDisciplinario") ChildContent =@<RegistrarAperturamientoDisciplinario></RegistrarAperturamientoDisciplinario>;
-if (e.Value.ToString() == "SolicitudExpedienteNotario") ChildContent = @<RegistrarSolicitudExpediente></RegistrarSolicitudExpediente>;
-if (e.Value.ToString() == "Dictamen") ChildContent = @<RegistrarDictamen></RegistrarDictamen>;
-if (e.Value.ToString() == "Resolucion") ChildContent = @<RegistrarResolucion></RegistrarResolucion>;
-if (e.Value.ToString() == "Apelacion") ChildContent = @<RegistrarApelacion></RegistrarApelacion>;
-if (e.Value.ToString() == "SolicitudBPN") ChildContent =@<RegistrarSolicBPN></RegistrarSolicBPN>;
-if (e.Value.ToString() == "SolicitudExpedicionFirma") ChildContent = @<RegistrarSolicExpedicionF></RegistrarSolicExpedicionF>;
-if (e.Value.ToString() == "EntregaExpedienteNotario") ChildContent = @<RegistrarEntregaExpedienteNotario></RegistrarEntregaExpedienteNotario>;
-if (e.Value.ToString() == "SolicitudDenuncia") ChildContent = @<RegistrarSolicDenuncias></RegistrarSolicDenuncias>;
-StateHasChanged();
+    if (e.Value.ToString() == "ResultadoBPN") ChildContent = @<RegistrarResultadoBPN></RegistrarResultadoBPN>;
+    if (e.Value.ToString() == "SolicitudExpedicionFirma") ChildContent = @<RegistrarSolicitudExpedicionFirma></RegistrarSolicitudExpedicionFirma>;
+    if (e.Value.ToString() == "OficioDesignacionNotario") ChildContent = @<RegistrarOficioDesignacionNotario></RegistrarOficioDesignacionNotario>;
+    if (e.Value.ToString() == "ConclusionFirma") ChildContent = @<RegistrarConclusionFirma></RegistrarConclusionFirma>;
+    if (e.Value.ToString() == "SolicitudDenuncia") ChildContent = @<RegistrarSolicitudDenuncia></RegistrarSolicitudDenuncia>;
+    if (e.Value.ToString() == "AperturamientoDisciplinario") ChildContent =@<RegistrarAperturamientoDisciplinario></RegistrarAperturamientoDisciplinario>;
+    if (e.Value.ToString() == "SolicitudExpedienteNotario") ChildContent = @<RegistrarSolicitudExpediente></RegistrarSolicitudExpediente>;
+    if (e.Value.ToString() == "Dictamen") ChildContent = @<RegistrarDictamen></RegistrarDictamen>;
+    if (e.Value.ToString() == "Resolucion") ChildContent = @<RegistrarResolucion></RegistrarResolucion>;
+    if (e.Value.ToString() == "Apelacion") ChildContent = @<RegistrarApelacion></RegistrarApelacion>;
+    if (e.Value.ToString() == "SolicitudBPN") ChildContent =@<RegistrarSolicBPN></RegistrarSolicBPN>;
+    if (e.Value.ToString() == "SolicitudExpedicionFirma") ChildContent = @<RegistrarSolicExpedicionF></RegistrarSolicExpedicionF>;
+    if (e.Value.ToString() == "EntregaExpedienteNotario") ChildContent = @<RegistrarEntregaExpedienteNotario></RegistrarEntregaExpedienteNotario>;
+    if (e.Value.ToString() == "SolicitudDenuncia") ChildContent = @<RegistrarSolicDenuncias></RegistrarSolicDenuncias>;
+    StateHasChanged();
 }
 }

@@ -1,13 +1,26 @@
 ﻿@page "/visualizarAgenda"
-@layout MainLayout
-<style>
-    .estilo1 {
-        color: white;
-        font-size: 45px;
-    }
-</style>
-<h3 class="estilo1">Aqui va el Visualizar Agenda de Fernanada</h3>
 
+<link rel="stylesheet" href="css/estiloCalendario/calendario.css" />
+
+ <div class="row">
+
+        <!-- Calendar -->
+        <div class="col-sm-12 col-md-12 col-lg-9">
+            <Calendar>
+                <DayTemplate Context="day">
+                    @{
+                        string currentDayClass = day.Date == DateTime.Now.Date ? "current-day" : "";
+                    }
+                    @if(!day.IsEmpty)
+                    {
+                        <div class="day shadow-effect @currentDayClass">
+                            <h3 class="ms-fontSize-24 ms-fontWeight-regular">@day.DayNumber</h3>
+                        </div>
+                    }
+                </DayTemplate>
+            </Calendar>
+        </div>
+</div>
 @code {
 
 }
