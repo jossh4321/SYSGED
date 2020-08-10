@@ -286,9 +286,8 @@
     {
         abrirDialogo = true;
         if (expedienteseleccionado.documento.tipo == "SolicitudDenuncia") ChildContent =@<VerSolicitudDenuncia documento="@expedienteseleccionado.documento"></VerSolicitudDenuncia>;
-if (expedienteseleccionado.documento.tipo == "Resolucion") ChildContent = @<VerResolucion documento="@expedienteseleccionado.documento"></VerResolucion>;
+        if (expedienteseleccionado.documento.tipo == "Resolucion") ChildContent = @<VerResolucion documento="@expedienteseleccionado.documento"></VerResolucion>;
 if (expedienteseleccionado.documento.tipo == "OficioBPN") ChildContent = @<VerOficioBPN documento="@expedienteseleccionado.documento"></VerOficioBPN>;
-@*if (expedienteseleccionado.documento.tipo == "OficioBPN") ChildContent = @<GenerarOficioBPN></GenerarOficioBPN>;*@
 if (expedienteseleccionado.documento.tipo == "SolicitudBPN") ChildContent = @<VerSolicitudBPN documento="@expedienteseleccionado.documento"></VerSolicitudBPN>;
 if (expedienteseleccionado.documento.tipo == "SolicitudExpedicionFirma") ChildContent = @<VerSolicitudExpedicionFirma documento="@expedienteseleccionado.documento"></VerSolicitudExpedicionFirma>;
 if (expedienteseleccionado.documento.tipo == "OficioDesignacionNotario") ChildContent = @<VerOficioDesignacionNotario documento="@expedienteseleccionado.documento"></VerOficioDesignacionNotario>;
@@ -297,10 +296,6 @@ if (expedienteseleccionado.documento.tipo == "EntregaExpedienteNotario") ChildCo
 if (expedienteseleccionado.documento.tipo == "Dictamen") ChildContent = @<VerDictamen documento="@expedienteseleccionado.documento"></VerDictamen>;
 if (expedienteseleccionado.documento.tipo == "Apelacion") ChildContent = @<VerApelacion documento="@expedienteseleccionado.documento"></VerApelacion>;
 if (expedienteseleccionado.documento.tipo == "AperturamientoDisciplinario") ChildContent = @<VerAperturamientoDisciplinario documento="@expedienteseleccionado.documento"></VerAperturamientoDisciplinario>;
-@*if (expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario") ChildContent = @<GenerarSolicitudExpediente></GenerarSolicitudExpediente>;
-
-
-    if (expedienteseleccionado.documento.tipo == "EntregaExpedienteNotario") ChildContent = @<GenerarEntregaExpedienteNotario></GenerarEntregaExpedienteNotario>;*@
 if (expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario") ChildContent = @<VerSolicitudExpedienteNotario documento="@expedienteseleccionado.documento"></VerSolicitudExpedienteNotario>;
 if (expedienteseleccionado.documento.tipo == "ResultadoBPN") ChildContent = @<VerResultadoBPN documento="@expedienteseleccionado.documento"></VerResultadoBPN>;
 StateHasChanged();

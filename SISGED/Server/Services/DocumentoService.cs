@@ -165,12 +165,18 @@ namespace SISGED.Server.Services
 
             return solicitudBPN;
         }
-        public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper, List<string> url2)
+        public OficioBPN registrarOficioBPNE(ExpedienteWrapper expedienteWrapper, List<string> url2, string url)
         {
             //Obtenemos los datos del expedientewrapper
             OficioBPNDTO oficioBPNDTO = new OficioBPNDTO();
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             oficioBPNDTO = JsonConvert.DeserializeObject<OficioBPNDTO>(json);
+
+            List<String> otor = new List<string>();
+            foreach (OtorganteDTO ot in oficioBPNDTO.contenidoDTO.otorgantes)
+            {
+                otor.Add(ot.nombre);
+            }
 
             //Insertando el oficio normal
             ContenidoOficioBPN contenidoSolicitudBPN = new ContenidoOficioBPN()
@@ -183,9 +189,9 @@ namespace SISGED.Server.Services
                 idnotario = oficioBPNDTO.contenidoDTO.idnotario.id,
                 actojuridico = oficioBPNDTO.contenidoDTO.actojuridico,
                 tipoprotocolo = oficioBPNDTO.contenidoDTO.tipoprotocolo,
-                otorgantes = oficioBPNDTO.contenidoDTO.otorgantes,
+                otorgantes = otor,
                 fecharealizacion = DateTime.Now,
-                url = "ninguna",
+                url = url,
                 firma = ""
             };
             OficioBPN documentoBPN = new OficioBPN()
@@ -216,19 +222,6 @@ namespace SISGED.Server.Services
 
             UpdateDefinition<Expediente> updateExpediente = Builders<Expediente>.Update.Push("documentos", documentoExpediente);
             Expediente expediente = _expedientes.FindOneAndUpdate(x => x.id == expedienteWrapper.idexpediente, updateExpediente);
-
-            //Actualizacion de bandeja de salida de usuario
-            /*BandejaDocumento bandejaDocumento = new BandejaDocumento();
-            bandejaDocumento.idexpediente = expediente.id;
-            bandejaDocumento.iddocumento = documentoExpediente.iddocumento;
-            UpdateDefinition<Bandeja> updateBandeja = Builders<Bandeja>.Update.Push("bandejasalida", bandejaDocumento);
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandeja);*/
-
-            //Actualizacion de bandeja de entrada de usuario
-            /*UpdateDefinition<Bandeja> updateBandejaEntrada =
-               Builders<Bandeja>.Update.PullFilter("bandejaentrada",
-                 Builders<BandejaDocumento>.Filter.Eq("iddocumento", expedienteWrapper.documentoentrada));
-            _bandejas.UpdateOne(band => band.usuario == expedienteWrapper.idusuarioactual, updateBandejaEntrada);*/
 
             //Actulizar el documento anterior a revisado
             var filter = Builders<Documento>.Filter.Eq("id", expedienteWrapper.documentoentrada);
@@ -1684,11 +1677,11 @@ namespace SISGED.Server.Services
             var json = JsonConvert.SerializeObject(expedienteWrapper.documento);
             oficioBPNDTO = JsonConvert.DeserializeObject<OficioBPNDTO>(json);
 
-            /*List<String> listaOtorgantes = new List<string>();
-            foreach (Otorgante obs in oficioBPNDTO.contenidoDTO.otorgantes)
+            List<String> listaOtorgantes = new List<string>();
+            foreach (OtorganteDTO obs in oficioBPNDTO.contenidoDTO.otorgantes)
             {
-                listaOtorgantes.Add(obs.nombre + " " + obs.apellido);
-            }*/
+                listaOtorgantes.Add(obs.nombre);
+            }
 
             //Creacion de Obj y registro en coleccion de documentos 
             ContenidoOficioBPN contenidoOficioBPN = new ContenidoOficioBPN()
@@ -1700,7 +1693,7 @@ namespace SISGED.Server.Services
                 idnotario = oficioBPNDTO.contenidoDTO.idnotario.id,
                 actojuridico = oficioBPNDTO.contenidoDTO.actojuridico,
                 tipoprotocolo = oficioBPNDTO.contenidoDTO.tipoprotocolo,
-                otorgantes = oficioBPNDTO.contenidoDTO.otorgantes,
+                otorgantes = listaOtorgantes
             };
             OficioBPN oficioBPN = new OficioBPN();
             var filter = Builders<Documento>.Filter.Eq("id", oficioBPNDTO.id);

@@ -14,6 +14,6 @@ namespace SISGED.Shared.Entities
     public class OtorganteDTO
     {
         public string nombre { get; set; }
-        public int index { get; set; }
+        public Int32 index { get; set; } = 0;
     }
 }
