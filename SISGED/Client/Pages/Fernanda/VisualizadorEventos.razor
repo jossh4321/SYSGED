@@ -1,0 +1,35 @@
+﻿@inject IRepository repository
+<style>
+    .quitarcentrado {
+        text-align: initial !important;
+    }
+</style>
+<div class="ms-depth-16 card">
+    <div class="card-content">
+        <h3 class="ms-fontSize-22 ms-fontWeight-regular">@SelectedDay.Date.ToString("D")</h3>
+        @{
+            if(SelectedDay.Events == null || SelectedDay.Events.Count == 0)
+            {
+                <div class="event shadow-effect magenta">
+                    <h4 class="ms-fontSize-14 ms-fontWeight-regular">No recibio ningún documento ese dia</h4>
+                </div>
+            }
+            else
+            {
+                @foreach (var item in SelectedDay.Events)
+                {
+                    <div class="event shadow-effect magenta">
+                        <h4 class="ms-fontSize-14 ms-fontWeight-regular">@item.fechaDelEvento.ToString("HH:mm")</h4>
+                        <p class="ms-fontSize-11 ms-fontWeight-regular quitarcentrado"> Nombre cliente: @item.nombreCliente </p>
+                        <p class="ms-fontSize-11 ms-fontWeight-regular quitarcentrado"> Nombre del emisor: @item.nombreEmisor </p>
+                        <p class="ms-fontSize-11 ms-fontWeight-regular quitarcentrado"> Tipo de documento: @item.tipoDocumento </p>
+                    </div>
+                }                
+            }              
+        }
+    </div>              
+</div>
+@code {
+    [Parameter]
+    public CalendarDay SelectedDay { get; set; }
+}

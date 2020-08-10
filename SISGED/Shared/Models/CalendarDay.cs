@@ -10,6 +10,6 @@ namespace SISGED.Shared.Models
         public int DayNumber { get; set; }
         public DateTime Date { get; set; }
         public bool IsEmpty { get; set; }
-        public List<Derivacion> Events { get; set; } = new List<Derivacion>();
+        public List<CalendarEvent> Events { get; set; } = new List<CalendarEvent>();
     }
 }
