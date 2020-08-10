@@ -76,7 +76,7 @@
     private Notario notario;
     private bool generado = false;
     private bool faltaCargar = true;
-    int paso = 2;
+    int paso = 1;
     int subpaso = 0;
 
     private async Task Generar()
@@ -187,7 +187,7 @@
             workspace.RemoveExpedienteSeleccionado(itemSalida);
 
             Int32 pasoAntiguo = paso;
-            paso = 3;
+            paso = 2;
             subpaso = 0;
             //Enviar paso=0+0,subpaso=2,idexpediente
             String tipodocumentoantiguo = workspace.asistente.tipodocumento;

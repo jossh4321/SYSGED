@@ -28,7 +28,7 @@ namespace SISGED.Shared.Validators.DocumentosValidator.Resolucion
 
         private bool BeAValidDate1(DateTime date)
         {
-            if( date <= DateTime.Now) { return false; }
+            if( date <= DateTime.UtcNow.AddHours(-5)) { return false; }
             return !date.Equals(default(DateTime));
         }
 

@@ -174,7 +174,7 @@
     private OficioDesignacionNotarioDTO oficiodesignacion = new OficioDesignacionNotarioDTO();
     private EditContext _editContext;
     private bool loadprocess = false;
-    int paso = 1;
+    int paso = 0;
     int subpaso = 0;
     String typeDocument = "OficioDesignacionNotario";
 
@@ -309,7 +309,7 @@
             subpaso = 2;
             //Enviar paso=0,subpaso=2,idexp
             Int32 pasoAntiguo = paso;
-            paso = 2;
+            paso = 1;
             subpaso = 0;
             //Enviar paso=0+0,subpaso=2,idexpediente
             String tipodocumentoantiguo = workspace.asistente.tipodocumento;
