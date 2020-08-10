@@ -288,7 +288,7 @@
     {
         abrirDialogo = true;
         if (expedienteseleccionado.documento.tipo == "SolicitudDenuncia") ChildContent =@<VerSolicitudDenuncia documento="@expedienteseleccionado.documento"></VerSolicitudDenuncia>;
-        if (expedienteseleccionado.documento.tipo == "Resolucion") ChildContent = @<VerResolucion documento="@expedienteseleccionado.documento"></VerResolucion>;
+if (expedienteseleccionado.documento.tipo == "Resolucion") ChildContent = @<VerResolucion documento="@expedienteseleccionado.documento"></VerResolucion>;
 if (expedienteseleccionado.documento.tipo == "OficioBPN") ChildContent = @<VerOficioBPN documento="@expedienteseleccionado.documento"></VerOficioBPN>;
 if (expedienteseleccionado.documento.tipo == "SolicitudBPN") ChildContent = @<VerSolicitudBPN documento="@expedienteseleccionado.documento"></VerSolicitudBPN>;
 if (expedienteseleccionado.documento.tipo == "SolicitudExpedicionFirma") ChildContent = @<VerSolicitudExpedicionFirma documento="@expedienteseleccionado.documento"></VerSolicitudExpedicionFirma>;
@@ -300,227 +300,230 @@ if (expedienteseleccionado.documento.tipo == "Apelacion") ChildContent = @<VerAp
 if (expedienteseleccionado.documento.tipo == "AperturamientoDisciplinario") ChildContent = @<VerAperturamientoDisciplinario documento="@expedienteseleccionado.documento"></VerAperturamientoDisciplinario>;
 if (expedienteseleccionado.documento.tipo == "SolicitudExpedienteNotario") ChildContent = @<VerSolicitudExpedienteNotario documento="@expedienteseleccionado.documento"></VerSolicitudExpedienteNotario>;
 if (expedienteseleccionado.documento.tipo == "ResultadoBPN") ChildContent = @<VerResultadoBPN documento="@expedienteseleccionado.documento"></VerResultadoBPN>;
-        StateHasChanged();
-    }
-    public void closeDialog() { abrirDialogo = false; }
-    public async Task UpdateDraggableComponents(string newCurrentPlace)
-    {
-        if (currentItemDragged.originPlace == "tools")
-        {
-            var tool = sesion.herramientasutilizables.SingleOrDefault(x => x.nombre == currentItemDragged.nombre);
-            if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
-            {
-                Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
+if (expedienteseleccionado.documento.tipo == "SolicitudInicial") ChildContent = @<VerSolicitudInicial documento="@expedienteseleccionado.documento"></VerSolicitudInicial>;
+StateHasChanged();
+}
+public void closeDialog() { abrirDialogo = false; }
+public async Task UpdateDraggableComponents(string newCurrentPlace)
+{
+if (currentItemDragged.originPlace == "tools")
+{
+var tool = sesion.herramientasutilizables.SingleOrDefault(x => x.nombre == currentItemDragged.nombre);
+if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
+{
+Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
 
-                tool.currentPlace = newCurrentPlace;
-                sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre))] = tool;
-                StateHasChanged();
-            }
-        }
-        else if (currentItemDragged.originPlace == "inputs")
-        {
-            var tool = sesion.listaentradas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
-            if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
-            {
-                if (newCurrentPlace == "workspace")
-                {
-                    expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor;
-                }
-                if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
-                if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
+tool.currentPlace = newCurrentPlace;
+sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre))] = tool;
+StateHasChanged();
+}
+}
+else if (currentItemDragged.originPlace == "inputs")
+{
+var tool = sesion.listaentradas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
+if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
+{
+if (newCurrentPlace == "workspace")
+{
+expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor;
 
-                Console.WriteLine("Es de la  entrada papu");
-                Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
+}
+if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
+if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
 
-                await GetAsistenteByExpedientId(expedienteseleccionado.idexpediente);
+Console.WriteLine("Es de la  entrada papu");
+Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
 
-                tool.currentPlace = newCurrentPlace;
-                sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
-                StateHasChanged();
-            }
-        }
-        else if (currentItemDragged.originPlace == "outputs")
-        {
-            var tool = sesion.listasalidas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
-            if (tool != null)
-            {
-                if (newCurrentPlace == "workspace") { expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor; }
-                if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
-                if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
-                tool.currentPlace = newCurrentPlace;
-                sesion.listasalidas[sesion.listasalidas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
-                StateHasChanged();
-            }
-        }
-    }
-    public void UpdateComponentBandeja(Item itemnuevo)
-    {
-        sesion.listasalidas.Add(itemnuevo);
-        StateHasChanged();
-    }
-    public void UpdateDocRegistrado(Item itemnuevo)
-    {
-        sesion.listaentradas[sesion.listaentradas.FindIndex(ind =>
-        ind.originPlace == "inputs" &&
-        ind.currentPlace == "workspace")] = itemnuevo;
-        //sesion.herramientasutilizables[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "tools";
-        StateHasChanged();
-    }
-    public void UpdateTools(string nombre)
-    {
-        var tool = sesion.herramientasutilizables.SingleOrDefault(x => x.nombre == nombre);
-        tool.currentPlace = "tools";
-        sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(nombre))] = tool;
-        StateHasChanged();
-    }
-    public void RemoveExpedienteSeleccionado(Item itemsalida)
-    {
-        sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "inputs";
+await GetAsistenteByExpedientId(expedienteseleccionado.idexpediente);
 
-        sesion.listaentradas.RemoveAll(ind => ind.nombre.Equals(itemsalida.nombre) &&
-        ind.cliente.tipodocumento.Equals(itemsalida.cliente.tipodocumento) &&
-        ind.cliente.numerodocumento.Equals(itemsalida.cliente.numerodocumento));
+tool.currentPlace = newCurrentPlace;
+sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
+tool.itemstatus = "InSpace";
+StateHasChanged();
+}
+}
+else if (currentItemDragged.originPlace == "outputs")
+{
+var tool = sesion.listasalidas.SingleOrDefault(x => x.nombre == currentItemDragged.nombre && x.cliente == currentItemDragged.cliente);
+if (tool != null)
+{
+if (newCurrentPlace == "workspace") { expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor; }
+if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
+if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
+tool.currentPlace = newCurrentPlace;
+sesion.listasalidas[sesion.listasalidas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
+StateHasChanged();
+}
+}
+}
+public void UpdateComponentBandeja(Item itemnuevo)
+{
+sesion.listasalidas.Add(itemnuevo);
+StateHasChanged();
+}
+public void UpdateDocRegistrado(Item itemnuevo)
+{
+sesion.listaentradas[sesion.listaentradas.FindIndex(ind =>
+ind.originPlace == "inputs" &&
+ind.currentPlace == "workspace")] = itemnuevo;
+//sesion.herramientasutilizables[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "tools";
+StateHasChanged();
+}
+public void UpdateTools(string nombre)
+{
+var tool = sesion.herramientasutilizables.SingleOrDefault(x => x.nombre == nombre);
+tool.currentPlace = "tools";
+sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(nombre))] = tool;
+StateHasChanged();
+}
+public void RemoveExpedienteSeleccionado(Item itemsalida)
+{
+sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace")].currentPlace = "inputs";
 
-        sesion.listasalidas.Add(itemsalida);
-        StateHasChanged();
-    }
-    public void RemoveExpedienteSeleccionadoBandejas(Item itemsalida)
-    {
+sesion.listaentradas.RemoveAll(ind => ind.nombre.Equals(itemsalida.nombre) &&
+ind.cliente.tipodocumento.Equals(itemsalida.cliente.tipodocumento) &&
+ind.cliente.numerodocumento.Equals(itemsalida.cliente.numerodocumento));
 
-        Int32 index = 0;
+sesion.listasalidas.Add(itemsalida);
+StateHasChanged();
+}
+public void RemoveExpedienteSeleccionadoBandejas(Item itemsalida)
+{
 
-        if(sesion.listasalidas.Exists(ind => ind.currentPlace == "workspace"))
-        {
-            index = sesion.listasalidas.FindIndex(ind => ind.currentPlace == "workspace");
+Int32 index = 0;
 
-            sesion.listasalidas.RemoveAt(index);
-        }
-        else if(sesion.listaentradas.Exists(ind => ind.currentPlace == "workspace"))
-        {
-            index = sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace");
+if (sesion.listasalidas.Exists(ind => ind.currentPlace == "workspace"))
+{
+index = sesion.listasalidas.FindIndex(ind => ind.currentPlace == "workspace");
 
-            sesion.listaentradas.RemoveAt(index);
-        }
+sesion.listasalidas.RemoveAt(index);
+}
+else if (sesion.listaentradas.Exists(ind => ind.currentPlace == "workspace"))
+{
+index = sesion.listaentradas.FindIndex(ind => ind.currentPlace == "workspace");
+
+sesion.listaentradas.RemoveAt(index);
+}
 
 
 
 
-        //sesion.listasalidas.RemoveAll(ind => ind.nombre.Equals(itemsalida.nombre) &&
-        //ind.cliente.tipodocumento.Equals(itemsalida.cliente.tipodocumento) &&
-        //ind.cliente.numerodocumento.Equals(itemsalida.cliente.numerodocumento));
+//sesion.listasalidas.RemoveAll(ind => ind.nombre.Equals(itemsalida.nombre) &&
+//ind.cliente.tipodocumento.Equals(itemsalida.cliente.tipodocumento) &&
+//ind.cliente.numerodocumento.Equals(itemsalida.cliente.numerodocumento));
 
-        StateHasChanged();
-    }
+StateHasChanged();
+}
 
-    public void ChangeMessage(String messageSend)
-    {
-        timer.Start();
-        this.messageSend = messageSend;
-        StateHasChanged();
-    }
+public void ChangeMessage(String messageSend)
+{
+timer.Start();
+this.messageSend = messageSend;
+StateHasChanged();
+}
 
-    public async Task VoiceMessage(String messageSend)
-    {
-        await js.InvokeVoidAsync("textSpeak", messageSend);
-    }
+public async Task VoiceMessage(String messageSend)
+{
+await js.InvokeVoidAsync("textSpeak", messageSend);
+}
 
-    public async Task GetAsistenteByExpedientId(String expedienteId)
-    {
-        var httpResponse = await repository.Get<Asistente>($"api/Asistente/getbyexpedientID?expedientID={expedienteId}");
-        if (!httpResponse.Error)
-        {
-            asistente = httpResponse.Response;
-            String message = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).subpaso.ElementAt(asistente.subpaso).descripcion;
-            String submessage = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
+public async Task GetAsistenteByExpedientId(String expedienteId)
+{
+var httpResponse = await repository.Get<Asistente>($"api/Asistente/getbyexpedientID?expedientID={expedienteId}");
+if (!httpResponse.Error)
+{
+asistente = httpResponse.Response;
+String message = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).subpaso.ElementAt(asistente.subpaso).descripcion;
+String submessage = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
 
-            Task voiceMessage = VoiceMessage(submessage);
+Task voiceMessage = VoiceMessage(submessage);
 
-            ChangeMessage(submessage);
+ChangeMessage(submessage);
 
-            await voiceMessage;
+await voiceMessage;
 
-            await UpdatePasoAndSubPaso(asistente.paso, asistente.subpaso, asistente.tipodocumento);
-        }
-    }
+await UpdatePasoAndSubPaso(asistente.paso, asistente.subpaso, asistente.tipodocumento);
+}
+}
 
-    public async Task UpdatePasoAndSubPaso(Int32 paso, Int32 subpaso, String tipodocumento)
-    {
+public async Task UpdatePasoAndSubPaso(Int32 paso, Int32 subpaso, String tipodocumento)
+{
 
-        Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
+Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
 
-        PasoDTO pasoDTO = new PasoDTO();
-        pasoDTO.paso = paso;
-        pasoDTO.subpaso = subpaso;
-        pasoDTO.tipodocumento = tipodocumento;
-        pasoDTO.idexpediente = asistente.idexpediente;
-        pasoDTO.fechainicio = DateTime.UtcNow.AddHours(-5).ToString();
-        pasoDTO.fechafin = "";
-        pasoDTO.fechalimite = DateTime.UtcNow.AddHours(-5).AddDays(dias).ToString();
+PasoDTO pasoDTO = new PasoDTO();
+pasoDTO.paso = paso;
+pasoDTO.subpaso = subpaso;
+pasoDTO.tipodocumento = tipodocumento;
+pasoDTO.idexpediente = asistente.idexpediente;
+pasoDTO.fechainicio = DateTime.UtcNow.AddHours(-5).ToString();
+pasoDTO.fechafin = "";
+pasoDTO.fechalimite = DateTime.UtcNow.AddHours(-5).AddDays(dias).ToString();
 
-        asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechainicio = pasoDTO.fechainicio;
-        asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechalimite = pasoDTO.fechalimite;
-        asistente.paso = paso;
-        asistente.subpaso = subpaso;
-        asistente.tipodocumento = tipodocumento;
+asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechainicio = pasoDTO.fechainicio;
+asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechalimite = pasoDTO.fechalimite;
+asistente.paso = paso;
+asistente.subpaso = subpaso;
+asistente.tipodocumento = tipodocumento;
 
-        var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/update", pasoDTO);
-    }
+var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/update", pasoDTO);
+}
 
-    public async Task<String> UpdateSolicitudInitial(Int32 paso, Int32 subpaso, String tipodocumento, String nombreExpediente, Int32 pasoAntiguo)
-    {
-        String messageCambio = "";
-        asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(pasoAntiguo).fechafin = DateTime.UtcNow.AddHours(-5).ToString();
-        asistente.paso = paso;
-        asistente.subpaso = subpaso;
-        asistente.tipodocumento = tipodocumento;
+public async Task<String> UpdateSolicitudInitial(Int32 paso, Int32 subpaso, String tipodocumento, String nombreExpediente, Int32 pasoAntiguo)
+{
+String messageCambio = "";
+asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(pasoAntiguo).fechafin = DateTime.UtcNow.AddHours(-5).ToString();
+asistente.paso = paso;
+asistente.subpaso = subpaso;
+asistente.tipodocumento = tipodocumento;
 
-        var httpResponse = await repository.Put<Asistente, Asistente>($"api/Asistente/updateinicial?nombreExpediente={nombreExpediente}", asistente);
-        if (!httpResponse.Error)
-        {
+var httpResponse = await repository.Put<Asistente, Asistente>($"api/Asistente/updateinicial?nombreExpediente={nombreExpediente}", asistente);
+if (!httpResponse.Error)
+{
 
-            asistente = httpResponse.Response;
-            messageCambio = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
+asistente = httpResponse.Response;
+messageCambio = asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(asistente.paso).descripcion;
 
-        }
-        return messageCambio;
-    }
+}
+return messageCambio;
+}
 
-    public async Task UpdatePasoAndSubPasoNormal(Int32 paso, Int32 subpaso, String tipodocumento)
-    {
+public async Task UpdatePasoAndSubPasoNormal(Int32 paso, Int32 subpaso, String tipodocumento)
+{
 
-        Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
+Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
 
-        PasoDTO pasoDTO = new PasoDTO();
-        pasoDTO.paso = paso;
-        pasoDTO.subpaso = subpaso;
-        pasoDTO.tipodocumento = tipodocumento;
-        pasoDTO.idexpediente = asistente.idexpediente;
+PasoDTO pasoDTO = new PasoDTO();
+pasoDTO.paso = paso;
+pasoDTO.subpaso = subpaso;
+pasoDTO.tipodocumento = tipodocumento;
+pasoDTO.idexpediente = asistente.idexpediente;
 
-        asistente.paso = paso;
-        asistente.subpaso = subpaso;
-        asistente.tipodocumento = tipodocumento;
+asistente.paso = paso;
+asistente.subpaso = subpaso;
+asistente.tipodocumento = tipodocumento;
 
-        var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/updateNormal", pasoDTO);
-    }
-    public async Task UpdatePasoAndSubPasoFinnally(Int32 paso, Int32 subpaso, String tipodocumento, Int32 pasoantiguo, String tipoDocumentoAntiguo)
-    {
+var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/updateNormal", pasoDTO);
+}
+public async Task UpdatePasoAndSubPasoFinnally(Int32 paso, Int32 subpaso, String tipodocumento, Int32 pasoantiguo, String tipoDocumentoAntiguo)
+{
 
-        Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
+Int32 dias = asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).dias;
 
-        PasoDTO pasoDTO = new PasoDTO();
-        pasoDTO.paso = paso;
-        pasoDTO.subpaso = subpaso;
-        pasoDTO.tipodocumento = tipodocumento;
-        pasoDTO.idexpediente = asistente.idexpediente;
-        pasoDTO.fechafin = DateTime.UtcNow.AddHours(-5).ToString();
-        pasoDTO.pasoantiguo = pasoantiguo;
-        pasoDTO.tipodocumentoAntiguo = tipoDocumentoAntiguo;
+PasoDTO pasoDTO = new PasoDTO();
+pasoDTO.paso = paso;
+pasoDTO.subpaso = subpaso;
+pasoDTO.tipodocumento = tipodocumento;
+pasoDTO.idexpediente = asistente.idexpediente;
+pasoDTO.fechafin = DateTime.UtcNow.AddHours(-5).ToString();
+pasoDTO.pasoantiguo = pasoantiguo;
+pasoDTO.tipodocumentoAntiguo = tipoDocumentoAntiguo;
 
-        asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechafin = pasoDTO.fechafin;
-        asistente.paso = paso;
-        asistente.subpaso = subpaso;
-        asistente.tipodocumento = tipodocumento;
+asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechafin = pasoDTO.fechafin;
+asistente.paso = paso;
+asistente.subpaso = subpaso;
+asistente.tipodocumento = tipodocumento;
 
-        var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/updateFinally", pasoDTO);
-    }
+var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/updateFinally", pasoDTO);
+}
 }
