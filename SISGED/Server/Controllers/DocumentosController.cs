@@ -80,8 +80,14 @@ namespace SISGED.Server.Controllers
                     url2.Add(urlData2);
                 }
             }
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(oficioBPNDTO.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(oficioBPNDTO.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "oficiobpn");
+            }
             OficioBPN documentoOficioBPN = new OficioBPN();
-            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente, url2);
+            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente, url2, urlData);
 
             return documentoOficioBPN;
         }
