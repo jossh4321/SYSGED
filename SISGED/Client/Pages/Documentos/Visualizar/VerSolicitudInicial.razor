@@ -160,7 +160,7 @@
                         @foreach (string urlanexos in documento.urlanexo)
                         {
                             string textito = "Anexo " + OH + " de la Solicitud Inicial.pdf";
-                            <a href="@urlanexos" download="textito" target="_blank">Descargar Anexo @OH</a>
+                            <a href="@urlanexos" download="@textito" target="_blank">Descargar Anexo @OH</a>
                             OH++;
                         }
                     }

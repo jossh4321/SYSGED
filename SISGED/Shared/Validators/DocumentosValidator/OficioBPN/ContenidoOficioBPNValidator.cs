@@ -13,7 +13,7 @@ namespace SISGED.Shared.Validators.DocumentosValidator.OficioBPN
         public ContenidoOficioBPNValidator(){
             RuleFor(x => x.titulo).NotEmpty().WithMessage("Debe Ingresar un titulo obligatoriamente");
             RuleFor(x => x.titulo).Matches("@^[A-aZ-z0-9ñáéíóú. ]*[A-aZ-z0-9ñáéíóú.]$")
-                                             .WithMessage("Debe ingresar un título válido").When(x => x.titulo != null && x.titulo != "");
+                                             .WithMessage("Debe ingresar un título válido").When(x => x.titulo != null && x.titulo != "" && x.titulo.Trim().Length != 0);
             RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe ingresar una descripción obligatoriamente");
             RuleFor(x => x.direccionoficio).NotEmpty().WithMessage("Debe ingresar una dirección de oficio obligatoriamente");
             RuleFor(x => x.actojuridico).NotEmpty().WithMessage("Debe ingresar un acto jurídico obligatoriamente");

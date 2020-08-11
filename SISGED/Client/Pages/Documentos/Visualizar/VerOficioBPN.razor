@@ -75,6 +75,10 @@
         width: 500px;
         background-color: #808080;
     }
+    .mdc-chip__text {
+        color: black !important;
+    }
+
 
     .div-form.mat-tab-group {
         max-width: 500px;
@@ -82,6 +86,7 @@
 
     .otorgantes {
         border: 1px solid #ccc;
+        color:black;
         background: #f2f2f2;
         display: flex;
         margin: 7px 10px;
@@ -193,6 +198,22 @@
                         <MatTextField @bind-Value="@notario.email" ReadOnly="true" Class="text-field-style" Label="Correo Electronico">
                         </MatTextField>
                     </div>
+                </MatTab>
+                <MatTab Label="Anexos">
+                    @if (documento.urlanexo.Count > 0)
+                    {
+                        int OH = 1;
+                        @foreach (string urlanexos in documento.urlanexo)
+                        {
+                            string textito = "Anexo " + OH + " del oficio de protocolo notarial.pdf";
+                            <a href="@urlanexos" download="@textito" target="_blank">Descargar Anexo @OH</a>
+                            OH++;
+                        }
+                    }
+                    else
+                    {
+                        <p>No hay anexos para este documento</p>
+                    }
                 </MatTab>
             </MatTabGroup>
 
