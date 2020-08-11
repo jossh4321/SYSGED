@@ -300,5 +300,16 @@ namespace SISGED.Server.Services
             Usuario usuario = _usuarios.Find(user => user.usuario == nombreusuario).First();
             _bandejas.UpdateOne(band => band.usuario == usuario.id, updateBandeja);
         }
+
+        public void InsertarBandeja(string tipo, string idusuario)
+        {
+            Bandeja mibandeja = new Bandeja();
+            mibandeja.tipo = tipo;
+            mibandeja.usuario = idusuario;
+            mibandeja.bandejaentrada = new List<BandejaDocumento>();
+            mibandeja.bandejasalida = new List<BandejaDocumento>();
+
+            _bandejas.InsertOne(mibandeja);
+        }
     }
 }
