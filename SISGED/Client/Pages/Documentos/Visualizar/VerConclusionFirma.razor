@@ -140,6 +140,22 @@
                         </MatTextField>
                     </div>
                 </MatTab>
+                <MatTab Label="Anexos">
+                    @if (documento.urlanexo.Count > 0)
+                    {
+                        int OH = 1;
+                        @foreach (string urlanexos in documento.urlanexo)
+                        {
+                            string textito = "Anexo " + OH + " de la conclusion de firma.pdf";
+                            <a href="@urlanexos" download="@textito" target="_blank">Descargar Anexo @OH</a>
+                            OH++;
+                        }
+                    }
+                    else
+                    {
+                        <p>No hay anexos para este documento</p>
+                    }
+                </MatTab>
             </MatTabGroup>
         </div>
     }
