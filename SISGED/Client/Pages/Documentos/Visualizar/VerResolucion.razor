@@ -124,6 +124,20 @@
         border-radius: 3px;
         border: 1px solid #800000
     }
+    .links {
+        text-decoration: none;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        background-color: white;
+        color: black;
+        cursor: pointer;
+    }
+
+        .links:hover {
+            text-decoration: none;
+            color: white;
+            background: #6200ee;
+        }
 </style>
 
 <div class="div-form">
@@ -182,16 +196,18 @@
                         }
                     </div>
                 </MatTab>
-                <MatTab Label="Anexos">
+                <MatTab Label="Anexos" Style="text-align: center;">
                     @if (documento.urlanexo.Count > 0)
                     {
-                        int OH = 1;
-                        @foreach (string urlanexos in documento.urlanexo)
-                        {
-                            string textito = "Anexo " + OH + " de la Resolucion.pdf";
-                            <a href="@urlanexos" download="@textito" target="_blank">Descargar Anexo @OH</a>
-                            OH++;
-                        }
+                        <div style="display:grid;">
+                            <br />
+                            @for (int a = 1; a < documento.urlanexo.Count + 1; a++)
+                            {
+                                string textito = "Anexo " + a + " de la Resolucion.pdf";
+                                <a class="links" href="@documento.urlanexo[a-1]" download="@textito" target="_blank">Descargar Anexo @a</a>
+                                <br />
+                            }
+                        </div>
                     }
                     else
                     {

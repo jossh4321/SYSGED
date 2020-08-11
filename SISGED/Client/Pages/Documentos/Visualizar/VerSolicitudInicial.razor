@@ -124,6 +124,22 @@
         border-radius: 3px;
         border: 1px solid #800000
     }
+    .mat-tab-group-content{
+        text-align: center;
+    }
+    .links {
+        text-decoration: none;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        background-color: white;
+        color: black;
+        cursor: pointer;
+    }
+        .links:hover {
+            text-decoration: none;
+            color: white;
+            background: #6200ee;
+        }
 </style>
 
 <div class="div-form">
@@ -131,9 +147,7 @@
     @if (firstLoad == true)
     {
         <div class="loader-block">
-            <div class="spinner-border spin" style="        width: 7rem;
-        height: 7rem;
-        color: #ccc" role="status">
+            <div class="spinner-border spin" style=" width: 7rem; height: 7rem; color: #ccc " role="status">
                 <span class="sr-only">Loading...</span>
             </div>
 
@@ -153,16 +167,18 @@
                         <MatTextField @bind-Value="@contenido.descripcion" Class="text-field-style" ReadOnly="true" Label="Descripcion de la solicitud inicial"></MatTextField>
                     </div>
                 </MatTab>
-                <MatTab Label="Anexos">
+                <MatTab Label="Anexos" Style="text-align: center;">
                     @if (documento.urlanexo.Count > 0)
                     {
-                        int OH = 1;
-                        @foreach (string urlanexos in documento.urlanexo)
+                    <div style="display:grid;">
+                        <br />
+                        @for (int a = 1; a < documento.urlanexo.Count + 1; a++)
                         {
-                            string textito = "Anexo " + OH + " de la Solicitud Inicial.pdf";
-                            <a href="@urlanexos" download="@textito" target="_blank">Descargar Anexo @OH</a>
-                            OH++;
+                            string textito = "Anexo " + a + " de la Solicitud Inicial.pdf";
+                            <a class="links" href="@documento.urlanexo[a-1]" download="@textito" target="_blank">Descargar Anexo @a</a>
+                            <br />
                         }
+                    </div>
                     }
                     else
                     {
@@ -182,13 +198,16 @@
 </MatDialog>
 
 @*
-    <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerAnexo(urlanexos))" Style="width:50% !important">Ver Anexo n°@OH</MatButton>
+    <a href="@urlanexos" download="@textito" target="_blank">Descargar Anexo @OH</a>
     <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" OnClick="@(()=>OpenDialogVerAnexo(urlanexos))" Style="width:100px !important">Ver Anexo n°@urlanexos</MatButton>
 
-    @for (int a = 1; a < documento.urlanexo.Count + 1; a++)
-    {
-        <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" download="@documento.urlanexo[a-1]" Style="width:100px !important">Ver Anexo n°@a</MatButton>
-    }*@
+    int OH = 1;
+                        @foreach (string urlanexos in documento.urlanexo)
+                        {
+                            string textito = "Anexo " + OH + " de la Solicitud Inicial.pdf";
+                            <MatButton Icon="@MatIconNames.Description" Class="mat-info-c" Link="@urlanexos" Style="width:50% !important" Target="_blank">Ver Anexo n°@OH</MatButton>
+                            OH++;
+                        }*@
 
 @code {
     //Datos del formulario
