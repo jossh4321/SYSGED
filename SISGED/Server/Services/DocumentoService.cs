@@ -1858,6 +1858,77 @@ namespace SISGED.Server.Services
             return expedientes;
         }
 
+        public async Task<List<DocumentoADTO2>> ObtenerSolicitudesUsuario2(string numerodocumento)
+        {
+
+            var filtroNumeroDocumento = Builders<Expediente>.Filter.Eq("cliente.numerodocumento", numerodocumento);
+
+            var proyeccionInicial = new BsonDocument("$project",
+                                        new BsonDocument
+                                            {
+                                                { "_id", "$_id" },
+                                                { "tipo", "$tipo" },
+                                                { "documento",
+                                        new BsonDocument("$arrayElemAt",
+                                        new BsonArray
+                                                    {
+                                                        "$documentos",
+                                                        0
+                                                    }) }
+                                            });
+
+            BsonArray subpipeline = new BsonArray();
+            subpipeline.Add(
+                new BsonDocument("$match", new BsonDocument(
+                    "$expr", new BsonDocument(
+                        "$eq", new BsonArray { "$_id", new BsonDocument("$toObjectId", "$$iddoc") }
+                        )
+                    )
+                ));
+
+            var lookupe = new BsonDocument("$lookup",
+                new BsonDocument("from", "documentos")
+                    .Add("let", new BsonDocument("iddoc", "$documento.iddocumento"))
+                    .Add("pipeline", subpipeline)
+                    .Add("as", "documentoOriginal")
+                );
+
+            var proyeccionFinal = new BsonDocument("$project",
+                                        new BsonDocument
+                                            {
+                                                { "_id", "$documentoOriginal._id" },
+                                                { "tipo",
+                                        new BsonDocument("$cond",
+                                        new BsonArray
+                                                    {
+                                                        new BsonDocument("$eq",
+                                                        new BsonArray
+                                                            {
+                                                                "$tipo",
+                                                                "Solicitud"
+                                                            }),
+                                                        "$documento.tipo",
+                                                        "$tipo"
+                                                    }) },
+                                                { "estado", "$documentoOriginal.estado" },
+                                                { "contenido", "$documentoOriginal.contenido" },
+                                                { "urlanexo", "$documentoOriginal.urlanexo" },
+                                                { "historialcontenido", "$documentoOriginal.historialcontenido" },
+                                                { "historialproceso", "$documentoOriginal.historialproceso" }
+                                            });
+
+
+            List<DocumentoADTO2> expedientes = await _expedientes.Aggregate()
+                                        .Match(filtroNumeroDocumento)
+                                        .AppendStage<DocumentoUsuarioDTO>(proyeccionInicial)
+                                        .AppendStage<DocumentoUsuarioLUDTO>(lookupe)
+                                        .Unwind<DocumentoUsuarioLUDTO, DocumentoUsuarioUDTO>(t => t.documentoOriginal)
+                                        .AppendStage<DocumentoADTO2>(proyeccionFinal)
+                                        .ToListAsync();
+
+            return expedientes;
+        }
+
         public async Task<List<StatisticsDTOR>> estadisticasDocXMesXArea(int mes, string area)
         {
            var match1= new BsonDocument("$match",
