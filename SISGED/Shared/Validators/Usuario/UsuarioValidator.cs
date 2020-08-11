@@ -10,7 +10,7 @@ namespace SISGED.Shared.Validators.UsuarioValidator
     {
         public UsuarioValidator()
         {
-            RuleFor(x => x.usuario).NotEmpty().WithMessage("Debe Ingresar un Nombre de Usuario");
+            RuleFor(x => x.usuario).NotEmpty().WithMessage("Debe ingresar un nombre de usuario");
             RuleFor(x => x.datos).SetValidator(new DatosValidator());
         }
     }

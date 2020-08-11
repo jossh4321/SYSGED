@@ -64,7 +64,7 @@
             <MatTabGroup>
                 <MatTab Label="Evaluacion">
                     <div class="field-container input-group-2">
-                        <h4>Aún no se ha realizado una evaluación a este documento</h4>>
+                        <h4>Aún no se ha realizado una evaluación a este documento</h4>
                     </div>
                 </MatTab>
 
@@ -77,10 +77,24 @@
         <div class=".modal-info-designacion-notario">
             <MatTabGroup>
                 <MatTab Label="Evaluacion">
-                    @foreach (EvaluacionDTO eva in participantes)
-                    {
-
-                    }
+                    <div class="field-container input-group-2">
+                        <h4>Participantes</h4>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@participante.nombreYApe" ReadOnly="true" Class="text-field-style" Label="Nombre y Apellidos"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@participante.numerodocumento" ReadOnly="true" Class="text-field-style" Label="DNI"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@participante.status" ReadOnly="true" Class="text-field-style" Label="Estado"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <MatTextField @bind-Value="@participante.descripcion" ReadOnly="true" Class="text-field-style" Label="Descripción"></MatTextField>
+                    </div>
+                    <div class="field-container input-group-2">
+                        <PaginationBootstrap currentPage="paginaactual" totalPages="paginastotales()" radio="2" selectedPage="paginaSeleccionada"></PaginationBootstrap>
+                    </div>
                     <div class="field-container input-group-2">
                         <MatTextField @bind-Value="@evaluacion.resultado" ReadOnly="true" Class="text-field-style" Label="Resultado de la Evaluacion"></MatTextField>
                     </div>
@@ -94,37 +108,65 @@
 @code {
     private bool firstLoad = true;
     private bool nohayEvaluacion = false;
+    public int paginaactual = 1;
     Evaluacion evaluacion = new Evaluacion();
     List<EvaluacionDTO> participantes = new List<EvaluacionDTO>();
+    EvaluacionDTO participante = new EvaluacionDTO();
     Usuario usuario = new Usuario();
     [Parameter] public DocumentoDTO documento { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        evaluacion = JsonConvert.DeserializeObject<Evaluacion>(documento.evaluacion.ToString());
-        if (!(evaluacion.resultado.Equals("pendiente") || evaluacion.evaluaciones == null || evaluacion.evaluaciones.Count == 0))
-        {
-            foreach (EvaluacionIndividual eva in evaluacion.evaluaciones)
-            {
-                EvaluacionDTO parti = new EvaluacionDTO();
-                await getUsuario(eva.idparticipante);
-                parti.nombreYApe = usuario.datos.nombre + " " + usuario.datos.apellido;
-                parti.numerodocumento = usuario.datos.numerodocumento;
-                parti.status = eva.status;
-                parti.descripcion = eva.descripcion;
-                participantes.Add(parti);
-            }
-            firstLoad = false;
-        }
-        else
+        if (documento.evaluacion == null)
         {
             firstLoad = false;
             nohayEvaluacion = true;
+        }
+        else
+        {
+            evaluacion = JsonConvert.DeserializeObject<Evaluacion>(documento.evaluacion.ToString());
+            if (!(evaluacion.resultado.Equals("pendiente") || evaluacion.evaluaciones == null || evaluacion.evaluaciones.Count == 0))
+            {
+                foreach (EvaluacionIndividual eva in evaluacion.evaluaciones)
+                {
+                    EvaluacionDTO parti = new EvaluacionDTO();
+                    await getUsuario(eva.idparticipante);
+                    parti.nombreYApe = usuario.datos.nombre + " " + usuario.datos.apellido;
+                    parti.numerodocumento = usuario.datos.numerodocumento;
+                    parti.status = eva.status;
+                    parti.descripcion = eva.descripcion;
+                    participantes.Add(parti);
+                }
+                paginaSeleccionada(1);
+                firstLoad = false;
+            }
+            else
+            {
+                firstLoad = false;
+                nohayEvaluacion = true;
+            }
         }
     }
     private async Task getUsuario(string idusuario)
     {
         var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={idusuario}");
         usuario = responseHttp.Response;
+    }
+
+    public void paginaSeleccionada(int pagina)
+    {
+        paginaactual = pagina;
+        participante = new EvaluacionDTO();
+        for (int i = 0; i < participantes.Count; i++)
+        {
+            if (i >= paginaactual - 1 && i < paginaactual)
+            {
+                participante = participantes.ElementAt(paginaactual - 1);
+            }
+        }
+    }
+    public int paginastotales()
+    {
+        return participantes.Count;
     }
 }

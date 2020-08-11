@@ -11,7 +11,7 @@ namespace SISGED.Shared.Validators.EstadisticasValidator
         public EstadisticaDocXAreaXMesValidator()
         {
             RuleFor(x => x.mes).NotEmpty().WithMessage("Debe seleccionar un mes obligatoriamente");
-            RuleFor(x => x.area).NotEmpty().WithMessage("Debe seleccionar un area obligatoriamente");
+            RuleFor(x => x.area).NotEmpty().WithMessage("Debe seleccionar un área obligatoriamente");
         }
     }
 }
