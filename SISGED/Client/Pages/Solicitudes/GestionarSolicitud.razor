@@ -352,7 +352,8 @@
     public async Task MostrarTabla()
     {
 
-        var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
+        //var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes/{sesion.usuario.datos.numerodocumento}");
+        var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes2/{sesion.usuario.datos.numerodocumento}");
         if (!httpResponse.Error)
         {
             DocumentoADTO2 docActivator = new DocumentoADTO2();

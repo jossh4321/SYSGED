@@ -508,6 +508,11 @@ namespace SISGED.Server.Controllers
         {
             return await _documentoservice.ObtenerSolicitudesUsuario(numerodocumento);
         }
+        [HttpGet("documentosolicitudes2/{numerodocumento}")]
+        public async Task<List<DocumentoADTO2>> obtenerSolicitudes2(string numerodocumento)
+        {
+            return await _documentoservice.ObtenerSolicitudesUsuario2(numerodocumento);
+        }
 
         [HttpGet("documentoodn")]
         public async Task<ActionResult<OficioDesignacionNotarioDTO>> obtenerOficioDesignacionNotario([FromQuery] string iddoc)

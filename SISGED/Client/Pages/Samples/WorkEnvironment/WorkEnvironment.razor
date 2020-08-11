@@ -296,7 +296,26 @@
         Console.WriteLine(sesion.rol);
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
-        List<Expediente_group> lista = new List<Expediente_group>();
+        List<DocumentoADTO2> lista = new List<DocumentoADTO2>();
+        var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes2/70477724");
+        if (!httpResponse.Error)
+        {
+            Console.WriteLine(httpResponse.Response);
+            /*DocumentoADTO2 docActivator = new DocumentoADTO2();
+            docs = httpResponse.Response;
+            if (docActivator.estado == "revisado")
+            {
+                activator = true;
+            }
+            else
+            {
+                activator = false;
+            }*/
+        }
+        else
+        {
+            Console.WriteLine("Ocurrio un error");
+        }
         //var httpResponse = await repository.Get<List<Expediente_group>>($"api/documentos/ganttexpediente?dni=70477724");
         //if (!httpResponse.Error)
         //{
@@ -356,15 +375,15 @@
                 if (newCurrentPlace == "workspace")
                 {
                     expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor;
-                    await GetAsistenteByExpedientId(expedienteseleccionado.idexpediente);
+
                 }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
                 if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
 
                 Console.WriteLine("Es de la  entrada papu");
                 Console.WriteLine(" Cambiando de " + tool.currentPlace+" a "+ newCurrentPlace);
+                await GetAsistenteByExpedientId(expedienteseleccionado.idexpediente);
 
-                
 
                 tool.currentPlace = newCurrentPlace;
                 sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
