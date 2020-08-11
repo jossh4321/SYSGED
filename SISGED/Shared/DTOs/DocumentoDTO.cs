@@ -51,15 +51,24 @@ namespace SISGED.Shared.DTOs
     }
     public class DocumentoUsuarioDTO
     {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
         public DocumentoExpediente documento { get; set; }
     }
     public class DocumentoUsuarioLUDTO
     {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
         public DocumentoExpediente documento { get; set; }
         public List<Documento> documentoOriginal { get; set; }
     }
     public class DocumentoUsuarioUDTO
     {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
         public DocumentoExpediente documento { get; set; }
         public Documento documentoOriginal { get; set; }
     }
