@@ -12,6 +12,9 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+    .field-container {
+        padding: 5px;
+    }
 </style>
 <li draggable="true" class="li-tool @classname" @ondragstart="@(() => HandleDragStart(herramienta))">
     <div class="tool-container">
@@ -27,7 +30,7 @@
             {
                 <p class="tool-client-name">@herramienta.cliente.nombre  -  @herramienta.cliente.numerodocumento </p>
 
-                if (herramienta.itemstatus.Equals("registrado") && herramienta.originPlace.Equals("inputs"))
+                if ((herramienta.itemstatus.Equals("registrado") || herramienta.itemstatus.Equals("evaluado")) && herramienta.originPlace.Equals("inputs"))
                 {
                     ExpedienteBandejaDTO documento = (ExpedienteBandejaDTO)herramienta.valor;
                     <p class="registro">Documento Registrado: @documento.documento.tipo</p>
@@ -37,12 +40,18 @@
                     EscrituraPublicaRDTO escrituraPublica = herramienta.escriturapublica;
                     <p class="registro">Escritura Pública escogido: @escrituraPublica.titulo</p>
                 }
-                if ((herramienta.itemstatus.Equals("InSpace") || herramienta.itemstatus.Equals("escogido") || herramienta.itemstatus.Equals("registrado")) && herramienta.originPlace.Equals("inputs"))
+                if ((herramienta.itemstatus.Equals("InSpace") || herramienta.itemstatus.Equals("escogido") || herramienta.itemstatus.Equals("registrado") || herramienta.itemstatus.Equals("evaluado")) && herramienta.originPlace.Equals("inputs"))
                 {
-                    <MatButton Class="mat-info-c" @onclick="@(()=>workSpace.openDialog())">Visualizar</MatButton>
+                    ExpedienteBandejaDTO documento = (ExpedienteBandejaDTO)herramienta.valor;
+                    <div class="field-container">
+                        <MatButton Class="mat-info-c" @onclick="@(()=>workSpace.openDialog())">Visualizar</MatButton>
+                        @if (herramienta.itemstatus.Equals("evaluado"))
+                        {
+                            <MatButton Class="mat-info-c" @onclick="@(() => workSpace.openDialogEva())">Visualizar Evaluacion</MatButton>
+                        }
+                    </div>
                 }
             }
-
         </div>
     </div>
 </li>

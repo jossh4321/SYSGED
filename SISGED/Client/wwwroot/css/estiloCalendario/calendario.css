@@ -38,7 +38,8 @@
 }
 
 .calendar-table {
-    width: 100% ;
+    width: 1099px;
+    min-width: 1099px;
     background-color: #f3f2f1;
     text-align: center;
 }

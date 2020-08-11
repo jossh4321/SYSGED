@@ -12,12 +12,14 @@ namespace SISGED.Shared.Validators.DocumentosValidator.OficioBPN
     {
         public ContenidoOficioBPNValidator(){
             RuleFor(x => x.titulo).NotEmpty().WithMessage("Debe Ingresar un titulo obligatoriamente");
-            RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe Ingresar una descripcion obligatoriamente");
-            RuleFor(x => x.direccionoficio).NotEmpty().WithMessage("Debe Ingresar una dirección de oficio obligatoriamente");
-            RuleFor(x => x.actojuridico).NotEmpty().WithMessage("Debe Ingresar un acto jurídico obligatoriamente");
-            RuleFor(x => x.tipoprotocolo).NotEmpty().WithMessage("Debe Ingresar un tipo de protocolo obligatoriamente");
+            RuleFor(x => x.titulo).Matches("@^[A-aZ-z0-9ñáéíóú. ]*[A-aZ-z0-9ñáéíóú.]$")
+                                             .WithMessage("Debe ingresar un título válido").When(x => x.titulo != null && x.titulo != "");
+            RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe ingresar una descripción obligatoriamente");
+            RuleFor(x => x.direccionoficio).NotEmpty().WithMessage("Debe ingresar una dirección de oficio obligatoriamente");
+            RuleFor(x => x.actojuridico).NotEmpty().WithMessage("Debe ingresar un acto jurídico obligatoriamente");
+            RuleFor(x => x.tipoprotocolo).NotEmpty().WithMessage("Debe ingresar un tipo de protocolo obligatoriamente");
             //RuleFor(x => x.data).NotEmpty().WithMessage("Debe Ingresar un archivo obligatoriamente, en el primer tab");
-            RuleFor(x => x.otorgantes).Must(x => x.Count >= 1).WithMessage("Debe agregar un otorgante como minimo");
+            RuleFor(x => x.otorgantes).Must(x => x.Count >= 1).WithMessage("Debe agregar un otorgante como mínimo");
 
             RuleFor(x => x.idnotario).Must(notario => notario != null && notario != new Notario())
                 .WithMessage("Debe seleccionar un notario obligatoriamente");

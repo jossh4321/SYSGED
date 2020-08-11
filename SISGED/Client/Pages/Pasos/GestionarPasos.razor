@@ -1,0 +1,324 @@
+﻿@page "/GestionPasos"
+@layout MainLayout
+@inject HttpClient Http
+@inject IRepository repository
+@inject IJSRuntime js
+@inject ISwalFireMessage swalfire
+<style>
+    /*div.cont *{
+        color: white;
+    }*/
+    .container-c {
+        display: inline-flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        margin: 10px auto;
+    }
+
+    tr.mdc-table-header-row {
+        background-color: #1a1a1a !important;
+    }
+
+    .table-header {
+        color: white;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: inline-block
+    }
+
+    tbody {
+        background-color: #4d4d4d !important;
+    }
+
+    .table-row {
+        color: #ccc;
+        font-family: sans-serif;
+        font-size: 14px;
+        display: inline-block
+    }
+
+    .mat-success-c {
+        color: green !important;
+        border: 1px solid green !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-dark-c {
+        color: black !important;
+        border: 1px solid black !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    /*#ffd11a*/
+    .mat-warning-c {
+        color: #ffd11a !important;
+        border: 1px solid #ffd11a !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-danger-c {
+        color: #ff3333 !important;
+        border: 1px solid #ff3333 !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-danger-c2 {
+        color: #0ACD2A !important;
+        border: 1px solid #0ACD2A !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+    .mat-info-c {
+        color: #3F7CFF !important;
+        border: 1px solid #3F7CFF !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+
+        .mat-success-c:hover, .mat-danger-c:hover, .mat-info-c:hover, .mat-warning-c:hover, .mat-dark-c:hover {
+            background-color: none !important;
+            transform: scale(1.07,1.07) !important;
+        }
+
+    .button-container {
+        display: block;
+        margin: 5px;
+        flex-grow: 1;
+    }
+
+    .button-container-lvl {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+    }
+
+    .mdc-table td:last-child {
+        width: unset !important;
+    }
+
+    .head-flex {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        color: white
+    }
+
+    .pruebita {
+        width: 300px;
+        height: 200px;
+        border: 1px solid black;
+    }
+
+    .loader-block {
+        display: flex;
+        margin-top: 20px !important;
+        min-width: 800px;
+        height: 300px;
+        background-color: #4d4d4d;
+        justify-content: center;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
+<div class="container-c" style=" width: auto;">
+
+
+    <div class="head-flex">
+        <h1>Gestion de Pasos por Procesos</h1>
+        <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true" Position="@MatTooltipPosition.Left">
+            <MatFAB Icon="@MatIconNames.Add" @onclick="@abrirDialogoRegistro"></MatFAB>
+        </MatTooltip>
+    </div>
+    @if (cargatabla == true)
+    {
+        <div class="loader-block">
+            <div class="spinner-border" style="width: 7rem; height: 7rem;color:#ccc" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <MatTable Items="@listapasos" class="mat-elevation-z5" Style="width:auto">
+            <MatTableHeader>
+                <th>
+                    <span class="table-header">Expediente</span>
+                </th>
+                <th>
+                    <span class="table-header">N° Pasos</span>
+                </th>
+                <th>
+                    <span class="table-header">Funciones</span>
+                </th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>
+                    <span class="table-row">@context.nombreexpediente</span>
+                </td>
+                <td>
+                    <span class="table-row">@context.documentos.Count() Pasos Registrados</span>
+                </td>
+                <td>
+                    <div class="button-container-lvl">
+                        <div class="button-container">
+                            <MatButton Icon="@MatBlazor.MatIconNames.Edit"
+                                       Class="mat-warning-c" @onclick="@(e => abrirDialogoEdicion(context.id))" Style="width:100% !important">Modificar</MatButton>
+                        </div>
+                        <div class="button-container">
+                            <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
+                                       Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context.id))" Style="width:100% !important">Detalle</MatButton>
+                        </div>
+                    </div>
+                </td>
+            </MatTableRow>
+        </MatTable>
+    }
+
+    <MatDialog @bind-IsOpen="@dialogoRegistro">
+        <RegistrarPasos></RegistrarPasos>
+        <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
+    </MatDialog>
+    <MatDialog @bind-IsOpen="@dialogoEdicion">
+        <CascadingValue Value="this">
+            <ModificarPasos></ModificarPasos>
+            <!--ModificarCuenta listausuarios="listausuarios"
+                             cerrarDialogoModificacion="cerrarDialogoModificacion"
+                             usuariodto="usuariodto" /-->
+        </CascadingValue>
+    </MatDialog>
+    <MatDialog @bind-IsOpen="@dialogoDetalle">
+        <CascadingValue Value="this">
+            <VisualizarPasos></VisualizarPasos>
+            <!--DetalleCuenta usuariodto="usuariodto" cerrarDialogoDetalle="cerrarDialogoDetalle" /-->
+        </CascadingValue>
+    </MatDialog>
+</div>
+
+@code {
+    public List<Pasos> listapasos = new List<Pasos>();
+    public UsuarioDTO usuariodto = new UsuarioDTO();
+    private bool dialogoRegistro = false;
+    private bool dialogoEdicion = false;
+    private bool dialogoDetalle = false;
+    public string imagenTemporalMod { get; set; }
+    public bool rendermod { get; set; } = false;
+    public bool cargatabla { get; set; } = false;
+    protected override async Task OnInitializedAsync()
+    {
+        cargatabla = true;
+        var httpResponse = await repository.Get<List<Pasos>>("api/paso/get");
+        if (!httpResponse.Error)
+        {
+            listapasos = httpResponse.Response;
+            listapasos.ForEach(x => Console.WriteLine(x.id));
+        }
+        else
+        {
+            //await swalfire("Error en el servidor");
+        }
+        cargatabla = false;
+    }
+
+    public async Task abrirDialogoEdicion(string id)
+    {
+        Pasos pasos = new Pasos();
+        var httpResponse = await repository.Get<Pasos>($"api/paso/get/id?id={id}");
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Algo Mal");
+        }
+        else
+        {
+            pasos = httpResponse.Response;
+
+        }
+        /*imagenTemporalMod = usuario.datos.imagen + "";
+        usuario.datos.imagen = null;
+        usuariodto.usuario = usuario.usuario;
+        usuariodto.clave = usuario.clave;
+        usuariodto.datos = usuario.datos;
+        usuariodto.id = usuario.id;
+        usuariodto.estado = usuario.estado;
+        usuariodto.tipo = usuario.tipo;
+        usuariodto.rolid = usuario.rol;
+        rendermod = true;
+        StateHasChanged();*/
+        dialogoEdicion = true;
+    }
+    public async Task abrirDialogoDetalle(string id)
+    {
+        Pasos pasos = new Pasos();
+        var httpResponse = await repository.Get<Pasos>($"api/paso/get/id?id={id}");
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Algo Mal");
+        }
+        else
+        {
+            pasos = httpResponse.Response;
+
+        }
+        /*usuariodto.usuario = usuario.usuario;
+        usuariodto.clave = usuario.clave;
+        usuariodto.datos = usuario.datos;
+        usuariodto.id = usuario.id;
+        usuariodto.estado = usuario.estado;
+        usuariodto.rolid = usuario.rol;
+        usuariodto.tipo = usuario.tipo;*/
+        dialogoDetalle = true;
+
+    }
+
+
+
+    /*public async Task abrirNotificacionEstado(Usuario usuario)
+    {
+
+        bool estado;
+        estado = await js.InvokeAsync<bool>("SwalFireEliminacion", "Cambio de Estado de Cuenta", usuario.estado, usuario.usuario);
+        if (estado == true)
+        {
+            usuario = await cambiarEstadoUsuario(usuario);
+            string accion = usuario.estado == "activo" ? "Bloqueo" : "Desbloqueo";
+
+            listausuarios[listausuarios.FindIndex(ind => ind.id == usuario.id)] = usuario;
+            accion = usuario.estado == "activo" ? "Desbloqueo" : "Bloqueo";
+            await swalfire.successMessage($"Se {accion} la cuenta del usuario {usuario.usuario} Satisfactoriamente");
+            StateHasChanged();
+        }
+        else
+        {
+            await swalfire.warningMessage($"Proceso de Modificacion de Estado Cancelado");
+        }
+    }*/
+
+    public async Task<Usuario> cambiarEstadoUsuario(Usuario usuario)
+    {
+        var httpResponse = await repository.Put<Usuario, Usuario>("api/usuarios/estado", usuario);
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Lo sentimos, Hubo un error de coneccion");
+        }
+        else
+        {
+            Console.WriteLine("Todo Bien en el cambio");
+        }
+        return httpResponse.Response;
+    }
+    public void abrirDialogoRegistro() => dialogoRegistro = true;
+
+    public void cerrarDialogoRegistro(bool cerrar) => dialogoRegistro = cerrar;
+    public void cerrarDialogoModificacion(bool cerrar) => dialogoEdicion = cerrar;
+    public void cerrarDialogoDetalle(bool cerrar) => dialogoDetalle = cerrar;
+}

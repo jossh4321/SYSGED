@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SISGED.Shared.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,11 +7,9 @@ namespace SISGED.Shared.Models
 {
     public class CalendarEvent
     {
-        public string Subject { get; set; }
-
-        public DateTime StartDate { get; set; }
-
-        public DateTime EndDate { get; set; }
-
+        public DateTime fechaDelEvento { get; set; }
+        public string nombreCliente { get; set; }
+        public string nombreEmisor { get; set; }
+        public string tipoDocumento { get; set; }
     }
 }

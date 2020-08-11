@@ -28,5 +28,11 @@ namespace SISGED.Server.Services
             Pasos paso = await _pasos.Find(x => x.nombreexpediente == nombreexpediente).FirstAsync();
             return paso;
         }
+
+        public async Task<Pasos> GetPasosById(String idpaso)
+        {
+            Pasos paso = await _pasos.Find(x => x.id == idpaso).FirstAsync();
+            return paso;
+        }
     }
 }

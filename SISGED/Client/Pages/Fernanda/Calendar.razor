@@ -80,7 +80,8 @@
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     private List<string> idexpedientes = new List<string>();
     private List<Expediente> expedientes = new List<Expediente>();
-    private List<Derivacion> derivaciones = new List<Derivacion>();
+    private List<CalendarEvent> derivaciones = new List<CalendarEvent>();
+    private Usuario usuario;
     private int year;
     private int actualyear;
     private int month;
@@ -116,15 +117,47 @@
         months.Add(new CalendarMonth() { indexMes = 12, nombreMes = "Diciembre" });
         foreach (Expediente ex in expedientes)
         {
-            derivaciones.Add(ex.derivaciones.ElementAt(ex.derivaciones.Count - 1));
+            CalendarEvent evento = new CalendarEvent();
+            evento.nombreCliente = ex.cliente.nombre;
+            Derivacion deri = ex.derivaciones.ElementAt(ex.derivaciones.Count - 1);
+            evento.fechaDelEvento = deri.fechaderivacion;
+            await getUsuario(deri.usuarioemisor);
+            evento.nombreEmisor = usuario.datos.nombre + " " + usuario.datos.apellido;
+            evento.tipoDocumento = tipoDocumento(deri.tipo);
+
+            derivaciones.Add(evento);
         }
         UpdateCalendar();
     }
+    private string tipoDocumento(string tipo)
+    {
+        if (tipo == "SolicitudDenuncia") return "Solicitud de Denuncia";
+        if (tipo == "OficioBPN") return "Oficio de Búsqueda de Protocolos Notariales";
+        if (tipo == "SolicitudBPN")  return "Solicitud de Búsqueda de Protocolos Notariales";
+        if (tipo == "ResultadoBPN") return "Resultado de Búsqueda de Protocolos Notariales";
+        if (tipo == "SolicitudExpedicionFirma") return "Solicitud Expedicion Firma";
+        if (tipo == "OficioDesignacionNotario") return "Oficio Designación de Notario";
+        if (tipo == "ConclusionFirma") return "Conclusión de Firma";
+        if (tipo == "AperturamientoDisciplinario") return "Aperturamiento Disciplinario";
+        if (tipo == "SolicitudExpedienteNotario") return "Solicitud Expediente Notario";
+        if (tipo == "EntregaExpedienteNotario") return "Entrega Expediente Notario";
+        if (tipo == "Dictamen") return "Dictamen";
+        if (tipo == "Resolucion") return "Resolución";
+        if (tipo == "Apelacion") return "Apelación";
+        if (tipo == "SolicitudInicial") return "Solicitud Inicial";
+        return "no encontre el tipo";
+    }
 
-    public async Task getExpediente(string idExpediente)
+    private async Task getExpediente(string idExpediente)
     {
         var responseHttp = await repository.Get<Expediente>($"api/expediente/id?id={idExpediente}");
         expedientes.Add(responseHttp.Response);
+    }
+
+    private async Task getUsuario(string id_Usuario)
+    {
+        var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={id_Usuario}");
+        usuario = responseHttp.Response;
     }
 
     void SelectYear(ChangeEventArgs e)
@@ -170,9 +203,9 @@
             diaNuevo.DayNumber = i + 1;
             diaNuevo.IsEmpty = false;
             diaNuevo.Date = new DateTime(year, month, i + 1);
-            foreach (Derivacion deri in derivaciones)
+            foreach (CalendarEvent deri in derivaciones)
             {
-                if(diaNuevo.Date.ToString("dd-MM-yy") == deri.fechaderivacion.ToString("dd-MM-yy"))
+                if(diaNuevo.Date.ToString("dd-MM-yy") == deri.fechaDelEvento.ToString("dd-MM-yy"))
                 {
                     diaNuevo.Events.Add(deri);
                 }

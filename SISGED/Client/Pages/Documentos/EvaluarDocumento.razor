@@ -40,6 +40,7 @@
         margin: 20px;
         border: 2px solid #666666;
         border-radius: 5px;
+        max-width: fit-content;
     }
 
     .titulo {
@@ -436,6 +437,21 @@ else
             OpenDesaprobado = false;
             observacion = null;
             DocumentoRevisado = true;
+            workspace.expedienteseleccionado.documento.evaluacion = JsonConvert.SerializeObject(evaluacion);
+            Item itemSalida = new Item()
+            {
+                nombre = workspace.expedienteseleccionado.tipo,
+                valor = workspace.expedienteseleccionado,
+                icono = "alarm_add",
+                descripcion = ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo,
+                currentPlace = "workspace",
+                originPlace = "inputs",
+                cliente = workspace.expedienteseleccionado.cliente,
+                itemstatus = "evaluado"
+            };
+            workspace.UpdateDocRegistrado(itemSalida);
+            workspace.UpdateTools("Evaluar Documento");
+            StateHasChanged();
 
             Int32 pasoAntiguo = paso;
             paso = 4;
