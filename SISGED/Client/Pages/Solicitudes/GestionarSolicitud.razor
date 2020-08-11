@@ -260,7 +260,7 @@
                                 }
                                 @if (context.estado == "finalizado")
                                 {
-                                    <MatButton Icon="@MatIconNames.Picture_as_pdf" Class="mat-pay-c" Disabled="false" OnClick="@(() => Pagar(context.id))" Style="width:100% !important">Visualizar Documento </MatButton>
+                                    <MatButton Icon="@MatIconNames.Picture_as_pdf" Class="mat-pay-c" Disabled="false" OnClick="@(e => abrirPrevisualizacion())" Style="width:100% !important">Visualizar Documento </MatButton>
                                 }
 
 
@@ -280,6 +280,12 @@
 
     }
 </div>
+
+<MatDialog @bind-IsOpen="@dialogIsOpen_Previsualizacion">
+    @*<iframe src="@urlDocumentoFinal" style="width:100%;height:500px;" >
+    </iframe>*@
+
+</MatDialog>
 
 <MatDialog @bind-IsOpen="@dialogIsOpen_Registrar">
     <CascadingValue Value="this">
@@ -312,7 +318,7 @@
 </MatDialog>
 
 @code {
-
+    
     string TipoSolicitud;
     string TipoSolicitud2;
     string tipo_front;
@@ -322,6 +328,7 @@
     private bool dialogIsOpen_Registrar = false;
     private bool dialogIsOpen_Modificar = false;
     private bool dialogIsOpen_VerDetalles = false;
+    private bool dialogIsOpen_Previsualizacion = false;
     bool dialogIsOpen_Cancelar = false;
 
     bool Registrar_SolicDenuncia = false;
@@ -488,10 +495,16 @@
 
 
     }
+    public void abrirPrevisualizacion()
+    {
+        dialogIsOpen_Previsualizacion = true;
+
+    }
 
     public void cerrarDialogoRegistro(bool cerrar) => dialogIsOpen_Registrar = cerrar;
     public void cerrarDialogoModificacion(bool cerrar) => dialogIsOpen_Modificar = cerrar;
     public void cerrarDialogoDetalle(bool cerrar) => dialogIsOpen_VerDetalles = cerrar;
+    public void cerrarDialogoPrevisualización(bool cerrar) => dialogIsOpen_Previsualizacion  = cerrar;
 
 
 }

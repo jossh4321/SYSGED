@@ -16,15 +16,17 @@ namespace SISGED.Server.Controllers
     public class UsuariosController: ControllerBase
     {
         private readonly UsuarioService _usuarioservice;
+        private readonly BandejaService _bandejaservice;
         private readonly RolesService _roleservice;
         private readonly IFileStorage _fileStorage;
         private readonly IMapper _mapper;
         
 
-        public UsuariosController(UsuarioService usuarioservice, 
+        public UsuariosController(BandejaService bandejaservice, UsuarioService usuarioservice, 
             RolesService roleservice, IFileStorage fileStorage,
             IMapper mapper)
         {
+            _bandejaservice = bandejaservice;
             _usuarioservice = usuarioservice;
             _roleservice = roleservice;
             _fileStorage = fileStorage;
@@ -45,7 +47,14 @@ namespace SISGED.Server.Controllers
                var profileimg = Convert.FromBase64String(usuario.datos.imagen);
                usuario.datos.imagen = await _fileStorage.saveFile(profileimg,"jpg","usuarios");
             }
-            return  _usuarioservice.Post(usuario);
+
+            Usuario objetousuario = _usuarioservice.Post(usuario);
+            if (objetousuario.tipo != "cliente")
+            {
+                _bandejaservice.InsertarBandeja(objetousuario.tipo, objetousuario.id);
+            }
+
+            return objetousuario;
         }
         [HttpGet("roles")]
         public ActionResult<List<Rol>> GetRoles()

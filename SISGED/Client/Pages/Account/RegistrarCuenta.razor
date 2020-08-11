@@ -58,7 +58,7 @@
     }
 
     .mdc-select__selected-text {
-        min-width: 350px!important;
+        min-width: 350px !important;
     }
 </style>
 <MatCard>
@@ -66,7 +66,7 @@
 
         @if (carga == true)
         {
-        <LoaderContent accion="Registro de Usuarios"></LoaderContent>
+            <LoaderContent accion="Registro de Usuarios"></LoaderContent>
         }
         else
         {
@@ -112,9 +112,10 @@
                             <MatSelect Label="Seleccione el rol del usuario" @bind-Value="@usuariodto.rolid" Class="text-field-style disabled-field">
                                 <MatOptionString Class="option-color" Disabled="true" Value="nulo"></MatOptionString>
                                 @foreach (Rol rol in listaroles)
-                                    {
-                                        <MatOptionString Class="option-color" Disabled="true" Value="@rol.id">@rol.label</MatOptionString>
-                                    }
+                                {
+                                    string AAA = rol.id + ";" + rol.label;
+                                        <MatOptionString Class="option-color" Disabled="true" Value="@AAA">@rol.label</MatOptionString>
+                                }
                             </MatSelect>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
@@ -125,7 +126,7 @@
                                 <span>Correcto</span>
                             </div>
                         </div>
-                        </MatTab>
+                    </MatTab>
 
                     <MatTab Label="Datos">
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.nombre)">
@@ -188,7 +189,7 @@
 
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.fechanacimiento)">
                             <MatDatePicker @bind-Value="@usuariodto.datos.fechanacimiento" Format="MM/dd/yyyy" Class="text-field-style" Label="Fecha Nacimiento"
-                                          @oninput='@(e => KeyUp(e,"fechanacimiento",usuariodto.datos))'></MatDatePicker>
+                                           @oninput='@(e => KeyUp(e,"fechanacimiento",usuariodto.datos))'></MatDatePicker>
 
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
@@ -303,12 +304,23 @@
         carga = true;
         Console.WriteLine("Todo Bien");
         Usuario usuario = new Usuario();
-        usuario.tipo = "A";
+
         usuario.usuario = usuariodto.usuario;
         usuario.clave = usuariodto.clave;
         usuario.estado = "activo";
         usuario.datos = usuariodto.datos;
-        usuario.rol = usuariodto.rolid;
+
+        string[] dataforrol = usuariodto.rolid.Split(';');
+        usuario.rol = dataforrol[0];
+        if (dataforrol[1] == "Cliente")
+        {
+            usuario.tipo = "cliente";
+        }
+        else
+        {
+            usuario.tipo = "administrador";
+        }
+
 
         var httpResponse = await repository.Post<Usuario, Usuario>("api/usuarios", usuario);
         if (httpResponse.Error)

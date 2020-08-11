@@ -20,7 +20,7 @@ namespace SISGED.Shared.Entities
 
         public string estado { get; set; }
 
-        public  string rolid { get; set; } 
+        public string rolid { get; set; } 
     }
 
 
