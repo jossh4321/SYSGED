@@ -368,7 +368,7 @@
 
                 tool.currentPlace = newCurrentPlace;
                 sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
-                //tool.itemstatus = "InSpace";
+                tool.itemstatus = "InSpace";
                 StateHasChanged();
             }
         }
