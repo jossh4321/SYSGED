@@ -11,7 +11,7 @@ namespace SISGED.Shared.Validators.PasosValidator
     {
         public PasosValidator()
         {
-            RuleFor(x => x.nombreexpediente).NotEmpty().WithMessage("Debe Ingresar un Nombre del expediente obligatoriamente");
+            RuleFor(x => x.nombreexpediente).NotEmpty().WithMessage("Debe ingresar un nombre del expediente obligatoriamente");
             RuleForEach(x => x.documentos).SetValidator(new DocumentosPasosValidator());
         }
     }
@@ -20,7 +20,7 @@ namespace SISGED.Shared.Validators.PasosValidator
     {
         public DocumentosPasosValidator()
         {
-            RuleFor(x => x.tipo).NotEmpty().WithMessage("Debe Ingresar un Nombre del Documento obligatoriamente");
+            RuleFor(x => x.tipo).NotEmpty().WithMessage("Debe ingresar un nombre del documento obligatoriamente");
             RuleForEach(x => x.pasos).SetValidator(new SubPasosValidator());
         }
     }
@@ -28,9 +28,9 @@ namespace SISGED.Shared.Validators.PasosValidator
     {
         public SubPasosValidator()
         {
-            RuleFor(x => x.nombre).NotEmpty().WithMessage("Debe Ingresar un Nombre del Paso obligatoriamente");
-            RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe Ingresar una Descripcion del Paso obligatoriamente");
-            RuleFor(x => x.dias).NotEmpty().WithMessage("Debe Ingresar una cantidad de Dias Obligatoriamente");
+            RuleFor(x => x.nombre).NotEmpty().WithMessage("Debe ingresar un nombre del paso obligatoriamente");
+            RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe ingresar una descripcion del paso obligatoriamente");
+            RuleFor(x => x.dias).NotEmpty().WithMessage("Debe ingresar una cantidad de días obligatoriamente");
         }
     }
 }
