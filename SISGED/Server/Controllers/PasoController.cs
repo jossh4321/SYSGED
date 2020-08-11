@@ -26,5 +26,13 @@ namespace SISGED.Server.Controllers
             pasos = await pasoService.GetPasos();
             return pasos;
         }
+
+        [HttpGet("get/id")]
+        public async Task<ActionResult<Pasos>> GetPasosById([FromQuery] string id)
+        {
+            Pasos pasos = new Pasos(); ;
+            pasos = await pasoService.GetPasosById(id);
+            return pasos;
+        }
     }
 }

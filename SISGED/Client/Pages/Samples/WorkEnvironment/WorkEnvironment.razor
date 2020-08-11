@@ -441,9 +441,9 @@ pasoDTO.paso = paso;
 pasoDTO.subpaso = subpaso;
 pasoDTO.tipodocumento = tipodocumento;
 pasoDTO.idexpediente = asistente.idexpediente;
-pasoDTO.fechainicio = DateTime.UtcNow.AddHours(-5).ToString();
-pasoDTO.fechafin = "";
-pasoDTO.fechalimite = DateTime.UtcNow.AddHours(-5).AddDays(dias).ToString();
+pasoDTO.fechainicio = DateTime.UtcNow.AddHours(-5);
+pasoDTO.fechafin = null;
+pasoDTO.fechalimite = DateTime.UtcNow.AddHours(-5).AddDays(dias);
 
 asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechainicio = pasoDTO.fechainicio;
 asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechalimite = pasoDTO.fechalimite;
@@ -457,7 +457,7 @@ var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/upda
 public async Task<String> UpdateSolicitudInitial(Int32 paso, Int32 subpaso, String tipodocumento, String nombreExpediente, Int32 pasoAntiguo)
 {
 String messageCambio = "";
-asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(pasoAntiguo).fechafin = DateTime.UtcNow.AddHours(-5).ToString();
+asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(pasoAntiguo).fechafin = DateTime.UtcNow.AddHours(-5);
 asistente.paso = paso;
 asistente.subpaso = subpaso;
 asistente.tipodocumento = tipodocumento;
@@ -500,7 +500,7 @@ pasoDTO.paso = paso;
 pasoDTO.subpaso = subpaso;
 pasoDTO.tipodocumento = tipodocumento;
 pasoDTO.idexpediente = asistente.idexpediente;
-pasoDTO.fechafin = DateTime.UtcNow.AddHours(-5).ToString();
+pasoDTO.fechafin = DateTime.UtcNow.AddHours(-5);
 pasoDTO.pasoantiguo = pasoantiguo;
 pasoDTO.tipodocumentoAntiguo = tipoDocumentoAntiguo;
 
