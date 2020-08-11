@@ -16,15 +16,29 @@
     div.output {
         flex-grow: 1;
         text-align: center;
-        overflow: auto;
+        overflow-y: scroll;
     }
 
+    div.tools {
+        border-top: 0px;
+        flex-grow: 1;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll !important;
+    }
+    .container-ot > div {
+        flex: 1;
+        display: flex;
+        
+    }
     .container-ot {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
-        height: inherit;
+        /**/
+        max-height: 100%;
     }
 
     div.workspace {
@@ -37,13 +51,7 @@
         flex-direction: column;
     }
 
-    div.tools {
-        border-top: 0px;
-        flex-grow: 1;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-    }
+  
 
     .common-box-style {
         border: 3px solid #808080;
@@ -104,8 +112,8 @@
         flex-basis: 100%;
         max-height: 100%;
         min-height: 100%;
-        overflow-y: auto;
-        overflow-x: hidden;
+      /*  overflow-y: auto;
+        overflow-x: hidden;*/
     }
 
     .div-view {
@@ -212,7 +220,7 @@
                 </DraggableList>
             </div>
             <div class="container-ot">
-                <div class="output common-box-style">
+                <div class="tools common-box-style">
                     <div class="box-title-style">
                         <span>Bandeja de Salida</span>
                     </div>
