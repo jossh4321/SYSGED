@@ -297,7 +297,7 @@
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
         List<DocumentoADTO2> lista = new List<DocumentoADTO2>();
-        var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes2/70477724");
+        var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes3/70477724");
         if (!httpResponse.Error)
         {
             Console.WriteLine(httpResponse.Response);
@@ -382,6 +382,7 @@
 
                 Console.WriteLine("Es de la  entrada papu");
                 Console.WriteLine(" Cambiando de " + tool.currentPlace+" a "+ newCurrentPlace);
+                
                 await GetAsistenteByExpedientId(expedienteseleccionado.idexpediente);
 
 
