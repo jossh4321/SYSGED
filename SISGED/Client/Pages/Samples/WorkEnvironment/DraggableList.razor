@@ -72,7 +72,7 @@
         }
         else if (place == "inputs")
         {
-            //Console.WriteLine("Parameter ToolList");
+            Console.WriteLine("On Parameter Set -> place = inputs");
             listaentradas.Clear();
             listaentradas.AddRange(sesion.listaentradas.
             Where(x => x.currentPlace == place));
@@ -81,6 +81,7 @@
         if (place == "workspace")
         {
             //Console.WriteLine("Parameter ToolList");
+            Console.WriteLine("On Parameter Set -> place = workspace");
             listaherramientas.Clear();
             listaherramientas.AddRange(sesion.herramientasutilizables.
             Where(x => x.currentPlace == place));

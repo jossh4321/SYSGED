@@ -3,7 +3,8 @@
 <style>
     .card-content-padding {
         padding: 15px;
-        width: 400px;
+        width: 550px;
+        background-color: #f2f2f2;
     }
 
     .field-container {
@@ -60,177 +61,132 @@
     .mdc-select__selected-text {
         min-width: 350px !important;
     }
+    div.mdc-dialog__surface{
+        border-radius:5px 5px 5px 5px !important;
+    }
 </style>
-<MatCard>
-    <MatCardContent Class="card-content-padding">
+<div>
+    <MatCard>
+        <MatCardContent Class="card-content-padding">
 
-        @if (carga == true)
-        {
-            <LoaderContent accion="Registro de Usuarios"></LoaderContent>
-        }
-        else
-        {
-            <MatHeadline6 Style="text-align:center">
-                Registro de Usuario
+            @if (carga == true)
+            {
+                <LoaderContent accion="Registro de Usuarios"></LoaderContent>
+            }
+            else
+            {
+                <MatHeadline6 Style="text-align:center">
+                    Registro de Usuario
 
-            </MatHeadline6>
+                </MatHeadline6>
 
-            <EditForm EditContext="@_editContext" Context="CurrentEditContext"
-                      OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
-                <FluentValidator></FluentValidator>
-                <MatTabGroup>
-                    <MatTab Label="Credenciales">
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.usuario)">
-                            <MatTextField @bind-Value="@usuariodto.usuario" Class="text-field-style"
-                                          Label="Nombre del Expediente" @oninput='@(e => KeyUp(e,"usuario",usuariodto))'></MatTextField>
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.usuario)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                <span>Correcto</span>
-                            </div>
+                <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                          OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+                    <FluentValidator></FluentValidator>
+
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => pasos.nombreexpediente)">
+                        <MatTextField @bind-Value="@pasos.nombreexpediente" Class="text-field-style"
+                                      Label="Nombre del Expediente" @oninput='@(e => KeyUp(e,"nombreexpediente",pasos))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                            <ValidationMessage For="@(() => pasos.nombreexpediente)" />
                         </div>
-                    </MatTab>
-
-                    <MatTab Label="Datos">
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.nombre)">
-                            <MatTextField @bind-Value="@usuariodto.datos.nombre" Class="text-field-style" Label="Nombre"
-                                          @oninput='@(e => KeyUp(e,"nombre",usuariodto.datos))'></MatTextField>
-
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.datos.nombre)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                <span>Correcto</span>
-                            </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                            <span>Correcto</span>
                         </div>
+                    </div>
 
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.apellido)">
-                            <MatTextField @bind-Value="@usuariodto.datos.apellido" Class="text-field-style" Label="Apellido"
-                                          @oninput='@(e => KeyUp(e,"apellido",usuariodto.datos))'></MatTextField>
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.datos.apellido)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                <span>Correcto</span>
-                            </div>
-                        </div>
+                    <div class="head-flex">
+                        <h3 style="color:black">Gestion de Documento de Paso</h3>
+                        <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true" Position="@MatTooltipPosition.Left">
+                            <MatFAB Icon="@MatIconNames.Add" type="button" @onclick="@abrirDialogoRegistroPasos"></MatFAB>
+                        </MatTooltip>
+                    </div>
 
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.tipodocumento)">
-                            <MatSelect Label="Tipo de documento" @bind-Value="@usuariodto.datos.tipodocumento">
-                                <MatOptionString Class="option-color" Value="nulo"></MatOptionString>
-                                <MatOptionString Class="option-color" Value="CE">Carnet de Extranjeria</MatOptionString>
-                                <MatOptionString Class="option-color" Value="DNI">D.N.I.</MatOptionString>
-                                <MatOptionString Class="option-color" Value="pasaporte">Pasaporte</MatOptionString>
-                            </MatSelect>
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.datos.tipodocumento)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                <span>Correcto</span>
-                            </div>
-                        </div>
+                    <MatTable Items="@pasos.documentos" class="mat-elevation-z5" Style="width:auto">
+                        <MatTableHeader>
+                            <th>
+                                <span class="table-header">Tipo de Solicitud</span>
+                            </th>
+                            <th>
+                                <span class="table-header">Pasos Registrados</span>
+                            </th>
+                            <th>
+                                <span class="table-header">Funciones</span>
+                            </th>
+                        </MatTableHeader>
+                        <MatTableRow>
+                            <td>
+                                <span class="table-row">@context.tipo</span>
+                            </td>
+                            <td>
+                                <span class="table-row">@context.pasos.Count() Pasos Registrados</span>
+                            </td>
+                            <td>
+                                <div class="button-container-lvl">
+                                    <div class="button-container">
+                                        <MatButton Icon="@MatBlazor.MatIconNames.Edit"
+                                                   Class="mat-warning-c" @onclick="@(e => AbrirDialogoEdicionPaso(context.indice))" Style="width:100% !important">Modificar</MatButton>
+                                    </div>
+                                    <div class="button-container">
+                                        <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
+                                                   Class="mat-info-c" @onclick="@(e => eliminar(context.indice))" Style="width:100% !important">Eliminar</MatButton>
+                                    </div>
+                                </div>
+                            </td>
+                        </MatTableRow>
+                    </MatTable>
 
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.numerodocumento)">
-                            <MatTextField @bind-Value="@usuariodto.datos.numerodocumento" Class="text-field-style" Label="Numero de Documento"
-                                          @oninput='@(e => KeyUp(e,"numerodocumento",usuariodto.datos))'></MatTextField>
+                </EditForm>
+            }
 
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.datos.numerodocumento)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                <span>Correcto</span>
-                            </div>
-                        </div>
+        </MatCardContent>
 
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.fechanacimiento)">
-                            <MatDatePicker @bind-Value="@usuariodto.datos.fechanacimiento" Format="MM/dd/yyyy" Class="text-field-style" Label="Fecha Nacimiento"
-                                           @oninput='@(e => KeyUp(e,"fechanacimiento",usuariodto.datos))'></MatDatePicker>
 
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.datos.fechanacimiento)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                <span>Correcto</span>
-                            </div>
-                        </div>
-
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.direccion)">
-                            <MatTextField @bind-Value="@usuariodto.datos.direccion" Class="text-field-style" Label="Direccion"
-                                          @oninput='@(e => KeyUp(e,"direccion",usuariodto.datos))'></MatTextField>
-
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.datos.direccion)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                <span>Correcto</span>
-                            </div>
-                        </div>
-
-                        <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.datos.email)">
-                            <MatTextField @bind-Value="@usuariodto.datos.email" Class="text-field-style" Label="Email"
-                                          @oninput='@(e => KeyUp(e,"email",usuariodto.datos))'></MatTextField>
-
-                            <div class="incorrecto">
-                                <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                                <ValidationMessage For="@(() => usuariodto.datos.email)" />
-                            </div>
-                            <div class="correcto">
-                                <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
-                                <span>Correcto</span>
-                            </div>
-                        </div>
-                        <div class="field-container">
-                            <InputImg Label="Foto" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@imagenTemporal"></InputImg>
-                        </div>
-                        <div class="field-container">
-                            <MatButton type="submit"
-                                       Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                                       Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                        </div>
-                    </MatTab>
-                </MatTabGroup>
-            </EditForm>
-        }
-    </MatCardContent>
-</MatCard>
+    </MatCard>
+    <MatDialog @bind-IsOpen="@dialogoRegistroPasos">
+        <h1>Hola</h1>
+        <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
+    </MatDialog>
+</div>
 @code{
     //public Usuario2 usuario2 = new Usuario2();
-    private UsuarioDTO usuariodto = new UsuarioDTO();
+    private PasosDTO2 pasos = new PasosDTO2();
     private List<Rol> listaroles = new List<Rol>();
     private EditContext _editContext;
     private bool carga = false;
+    public bool dialogoRegistroPasos = false;
 
     // [Parameter] public bool dialogoRegistro { get; set; }
     [Parameter] public List<Usuario> listausuarios { get; set; }
     [Parameter] public EventCallback<bool> cerrarDialogoRegistro { get; set; }
     private string imagenTemporal { get; set; } = null;
 
+    public void addDocumento()
+    {
+        Console.WriteLine("Agregando Documento");
+    }
+
+    public void abrirDialogoRegistroPasos()
+    {
+        dialogoRegistroPasos = true;
+    }
+    public void AbrirDialogoEdicionPaso(int indice)
+    {
+
+    }
+
+    public void eliminar(int indice)
+    {
+
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
-        _editContext = new EditContext(usuariodto);
-        await getRoles();
-        imagenTemporal = "";
-        if (!string.IsNullOrWhiteSpace(usuariodto.datos.imagen))
-        {
-            imagenTemporal = usuariodto.datos.imagen;
-            usuariodto.datos.imagen = null;
-        }
+        _editContext = new EditContext(pasos);
     }
     public async Task getRoles()
     {
@@ -245,10 +201,7 @@
 
         }
     }
-    public void ImagenSeleccionada(string image)
-    {
-        usuariodto.datos.imagen = image;
-    }
+
 
     void doSomething(ChangeEventArgs e)
     {
@@ -267,35 +220,7 @@
     }
     public async Task handleValidSubmit()
     {
-        carga = true;
-        Console.WriteLine("Todo Bien");
-        Usuario usuario = new Usuario();
-        usuario.tipo = "A";
-        usuario.usuario = usuariodto.usuario;
-        usuario.clave = usuariodto.clave;
-        usuario.estado = "activo";
-        usuario.datos = usuariodto.datos;
-        usuario.rol = usuariodto.rolid;
 
-        var httpResponse = await repository.Post<Usuario, Usuario>("api/usuarios", usuario);
-        if (httpResponse.Error)
-        {
-            await swalfire.errorMessage("Error en el servidor");
-        }
-        else
-        {
-            listausuarios.Add(httpResponse.Response);
-
-
-            usuariodto = new UsuarioDTO();
-            _editContext = new EditContext(usuariodto);
-            _editContext.MarkAsUnmodified();
-            _editContext.NotifyValidationStateChanged();
-
-            StateHasChanged();
-            carga = false;
-            await cerrarDialogoRegistro.InvokeAsync(false);
-        }
         await swalfire.successMessage("Usuario Registrado Correctamente");
     }
 
