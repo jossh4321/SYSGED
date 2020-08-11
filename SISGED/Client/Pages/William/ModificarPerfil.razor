@@ -6,8 +6,8 @@
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
-        background-color: #BDECB6;
-        flex-basis: 100%;
+        background-color: #404040;
+       /* flex-basis: 100%;*/
         border-radius: 2px 2px 1px 1px;
         width: 80%;
         heigth: 4px;
@@ -101,14 +101,22 @@
         margin-top: 5px;
         color: #FFFFFF;
     }
+    .demo-mat-card {
+        max-width: 500px;
+        padding: 0 10px 0 10px;
+    }
+    .mdc-tab__ripple {
+        background-color: #FAF3F3;
+    }
+
 </style>
 <div class="div-form">
 
-    <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+    <EditForm EditContext="@_editContext" Context="CurrentEditContext" Class="demo-mat-card"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
         <MatTabGroup>
-            <MatTab Label="Informacion  de  Usuario ">
+            <MatTab Label="Información  de  Usuario ">
 
 
                 
