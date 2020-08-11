@@ -1929,6 +1929,153 @@ namespace SISGED.Server.Services
             return expedientes;
         }
 
+        public async Task<List<DocumentoADTO2>> ObtenerSolicitudesUsuario3(string numerodocumento)
+        {
+
+            var filtroNumeroDocumento = Builders<Expediente>.Filter.Eq("cliente.numerodocumento", numerodocumento);
+
+            var proyeccionInicial = new BsonDocument("$project",
+                                        new BsonDocument
+                                            {
+                                                { "_id", "$_id" },
+                                                { "tipo", "$tipo" },
+                                                { "documentoinicial",
+                                        new BsonDocument("$arrayElemAt",
+                                        new BsonArray
+                                                    {
+                                                        "$documentos",
+                                                        0
+                                                    }) },
+                                                { "documentofinal",
+                                        new BsonDocument("$arrayElemAt",
+                                        new BsonArray
+                                                    {
+                                                        "$documentos",
+                                                        -1
+                                                    }) }
+                                            });
+
+            var lookup1 = new BsonDocument("$lookup",
+                new BsonDocument
+                    {
+                        { "from", "documentos" },
+                        { "let",
+                new BsonDocument("iddoc", "$documentoinicial.iddocumento") },
+                        { "pipeline",
+                new BsonArray
+                        {
+                            new BsonDocument("$match",
+                            new BsonDocument("$expr",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                        {
+                                            "$_id",
+                                            new BsonDocument("$toObjectId", "$$iddoc")
+                                        })))
+                        } },
+                        { "as", "documentoInicialOriginal" }
+                    });
+
+            var lookup2 = new BsonDocument("$lookup",
+                            new BsonDocument
+                                {
+                                    { "from", "documentos" },
+                                    { "let",
+                            new BsonDocument("iddoc", "$documentofinal.iddocumento") },
+                                    { "pipeline",
+                            new BsonArray
+                                    {
+                                        new BsonDocument("$match",
+                                        new BsonDocument("$expr",
+                                        new BsonDocument("$eq",
+                                        new BsonArray
+                                                    {
+                                                        "$_id",
+                                                        new BsonDocument("$toObjectId", "$$iddoc")
+                                                    })))
+                                    } },
+                                    { "as", "documentoFinalOriginal" }
+                                });
+
+            var lookup3 = new BsonDocument("$lookup",
+                            new BsonDocument
+                                {
+                                    { "from", "escrituraspublicas" },
+                                    { "let",
+                            new BsonDocument("idescpub", "$documentoFinalOriginal.contenido.idescriturapublica") },
+                                    { "pipeline",
+                            new BsonArray
+                                    {
+                                        new BsonDocument("$match",
+                                        new BsonDocument("$expr",
+                                        new BsonDocument("$eq",
+                                        new BsonArray
+                                                    {
+                                                        "$_id",
+                                                        new BsonDocument("$toObjectId", "$$idescpub")
+                                                    })))
+                                    } },
+                                    { "as", "escriturapublica" }
+                                });
+
+            var proyeccionFinal = new BsonDocument("$project",
+                                    new BsonDocument
+                                        {
+                                            { "_id", "$documentoInicialOriginal._id" },
+                                            { "tipo",
+                                    new BsonDocument("$cond",
+                                    new BsonArray
+                                                {
+                                                    new BsonDocument("$eq",
+                                                    new BsonArray
+                                                        {
+                                                            "$tipo",
+                                                            "Solicitud"
+                                                        }),
+                                                    "Solicitud Inicial",
+                                                    "$tipo"
+                                                }) },
+                                            { "estado", "$documentoInicialOriginal.estado" },
+                                            { "contenido", "$documentoInicialOriginal.contenido" },
+                                            { "urlanexo", "$documentoInicialOriginal.urlanexo" },
+                                            { "historialcontenido", "$documentoInicialOriginal.historialcontenido" },
+                                            { "historialproceso", "$documentoInicialOriginal.historialproceso" },
+                                            { "urlexpediente",
+                                    new BsonDocument("$cond",
+                                    new BsonArray
+                                                {
+                                                    new BsonDocument("$eq",
+                                                    new BsonArray
+                                                        {
+                                                            new BsonDocument("$size", "$escriturapublica"),
+                                                            0
+                                                        }),
+                                                    "ninguno",
+                                                    new BsonDocument("$arrayElemAt",
+                                                    new BsonArray
+                                                        {
+                                                            "$escriturapublica.url",
+                                                            0
+                                                        })
+                                                }) }
+                                        });
+
+
+            List<DocumentoADTO2> expedientes = await _expedientes.Aggregate()
+                                        .Match(filtroNumeroDocumento)
+                                        .AppendStage<DocumentoUsuarioDTO2>(proyeccionInicial)
+                                        .AppendStage<DocumentoUsuarioDTO2_lk1>(lookup1)
+                                        .Unwind<DocumentoUsuarioDTO2_lk1, DocumentoUsuarioDTO2_uw1>(t => t.documentoInicialOriginal)
+                                        .AppendStage<DocumentoUsuarioDTO2_lk2>(lookup2)
+                                         .Unwind<DocumentoUsuarioDTO2_lk2, DocumentoUsuarioDTO2_uw2>(t => t.documentoFinalOriginal)
+                                        .AppendStage<DocumentoUsuarioDTO2_lk3>(lookup3)
+                                        .AppendStage<DocumentoADTO2>(proyeccionFinal)
+                                        .ToListAsync();
+
+            return expedientes;
+        }
+
+
         public async Task<List<StatisticsDTOR>> estadisticasDocXMesXArea(int mes, string area)
         {
            var match1= new BsonDocument("$match",

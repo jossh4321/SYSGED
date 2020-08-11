@@ -29,7 +29,7 @@
             else
             {
                 <p class="tool-client-name">@herramienta.cliente.nombre  -  @herramienta.cliente.numerodocumento </p>
-
+                ExpedienteBandejaDTO doc = (ExpedienteBandejaDTO)herramienta.valor;
                 if ((herramienta.itemstatus.Equals("registrado") || herramienta.itemstatus.Equals("evaluado")) && herramienta.originPlace.Equals("inputs"))
                 {
                     ExpedienteBandejaDTO documento = (ExpedienteBandejaDTO)herramienta.valor;
@@ -51,6 +51,18 @@
                         }
                     </div>
                 }
+
+                if (workSpace.escrituraPublicaseleccionada != null)
+                {
+                    if (doc.documento.tipo == "OficioDesignacionNotario" || doc.documento.tipo == "ConclusionFirma" ||
+                        doc.documento.tipo == "OficioBPN" || doc.documento.tipo == "ResultadoBPN")
+                    {
+                        <div class="field-container">
+                            <a class="mat-info-c" style="padding:10px" @onclick="@(() => mostrarEscrituraPublica())"
+                               href="@workSpace.escrituraPublicaseleccionada.url" target="_blank">Visualizar Escritura Publica</a>
+                        </div>
+                    }
+                }
                 /*if ()
                 {
 
@@ -69,5 +81,10 @@
     private void HandleDragStart(Item tool)
     {
         workSpace.currentItemDragged = tool;
+    }
+
+    public async Task mostrarEscrituraPublica()
+    {
+        Console.WriteLine("Visualizando la escritura publica");
     }
 }
