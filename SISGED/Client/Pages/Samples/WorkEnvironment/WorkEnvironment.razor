@@ -198,7 +198,7 @@
         <span>Área de Trabajo Especializada - Usuario: @sesion.usuario.datos.nombre @sesion.usuario.datos.apellido </span>
     </div>
     <CascadingValue Value="this">
-        <div class="wfe-container">
+        <dBiv class="wfe-container">
             <div class="input common-box-style">
                 <div class="box-title-style">
                     <span>Bandeja de Entrada</span>
@@ -237,7 +237,7 @@
                 </div>
             </div>
             <VirtualMessage message="@messageSend"></VirtualMessage>
-        </div>
+        </dBiv>
     </CascadingValue>
     @if (expedienteseleccionado != null)
     {
@@ -268,7 +268,7 @@
     }
 
 </div>
-@code {
+@code{
     [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
     public List<Item> listaherramientas = new List<Item>();
     public bool abrirDialogo = false;
@@ -478,9 +478,9 @@
         pasoDTO.subpaso = subpaso;
         pasoDTO.tipodocumento = tipodocumento;
         pasoDTO.idexpediente = asistente.idexpediente;
-        pasoDTO.fechainicio = DateTime.UtcNow.AddHours(-5).ToString();
-        pasoDTO.fechafin = "";
-        pasoDTO.fechalimite = DateTime.UtcNow.AddHours(-5).AddDays(dias).ToString();
+        pasoDTO.fechainicio = DateTime.UtcNow.AddHours(-5);
+        pasoDTO.fechafin = null;
+        pasoDTO.fechalimite = DateTime.UtcNow.AddHours(-5).AddDays(dias);
 
         asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechainicio = pasoDTO.fechainicio;
         asistente.pasos.documentos.Find(x => x.tipo == tipodocumento).pasos.ElementAt(paso).fechalimite = pasoDTO.fechalimite;
@@ -494,7 +494,7 @@
     public async Task<String> UpdateSolicitudInitial(Int32 paso, Int32 subpaso, String tipodocumento, String nombreExpediente, Int32 pasoAntiguo)
     {
         String messageCambio = "";
-        asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(pasoAntiguo).fechafin = DateTime.UtcNow.AddHours(-5).ToString();
+        asistente.pasos.documentos.Find(x => x.tipo == asistente.tipodocumento).pasos.ElementAt(pasoAntiguo).fechafin = DateTime.UtcNow.AddHours(-5);
         asistente.paso = paso;
         asistente.subpaso = subpaso;
         asistente.tipodocumento = tipodocumento;
@@ -537,7 +537,7 @@
         pasoDTO.subpaso = subpaso;
         pasoDTO.tipodocumento = tipodocumento;
         pasoDTO.idexpediente = asistente.idexpediente;
-        pasoDTO.fechafin = DateTime.UtcNow.AddHours(-5).ToString();
+        pasoDTO.fechafin = DateTime.UtcNow.AddHours(-5);
         pasoDTO.pasoantiguo = pasoantiguo;
         pasoDTO.tipodocumentoAntiguo = tipoDocumentoAntiguo;
 
@@ -549,3 +549,4 @@
         var httpResponse = await repository.Put<Asistente, PasoDTO>($"api/Asistente/updateFinally", pasoDTO);
     }
 }
+
