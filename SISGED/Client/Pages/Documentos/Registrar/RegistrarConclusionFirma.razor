@@ -222,7 +222,7 @@
     private bool loadprocess = false;
     public List<EscrituraPublica> escriturapublicasseleccionados = new List<EscrituraPublica>();
     public EscrituraPublica escriturapublicaselect;
-    int paso = 0;
+    int paso = 1;
     int subpaso = 0;
     String typeDocument = "ConclusionFirma";
 
@@ -294,7 +294,7 @@
                 conclusionFirma.contenidoDTO.Urlanexo = null;
             }
         }
-
+        StateHasChanged();
         subpaso = 1;
         //Enviar paso=0,subpaso=1,idexp
         String message = "";
@@ -305,9 +305,11 @@
         }
         else
         {
+            Console.WriteLine("He llegado al conclusión de firma");
+
             message = workspace.asistente.pasos.documentos.Find(x => x.tipo == workspace.asistente.tipodocumento).pasos.ElementAt(paso).subpaso.ElementAt(subpaso).descripcion;
 
-            await workspace.UpdatePasoAndSubPasoNormal(paso, subpaso, workspace.expedienteseleccionado.documento.tipo);
+            await workspace.UpdatePasoAndSubPaso(paso, subpaso, workspace.asistente.tipodocumento);
         }
 
         Task voiceMessage = workspace.VoiceMessage(message);
@@ -315,9 +317,6 @@
         workspace.ChangeMessage(message);
 
         await voiceMessage;
-
-        StateHasChanged();
-
 
     }
 
@@ -403,7 +402,7 @@
             subpaso = 2;
             //Enviar paso=0,subpaso=2,idexp
             Int32 pasoAntiguo = paso;
-            paso = 1;
+            paso = 2;
             subpaso = 0;
             //Enviar paso=0+0,subpaso=2,idexpediente
             String tipodocumentoantiguo = workspace.asistente.tipodocumento;

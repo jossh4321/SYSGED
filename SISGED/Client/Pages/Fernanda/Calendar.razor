@@ -1,0 +1,225 @@
+﻿@inject IRepository repository
+
+<style>
+    .entradasSelect {
+        display: block !important;
+        width: 110px !important;
+        padding: 3px !important;
+        margin: 10px 0;
+        border: 1px solid #3b3a39 !important;
+    }
+    .entradasSelect:focus {
+        outline: none;
+        border: 2px dashed #0078d4;
+    }
+
+</style>
+<div class="calendar">
+    <div class="row">
+        <div class="col-sm-12 col-lg-2">
+            <select name="" id="" class="entradasSelect" @onchange="SelectYear">
+                @for (int i = actualyear-2; i < actualyear + 1; i++)
+                {
+                    @if(i  == actualyear)
+                    {
+                        <option selected>@i</option>
+                    }
+                    else
+                    {
+                        <option>@i</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-sm-12 col-lg-2">
+            <select name="" id="" class="entradasSelect" @onchange="SelectMonth">
+                @foreach (CalendarMonth I in months)
+                {
+                    @if (I.indexMes == actualmonth)
+                    {
+                        <option value="@I.indexMes" selected>@I.nombreMes</option>
+                    }
+                    else
+                    {
+                        <option value="@I.indexMes">@I.nombreMes</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+    <table class="calendar-table">
+        <thead>
+            <tr>
+                <td>Dom</td>
+                <td>Lun</td>
+                <td>Mar</td>
+                <td>Mie</td>
+                <td>Jue</td>
+                <td>Vie</td>
+                <td>Sab</td>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int r = 0; r < rowsCount; r++)
+             {
+                <tr>
+                    @foreach (var item in days.Skip(r * 7).Take(7))
+                    {
+                        <td>@DayTemplate(item)</td>
+                    }
+                </tr>
+             }
+        </tbody>
+    </table>
+</div>
+@code {
+    [Parameter]
+    public RenderFragment<CalendarDay> DayTemplate { get; set; }
+    private List<CalendarDay> days = new List<CalendarDay>();
+    private List<CalendarMonth> months = new List<CalendarMonth>();
+    [CascadingParameter(Name = "SesionUsuario")] protected Sesion sesion { get; set; }
+    private List<string> idexpedientes = new List<string>();
+    private List<Expediente> expedientes = new List<Expediente>();
+    private List<CalendarEvent> derivaciones = new List<CalendarEvent>();
+    private Usuario usuario;
+    private int year;
+    private int actualyear;
+    private int month;
+    private int actualmonth;
+    private int rowsCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        foreach(Item i in sesion.listaentradas)
+        {
+            ExpedienteBandejaDTO expedienteEntrada = (ExpedienteBandejaDTO)i.valor;
+            idexpedientes.Add(expedienteEntrada.idexpediente);
+        }
+        foreach(string o in idexpedientes)
+        {
+            await getExpediente(o);
+        }
+        actualmonth = Convert.ToInt32(DateTime.Now.Month.ToString());
+        actualyear = Convert.ToInt32(DateTime.Now.Year.ToString());
+        year = actualyear;
+        month = actualmonth;
+        months.Add(new CalendarMonth() {indexMes = 1, nombreMes ="Enero"});
+        months.Add(new CalendarMonth() { indexMes = 2, nombreMes = "Febrero" });
+        months.Add(new CalendarMonth() { indexMes = 3, nombreMes = "Marzo" });
+        months.Add(new CalendarMonth() { indexMes = 4, nombreMes = "Abril" });
+        months.Add(new CalendarMonth() { indexMes = 5, nombreMes = "Mayo" });
+        months.Add(new CalendarMonth() { indexMes = 6, nombreMes = "Junio" });
+        months.Add(new CalendarMonth() { indexMes = 7, nombreMes = "Julio" });
+        months.Add(new CalendarMonth() { indexMes = 8, nombreMes = "Agosto" });
+        months.Add(new CalendarMonth() { indexMes = 9, nombreMes = "Setiembre" });
+        months.Add(new CalendarMonth() { indexMes = 10, nombreMes = "Octubre" });
+        months.Add(new CalendarMonth() { indexMes = 11, nombreMes = "Noviembre" });
+        months.Add(new CalendarMonth() { indexMes = 12, nombreMes = "Diciembre" });
+        foreach (Expediente ex in expedientes)
+        {
+            CalendarEvent evento = new CalendarEvent();
+            evento.nombreCliente = ex.cliente.nombre;
+            Derivacion deri = ex.derivaciones.ElementAt(ex.derivaciones.Count - 1);
+            evento.fechaDelEvento = deri.fechaderivacion;
+            await getUsuario(deri.usuarioemisor);
+            evento.nombreEmisor = usuario.datos.nombre + " " + usuario.datos.apellido;
+            evento.tipoDocumento = tipoDocumento(deri.tipo);
+
+            derivaciones.Add(evento);
+        }
+        UpdateCalendar();
+    }
+    private string tipoDocumento(string tipo)
+    {
+        if (tipo == "SolicitudDenuncia") return "Solicitud de Denuncia";
+        if (tipo == "OficioBPN") return "Oficio de Búsqueda de Protocolos Notariales";
+        if (tipo == "SolicitudBPN")  return "Solicitud de Búsqueda de Protocolos Notariales";
+        if (tipo == "ResultadoBPN") return "Resultado de Búsqueda de Protocolos Notariales";
+        if (tipo == "SolicitudExpedicionFirma") return "Solicitud Expedicion Firma";
+        if (tipo == "OficioDesignacionNotario") return "Oficio Designación de Notario";
+        if (tipo == "ConclusionFirma") return "Conclusión de Firma";
+        if (tipo == "AperturamientoDisciplinario") return "Aperturamiento Disciplinario";
+        if (tipo == "SolicitudExpedienteNotario") return "Solicitud Expediente Notario";
+        if (tipo == "EntregaExpedienteNotario") return "Entrega Expediente Notario";
+        if (tipo == "Dictamen") return "Dictamen";
+        if (tipo == "Resolucion") return "Resolución";
+        if (tipo == "Apelacion") return "Apelación";
+        if (tipo == "SolicitudInicial") return "Solicitud Inicial";
+        return "no encontre el tipo";
+    }
+
+    private async Task getExpediente(string idExpediente)
+    {
+        var responseHttp = await repository.Get<Expediente>($"api/expediente/id?id={idExpediente}");
+        expedientes.Add(responseHttp.Response);
+    }
+
+    private async Task getUsuario(string id_Usuario)
+    {
+        var responseHttp = await repository.Get<Usuario>($"api/usuarios/id?id={id_Usuario}");
+        usuario = responseHttp.Response;
+    }
+
+    void SelectYear(ChangeEventArgs e)
+    {
+        year = Convert.ToInt32(e.Value.ToString());
+        UpdateCalendar();
+    }
+    void SelectMonth(ChangeEventArgs e)
+    {
+        month = Convert.ToInt32(e.Value.ToString());
+        UpdateCalendar();
+    }
+    void UpdateCalendar()
+    {
+        days = new List<CalendarDay>();
+        var firstDayDate = new DateTime(year, month, 1);
+        int weekDayNumber = (int)firstDayDate.DayOfWeek;
+        int numberOfEmptyDays = 0;
+        if (weekDayNumber == 7) // Sunday 
+        {
+            numberOfEmptyDays = 0;
+        }
+        else
+        {
+            numberOfEmptyDays = weekDayNumber;
+        }
+
+        // Add the empty days 
+        for (int i = 0; i < numberOfEmptyDays; i++)
+        {
+            days.Add(new CalendarDay
+            {
+                DayNumber = 0,
+                IsEmpty = true
+            });
+        }
+        // Add the month days 
+        int numberOfDaysInMonth = DateTime.DaysInMonth(year, month);
+
+        for (int i = 0; i < numberOfDaysInMonth; i++)
+        {
+            CalendarDay diaNuevo = new CalendarDay();
+            diaNuevo.DayNumber = i + 1;
+            diaNuevo.IsEmpty = false;
+            diaNuevo.Date = new DateTime(year, month, i + 1);
+            foreach (CalendarEvent deri in derivaciones)
+            {
+                if(diaNuevo.Date.ToString("dd-MM-yy") == deri.fechaDelEvento.ToString("dd-MM-yy"))
+                {
+                    diaNuevo.Events.Add(deri);
+                }
+            }
+            days.Add(diaNuevo);
+        }
+
+        // 2- Calcualte the number of rows 
+        int remaning = days.Count % 7;
+        if (remaning == 0)
+            rowsCount = days.Count / 7;
+        else
+            rowsCount = Convert.ToInt32(days.Count / 7) + 1;
+
+        Console.WriteLine($"Total Rows: {rowsCount} | Number of Empty Days {numberOfEmptyDays} | Month Days {numberOfDaysInMonth}");
+    }
+}

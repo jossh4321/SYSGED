@@ -12,6 +12,9 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+    .field-container {
+        padding: 5px;
+    }
 </style>
 <li draggable="true" class="li-tool @classname" @ondragstart="@(() => HandleDragStart(herramienta))">
     <div class="tool-container">
@@ -26,19 +29,29 @@
             else
             {
                 <p class="tool-client-name">@herramienta.cliente.nombre  -  @herramienta.cliente.numerodocumento </p>
+
                 if (herramienta.itemstatus.Equals("registrado") && herramienta.originPlace.Equals("inputs"))
                 {
                     ExpedienteBandejaDTO documento = (ExpedienteBandejaDTO)herramienta.valor;
                     <p class="registro">Documento Registrado: @documento.documento.tipo</p>
-                    <MatButton Class="mat-info-c" @onclick="@(()=>workSpace.openDialog())" >Visualizar</MatButton>
                 }
                 if (herramienta.itemstatus.Equals("escogido") && herramienta.originPlace.Equals("inputs"))
                 {
                     EscrituraPublicaRDTO escrituraPublica = herramienta.escriturapublica;
                     <p class="registro">Escritura Pública escogido: @escrituraPublica.titulo</p>
                 }
+                if ((herramienta.itemstatus.Equals("InSpace") || herramienta.itemstatus.Equals("escogido") || herramienta.itemstatus.Equals("registrado")) && herramienta.originPlace.Equals("inputs"))
+                {
+                    ExpedienteBandejaDTO documento = (ExpedienteBandejaDTO)herramienta.valor;
+                    <div class="field-container">
+                        <MatButton Class="mat-info-c" @onclick="@(()=>workSpace.openDialog())">Visualizar</MatButton>
+                        @if (documento.documento.tipo == "OficioDesignacionNotario" || documento.documento.tipo == "Resolucion" || documento.documento.tipo == "Apelacion" || documento.documento.tipo == "OficioBPN")
+                        {
+                            <MatButton Class="mat-info-c" @onclick="@(() => workSpace.openDialogEva())">Visualizar Evaluacion</MatButton>
+                        }
+                    </div>
+                }
             }
-
         </div>
     </div>
 </li>

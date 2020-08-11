@@ -63,7 +63,7 @@ namespace SISGED.Server.Helpers
             await contenedor.CreateIfNotExistsAsync();
             await contenedor.SetPermissionsAsync(new BlobContainerPermissions
             {
-                PublicAccess = BlobContainerPublicAccessType.Blob
+                PublicAccess = BlobContainerPublicAccessType.Container
             });
             var filename = $"{Guid.NewGuid()}.{extension}";
             var blob = contenedor.GetBlockBlobReference(filename);

@@ -80,8 +80,14 @@ namespace SISGED.Server.Controllers
                     url2.Add(urlData2);
                 }
             }
+            string urlData = "";
+            if (!string.IsNullOrWhiteSpace(oficioBPNDTO.contenidoDTO.data))
+            {
+                var solicitudBytes = Convert.FromBase64String(oficioBPNDTO.contenidoDTO.data);
+                urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "oficiobpn");
+            }
             OficioBPN documentoOficioBPN = new OficioBPN();
-            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente, url2);
+            documentoOficioBPN = _documentoservice.registrarOficioBPNE(expediente, url2, urlData);
 
             return documentoOficioBPN;
         }
@@ -229,7 +235,7 @@ namespace SISGED.Server.Controllers
             Expediente expediente = new Expediente();
             expediente.tipo = "Solicitud";
             expediente.cliente = cliente;
-            expediente.fechainicio = DateTime.Now;
+            expediente.fechainicio = DateTime.UtcNow.AddHours(-5);
             expediente.fechafin = null;
             expediente.documentos = new List<DocumentoExpediente>()
             {
@@ -237,8 +243,8 @@ namespace SISGED.Server.Controllers
                     indice = 1,
                     iddocumento = soliInicial.id,
                     tipo  = "SolicitudInicial",
-                    fechacreacion = DateTime.Now,
-                    fechaexceso= DateTime.Now.AddDays(10),
+                    fechacreacion = DateTime.UtcNow.AddHours(-5),
+                    fechaexceso= DateTime.UtcNow.AddHours(-5).AddDays(10),
                     fechademora = null
                 }
             };
@@ -417,7 +423,11 @@ namespace SISGED.Server.Controllers
                 var solicitudBytes = Convert.FromBase64String(resolucionDTO.contenidoDTO.data);
                 urlData = await _almacenadorDeDocs.saveDoc(solicitudBytes, "pdf", "resolucion");
             }
-            return _documentoservice.registrarResolucion(resolucionDTO, urlData, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada);
+
+            ExpedienteDTO expedientePorConsultar = _expedienteservice.getById(expedientewrapper.idexpediente);
+            DocumentoExpediente documentosolicitud = expedientePorConsultar.documentos.Find(x => x.tipo == "SolicitudInicial");
+
+            return _documentoservice.registrarResolucion(resolucionDTO, urlData, url2, expedientewrapper.idusuarioactual, expedientewrapper.idexpediente, expedientewrapper.documentoentrada, documentosolicitud.iddocumento);
         }
 
         [HttpPost("documentoResultadoBPN")]

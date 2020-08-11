@@ -1,0 +1,8 @@
+﻿
+<iframe src="@urlAnexo" width="100%" height="500px"></iframe>
+
+@code {
+
+    [Parameter] public string urlAnexo { get; set; }
+    [Parameter] public EventCallback<bool> cerrarDialogoAnexo { get; set; }
+}

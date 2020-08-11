@@ -11,15 +11,14 @@ namespace SISGED.Shared.DTOs
     {
         public string titulo { get; set; }
         public string descripcion { get; set; }
-        //public string observacion { get; set; }
         public Usuario idcliente { get; set; } = new Usuario();
         public string direccionoficio { get; set; }
         public Notario idnotario { get; set; } = new Notario();
         public string actojuridico { get; set; }
         public string tipoprotocolo { get; set; }
-        public List<string> otorgantes { get; set; } = new List<string>();
+        public List<OtorganteDTO> otorgantes { get; set; } = new List<OtorganteDTO>();
         public DateTime? fecharealizacion { get; set; }
-        public string url { get; set; }
+        public string data { get; set; }
         public List<string> Urlanexo { get; set; } = new List<string>();
 
     }
