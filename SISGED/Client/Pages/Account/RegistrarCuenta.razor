@@ -96,7 +96,7 @@
                         <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => usuariodto.clave)">
 
                             <MatTextField @bind-Value="@usuariodto.clave" Class="text-field-style"
-                                          Label="Clave" @oninput='@(e => KeyUp(e,"clave",usuariodto))'></MatTextField>
+                                          Label="Clave" @oninput='@(e => KeyUp(e,"clave",usuariodto))' Type="Password"></MatTextField>
                             <div class="incorrecto">
                                 <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                                 <ValidationMessage For="@(() => usuariodto.clave)" />

@@ -78,6 +78,22 @@
                     <MatDatePicker @bind-Value="@solicitudExpedicionFirma.fecharealizacion" Format="MM/dd/yy H:mm:ss" Class="text-field-style" Label="Fecha de Realizacion" ReadOnly="true"></MatDatePicker>
                 </div>
             </MatTab>
+            <MatTab Label="Anexos">
+                @if (documento.urlanexo.Count > 0)
+                {
+                    int OH = 1;
+                    @foreach (string urlanexos in documento.urlanexo)
+                    {
+                        string textito = "Anexo " + OH + " de la Solicitud Expedicion Firma.pdf";
+                        <a href="@urlanexos" download="@textito" target="_blank">Descargar Anexo @OH</a>
+                        OH++;
+                    }
+                }
+                else
+                {
+                    <p>No hay anexos para este documento</p>
+                }
+            </MatTab>
         </MatTabGroup>
     }
 </div>

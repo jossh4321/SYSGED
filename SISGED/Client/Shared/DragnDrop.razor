@@ -135,27 +135,20 @@
         foreach (var file in await list.EnumerateFilesAsync())
         {
             var fileInfo = await file.ReadFileInfoAsync();
-            if (fileInfo.Type== "application/pdf")
+            if (fileInfo.Type == "application/pdf")
             {
                 string FileName = fileInfo.Name;
-                this.StateHasChanged();
-                using (var fs = await file.OpenReadAsync())
+                using (MemoryStream memoryStream = await file.CreateMemoryStreamAsync(4 * 1024))
                 {
-                    var bufferSize = 20480;
-                    var buffer = new byte[bufferSize];
-                    int count;
-                    while ((count = await fs.ReadAsync(buffer, 0, buffer.Length)) != 0)
-                    {
-
-                        this.StateHasChanged();
-                    }
-                    imagenBase64 = Convert.ToBase64String(buffer);
-
+                    var fileinfo = await file.ReadFileInfoAsync();
+                    var bytesImagen = new byte[memoryStream.Length];
+                    memoryStream.Read(bytesImagen, 0, (int)memoryStream.Length);
+                    imagenBase64 = Convert.ToBase64String(bytesImagen);
                     await FileNames.InvokeAsync(FileName);
                     await ImagenSeleccionada.InvokeAsync(imagenBase64);
                     ImagenTemporal = null;
+                    StateHasChanged();
                 }
-                this.StateHasChanged();
             }
         }
 

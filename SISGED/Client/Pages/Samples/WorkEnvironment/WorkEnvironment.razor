@@ -16,15 +16,29 @@
     div.output {
         flex-grow: 1;
         text-align: center;
-        overflow: auto;
+        overflow-y: scroll;
     }
 
+    div.tools {
+        border-top: 0px;
+        flex-grow: 1;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll !important;
+    }
+    .container-ot > div {
+        flex: 1;
+        display: flex;
+        
+    }
     .container-ot {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
-        height: inherit;
+        /**/
+        max-height: 100%;
     }
 
     div.workspace {
@@ -37,13 +51,7 @@
         flex-direction: column;
     }
 
-    div.tools {
-        border-top: 0px;
-        flex-grow: 1;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-    }
+  
 
     .common-box-style {
         border: 3px solid #808080;
@@ -104,8 +112,8 @@
         flex-basis: 100%;
         max-height: 100%;
         min-height: 100%;
-        overflow-y: auto;
-        overflow-x: hidden;
+      /*  overflow-y: auto;
+        overflow-x: hidden;*/
     }
 
     .div-view {
@@ -212,7 +220,7 @@
                 </DraggableList>
             </div>
             <div class="container-ot">
-                <div class="output common-box-style">
+                <div class="tools common-box-style">
                     <div class="box-title-style">
                         <span>Bandeja de Salida</span>
                     </div>
@@ -333,7 +341,7 @@
             var tool = sesion.herramientasutilizables.SingleOrDefault(x => x.nombre == currentItemDragged.nombre);
             if (tool != null /*&& listaherramientas.Where(x => x.currentPlace == "workspace").Count() == 0*/)
             {
-                Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
+                Console.WriteLine(" Cambiando de " + tool.currentPlace + " a " + newCurrentPlace);
 
                 tool.currentPlace = newCurrentPlace;
                 sesion.herramientasutilizables[sesion.herramientasutilizables.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre))] = tool;
@@ -348,19 +356,19 @@
                 if (newCurrentPlace == "workspace")
                 {
                     expedienteseleccionado = (ExpedienteBandejaDTO)tool.valor;
-
+                    await GetAsistenteByExpedientId(expedienteseleccionado.idexpediente);
                 }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
                 if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
 
                 Console.WriteLine("Es de la  entrada papu");
-                Console.WriteLine("ESTOY EN EL CAMBIO => ORIGIN: " + tool.originPlace);
+                Console.WriteLine(" Cambiando de " + tool.currentPlace+" a "+ newCurrentPlace);
 
-                await GetAsistenteByExpedientId(expedienteseleccionado.idexpediente);
+                
 
                 tool.currentPlace = newCurrentPlace;
                 sesion.listaentradas[sesion.listaentradas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
-                tool.itemstatus = "InSpace";
+                //tool.itemstatus = "InSpace";
                 StateHasChanged();
             }
         }
@@ -373,6 +381,7 @@
                 if (newCurrentPlace == "outputs") { expedienteseleccionado = null; }
                 if (newCurrentPlace == "inputs") { expedienteseleccionado = null; }
                 tool.currentPlace = newCurrentPlace;
+                Console.WriteLine(" Cambiando de " + tool.currentPlace + " a " + newCurrentPlace);
                 sesion.listasalidas[sesion.listasalidas.FindIndex(ind => ind.nombre.Equals(currentItemDragged.nombre) && ind.cliente.Equals(currentItemDragged.cliente))] = tool;
                 StateHasChanged();
             }

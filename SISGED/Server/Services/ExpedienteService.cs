@@ -103,6 +103,7 @@ namespace SISGED.Server.Services
             Proceso proceso = new Proceso();
             proceso.area = derivacion.areaprocedencia;
             proceso.fechaemision = DateTime.Now;
+            proceso.fecharecepcion = DateTime.Now;
             proceso.idemisor = derivacion.usuarioemisor;
             proceso.idreceptor = userId;
 	
