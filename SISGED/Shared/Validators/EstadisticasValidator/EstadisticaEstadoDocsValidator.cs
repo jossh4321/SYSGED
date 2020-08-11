@@ -13,7 +13,7 @@ namespace SISGED.Shared.Validators.EstadisticasValidator
         {
             RuleFor(x => x.mes).NotEmpty().WithMessage("Debe seleccionar un mes obligatoriamente");
             RuleFor(x => x.usuario).Must(usuario => usuario != null && usuario != new usuario_unwind())
-                .WithMessage("Debe seleccionar un Usuario Obligatoriamente");
+                .WithMessage("Debe seleccionar un usuario obligatoriamente");
         }
     }
 }
