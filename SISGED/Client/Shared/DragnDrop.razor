@@ -39,9 +39,9 @@
            @onchange="OnInputChange"
            @ondragenter=OnIpDragEnter
            @ondragleave=OnIpDragLeave
+           accept=".pdf"
            multiple />
     Arrastre los archivos aquí o haga clic en mí
-
     @foreach (var fileInfo in IpFileList)
     {
         <br />@fileInfo.Name
@@ -98,7 +98,7 @@
 
     public async Task OnInputChange(EventArgs e)
     {
-        
+
         _ipdropClasses.Remove(dropTargetDragClass);
         this.StateHasChanged();
         await this.RefreshIpFileList();
@@ -135,25 +135,28 @@
         foreach (var file in await list.EnumerateFilesAsync())
         {
             var fileInfo = await file.ReadFileInfoAsync();
-            string FileName = fileInfo.Name;
-            this.StateHasChanged();
-            using (var fs = await file.OpenReadAsync())
+            if (fileInfo.Type== "application/pdf")
             {
-                var bufferSize = 20480;
-                var buffer = new byte[bufferSize];
-                int count;
-                while ((count = await fs.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                string FileName = fileInfo.Name;
+                this.StateHasChanged();
+                using (var fs = await file.OpenReadAsync())
                 {
+                    var bufferSize = 20480;
+                    var buffer = new byte[bufferSize];
+                    int count;
+                    while ((count = await fs.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                    {
 
-                    this.StateHasChanged();
+                        this.StateHasChanged();
+                    }
+                    imagenBase64 = Convert.ToBase64String(buffer);
+
+                    await FileNames.InvokeAsync(FileName);
+                    await ImagenSeleccionada.InvokeAsync(imagenBase64);
+                    ImagenTemporal = null;
                 }
-                imagenBase64 = Convert.ToBase64String(buffer);
-
-                await FileNames.InvokeAsync(FileName);
-                await ImagenSeleccionada.InvokeAsync(imagenBase64);
-                ImagenTemporal = null;
+                this.StateHasChanged();
             }
-            this.StateHasChanged();
         }
 
     }
