@@ -135,7 +135,7 @@
 
 
     <div class="head-flex">
-        <h1>Gestion de Pasos por Procesos</h1>
+        <h1 style="color:black">Gestion de Pasos por Procesos</h1>
         <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true" Position="@MatTooltipPosition.Left">
             <MatFAB Icon="@MatIconNames.Add" @onclick="@abrirDialogoRegistro"></MatFAB>
         </MatTooltip>
@@ -177,7 +177,7 @@
                         </div>
                         <div class="button-container">
                             <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
-                                       Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context.id))" Style="width:100% !important">Detalle</MatButton>
+                                       Class="mat-info-c" @onclick="@(e => abrirDialogoDetalle(context))" Style="width:100% !important">Detalle</MatButton>
                         </div>
                     </div>
                 </td>
@@ -186,21 +186,21 @@
     }
 
     <MatDialog @bind-IsOpen="@dialogoRegistro">
-        <RegistrarPasos  dialogoRegistro ="dialogoRegistro" agregarPaso="agregarPaso" renderaddexp="renderaddexp" ></RegistrarPasos>
+        <RegistrarPasos  dialogoRegistro ="dialogoRegistro" agregarPaso="agregarPaso" renderaddexp="renderaddexp" cerrarDialogoRegistro="cerrarDialogoRegistro" ></RegistrarPasos>
         <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
     </MatDialog>
     <MatDialog @bind-IsOpen="@dialogoEdicion">
         <SISGED.Client.Pages.Pasos.RegistrarPaso.ModificarPasos dialogoEdicion="@dialogoEdicion" 
-                     pasos="@pasos" rendermodexp="@rendermodexp" modificarPaso="modificarPaso"></SISGED.Client.Pages.Pasos.RegistrarPaso.ModificarPasos>
+                     pasos="@pasos" rendermodexp="@rendermodexp" modificarPaso="modificarPaso"
+                                                                cerrarDialogoModificacion="cerrarDialogoModificacion"></SISGED.Client.Pages.Pasos.RegistrarPaso.ModificarPasos>
         <!--ModificarCuenta listausuarios="listausuarios"
                      cerrarDialogoModificacion="cerrarDialogoModificacion"
                      usuariodto="usuariodto" /-->
     </MatDialog>
     <MatDialog @bind-IsOpen="@dialogoDetalle">
-        <CascadingValue Value="this">
             <!--VisualizarPasos></VisualizarPasos-->
             <!--DetalleCuenta usuariodto="usuariodto" cerrarDialogoDetalle="cerrarDialogoDetalle" /-->
-        </CascadingValue>
+            <VisualizarPasos dialogoDetalle="dialogoDetalle"  pasos="@pasos" rendermodexp="@rendermodexp" cerrarDialogoDetalle="@cerrarDialogoDetalle"></VisualizarPasos>
     </MatDialog>
 </div>
 
@@ -216,6 +216,7 @@
     public bool cargatabla { get; set; } = false;
 
     public PasosDTO2 pasos = new PasosDTO2();
+    public PasosDTO2 pasosdet = new PasosDTO2();
 
     protected override async Task OnInitializedAsync()
     {
@@ -232,8 +233,6 @@
         }
         cargatabla = false;
     }
-
-
     public async Task abrirDialogoEdicion(PasosDTO2 context)
     {
         pasos = context;
@@ -242,27 +241,11 @@
 
         StateHasChanged();
     }
-    public async Task abrirDialogoDetalle(string id)
+    public async Task abrirDialogoDetalle(PasosDTO2 context)
     {
-        Pasos pasos = new Pasos();
-        var httpResponse = await repository.Get<Pasos>($"api/paso/get/id?id={id}");
-        if (httpResponse.Error)
-        {
-            Console.WriteLine("Algo Mal");
-        }
-        else
-        {
-            pasos = httpResponse.Response;
-
-        }
-        /*usuariodto.usuario = usuario.usuario;
-        usuariodto.clave = usuario.clave;
-        usuariodto.datos = usuario.datos;
-        usuariodto.id = usuario.id;
-        usuariodto.estado = usuario.estado;
-        usuariodto.rolid = usuario.rol;
-        usuariodto.tipo = usuario.tipo;*/
+        pasos = context;
         dialogoDetalle = true;
+        StateHasChanged();
 
     }
 
