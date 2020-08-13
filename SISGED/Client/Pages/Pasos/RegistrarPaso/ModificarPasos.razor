@@ -159,7 +159,7 @@
                     <div class="field-container">
                         <MatButton type="submit"
                                    Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                                   Class="button-input-style mat-warning-c sub-but">Modificar Ahora</MatButton>
                     </div>
                     <div class="field-container">
                         <MatButton type="button"
@@ -203,7 +203,7 @@
 
     // [Parameter] public bool dialogoRegistro { get; set; }
     [Parameter] public List<Usuario> listausuarios { get; set; }
-    [Parameter] public EventCallback<bool> cerrarDialogoRegistro { get; set; }
+    [Parameter] public EventCallback<bool> cerrarDialogoModificacion { get; set; }
     [Parameter] public bool renderaddexp { get; set; }
     [Parameter] public EventCallback<PasosDTO2> modificarPaso { get; set; }
     private string imagenTemporal { get; set; } = null;
@@ -296,7 +296,8 @@
 
     public void cerrar()
     {
-        dialogoEdicion = false;
+        //dialogoEdicion = false;
+        cerrarDialogoModificacion.InvokeAsync(false);
     }
     public void handleInvalidSubmit()
     {

@@ -2295,10 +2295,10 @@ namespace SISGED.Server.Services
             var match1 = new BsonDocument("$match",
                 new BsonDocument
                     {
-                        { "estado",
+                        /*{ "estado",
                 new BsonDocument("$in",
                 new BsonArray
-                            {"caducado", "procesado","pendiente"}) },
+                            {"caducado", "procesado","pendiente"}) },*/
                         { "tipo",
                             new BsonDocument("$nin",
                             new BsonArray
@@ -2324,42 +2324,108 @@ namespace SISGED.Server.Services
         {
             { "_id", "$tipo" },
             { "caducados",
-                    new BsonDocument("$sum",
-                    new BsonDocument("$cond",
-                    new BsonArray{new BsonDocument("$eq",
-                                        new BsonArray
-                                            { "$estado",
-                                                "caducado"
-                                            }), 0, 1})) },
-                            { "procesados",
-                                    new BsonDocument("$sum",
-                                    new BsonDocument("$cond",
-                                    new BsonArray
+    new BsonDocument("$sum",
+    new BsonDocument("$cond",
+    new BsonArray
+                    {
+                        new BsonDocument("$eq",
+                        new BsonArray
+                            {
+                                "$estado",
+                                "caducado"
+                            }),
+                        1,
+                        0
+                    })) },
+            { "procesados",
+    new BsonDocument("$sum",
+    new BsonDocument("$switch",
+    new BsonDocument
+                    {
+                        { "branches",
+    new BsonArray
+                        {
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
                                     {
-                                        new BsonDocument("$eq",
-                                        new BsonArray
-                                            {
-                                                "$estado",
-                                                "procesado"
-                                            }),
-                                        0,
-                                        1
-                                    })) },
-                            { "pendientes",
-                                    new BsonDocument("$sum",
-                                    new BsonDocument("$cond",
-                                    new BsonArray
-                                                    {
-                                                        new BsonDocument("$eq",
-                                                        new BsonArray
-                                                            {
-                                                                "$estado",
-                                                                "pendiente"
-                                                            }),
-                                                        0,
-                                                        1
-                                                    })) }
-                                        });
+                                        "$estado",
+                                        "procesado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "finalizado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "revisado"
+                                    }) },
+                                { "then", 1 }
+                            }
+                        } },
+                        { "default", 0 }
+                    })) },
+            { "pendientes",
+    new BsonDocument("$sum",
+    new BsonDocument("$switch",
+    new BsonDocument
+                    {
+                        { "branches",
+    new BsonArray
+                        {
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "pendiente"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "creado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "modificado"
+                                    }) },
+                                { "then", 1 }
+                            }
+                        } },
+                        { "default", 0 }
+                    })) }
+        });
 
             List<estadistica1_group> estadistica1 = new List<estadistica1_group>();
             estadistica1 = _documentos.Aggregate()
@@ -2377,14 +2443,14 @@ namespace SISGED.Server.Services
             var match1 = new BsonDocument("$match",
                                 new BsonDocument
                                     {
-                                        { "estado",
+                                        /*{ "estado",
                                 new BsonDocument("$in",
                                 new BsonArray
                                             {
                                                 "caducado",
                                                 "procesado",
                                                 "pendiente"
-                                            }) },
+                                            }) },*/
                                         { "tipo",
                                 new BsonDocument("$nin",
                                 new BsonArray
@@ -2412,43 +2478,108 @@ namespace SISGED.Server.Services
         {
             { "_id", "$tipo" },
             { "caducados",
-                    new BsonDocument("$sum",
-                    new BsonDocument("$cond",
-                    new BsonArray{new BsonDocument("$eq",
-                                        new BsonArray
-                                            { "$estado",
-                                                "caducado"
-                                            }), 0, 1})) },
-                            { "procesados",
-                                    new BsonDocument("$sum",
-                                    new BsonDocument("$cond",
-                                    new BsonArray
+    new BsonDocument("$sum",
+    new BsonDocument("$cond",
+    new BsonArray
+                    {
+                        new BsonDocument("$eq",
+                        new BsonArray
+                            {
+                                "$estado",
+                                "caducado"
+                            }),
+                        1,
+                        0
+                    })) },
+            { "procesados",
+    new BsonDocument("$sum",
+    new BsonDocument("$switch",
+    new BsonDocument
+                    {
+                        { "branches",
+    new BsonArray
+                        {
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
                                     {
-                                        new BsonDocument("$eq",
-                                        new BsonArray
-                                            {
-                                                "$estado",
-                                                "procesado"
-                                            }),
-                                        0,
-                                        1
-                                    })) },
-                            { "pendientes",
-                                    new BsonDocument("$sum",
-                                    new BsonDocument("$cond",
-                                    new BsonArray
-                                                    {
-                                                        new BsonDocument("$eq",
-                                                        new BsonArray
-                                                            {
-                                                                "$estado",
-                                                                "pendiente"
-                                                            }),
-                                                        0,
-                                                        1
-                                                    })) }
-                                        });
-
+                                        "$estado",
+                                        "procesado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "finalizado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "revisado"
+                                    }) },
+                                { "then", 1 }
+                            }
+                        } },
+                        { "default", 0 }
+                    })) },
+            { "pendientes",
+    new BsonDocument("$sum",
+    new BsonDocument("$switch",
+    new BsonDocument
+                    {
+                        { "branches",
+    new BsonArray
+                        {
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "pendiente"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "creado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "modificado"
+                                    }) },
+                                { "then", 1 }
+                            }
+                        } },
+                        { "default", 0 }
+                    })) }
+        });
             List<estadistica1_group> estadistica1 = new List<estadistica1_group>();
             estadistica1 = _documentos.Aggregate()
                                         .AppendStage<Documento>(match1)
@@ -2464,14 +2595,14 @@ namespace SISGED.Server.Services
             var match1 = new BsonDocument("$match",
                                 new BsonDocument
                                     {
-                                        { "estado",
+                                        /*{ "estado",
                                             new BsonDocument("$in",
                                             new BsonArray
                                                         {
                                                             "caducado",
                                                             "procesado",
                                                             "pendiente"
-                                                        }) },
+                                                        }) },*/
                                         { "tipo",
                                                 new BsonDocument("$nin",
                                                 new BsonArray
@@ -2499,42 +2630,108 @@ namespace SISGED.Server.Services
         {
             { "_id", "$tipo" },
             { "caducados",
-                    new BsonDocument("$sum",
-                    new BsonDocument("$cond",
-                    new BsonArray{new BsonDocument("$eq",
-                                        new BsonArray
-                                            { "$estado",
-                                                "caducado"
-                                            }), 0, 1})) },
-                            { "procesados",
-                                    new BsonDocument("$sum",
-                                    new BsonDocument("$cond",
-                                    new BsonArray
+    new BsonDocument("$sum",
+    new BsonDocument("$cond",
+    new BsonArray
+                    {
+                        new BsonDocument("$eq",
+                        new BsonArray
+                            {
+                                "$estado",
+                                "caducado"
+                            }),
+                        1,
+                        0
+                    })) },
+            { "procesados",
+    new BsonDocument("$sum",
+    new BsonDocument("$switch",
+    new BsonDocument
+                    {
+                        { "branches",
+    new BsonArray
+                        {
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
                                     {
-                                        new BsonDocument("$eq",
-                                        new BsonArray
-                                            {
-                                                "$estado",
-                                                "procesado"
-                                            }),
-                                        0,
-                                        1
-                                    })) },
-                            { "pendientes",
-                                    new BsonDocument("$sum",
-                                    new BsonDocument("$cond",
-                                    new BsonArray
-                                                    {
-                                                        new BsonDocument("$eq",
-                                                        new BsonArray
-                                                            {
-                                                                "$estado",
-                                                                "pendiente"
-                                                            }),
-                                                        0,
-                                                        1
-                                                    })) }
-                                        });
+                                        "$estado",
+                                        "procesado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "finalizado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "revisado"
+                                    }) },
+                                { "then", 1 }
+                            }
+                        } },
+                        { "default", 0 }
+                    })) },
+            { "pendientes",
+    new BsonDocument("$sum",
+    new BsonDocument("$switch",
+    new BsonDocument
+                    {
+                        { "branches",
+    new BsonArray
+                        {
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "pendiente"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "creado"
+                                    }) },
+                                { "then", 1 }
+                            },
+                            new BsonDocument
+                            {
+                                { "case",
+                            new BsonDocument("$eq",
+                            new BsonArray
+                                    {
+                                        "$estado",
+                                        "modificado"
+                                    }) },
+                                { "then", 1 }
+                            }
+                        } },
+                        { "default", 0 }
+                    })) }
+        });
 
             List<estadistica1_group> estadistica1 = new List<estadistica1_group>();
             estadistica1 = _documentos.Aggregate()

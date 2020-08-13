@@ -92,6 +92,7 @@
     .icono {
         margin-left: 20px;
     }
+
         .icono i {
             margin: 5px;
         }
@@ -101,6 +102,7 @@
         flex-direction: row;
         flex-wrap: wrap;
     }
+
     .base-field {
         flex-basis: 90%;
     }
@@ -115,6 +117,7 @@
         border-radius: 3px;
         border: 1px solid #800000
     }
+
     .titulo {
         color: #d9d9d9;
     }
@@ -126,42 +129,36 @@
         font-size: 13px !important;
         transition: all 300ms !important;
     }
-    .mat-jum-d {
-        color: #F3F3F3 !important;
-        background-color: #E94343 !important;
-        border-radius: 15px !important;
-        font-size: 13px !important;
-        transition: all 300ms !important;
-    }
 </style>
 <div>
     <MatCard>
         <MatCardContent Class="card-content-padding">
-            <div>
-                <h4>Registro de Sub Pasos para un documento</h4>
-            </div>
+            <MatHeadline6 Style="text-align:center">
+                Visualizacion de Sub de pasos para un Documento
+
+            </MatHeadline6>
             <EditForm EditContext="@_editContext" Context="CurrentEditContext"
                       OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
                 <FluentValidator></FluentValidator>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => paso.nombre)">
-                    <MatTextField @bind-Value="@paso.nombre" Class="text-field-style"
-                                  Label="Nombre del Sub Paso" @oninput='@(e => KeyUp(e,"nombre",paso))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => subPasoDocumento.nombre)">
+                    <MatTextField @bind-Value="@subPasoDocumento.nombre" Class="text-field-style"
+                                  Label="Nombre del Sub Paso" ReadOnly="true" @oninput='@(e => KeyUp(e,"nombre",subPasoDocumento))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                        <ValidationMessage For="@(() =>  paso.nombre)" />
+                        <ValidationMessage For="@(() =>  subPasoDocumento.nombre)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
                         <span>Correcto</span>
                     </div>
                 </div>
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => paso.descripcion)">
-                    <MatTextField @bind-Value="@paso.descripcion" Class="text-field-style"
-                                  Label="Nombre del Sub Paso" @oninput='@(e => KeyUp(e,"descripcion",paso))'></MatTextField>
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => subPasoDocumento.descripcion)">
+                    <MatTextField @bind-Value="@subPasoDocumento.descripcion" Class="text-field-style"
+                                  Label="Nombre del Sub Paso" ReadOnly="true" @oninput='@(e => KeyUp(e,"descripcion",subPasoDocumento))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
-                        <ValidationMessage For="@(() =>  paso.descripcion)" />
+                        <ValidationMessage For="@(() =>  subPasoDocumento.descripcion)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
@@ -169,19 +166,18 @@
                     </div>
                 </div>
 
-                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => paso.dias)">
-                    <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
-                                           @bind-Value=paso.dias
+                <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => subPasoDocumento.dias)">
+                    <MatNumericUpDownField Label="Cantidad de Fojas" ReadOnly="true" Class="text-field-style"
+                                           @bind-Value=subPasoDocumento.dias
                                            FieldType="MatNumericUpDownFieldType.Numeric"
                                            DecimalPlaces=0
                                            Minimum=2 Maximum=50
                                            AllowInput="false"
-                                           @oninput='@(e => KeyUp(e,"dias",paso.dias))'></MatNumericUpDownField>
-
-
+                                            Disabled="true"
+                                           @oninput='@(e => KeyUp(e,"dias",subPasoDocumento.dias))'></MatNumericUpDownField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                        <ValidationMessage For="@(() => paso.dias)" />
+                        <ValidationMessage For="@(() => subPasoDocumento.dias)" />
                     </div>
                     <div class="correcto">
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -192,36 +188,33 @@
                 <div class="contenedor-participantes">
                     <div class="titulo-paticipantes">
                         <div><span class="titulo">Sub Pasos</span></div>
-                        <div class="icono" @onclick="@(addSubpaso)">
+                        <div class="icono">
                             <MatIcon Icon="add_circle_outline"></MatIcon>
                         </div>
                     </div>
-                    @for (int i = 0; i < paso.subpaso.Count; i++)
+                    @for (int i = 0; i < subPasoDocumento.subpaso.Count; i++)
                     {
                         int index = i;
                         <div class="single-textfield-container">
-                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => paso.subpaso[index].descripcion)">
-                                <MatTextField @bind-Value="@paso.subpaso[index].descripcion" Class="text-field-style"
-                                              Label="Nombre del participante"
-                                              @oninput='@(e => KeyUp(e, "descripcion", paso.subpaso[index]))'></MatTextField>
+                            <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => subPasoDocumento.subpaso[index].descripcion)">
+                                <MatTextField @bind-Value="@subPasoDocumento.subpaso[index].descripcion" Class="text-field-style"
+                                              Label="Nombre del participante" ReadOnly="true"
+                                              @oninput='@(e => KeyUp(e, "descripcion", subPasoDocumento.subpaso[index]))'></MatTextField>
                                 <div class="incorrecto">
                                     <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                                    <ValidationMessage For="@(() => paso.subpaso[index].descripcion)" />
+                                    <ValidationMessage For="@(() => subPasoDocumento.subpaso[index].descripcion)" />
                                 </div>
                                 <div class="correcto">
                                     <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
                                     <span class="good-msg">Correcto</span>
                                 </div>
                             </div>
-                            <div class="base-icon" @onclick="@(() => removeSubPaso(index))">
-                                <MatIcon Icon="remove_circle_outline"></MatIcon>
-                            </div>
                         </div>
                     }
-                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => paso.subpaso)">
+                    <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => subPasoDocumento.subpaso)">
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>
-                            <ValidationMessage For="@(() =>paso.subpaso)" />
+                            <ValidationMessage For="@(() =>subPasoDocumento.subpaso)" />
                         </div>
                         <div class="correcto">
                             <MatIcon Icon="@MatIconNames.Check" Class="val-icon good-icon"></MatIcon>
@@ -229,16 +222,10 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="field-container">
-                    <MatButton type="submit"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>
                 <div class="field-container">
                     <MatButton type="button"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="@cerrar"
-                               Class="button-input-style mat-error-c sub-but">Volver</MatButton>
+                               Class="button-input-style mat-info-c sub-but">Volver</MatButton>
                 </div>
             </EditForm>
 
@@ -247,25 +234,39 @@
 </div>
 @code {
 
-    [Parameter] public EventCallback<bool> cerrarDialogoRegistroSubPaso { get; set; }
-    [Parameter] public EventCallback<PasoDocDTO> agregarSubpasoRegistrado { get; set; }
-    private PasoDocDTO paso = new PasoDocDTO();
+    [Parameter] public EventCallback<bool> cerrarDialogoModificacionSubPaso { get; set; }
+    [Parameter] public EventCallback<PasoDocDTO> modificarSubPasoDocumento { get; set; }
+    [Parameter] public PasoDocDTO subPasoDocumento { get; set; }
+    [Parameter] public bool rendermod { get; set; }
+    //[Parameter] public EventCallback<Paso> agregarSubpasoRegistrado { get; set; }
+    //private Paso paso = new Paso();
     private EditContext _editContext;
     protected override async Task OnInitializedAsync()
     {
-        paso.subpaso = new List<SubPaso>() { new SubPaso() { indice = 0, descripcion = "" } };
-        _editContext = new EditContext(paso);
+        _editContext = new EditContext(subPasoDocumento);
     }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (rendermod == true)
+        {
+            _editContext = new EditContext(subPasoDocumento);
+            rendermod = false;
+            StateHasChanged();
+        }
+    }
+
     public async Task handleValidSubmit()
     {
         Console.WriteLine("todo bien");
-        await agregarSubpasoRegistrado.InvokeAsync(paso);
-        paso = new PasoDocDTO();
-        paso.subpaso = new List<SubPaso>() { new SubPaso() { indice = 0, descripcion = "" } };
-        _editContext = new EditContext(paso);
+
+        /*subPasoDocumento = new PasoDocDTO();
+        subPasoDocumento.subpaso = new List<SubPaso>() { new SubPaso() { indice = 0, descripcion = "" } };*/
+        //_editContext = new EditContext(subPasoDocumento);
         _editContext.MarkAsUnmodified();
         _editContext.NotifyValidationStateChanged();
 
+        StateHasChanged();
+        await modificarSubPasoDocumento.InvokeAsync(subPasoDocumento);
         //await cerrarDialogoRegistroSubPaso.InvokeAsync(false);
     }
 
@@ -286,21 +287,21 @@
     }
     public void addSubpaso()
     {
-        paso.subpaso.Add(new SubPaso() { indice = (paso.subpaso.Count) });
+        subPasoDocumento.subpaso.Add(new SubPaso() { indice = (subPasoDocumento.subpaso.Count) });
         StateHasChanged();
     }
 
     public void removeSubPaso(int indice)
     {
-        paso.subpaso.RemoveAt(indice);
+        subPasoDocumento.subpaso.RemoveAt(indice);
         StateHasChanged();
     }
     public async Task cerrar()
     {
-        await cerrarDialogoRegistroSubPaso.InvokeAsync(false);
-        paso = new PasoDocDTO();
-        paso.subpaso = new List<SubPaso>() { new SubPaso() { indice = 0, descripcion = "" } };
-        _editContext = new EditContext(paso);
+        await cerrarDialogoModificacionSubPaso.InvokeAsync(false);
+        subPasoDocumento = new PasoDocDTO();
+        subPasoDocumento.subpaso = new List<SubPaso>() { new SubPaso() { indice = 0, descripcion = "" } };
+        _editContext = new EditContext(subPasoDocumento);
         _editContext.MarkAsUnmodified();
         _editContext.NotifyValidationStateChanged();
     }

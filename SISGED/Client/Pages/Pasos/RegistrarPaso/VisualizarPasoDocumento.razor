@@ -1,9 +1,6 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 <style>
-    .mdc-dialog--open .mdc-dialog__scrim {
-        opacity: 0 !important;
-    }
     .card-content-padding {
         padding: 15px;
         width: 550px;
@@ -70,19 +67,12 @@
     div.mdc-dialog__surface {
         border-radius: 5px 5px 5px 5px !important;
     }
-    .mat-jum-d {
-        color: #F3F3F3 !important;
-        background-color: #E94343 !important;
-        border-radius: 15px !important;
-        font-size: 13px !important;
-        transition: all 300ms !important;
-    }
 </style>
 <div>
     <MatCard>
         <MatCardContent Class="card-content-padding">
             <MatHeadline6 Style="text-align:center">
-                Registro de Lista de pasos para un Documento
+                Visualizacion de Lista de pasos para un Documento
 
             </MatHeadline6>
             <EditForm EditContext="@_editContext" Context="CurrentEditContext"
@@ -91,7 +81,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documentopaso.tipo)">
                     <MatTextField @bind-Value="@documentopaso.tipo" Class="text-field-style"
-                                  Label="Nombre del Expediente" @oninput='@(e => KeyUp(e,"tipo",documentopaso))'></MatTextField>
+                                  Label="Nombre del Expediente" ReadOnly="true" @oninput='@(e => KeyUp(e,"tipo",documentopaso))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                         <ValidationMessage For="@(() => documentopaso.tipo)" />
@@ -100,11 +90,6 @@
                         <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
                         <span>Correcto</span>
                     </div>
-                </div>
-
-                <div class="head-flex">
-                    <h4 style="color:black">Agregue Pasos al documento</h4>
-                    <MatFAB Icon="@MatIconNames.Add" type="button" @onclick="@abrirDialogoRegistroSubPaso"></MatFAB>
                 </div>
 
                 <MatTable Items="@documentopaso.pasos" class="mat-elevation-z5" Style="width:auto">
@@ -136,21 +121,12 @@
                             <div class="button-container-lvl">
                                 <div class="button-container">
                                     <MatButton Icon="@MatBlazor.MatIconNames.Edit"
-                                               Class="mat-warning-c" @onclick="@(e => AbrirDialogoEdicionSubPaso((PasoDocDTO)context))" Style="width:100% !important">Modificar</MatButton>
-                                </div>
-                                <div class="button-container">
-                                    <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
-                                               Class="mat-jum-d" @onclick="@(e => EliminarSubPaso(context.uid))" Style="width:100% !important">Eliminar</MatButton>
+                                               Class="mat-info-c" @onclick="@(e => AbrirDialogoVisualizacionSubPaso((PasoDocDTO)context))" Style="width:100% !important">Visualizar</MatButton>
                                 </div>
                             </div>
                         </td>
                     </MatTableRow>
                 </MatTable>
-                <div class="field-container">
-                    <MatButton type="submit"
-                               Icon="@MatBlazor.MatIconNames.Check_circle_outline"
-                               Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
-                </div>
                 <div class="field-container">
                     <MatButton type="button"
                                Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="@cerrar"
@@ -160,30 +136,26 @@
 
         </MatCardContent>
     </MatCard>
-    <MatDialog @bind-IsOpen="@dialogoRegistroSubPasos">
-        <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
-        <RegistrarSubPasos cerrarDialogoRegistroSubPaso="cerrarDialogoRegistroSubPaso" agregarSubpasoRegistrado="agregarSubpasoRegistrado" />
-    </MatDialog>
 
-    
-    <MatDialog @bind-IsOpen="@dialogoModificacionSubPasos">
+
+    <MatDialog @bind-IsOpen="@dialogoVisualizacionSubPasos">
         <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
-            <ModificarSubPasos cerrarDialogoModificacionSubPaso="cerrarDialogoModificacionSubPaso"
-                               subPasoDocumento="@subPasoDocumento" modificarSubPasoDocumento="modificarSubPasoDocumento" rendermod="rendermod"/>
-           
+        <VisualizarSubPasos cerrarDialogoModificacionSubPaso="cerrarDialogoVisualizacionSubPaso"
+                           subPasoDocumento="@subPasoDocumento"  rendermod="rendermod" />
     </MatDialog>
 
 </div>
 @code {
 
-    private DocumentoPasoDTO2 documentopaso = new DocumentoPasoDTO2();
+    //private DocumentoPasoDTO2 documentopaso = new DocumentoPasoDTO2();
     private EditContext _editContext;
-    private bool dialogoRegistroSubPasos = false;
-    private bool dialogoModificacionSubPasos = false;
+    private bool dialogoVisualizacionSubPasos = false;
     private PasoDocDTO subPasoDocumento = new PasoDocDTO();
     private bool rendermod = false;
-    [Parameter] public EventCallback<bool> cerrarDialogoRegistroPasoDocumento { get; set; }
-    [Parameter] public EventCallback<DocumentoPasoDTO2> registrarPasoDocuento { get; set; }
+    [Parameter] public EventCallback<bool> cerrarDialogoVisualizacionPasoDocumento { get; set; }
+    [Parameter] public bool rendermodpasodocumento { get; set; }
+    [Parameter] public EventCallback<DocumentoPasoDTO2> modificarPasoDocumento { get; set; }
+    [Parameter] public DocumentoPasoDTO2 documentopaso { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -192,17 +164,25 @@
     public async Task handleValidSubmit()
     {
         Console.WriteLine("todo bien");
-        await registrarPasoDocuento.InvokeAsync(documentopaso);
-        documentopaso = new DocumentoPasoDTO2();
-        _editContext = new EditContext(documentopaso);
         _editContext.MarkAsUnmodified();
         _editContext.NotifyValidationStateChanged();
+        StateHasChanged();
+        await modificarPasoDocumento.InvokeAsync(documentopaso);
     }
 
     public void handleInvalidSubmit()
     {
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
         Console.WriteLine("Algo Mal");
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (rendermodpasodocumento == true)
+        {
+            _editContext = new EditContext(documentopaso);
+            rendermodpasodocumento = false;
+            StateHasChanged();
+        }
     }
 
     void KeyUp(ChangeEventArgs e, string memberName, object val)
@@ -215,35 +195,12 @@
         var fi = new FieldIdentifier(val, memberName);
         _editContext.NotifyFieldChanged(fi);
     }
-    public void AbrirDialogoEdicionSubPaso(PasoDocDTO context)
+    public void AbrirDialogoVisualizacionSubPaso(PasoDocDTO context)
     {
         PasoDocDTO paso = context;
         subPasoDocumento = paso;
         rendermod = true;
-        dialogoModificacionSubPasos = true;
-    }
-    public void EliminarSubPaso(string uid)
-    {
-        int indice = documentopaso.pasos.FindIndex(ind => ind.uid.Equals(uid));
-        documentopaso.pasos.RemoveAt(indice);
-        StateHasChanged();
-    }
-    public void abrirDialogoRegistroSubPaso()
-    {
-        dialogoRegistroSubPasos = true;
-    }
-    public void agregarSubpasoRegistrado(PasoDocDTO subpaso)
-    {
-        subpaso.uid = generateUID();
-        documentopaso.pasos.Add(subpaso);
-        dialogoRegistroSubPasos = false;
-
-    }
-    public void modificarSubPasoDocumento(PasoDocDTO subpaso)
-    {
-        documentopaso.pasos[documentopaso.pasos.FindIndex(ind => ind.uid.Equals(subpaso.uid))] = subpaso;
-        dialogoModificacionSubPasos = false;
-        StateHasChanged();
+        dialogoVisualizacionSubPasos = true;
     }
 
     public string generateUID()
@@ -252,9 +209,8 @@
     }
     public async Task cerrar()
     {
-        await cerrarDialogoRegistroPasoDocumento.InvokeAsync(false);
+        await cerrarDialogoVisualizacionPasoDocumento.InvokeAsync(false);
     }
 
-    public void cerrarDialogoRegistroSubPaso(bool cerrar) => dialogoRegistroSubPasos = cerrar;
-    public void cerrarDialogoModificacionSubPaso(bool cerrar) => dialogoModificacionSubPasos = cerrar;
+    public void cerrarDialogoVisualizacionSubPaso(bool cerrar) => dialogoVisualizacionSubPasos = cerrar;
 }

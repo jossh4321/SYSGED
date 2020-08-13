@@ -2,7 +2,6 @@
 @layout MainLayout
 @inject IJSRuntime JS
 @inject IRepository repository
-<h3>Charts</h3>
 <style>
     .cont-chart {
         display: flex;
@@ -92,14 +91,14 @@
     }
 </style>
 <div class="cont-chart">
-    <h1 style="color:white">Generador de Estadisticas</h1>
+    <h1 style="color:black">Generador de Estadisticas</h1>
     <div class="statistics-selector">
         @if (sesion.rol == "JuntaDirectiva")
         {
             <MatSelect Label="Seleccione la Estadistica a visualizar para la Junta Directiva" TValue="string" @bind-Value="@selector" Style="flex-basis: 80%; margin-right:20px">
                 <MatOptionString Class="option-color" Value="estadistica1">Estado de Documentos por Mes</MatOptionString>
                 <MatOptionString Class="option-color" Value="estadistica2">Estado de Documentos Por Mes Y Area</MatOptionString>
-                <MatOptionString Class="option-color" Value="estadistica3">Documentos Caducados por Mes y Usuario </MatOptionString>
+                <MatOptionString Class="option-color" Value="estadistica3">Estado de Documentos por Mes y Usuario </MatOptionString>
                 <!--MatOptionString Class="option-color" Value="estadistica4">Documentos Evaluados por la Junta Directiva</MatOptionString-->
             </MatSelect>
         }

@@ -1,5 +1,299 @@
-﻿<h3>VisualizarPasos</h3>
-<h1>Visualzar Pasos</h1>
-@code {
+﻿@inject IRepository repository
+@inject ISwalFireMessage swalfire
+<style>
+    .card-content-padding {
+        padding: 15px;
+        width: 550px;
+        background-color: #f2f2f2;
+    }
+
+    .field-container {
+        display: block;
+        padding: 10px;
+    }
+
+    .text-field-style {
+        display: block !important;
+    }
+
+    .button-input-style {
+        display: block !important;
+    }
+    /*Validation*/
+    .validation-message {
+        display: inline;
+    }
+
+    div.invalid .correcto {
+        display: none;
+    }
+
+    div.valid .incorrecto,
+    div.valid:not(.modified) .correcto {
+        display: none;
+    }
+
+    .correcto {
+        color: green;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    .incorrecto {
+        color: red;
+        font-family: sans-serif;
+        font-size: 15px;
+        display: flex;
+        height: 18px;
+    }
+
+    i.val-icon {
+        font-size: 20px;
+    }
+
+    .sub-but {
+        display: block !important;
+        width: 100%;
+    }
+
+    .mdc-select__selected-text {
+        min-width: 350px !important;
+    }
+
+    div.mdc-dialog__surface {
+        border-radius: 5px 5px 5px 5px !important;
+    }
+
+    .mat-error-c {
+        color: red !important;
+        border: 1px solid red !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    /*para matblazor*/
+    /*div.mdc-dialog .mdc-dialog__container {
+        width: 100% !important;
+    }
+
+    .mdc-dialog .mdc-dialog__surface {
+        max-width: none !important;
+        width: 800px !important;
+    }*/
+</style>
+<div>
+    <MatCard>
+        <MatCardContent Class="card-content-padding">
+
+            @if (carga == true)
+            {
+                <LoaderContent accion="Registro de sos"></LoaderContent>
+            }
+            else
+            {
+                <MatHeadline6 Style="text-align:center">
+                    Visualizacion de Lista de pasos para un Expediente
+
+                </MatHeadline6>
+
+                <EditForm EditContext="@_editContext" Context="CurrentEditContext"
+                          OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
+                    <FluentValidator></FluentValidator>
+
+
+                    <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => pasos.nombreexpediente)">
+                        <MatTextField @bind-Value="@pasos.nombreexpediente" Class="text-field-style"
+                                      Label="Nombre del Expediente" ReadOnly="true" @oninput='@(e => KeyUp(e,"nombreexpediente",pasos))'></MatTextField>
+                        <div class="incorrecto">
+                            <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
+                            <ValidationMessage For="@(() => pasos.nombreexpediente)" />
+                        </div>
+                        <div class="correcto">
+                            <MatIcon Icon="@MatIconNames.Check" Class="val-icon"></MatIcon>
+                            <span>Correcto</span>
+                        </div>
+                    </div>
+
+                    <MatTable Items="@pasos.documentos" class="mat-elevation-z5" Style="width:auto">
+                        <MatTableHeader>
+                            <th>
+                                <span class="table-header">Tipo de Solicitud</span>
+                            </th>
+                            <th>
+                                <span class="table-header">Pasos Registrados</span>
+                            </th>
+                            <th>
+                                <span class="table-header">Funciones</span>
+                            </th>
+                        </MatTableHeader>
+                        <MatTableRow>
+                            <td>
+                                <span class="table-row">@context.tipo</span>
+                            </td>
+                            <td>
+                                <span class="table-row">@context.pasos.Count() Pasos Registrados</span>
+                            </td>
+                            <td>
+                                <div class="button-container-lvl">
+                                    <div class="button-container">
+                                        <MatButton Icon="@MatBlazor.MatIconNames.Edit"
+                                                   Class="mat-info-c" @onclick="@(e => AbrirDialogoVisualizacionPaso(context))" Style="width:100% !important">Visualizar</MatButton>
+                                    </div>
+                                </div>
+                            </td>
+                        </MatTableRow>
+                    </MatTable>
+                    <div class="field-container">
+                        <MatButton type="button"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="@cerrar"
+                                   Class="button-input-style mat-info-c sub-but">Volver</MatButton>
+                    </div>
+                </EditForm>
+            }
+
+        </MatCardContent>
+
+
+    </MatCard>
+    <MatDialog @bind-IsOpen="@dialogoVisualizacionPasoDocumento">
+        <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
+        <SISGED.Client.Pages.Pasos.RegistrarPaso.VisualizarPasoDocumento cerrarDialogoVisualizacionPasoDocumento="cerrarDialogoVisualizacionPasoDocumento"
+                                documentopaso="@documentopaso"
+                                rendermodpasodocumento="@rendermodpasodocumento" />
+    </MatDialog>
+</div>
+@code{
+    //public Usuario2 usuario2 = new Usuario2();
+    //[Parameter] public bool dialogoRegistro { get; set; }
+    //[Parameter] public EventCallback<PasosDTO2> agregarPaso { get; set; }
+    [Parameter] public PasosDTO2 pasos { get; set; }
+    [Parameter] public bool rendermodexp { get; set; }
+    [Parameter] public bool dialogoDetalle { get; set; }
+    private List<Rol> listaroles = new List<Rol>();
+    private EditContext _editContext;
+    private bool carga = false;
+    public bool dialogoVisualizacionPasoDocumento = false;
+    public bool rendermodpasodocumento = false;
+    public DocumentoPasoDTO2 documentopaso = new DocumentoPasoDTO2();
+
+    // [Parameter] public bool dialogoRegistro { get; set; }
+    [Parameter] public List<Usuario> listausuarios { get; set; }
+    [Parameter] public EventCallback<bool> cerrarDialogoDetalle { get; set; }
+    [Parameter] public bool renderaddexp { get; set; }
+    [Parameter] public EventCallback<PasosDTO2> modificarPaso { get; set; }
+    private string imagenTemporal { get; set; } = null;
+
+    public void addDocumento()
+    {
+        Console.WriteLine("Agregando Documento");
+    }
+    public void AbrirDialogoVisualizacionPaso(DocumentoPasoDTO2 context)
+    {
+        DocumentoPasoDTO2 docpaso = context;
+        documentopaso = docpaso;
+        rendermodpasodocumento = true;
+        dialogoVisualizacionPasoDocumento = true;
+    }
+    public void eliminar(int indice)
+    {
+        pasos.documentos.RemoveAt(indice);
+        StateHasChanged();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (rendermodexp == true)
+        {
+            //pasos = new PasosDTO2();
+            _editContext = new EditContext(pasos);
+            rendermodexp = false;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _editContext = new EditContext(pasos);
+    }
+    public async Task getRoles()
+    {
+        var httpResponse = await repository.Get<List<Rol>>("api/usuarios/roles");
+        if (httpResponse.Error)
+        {
+            Console.WriteLine("Ha ocurrido un error al traer roles");
+        }
+        else
+        {
+            listaroles = httpResponse.Response;
+
+        }
+    }
+    void doSomething(ChangeEventArgs e)
+    {
+        string selectedString = e.Value.ToString();
+        Console.WriteLine("It is definitely: " + selectedString);
+    }
+    void KeyUp(ChangeEventArgs e, string memberName, object val)
+    {
+        //var property = usuario2.GetType().GetProperty(memberName);
+        var property = val.GetType().GetProperty(memberName); //GetProperty(memberName, usuario2);
+        property.SetValue(val, e.Value.ToString());
+        Console.WriteLine(e.Value.ToString());
+        Console.WriteLine("Aqui Todo Bien: " + e.Value.ToString());
+        var fi = new FieldIdentifier(val, memberName);
+        _editContext.NotifyFieldChanged(fi);
+    }
+    public async Task handleValidSubmit()
+    {
+        Console.WriteLine("todo bien");
+
+        var httpResponse = await repository.Put<PasosDTO2, PasosDTO2>($"api/paso", pasos);
+        if (!httpResponse.Error)
+        {
+            pasos = httpResponse.Response;
+            await modificarPaso.InvokeAsync(pasos);
+            pasos = new PasosDTO2();
+            _editContext = new EditContext(pasos);
+            _editContext.MarkAsUnmodified();
+            _editContext.NotifyValidationStateChanged();
+            await swalfire.successMessage("Paso Registrado Correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("ERORR 500 : Fallo en el servidor");
+        }
+    }
+
+    public void cerrar()
+    {
+        //dialogoDetalle = false;
+        cerrarDialogoDetalle.InvokeAsync(false);
+    }
+    public void handleInvalidSubmit()
+    {
+        swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
+        Console.WriteLine("Algo Mal");
+    }
+
+    public string generateUID()
+    {
+        return Guid.NewGuid().ToString("N");
+    }
+    public void cerrarDialogoVisualizacionPasoDocumento(bool cerrar) => dialogoVisualizacionPasoDocumento = cerrar;
+    /*public List<ItemSelect> itemset = new List<ItemSelect>
+{
+        new ItemSelect(){ label="D.N.I", value="DNI"},
+        new ItemSelect(){ label="PASAPORTE", value="PASAPORTE"},
+        new ItemSelect(){ label="CARNET DE EXTRANJERIA", value="CE"}
+    };
+
+    public class ItemSelect
+    {
+        public string label { get; set; }
+        public string value { get; set; }
+    }*/
 
 }
+
