@@ -127,6 +127,7 @@
         docs.codigo = codigo;
         docs.firma = imagen;
         urlNexo = urlNexo.Substring(51);
+        Console.WriteLine("Esta es mi url" + urlNexo);
         docs.urlDeGenerado = urlNexo;
 
         var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);
