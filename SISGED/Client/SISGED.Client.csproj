@@ -270,6 +270,7 @@
   <ItemGroup>
     <Folder Include="Pages\Documentos\Otros\" />
     <Folder Include="..\..\..\SISGED - copia %25282%2529\SISGED\Client\Pages\Documentos\Modificar\" />
+    <Folder Include="Pages\Pasos\ModificarPaso\" />
   </ItemGroup>
 
 </Project>

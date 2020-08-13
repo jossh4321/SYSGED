@@ -24,6 +24,7 @@ namespace SISGED.Shared.Entities
     }
     public class Paso
     {
+        
         public Int32 indice { get; set; }
         public String nombre { get; set; }
         public String descripcion { get; set; }
@@ -31,7 +32,7 @@ namespace SISGED.Shared.Entities
         public DateTime? fechafin { get; set; }
         public DateTime? fechalimite { get; set; }
         public Int32 dias { get; set; }
-        public List<SubPaso> subpaso {get; set;}
+        public List<SubPaso> subpaso { get; set; } = new List<SubPaso>();
 
     }
 

@@ -29,6 +29,7 @@ using SISGED.Shared.Validators.DocumentosValidator.EntregaExpedienteNotario;
 using SISGED.Shared.Validators.DocumentosValidator.ResultadoBPN;
 using SISGED.Shared.Validators.DocumentosValidator.ConclusionFirma;
 using SISGED.Shared.Validators.DocumentosValidator.Resolucion;
+using SISGED.Shared.Validators.PasosValidator;
 
 namespace SISGED.Client
 {
@@ -129,6 +130,10 @@ namespace SISGED.Client
             services.AddValidatorsFromAssemblyContaining<EstadisticaDocCaducadosValidator>();
 
 
+            services.AddValidatorsFromAssemblyContaining<InformacionSubpaso>();
+            services.AddValidatorsFromAssemblyContaining<SubPasosValidator>();
+            services.AddValidatorsFromAssemblyContaining<DocumentosPasosValidator>();
+            services.AddValidatorsFromAssemblyContaining<PasosValidator>();
 
             services.AddAuthorizationCore();
             services.AddScoped<JWTAuthenticationProvider> ();

@@ -22,15 +22,28 @@ namespace SISGED.Shared.Validators.PasosValidator
         {
             RuleFor(x => x.tipo).NotEmpty().WithMessage("Debe ingresar un nombre del documento obligatoriamente");
             RuleForEach(x => x.pasos).SetValidator(new SubPasosValidator());
+            RuleFor(x => x.pasos)
+           .Must(x => x.Count >= 1).WithMessage("Debe agregar un paso como mínimo");
         }
     }
-    public class SubPasosValidator : AbstractValidator<Paso>
+    public class SubPasosValidator : AbstractValidator<PasoDocDTO>
     {
         public SubPasosValidator()
         {
             RuleFor(x => x.nombre).NotEmpty().WithMessage("Debe ingresar un nombre del paso obligatoriamente");
             RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe ingresar una descripcion del paso obligatoriamente");
             RuleFor(x => x.dias).NotEmpty().WithMessage("Debe ingresar una cantidad de días obligatoriamente");
+            RuleForEach(x => x.subpaso).SetValidator(new InformacionSubpaso());
+            RuleFor(x => x.subpaso)
+            .Must(x => x.Count >= 1).WithMessage("Debe agregar un sub-paso como mínimo");
+        }
+    }
+
+    public class InformacionSubpaso : AbstractValidator<SubPaso>
+    {
+        public InformacionSubpaso()
+        {
+            RuleFor(x => x.descripcion).NotEmpty().WithMessage("Debe ingresar una descripcion obligatoriamente");
         }
     }
 }

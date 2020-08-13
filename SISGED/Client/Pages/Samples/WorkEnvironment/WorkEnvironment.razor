@@ -308,26 +308,8 @@
         Console.WriteLine(sesion.rol);
         List<ConclusionFirmaDTO> listaexpediente = new List<ConclusionFirmaDTO>();
         Usuario usuario = new Usuario();
-        List<DocumentoADTO2> lista = new List<DocumentoADTO2>();
-        var httpResponse = await repository.Get<List<DocumentoADTO2>>($"api/documentos/documentosolicitudes3/70477724");
-        if (!httpResponse.Error)
-        {
-            Console.WriteLine(httpResponse.Response);
-            /*DocumentoADTO2 docActivator = new DocumentoADTO2();
-            docs = httpResponse.Response;
-            if (docActivator.estado == "revisado")
-            {
-                activator = true;
-            }
-            else
-            {
-                activator = false;
-            }*/
-        }
-        else
-        {
-            Console.WriteLine("Ocurrio un error");
-        }
+        List<PasosDTO2> lista = new List<PasosDTO2>();
+
         //var httpResponse = await repository.Get<List<Expediente_group>>($"api/documentos/ganttexpediente?dni=70477724");
         //if (!httpResponse.Error)
         //{
