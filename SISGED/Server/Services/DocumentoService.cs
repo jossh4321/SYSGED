@@ -656,7 +656,7 @@ namespace SISGED.Server.Services
                 var updateS = Builders<Documento>.Update
                        .Set("estado", "finalizado");
 
-                _documentos.UpdateOne(filter, update);
+                _documentos.UpdateOne(filterS, updateS);
             }
             return resolucion;
         }
