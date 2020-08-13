@@ -202,6 +202,32 @@ namespace SISGED.Shared.DTOs
         public List<Derivacion> derivaciones { get; set; }
         public string estado { get; set; }
     }
+    public class ExpedineteDTO_lookup1g
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; } = new DocumentoExpediente();
+        public List<Derivacion> derivaciones { get; set; }
+        public List<Documento> documentoobj { get; set; }
+        public string estado { get; set; }
+    }
+    public class ExpedineteDTO_unwind2g
+    {
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string id { get; set; }
+        public string tipo { get; set; }
+        public Cliente cliente { get; set; }
+        public DateTime fechainicio { get; set; }
+        public DateTime? fechafin { get; set; }
+        public DocumentoExpediente documentos { get; set; } = new DocumentoExpediente();
+        public List<Derivacion> derivaciones { get; set; }
+        public Documento documentoobj { get; set; }
+        public string estado { get; set; }
+    }
     public class ExpedienteDTO_lookup
     {
         [BsonRepresentation(BsonType.ObjectId)]

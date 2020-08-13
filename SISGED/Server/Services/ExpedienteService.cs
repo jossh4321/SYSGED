@@ -417,124 +417,141 @@ namespace SISGED.Server.Services
                                 new BsonDocument("cliente.numerodocumento", dni));
 
             var project = new BsonDocument("$project",
-                                    new BsonDocument
-                                        {
-                                            { "_id", "$_id" },
-                                            { "tipoexpediente", "$tipo" },
-                                            { "iddocumento", "$documentos.iddocumento" },
-                                            { "tipodocumento", "$documentos.tipo" },
-                                            { "cliente", "$cliente" },
-                                            { "fechacreacion", "$documentos.fechacreacion" },
-                                            { "fechademora",
-                                    new BsonDocument("$cond",
-                                    new BsonArray
-                                                {
-                                                    new BsonDocument("$eq",
-                                                    new BsonArray
-                                                        {
-                                                            "$documentos.fechademora",
-                                                            BsonNull.Value
-                                                        }),
-                                                    "$documentos.fechaexceso",
-                                                    "$documentos.fechademora"
-                                                }) },
-                                            { "fechaexceso", "$documentos.fechaexceso" },
-                                            { "estado",
-                                    new BsonDocument("$switch",
-                                    new BsonDocument("branches",
-                                    new BsonArray
-                                                    {
-                                                        new BsonDocument
-                                                        {
-                                                            { "case",
-                                                        new BsonDocument("$and",
-                                                        new BsonArray
-                                                                {
-                                                                    new BsonDocument("$eq",
-                                                                    new BsonArray
-                                                                        {
-                                                                            "$documentos.fechademora",
-                                                                            BsonNull.Value
-                                                                        }),
-                                                                    new BsonDocument("$gte",
-                                                                    new BsonArray
-                                                                        {
-                                                                            "$documentos.fechaexceso",
-                                                                            new DateTime(2020, 8, 6, 0, 0, 0)
-                                                                        })
-                                                                }) },
-                                                            { "then", "pendiente" }
-                                                        },
-                                                        new BsonDocument
-                                                        {
-                                                            { "case",
-                                                        new BsonDocument("$and",
-                                                        new BsonArray
-                                                                {
-                                                                    new BsonDocument("$eq",
-                                                                    new BsonArray
-                                                                        {
-                                                                            "$documentos.fechademora",
-                                                                            BsonNull.Value
-                                                                        }),
-                                                                    new BsonDocument("$lt",
-                                                                    new BsonArray
-                                                                        {
-                                                                            "$documentos.fechaexceso",
-                                                                            new DateTime(2020, 8, 6, 0, 0, 0)
-                                                                        })
-                                                                }) },
-                                                            { "then", "caducado" }
-                                                        },
-                                                        new BsonDocument
-                                                        {
-                                                            { "case",
-                                                        new BsonDocument("$and",
-                                                        new BsonArray
-                                                                {
-                                                                    new BsonDocument("$ne",
-                                                                    new BsonArray
-                                                                        {
-                                                                            "$documentos.fechademora",
-                                                                            BsonNull.Value
-                                                                        }),
-                                                                    new BsonDocument("$gt",
-                                                                    new BsonArray
-                                                                        {
-                                                                            "$documentos.fechademora",
-                                                                            "$documentos.fechaexceso"
-                                                                        })
-                                                                }) },
-                                                            { "then", "procesado" }
-                                                        },
-                                                        new BsonDocument
-                                                        {
-                                                            { "case",
-                                                        new BsonDocument("$and",
-                                                        new BsonArray
-                                                                {
-                                                                    new BsonDocument("$ne",
-                                                                    new BsonArray
-                                                                        {
-                                                                            "$documentos.fechademora",
-                                                                            BsonNull.Value
-                                                                        }),
-                                                                    new BsonDocument("$lte",
-                                                                    new BsonArray
-                                                                        {
-                                                                            "$documentos.fechademora",
-                                                                            "$documentos.fechaexceso"
-                                                                        })
-                                                                }) },
-                                                            { "then", "procesado" }
-                                                        }
-                                                    })) }
-                                        });
+    new BsonDocument
+        {
+            { "_id", "$_id" },
+            { "tipoexpediente", "$tipo" },
+            { "iddocumento", "$documentos.iddocumento" },
+            { "tipodocumento", "$documentos.tipo" },
+            { "cliente", "$cliente" },
+            { "fechacreacion", "$documentos.fechacreacion" },
+            { "fechademora",
+    new BsonDocument("$cond",
+    new BsonArray
+                {
+                    new BsonDocument("$eq",
+                    new BsonArray
+                        {
+                            "$documentos.fechademora",
+                            BsonNull.Value
+                        }),
+                    "$documentos.fechaexceso",
+                    "$documentos.fechademora"
+                }) },
+            { "fechaexceso", "$documentos.fechaexceso" },
+            { "estado",
+    new BsonDocument("$switch",
+    new BsonDocument("branches",
+    new BsonArray
+                    {
+                        new BsonDocument
+                        {
+                            { "case",
+                        new BsonDocument("$eq",
+                        new BsonArray
+                                {
+                                    "$documentoobj.estado",
+                                    "pendiente"
+                                }) },
+                            { "then", "pendiente" }
+                        },
+                        new BsonDocument
+                        {
+                            { "case",
+                        new BsonDocument("$eq",
+                        new BsonArray
+                                {
+                                    "$documentoobj.estado",
+                                    "creado"
+                                }) },
+                            { "then", "pendiente" }
+                        },
+                        new BsonDocument
+                        {
+                            { "case",
+                        new BsonDocument("$eq",
+                        new BsonArray
+                                {
+                                    "$documentoobj.estado",
+                                    "modificado"
+                                }) },
+                            { "then", "pendiente" }
+                        },
+                        new BsonDocument
+                        {
+                            { "case",
+                        new BsonDocument("$eq",
+                        new BsonArray
+                                {
+                                    "$documentoobj.estado",
+                                    "procesado"
+                                }) },
+                            { "then", "procesado" }
+                        },
+                        new BsonDocument
+                        {
+                            { "case",
+                        new BsonDocument("$eq",
+                        new BsonArray
+                                {
+                                    "$documentoobj.estado",
+                                    "finalizado"
+                                }) },
+                            { "then", "procesado" }
+                        },
+                        new BsonDocument
+                        {
+                            { "case",
+                        new BsonDocument("$eq",
+                        new BsonArray
+                                {
+                                    "$documentoobj.estado",
+                                    "revisado"
+                                }) },
+                            { "then", "procesado" }
+                        },
+                        new BsonDocument
+                        {
+                            { "case",
+                        new BsonDocument("$eq",
+                        new BsonArray
+                                {
+                                    "$documentoobj.estado",
+                                    "caducado"
+                                }) },
+                            { "then", "caducado" }
+                        }
+                    })) }
+        });
+
+            var lookup = new BsonDocument("$lookup",
+                    new BsonDocument
+                        {
+                            { "from", "documentos" },
+                            { "let",
+                    new BsonDocument("iddoc", "$documentos.iddocumento") },
+                            { "pipeline",
+                    new BsonArray
+                            {
+                                new BsonDocument("$match",
+                                new BsonDocument("$expr",
+                                new BsonDocument("$eq",
+                                new BsonArray
+                                            {
+                                                "$_id",
+                                                new BsonDocument("$toObjectId", "$$iddoc")
+                                            })))
+                            } },
+                            { "as", "documentoobj" }
+                        });
+
 
             List<expediente_project> listaexpediente = new List<expediente_project>();
             listaexpediente = await  _expedientes.Aggregate()
                                    .AppendStage<Expediente>(match1)
                                    .Unwind<Expediente, ExpedineteDTO_unwind1>(x => x.documentos)
+                                   .AppendStage<ExpedineteDTO_lookup1g>(lookup)
+                                   .Unwind<ExpedineteDTO_lookup1g, ExpedineteDTO_unwind2g>(x=> x.documentoobj)
                                    .AppendStage<expediente_project>(project).ToListAsync();
             return listaexpediente;
         }
