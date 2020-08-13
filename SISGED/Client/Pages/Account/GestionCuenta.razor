@@ -8,11 +8,37 @@
     /*div.cont *{
         color: white;
     }*/
+
+    .mdc-floating-label--float-above {
+        color: black !important;
+    }
+
+    :root {
+        --mdc-theme-primary: #1FA270 !important;
+    }
+
+    div.mdc-paginator-page-size {
+        color: black !important;
+    }
+    div.mdc-paginator-range-actions {
+        color: black !important;
+    }
+    div.mdc-paginator{
+        color: black !important;
+    }
+    .mdc-select:not(.mdc-select--disabled) .mdc-select__anchor {
+        background-color: #ACB1B6 !important;
+    }
+
     .container-c {
         display: inline-flex;
         flex-wrap: wrap;
         flex-direction: column;
         margin: 10px auto;
+    }
+
+    .mdc-paginator-container {
+        color: black;
     }
 
     tr.mdc-table-header-row {
@@ -27,11 +53,11 @@
     }
 
     tbody {
-        background-color: #4d4d4d !important;
+        background-color: #DCDCDC !important;
     }
 
     .table-row {
-        color: #ccc;
+        color: black;
         font-family: sans-serif;
         font-size: 14px;
         display: inline-block
@@ -54,31 +80,32 @@
     }
     /*#ffd11a*/
     .mat-warning-c {
-        color: #ffd11a !important;
-        border: 1px solid #ffd11a !important;
+        background-color: #018786 !important;
+        color: #F3F3F3 !important;
         border-radius: 15px !important;
         font-size: 13px !important;
         transition: all 300ms !important;
     }
 
     .mat-danger-c {
-        color: #ff3333 !important;
-        border: 1px solid #ff3333 !important;
+        color: #F3F3F3 !important;
+        background-color: #E94343 !important;
         border-radius: 15px !important;
         font-size: 13px !important;
         transition: all 300ms !important;
     }
+
     .mat-danger-c2 {
-        color: #0ACD2A !important;
-        border: 1px solid #0ACD2A !important;
+        color: #F3F3F3 !important;
+        background-color: #F5AA36 !important;
         border-radius: 15px !important;
         font-size: 13px !important;
         transition: all 300ms !important;
     }
 
     .mat-info-c {
-        color: #3F7CFF !important;
-        border: 1px solid #3F7CFF !important;
+        color: #F3F3F3 !important;
+        background-color: #307AC3 !important;
         border-radius: 15px !important;
         font-size: 13px !important;
         transition: all 300ms !important;
@@ -134,7 +161,7 @@
 
 
     <div class="head-flex">
-        <h1>Vista de Gestion de Cuenta</h1>
+        <h1 style="color:#25393D">Vista de Gestion de Cuenta</h1>
         <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true" Position="@MatTooltipPosition.Left">
             <MatFAB Icon="@MatIconNames.Add" @onclick="@abrirDialogoRegistro"></MatFAB>
         </MatTooltip>
@@ -149,24 +176,24 @@
     }
     else
     {
-        <MatTable Items="@listausuarios" class="mat-elevation-z5" Style="width:auto">
+        <MatTable Items="@listausuarios" class="mat-elevation-z5 div.mdc-paginator-range-buttons button i" Style="width:auto">
             <MatTableHeader>
-                <th>
+                <th style="background-color:#25393D;">
                     <span class="table-header">Nombre Completo</span>
                 </th>
-                <th>
+                <th style="background-color:#25393D;">
                     <span class="table-header">Numero de Documento</span>
                 </th>
-                <th>
+                <th style="background-color:#25393D;">
                     <span class="table-header">Email</span>
                 </th>
                 <!--<th>
                     <span class="table-header">Rol</span>
                 </th>-->
-                <th>
+                <th style="background-color:#25393D;">
                     <span class="table-header">Estado</span>
                 </th>
-                <th>
+                <th style="background-color:#25393D;">
                     <span class="table-header">Funciones</span>
                 </th>
             </MatTableHeader>

@@ -491,6 +491,11 @@ namespace SISGED.Server.Controllers
                 var solicitudBytes2 = Convert.FromBase64String(documento.firma);
                 documento.firma = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "png", "resultadobpn");
             }
+            if (!string.IsNullOrWhiteSpace(documento.urlDeGenerado))
+            {
+                var solicitudBytes2 = Convert.FromBase64String(documento.urlDeGenerado);
+                documento.urlDeGenerado = await _almacenadorDeDocs.saveDoc(solicitudBytes2, "pdf", "resultadobpn");
+            }
 
             return _documentoservice.generarDocumento(documento);
         }

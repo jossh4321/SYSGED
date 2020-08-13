@@ -1,5 +1,9 @@
-﻿body {
-    background-color: #222;
+﻿.main {
+    background-color: white;
+}
+
+body {
+    background-color: white;
     color: #fff;
 }
 
@@ -7,14 +11,15 @@ p {
     display: block;
     margin-block-start: 1em;
     margin-block-end: 1em;
+    color: white;
 }
 
     p > ul {
-        color: #b0b3b4;
+        color: white;
     }
 
         p > ul > li {
-            color: #b0b3b4;
+            color: white;
         }
 
 #preloader {
@@ -126,6 +131,10 @@ td,
 a {
     -ms-text-size-adjust: 100%; /* 1 */
     -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+table {
+    background-color: #F3F3F3
 }
 /**
         * Better fluid images in Internet Explorer.

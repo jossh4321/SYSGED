@@ -7,6 +7,16 @@
 
 <link rel="stylesheet" href="css/processing.css" />
 
+<style>
+    .main {
+        background-color: #F3F3F3 !important;
+    }
+
+    p {
+        color: white !important;
+    }
+</style>
+
 @if (firstLoad)
 {
     <div id="preloader" style="display:" block">
@@ -34,7 +44,7 @@ else
             <td align="center">
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
-                        <td align="left" bgcolor="black" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf; text-align:center">
+                        <td align="left" bgcolor="#25393D" style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf; text-align:center">
                             <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">Estado de Transacción</h1>
                         </td>
                     </tr>
@@ -45,7 +55,7 @@ else
             <td align="center">
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                     <tr>
-                        <td align="left" bgcolor="black" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
+                        <td align="left" bgcolor="#25393D" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                             <p>Estimado Usuario:</p>
                             <p style="margin: 0;">
                                 Le notificamos que el procesamiento de su transacción ha sido APROBADO.
@@ -56,22 +66,23 @@ else
                             <p style="font-weight:bolder">Detalle:</p>
                             <p>
                                 <ul>
-                                    <li>Tipo de Solicitud: @documento.tipo.ToUpper()</li>
-                                    <li>Fecha: @DateTime.Today.ToShortDateString()</li>
+                                    <li style="color:white">Tipo de Solicitud: @documento.tipo.ToUpper()</li>
+                                    <li style="color:white">Fecha: @DateTime.Today.ToShortDateString()</li>
                                     @* <li>Estado: @documento.estado.ToString().ToUpper()</li>*@
                                 </ul>
                             </p>
                         </td>
                     </tr>
                     <tr>
-                        <td align="left" bgcolor="black">
+                        <td align="left" bgcolor="#25393D">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
-                                    <td align="center" bgcolor="black" style="padding: 12px;">
+                                    <td align="center" bgcolor="#25393D" style="padding: 12px;">
                                         <table border="0" cellpadding="0" cellspacing="0">
                                             <tr>
-                                                <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                                                    <button @onclick="Redireccion" style="        background-color: #1a82e2; display: inline-block;
+                                                <td align="center" bgcolor="#25393D" style="border-radius: 6px;">
+                                                    <button @onclick="Redireccion" style="        background-color: #1FA270;
+        display: inline-block;
         padding: 16px 36px;
         font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
         font-size: 16px;
@@ -89,7 +100,7 @@ else
                         </td>
                     </tr>
                     <tr>
-                        <td align="left" bgcolor="black" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
+                        <td align="left" bgcolor="#25393D" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
                             <p style="margin: 0;">Saludos,<br> Colegio de Notarios de Lima</p>
                         </td>
                     </tr>
@@ -101,15 +112,15 @@ else
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
 
                     <tr>
-                        <td align="center" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                            <p style="margin: 0;">El proceso de pago NO es parte del Colegio de Notarios de Lima, nosotros no guardamos ninguna información de método de pago.</p>
+                        <td align="center" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666666 !important;">
+                            <p style="margin: 0; color: #666666;">El proceso de pago NO es parte del Colegio de Notarios de Lima, nosotros no guardamos ninguna información de método de pago.</p>
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
+                        <td align="center" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666666 !important;">
 
-                            <p style="margin: 0;">Colegio de Notarios de Lima: Av. Gregorio Escobedo 343, Jesús María 15072, Lima, Perú</p>
-                            <p style="margin: 0;">Telefono: 3190700</p>
+                            <p style="margin: 0; color: #666666;">Colegio de Notarios de Lima: Av. Gregorio Escobedo 343, Jesús María 15072, Lima, Perú</p>
+                            <p style="margin: 0; color: #666666;">Telefono: 3190700</p>
                         </td>
                     </tr>
                 </table>

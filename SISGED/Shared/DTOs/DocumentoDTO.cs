@@ -48,6 +48,7 @@ namespace SISGED.Shared.DTOs
         public string idusuario { get; set; } = null;
         public string codigo { get; set; }
         public string firma { get; set; }
+        public string urlDeGenerado { get; set; }
     }
     public class DocumentoUsuarioDTO
     {
