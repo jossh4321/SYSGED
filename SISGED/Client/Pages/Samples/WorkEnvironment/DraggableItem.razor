@@ -15,8 +15,15 @@
     .field-container {
         padding: 5px;
     }
+
+    .color-tool {
+        background-color: #25393D !important;
+    }
+        .color-tool .tool-name {
+            color: white !important;
+        }
 </style>
-<li draggable="true" class="li-tool @classname" @ondragstart="@(() => HandleDragStart(herramienta))">
+<li draggable="true" class="li-tool @classname @(herramienta.originPlace == "tools" ? "color-tool": null)" @ondragstart="@(() => HandleDragStart(herramienta))">
     <div class="tool-container">
         <MatIcon>@MatIconNames.Assistant</MatIcon>
         <div class="tool-sub-container">
