@@ -256,7 +256,7 @@ else
                 areaprocedencia = rolNombreProcedencia,
                 usuarioemisor   = sesion.usuario.id,
                 tipo            =  ((DocumentoDTO)workspace.expedienteseleccionado.documento).tipo/*"OficioDesignacionNotario"*/,//workspace.expedienteseleccionado.tipo,
-                fechaderivacion = DateTime.Now.ToLocalTime(),
+                fechaderivacion = DateTime.UtcNow.AddHours(-5),
                 estado          = "pendiente"},
         };
         expediente.derivaciones = derivaciones;
@@ -301,9 +301,20 @@ else
 
             if (index == workspace.asistente.pasos.documentos.Count - 1)
             {
+                if(workspace.asistente.tipodocumento.Equals("Resolucion") && workspace.asistente.paso <
+                                                                                workspace.asistente.pasos.documentos.Find(x => x.tipo == "Resolucion").pasos.Count)
+                {
+                    paso = workspace.asistente.paso + 1;
+                    subpaso = 0;
+                }
+                else
+                {
+                    paso = workspace.asistente.paso;
+                    subpaso = workspace.asistente.subpaso + 1;
+                }
+
                 tipoDocumento = workspace.asistente.tipodocumento;
-                paso = workspace.asistente.paso;
-                subpaso = workspace.asistente.subpaso + 1;
+
             }
             else
             {
