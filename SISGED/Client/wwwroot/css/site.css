@@ -694,3 +694,7 @@ div.valid .incorrecto {
 .render-fragment{
     display:flex;
 }
+
+.bar-side-icons-style {
+    color: white !important;
+} 
