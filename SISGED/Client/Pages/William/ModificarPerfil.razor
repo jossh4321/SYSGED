@@ -6,11 +6,14 @@
 @using SISGED.Client.Pages.Samples.WorkEnvironment
 <style>
     .div-form {
-        background-color: #404040;
-       /* flex-basis: 100%;*/
+        background-color: #1FA270;
+        /* flex-basis: 100%;*/
         border-radius: 2px 2px 1px 1px;
         width: 80%;
         heigth: 4px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
     }
 
     .centro {
@@ -20,14 +23,19 @@
     }
 
     .field-container {
-        display: block;
+        
         padding: 5px;
+        
+
     }
 
     .text-field-style {
         display: block !important;
         width: 350px;
-        heigth: 4px
+        heigth: 4px;
+        margin-left:155px;
+        margin-right: auto;
+        text-align: center;
     }
 
     /*validacion*/
@@ -50,6 +58,8 @@
         font-size: 15px;
         display: flex;
         height: 18px;
+        margin-left: 155px;
+        margin-right: auto;
     }
 
     .incorrecto {
@@ -58,6 +68,8 @@
         font-size: 15px;
         display: flex;
         height: 18px;
+        margin-left: 155px;
+        margin-right: auto;
     }
 
     i.val-icon {
@@ -72,51 +84,25 @@
         color: red !important;
     }
 
-    .modal-info-solicitudBPN {
-        display: flex;
-        flex-direction: column;
-        /*height: 700px;*/
-        width: 300px;
-        background-color: #FFFFFF;
-    }
-
-    .div-form.mat-tab-group {
-        max-width: 300px;
-    }
-
-    .otorgantes {
-        border: 1px solid #ccc;
-        background: #FFFFFF;
-        display: flex;
-        margin: 7px 10px;
-        align-items: center;
-        flex-direction: column;
-        border-radius: 5px 5px 0px 0px;
-        border-bottom: 1px solid black;
-    }
-
-    .title-ot {
-        font-size: 16px;
-        margin-bottom: 0px;
-        margin-top: 5px;
-        color: #FFFFFF;
-    }
+ 
+    
     .demo-mat-card {
-        max-width: 500px;
+        
         padding: 0 10px 0 10px;
     }
     .mdc-tab__ripple {
         background-color: #FAF3F3;
+        
     }
 
 </style>
-<div class="div-form">
+<div class="div-form"  >
 
     <EditForm EditContext="@_editContext" Context="CurrentEditContext" Class="demo-mat-card"
               OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
         <FluentValidator></FluentValidator>
         <MatTabGroup>
-            <MatTab Label="Información  de  Usuario ">
+            <MatTab    Label="Información  de  Usuario " Style="margin-left: auto; margin-right: auto;">
 
 
                 
@@ -239,13 +225,20 @@
                         <span class="good-msg">Correcto</span>
                     </div>
                 </div>
-
-                <InputImgModificarUsuario Label="Foto" ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@(usuario.datos.imagen)" />
-                <div class="field-container">
+                  <InputImgModificarUsuario   ImagenSeleccionada="ImagenSeleccionada" ImagenTemporal="@(usuario.datos.imagen)" />
+               
+                <div > 
                     <MatCardActions>
                         <MatButton Raised="true"
-                                   Class="centro"
+                                  
+        
                                    type="submit"
+                                   style="        margin-left: 500px;
+        margin-right: auto;
+       
+        color: #1FA270;
+        background-color: #F3F3F3 !important"
+                                                
                                    Icon="@MatBlazor.MatIconNames.Check_circle_outline">Modificar</MatButton>
                     </MatCardActions>
                 </div>
