@@ -173,7 +173,7 @@
                     <div class="button-container-lvl">
                         <div class="button-container">
                             <MatButton Icon="@MatBlazor.MatIconNames.Edit"
-                                       Class="mat-warning-c" @onclick="@(e => abrirDialogoEdicion(context.id))" Style="width:100% !important">Modificar</MatButton>
+                                       Class="mat-warning-c" @onclick="@(e => abrirDialogoEdicion(context))" Style="width:100% !important">Modificar</MatButton>
                         </div>
                         <div class="button-container">
                             <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
@@ -186,38 +186,41 @@
     }
 
     <MatDialog @bind-IsOpen="@dialogoRegistro">
-        <RegistrarPasos></RegistrarPasos>
+        <RegistrarPasos  dialogoRegistro ="dialogoRegistro" agregarPaso="agregarPaso" renderaddexp="renderaddexp" ></RegistrarPasos>
         <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
     </MatDialog>
     <MatDialog @bind-IsOpen="@dialogoEdicion">
-        <CascadingValue Value="this">
-            <ModificarPasos></ModificarPasos>
-            <!--ModificarCuenta listausuarios="listausuarios"
-                             cerrarDialogoModificacion="cerrarDialogoModificacion"
-                             usuariodto="usuariodto" /-->
-        </CascadingValue>
+        <SISGED.Client.Pages.Pasos.RegistrarPaso.ModificarPasos dialogoEdicion="@dialogoEdicion" 
+                     pasos="@pasos" rendermodexp="@rendermodexp" modificarPaso="modificarPaso"></SISGED.Client.Pages.Pasos.RegistrarPaso.ModificarPasos>
+        <!--ModificarCuenta listausuarios="listausuarios"
+                     cerrarDialogoModificacion="cerrarDialogoModificacion"
+                     usuariodto="usuariodto" /-->
     </MatDialog>
     <MatDialog @bind-IsOpen="@dialogoDetalle">
         <CascadingValue Value="this">
-            <VisualizarPasos></VisualizarPasos>
+            <!--VisualizarPasos></VisualizarPasos-->
             <!--DetalleCuenta usuariodto="usuariodto" cerrarDialogoDetalle="cerrarDialogoDetalle" /-->
         </CascadingValue>
     </MatDialog>
 </div>
 
 @code {
-    public List<Pasos> listapasos = new List<Pasos>();
-    public UsuarioDTO usuariodto = new UsuarioDTO();
+    public List<PasosDTO2> listapasos = new List<PasosDTO2>();
     private bool dialogoRegistro = false;
     private bool dialogoEdicion = false;
     private bool dialogoDetalle = false;
     public string imagenTemporalMod { get; set; }
     public bool rendermod { get; set; } = false;
+    public bool renderaddexp = false;
+    public bool rendermodexp = false;
     public bool cargatabla { get; set; } = false;
+
+    public PasosDTO2 pasos = new PasosDTO2();
+
     protected override async Task OnInitializedAsync()
     {
         cargatabla = true;
-        var httpResponse = await repository.Get<List<Pasos>>("api/paso/get");
+        var httpResponse = await repository.Get<List<PasosDTO2>>($"api/paso/get/pasosdto2id");
         if (!httpResponse.Error)
         {
             listapasos = httpResponse.Response;
@@ -230,31 +233,14 @@
         cargatabla = false;
     }
 
-    public async Task abrirDialogoEdicion(string id)
-    {
-        Pasos pasos = new Pasos();
-        var httpResponse = await repository.Get<Pasos>($"api/paso/get/id?id={id}");
-        if (httpResponse.Error)
-        {
-            Console.WriteLine("Algo Mal");
-        }
-        else
-        {
-            pasos = httpResponse.Response;
 
-        }
-        /*imagenTemporalMod = usuario.datos.imagen + "";
-        usuario.datos.imagen = null;
-        usuariodto.usuario = usuario.usuario;
-        usuariodto.clave = usuario.clave;
-        usuariodto.datos = usuario.datos;
-        usuariodto.id = usuario.id;
-        usuariodto.estado = usuario.estado;
-        usuariodto.tipo = usuario.tipo;
-        usuariodto.rolid = usuario.rol;
-        rendermod = true;
-        StateHasChanged();*/
+    public async Task abrirDialogoEdicion(PasosDTO2 context)
+    {
+        pasos = context;
+        rendermodexp = true;
         dialogoEdicion = true;
+
+        StateHasChanged();
     }
     public async Task abrirDialogoDetalle(string id)
     {
@@ -280,28 +266,23 @@
 
     }
 
-
-
-    /*public async Task abrirNotificacionEstado(Usuario usuario)
+    public void agregarPaso(PasosDTO2 paso)
     {
-
-        bool estado;
-        estado = await js.InvokeAsync<bool>("SwalFireEliminacion", "Cambio de Estado de Cuenta", usuario.estado, usuario.usuario);
-        if (estado == true)
-        {
-            usuario = await cambiarEstadoUsuario(usuario);
-            string accion = usuario.estado == "activo" ? "Bloqueo" : "Desbloqueo";
-
-            listausuarios[listausuarios.FindIndex(ind => ind.id == usuario.id)] = usuario;
-            accion = usuario.estado == "activo" ? "Desbloqueo" : "Bloqueo";
-            await swalfire.successMessage($"Se {accion} la cuenta del usuario {usuario.usuario} Satisfactoriamente");
-            StateHasChanged();
-        }
-        else
-        {
-            await swalfire.warningMessage($"Proceso de Modificacion de Estado Cancelado");
-        }
-    }*/
+        //paso.uid = generateUID();
+        listapasos.Add(paso);
+        dialogoRegistro = false;
+        renderaddexp = true;
+    }
+    public void modificarPaso(PasosDTO2 paso)
+    {
+        listapasos[listapasos.FindIndex(ind => ind.id.Equals(paso.id))] = paso;
+        dialogoEdicion = false;
+        StateHasChanged();
+    }
+    public string generateUID()
+    {
+        return Guid.NewGuid().ToString("N");
+    }
 
     public async Task<Usuario> cambiarEstadoUsuario(Usuario usuario)
     {
@@ -316,9 +297,9 @@
         }
         return httpResponse.Response;
     }
-    public void abrirDialogoRegistro() => dialogoRegistro = true;
+    public void abrirDialogoRegistro() { dialogoRegistro = true; renderaddexp = true; }
 
-    public void cerrarDialogoRegistro(bool cerrar) => dialogoRegistro = cerrar;
+    public void cerrarDialogoRegistro(bool cerrar) { dialogoRegistro = cerrar; }
     public void cerrarDialogoModificacion(bool cerrar) => dialogoEdicion = cerrar;
     public void cerrarDialogoDetalle(bool cerrar) => dialogoDetalle = cerrar;
 }

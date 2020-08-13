@@ -64,6 +64,22 @@
     div.mdc-dialog__surface{
         border-radius:5px 5px 5px 5px !important;
     }
+    .mat-error-c {
+        color: red !important;
+        border: 1px solid red !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    /*para matblazor*/
+    /*div.mdc-dialog .mdc-dialog__container {
+        width: 100% !important;
+    }
+
+    .mdc-dialog .mdc-dialog__surface {
+        max-width: none !important;
+        width: 800px !important;
+    }*/
 </style>
 <div>
     <MatCard>
@@ -71,12 +87,12 @@
 
             @if (carga == true)
             {
-                <LoaderContent accion="Registro de Usuarios"></LoaderContent>
+                <LoaderContent accion="Registro de sos"></LoaderContent>
             }
             else
             {
                 <MatHeadline6 Style="text-align:center">
-                    Registro de Usuario
+                    Registro de Lista de pasos para un Expediente
 
                 </MatHeadline6>
 
@@ -100,8 +116,8 @@
 
                     <div class="head-flex">
                         <h3 style="color:black">Gestion de Documento de Paso</h3>
-                        <MatTooltip Tooltip="Registrar una Cuenta!" Wrap="true" Position="@MatTooltipPosition.Left">
-                            <MatFAB Icon="@MatIconNames.Add" type="button" @onclick="@abrirDialogoRegistroPasos"></MatFAB>
+                        <MatTooltip Tooltip="Registrar una Documento!" Wrap="true" Position="@MatTooltipPosition.Left">
+                            <MatFAB Icon="@MatIconNames.Add" type="button" @onclick="@abrirDialogoRegistroPasosDocumento"></MatFAB>
                         </MatTooltip>
                     </div>
 
@@ -128,17 +144,26 @@
                                 <div class="button-container-lvl">
                                     <div class="button-container">
                                         <MatButton Icon="@MatBlazor.MatIconNames.Edit"
-                                                   Class="mat-warning-c" @onclick="@(e => AbrirDialogoEdicionPaso(context.indice))" Style="width:100% !important">Modificar</MatButton>
+                                                   Class="mat-warning-c" @onclick="@(e => AbrirDialogoEdicionPaso(context))" Style="width:100% !important">Modificar</MatButton>
                                     </div>
                                     <div class="button-container">
                                         <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
-                                                   Class="mat-info-c" @onclick="@(e => eliminar(context.indice))" Style="width:100% !important">Eliminar</MatButton>
+                                                   Class="mat-error-c" @onclick="@(e => eliminar(context.indice))" Style="width:100% !important">Eliminar</MatButton>
                                     </div>
                                 </div>
                             </td>
                         </MatTableRow>
                     </MatTable>
-
+                    <div class="field-container">
+                        <MatButton type="submit"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline"
+                                   Class="button-input-style mat-success-c sub-but">Registrar Ahora</MatButton>
+                    </div>
+                    <div class="field-container">
+                        <MatButton type="button"
+                                   Icon="@MatBlazor.MatIconNames.Check_circle_outline" @onclick="@cerrar"
+                                   Class="button-input-style mat-error-c sub-but">Volver</MatButton>
+                    </div>
                 </EditForm>
             }
 
@@ -146,22 +171,36 @@
 
 
     </MatCard>
-    <MatDialog @bind-IsOpen="@dialogoRegistroPasos">
-        <h1>Hola</h1>
+    <MatDialog @bind-IsOpen="@dialogoRegistroPasosDocumento">
         <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
+        <SISGED.Client.Pages.Pasos.RegistrarPaso.RegistrarPasoDocumento cerrarDialogoRegistroPasoDocumento="cerrarDialogoRegistroPasoDocumento"
+                                registrarPasoDocuento="registrarPasoDocuento" />
+    </MatDialog>
+    <MatDialog @bind-IsOpen="@dialogoModificarPasoDocumento">
+        <!--RegistrarCuenta listausuarios="listausuarios" cerrarDialogoRegistro="cerrarDialogoRegistro" /-->
+        <ModificarPasoDocumento cerrarDialogoModificacionPasoDocumento="cerrarDialogoModificacionPasoDocumento"
+                                modificarPasoDocumento="modificarPasoDocumento" 
+                                documentopaso="@documentopaso"
+                                rendermodpasodocumento="@rendermodpasodocumento"/>
     </MatDialog>
 </div>
 @code{
     //public Usuario2 usuario2 = new Usuario2();
+    [Parameter] public bool dialogoRegistro { get; set; }
+    [Parameter] public EventCallback<PasosDTO2> agregarPaso { get; set; }
     private PasosDTO2 pasos = new PasosDTO2();
     private List<Rol> listaroles = new List<Rol>();
     private EditContext _editContext;
     private bool carga = false;
-    public bool dialogoRegistroPasos = false;
+    public bool dialogoRegistroPasosDocumento = false;
+    public bool dialogoModificarPasoDocumento = false;
+    public bool rendermodpasodocumento = false;
+    public DocumentoPasoDTO2 documentopaso = new DocumentoPasoDTO2();
 
     // [Parameter] public bool dialogoRegistro { get; set; }
     [Parameter] public List<Usuario> listausuarios { get; set; }
     [Parameter] public EventCallback<bool> cerrarDialogoRegistro { get; set; }
+    [Parameter] public bool renderaddexp { get; set; }
     private string imagenTemporal { get; set; } = null;
 
     public void addDocumento()
@@ -169,20 +208,33 @@
         Console.WriteLine("Agregando Documento");
     }
 
-    public void abrirDialogoRegistroPasos()
+    public void abrirDialogoRegistroPasosDocumento()
     {
-        dialogoRegistroPasos = true;
+        dialogoRegistroPasosDocumento = true;
     }
-    public void AbrirDialogoEdicionPaso(int indice)
+    public void AbrirDialogoEdicionPaso(DocumentoPasoDTO2 context)
     {
-
+        DocumentoPasoDTO2 docpaso = context;
+        documentopaso = docpaso;
+        rendermodpasodocumento = true;
+        dialogoModificarPasoDocumento = true;
     }
-
     public void eliminar(int indice)
     {
-
+        pasos.documentos.RemoveAt(indice);
+        StateHasChanged();
     }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (renderaddexp == true)
+        {
+            pasos = new PasosDTO2();
+            _editContext = new EditContext(pasos);
+            renderaddexp = false;
+            StateHasChanged();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -201,8 +253,6 @@
 
         }
     }
-
-
     void doSomething(ChangeEventArgs e)
     {
         string selectedString = e.Value.ToString();
@@ -220,32 +270,51 @@
     }
     public async Task handleValidSubmit()
     {
-
-        await swalfire.successMessage("Usuario Registrado Correctamente");
+        Console.WriteLine("todo bien");
+        var httpResponse = await repository.Post<PasosDTO2, PasosDTO2>($"api/paso", pasos);
+        if (!httpResponse.Error)
+        {
+            pasos = httpResponse.Response;
+            await agregarPaso.InvokeAsync(pasos);
+            pasos = new PasosDTO2();
+            _editContext = new EditContext(pasos);
+            _editContext.MarkAsUnmodified();
+            _editContext.NotifyValidationStateChanged();
+            await swalfire.successMessage("Paso Registrado Correctamente");
+        }
+        else
+        {
+            await swalfire.errorMessage("ERORR 500 : Fallo en el servidor");
+        }
     }
-
+    public void cerrar()
+    {
+        dialogoRegistro = false;
+    }
     public void handleInvalidSubmit()
     {
         swalfire.errorMessage("Por favor, Verifique los Datos Ingresados");
         Console.WriteLine("Algo Mal");
     }
-    public System.Reflection.PropertyInfo GetProperty(string name, Object obj)
+
+    public void registrarPasoDocuento(DocumentoPasoDTO2 pasodocumento)
     {
-        System.Reflection.PropertyInfo info = null;
-        foreach (string item in name.Split('.'))
-        {
-            if (obj == null)
-            {
-                return null;
-            }
-            Type type = obj.GetType();
-            info = type.GetProperty(item);
-            if (info == null) { return null; }
-            obj = info.GetValue(obj, null);
-        }
-        Console.WriteLine("se retorno aqui");
-        return info;
+        pasodocumento.uid = generateUID();
+        pasos.documentos.Add(pasodocumento);
+        dialogoRegistroPasosDocumento = false;
     }
+    public void modificarPasoDocumento(DocumentoPasoDTO2 pasodocumento)
+    {
+        pasos.documentos[pasos.documentos.FindIndex(ind => ind.uid.Equals(pasodocumento.uid))] = pasodocumento;
+        dialogoModificarPasoDocumento = false;
+        StateHasChanged();
+    }
+    public string generateUID()
+    {
+        return Guid.NewGuid().ToString("N");
+    }
+    public void cerrarDialogoRegistroPasoDocumento(bool cerrar) => dialogoRegistroPasosDocumento = cerrar;
+    public void cerrarDialogoModificacionPasoDocumento(bool cerrar) => dialogoModificarPasoDocumento = cerrar;
     /*public List<ItemSelect> itemset = new List<ItemSelect>
 {
         new ItemSelect(){ label="D.N.I", value="DNI"},
