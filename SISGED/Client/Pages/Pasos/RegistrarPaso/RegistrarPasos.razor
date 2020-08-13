@@ -1,6 +1,9 @@
 ﻿@inject IRepository repository
 @inject ISwalFireMessage swalfire
 <style>
+    .mdc-dialog--open .mdc-dialog__scrim {
+        opacity: 0 !important;
+    }
     .card-content-padding {
         padding: 15px;
         width: 550px;
@@ -67,6 +70,13 @@
     .mat-error-c {
         color: red !important;
         border: 1px solid red !important;
+        border-radius: 15px !important;
+        font-size: 13px !important;
+        transition: all 300ms !important;
+    }
+    .mat-jum-d {
+        color: #F3F3F3 !important;
+        background-color: #E94343 !important;
         border-radius: 15px !important;
         font-size: 13px !important;
         transition: all 300ms !important;
@@ -148,7 +158,7 @@
                                     </div>
                                     <div class="button-container">
                                         <MatButton Icon="@MatBlazor.MatIconNames.Remove_red_eye"
-                                                   Class="mat-error-c" @onclick="@(e => eliminar(context.indice))" Style="width:100% !important">Eliminar</MatButton>
+                                                   Class="mat-jum-d" @onclick="@(e => eliminar(context.indice))" Style="width:100% !important">Eliminar</MatButton>
                                     </div>
                                 </div>
                             </td>
