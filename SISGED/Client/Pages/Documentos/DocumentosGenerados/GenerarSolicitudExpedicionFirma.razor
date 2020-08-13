@@ -119,6 +119,7 @@
     }
     private async Task ConfirmacionG()
     {
+        Console.WriteLine("Llegue aqui papu");
         DocumentoGenerarDTO docs = new DocumentoGenerarDTO();
         docs.iddocumentoAnterior = workspace.expedienteseleccionado.documentosobj.ElementAt(workspace.expedienteseleccionado.documentosobj.Count - 2).id;
         docs.iddocumento = workspace.expedienteseleccionado.documento.id;
@@ -126,9 +127,10 @@
         docs.idusuario = sesion.usuario.id;
         docs.codigo = codigo;
         docs.firma = imagen;
+        Console.WriteLine("Llegue aqui papu");
         urlNexo = urlNexo.Substring(51);
         docs.urlDeGenerado = urlNexo;
-
+        Console.WriteLine("Estoy en el final");
         var responseHttp = await repositorio.Put<Documento, DocumentoGenerarDTO>("api/Documentos/generardocumento", docs);
         if (responseHttp.Error)
         {
