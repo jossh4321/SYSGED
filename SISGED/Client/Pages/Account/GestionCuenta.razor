@@ -17,16 +17,19 @@
         --mdc-theme-primary: #1FA270 !important;
     }
 
-    div.mdc-paginator-container {
+    div.mdc-paginator-page-size {
         color: black !important;
     }
-
-    .mdc-paginator-container {
+    div.mdc-paginator-range-actions {
+        color: black !important;
+    }
+    div.mdc-paginator{
         color: black !important;
     }
     .mdc-select:not(.mdc-select--disabled) .mdc-select__anchor {
         background-color: #ACB1B6 !important;
     }
+
     .container-c {
         display: inline-flex;
         flex-wrap: wrap;
@@ -173,7 +176,7 @@
     }
     else
     {
-        <MatTable Items="@listausuarios" class="mat-elevation-z5" Style="width:auto">
+        <MatTable Items="@listausuarios" class="mat-elevation-z5 div.mdc-paginator-range-buttons button i" Style="width:auto">
             <MatTableHeader>
                 <th style="background-color:#25393D;">
                     <span class="table-header">Nombre Completo</span>
