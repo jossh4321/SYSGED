@@ -7,16 +7,17 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #666;
+    background: #25393D;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #999;
+    background: #25393D;
     cursor: pointer;
 }
 body {
-    background-image: url('../images/sysged-background-image.png');
+    /*background-image: url('../images/sysged-background-image.png');*/
+    background-color: #F3F3F3;
     background-attachment: fixed;
 }
 
@@ -322,7 +323,7 @@ app {
     }
 
         .bar-menu-item-container:hover {
-            background-color: #000000
+            background-color: #1ABA4F;
         }
 
     .bar-menu-item-icon {
@@ -335,7 +336,7 @@ app {
 
     div.bar-menu-user-shrink {
         display: inline-block;
-        background-color: rgb(32,32,32);
+        background-color: #1FA270;
         box-shadow: none;
         height: inherit;
         padding: 12px;
@@ -374,7 +375,7 @@ app {
     .profile-name-text {
         font-family: sans-serif;
         font-size: 13px;
-        color: rgba(255,255,255,0.5);
+        color: white;
         line-height:15px;
     }
     .admin-banner {
@@ -556,9 +557,9 @@ app {
         text-align: center;
         margin-left: 10px;
     }
-    .bar-menu-item-container:hover {
-        background-color: #000000
-    }
+        .bar-menu-item-container:hover {
+            background-color: #1ABA4F;
+        }
     .bar-menu-item-icon {
         cursor: pointer;
         border-radius:50%;
@@ -568,20 +569,19 @@ app {
         }
     div.bar-menu-user-shrink {
         display: inline-block;
-        background-color: rgb(32,32,32);
+        background-color: #1FA270;
         box-shadow: none;
-        height:inherit;
-        padding:12px;
+        height: inherit;
+        padding: 12px;
         cursor: pointer;
-        margin-left:10px;
-        border-radius:0px;
-        min-width:160.7px
-        
+        margin-left: 10px;
+        border-radius: 0px;
+        min-width: 160.7px
     }
     /****************************************/
-    div.bar-menu-user-shrink:hover {
-        background-color: #000000;
-    }
+        div.bar-menu-user-shrink:hover {
+            background-color: #1ABA4F;
+        }
 
     div.more-items {
         background-color: #666;
@@ -596,14 +596,14 @@ app {
     .profile-name-text {
         font-family: sans-serif;
         font-size: 14px;
-        color: rgba(255,255,255,0.5)
+        color: white;
     }
     span.admin-banner {
         font-family: 'Helvetica', 'Arial', 'sans-serif';
         font-size: 14px;
         font-weight: 400;
         line-height: 20px;
-        color: rgba(255,255,255,0.8);
+        color: white;
         margin: auto
     }
     
@@ -621,7 +621,7 @@ app {
     border-radius:50%;
 }
     .side-bar-collapse-button:hover {
-        background-color: #000000;
+        background-color: #1ABA4F;
     }
 
 div.non-show{

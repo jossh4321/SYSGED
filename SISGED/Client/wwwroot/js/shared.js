@@ -118,6 +118,7 @@ function gPDF(image, nombre, documento) {
     //document.getElementById('docpdf').setAttribute('src', doc.output('datauristring'));
 
     $('#docpdf').attr('src', doc.output('datauristring'));
+    return doc.output('datauristring');
 }
 
 function textSpeak(message) {
