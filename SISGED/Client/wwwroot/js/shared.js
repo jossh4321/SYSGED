@@ -43,10 +43,12 @@ async function SwalFireEstado(titlex) {
     return res;
 }
 function gPDF(image, nombre, documento) {
-    const doc = new jsPDF();
+    var doc = new jsPDF();
     var pageSize = doc.internal.pageSize;
     var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
     var pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
+
+   
     doc.autoTable({
         html: '#convertirPDF',
         theme: 'plain',
@@ -112,8 +114,11 @@ function gPDF(image, nombre, documento) {
         doc.text(documento, pageWidth / 2, 82, 'center');
 
     }
+    
+    //document.getElementById('docpdf').setAttribute('src', doc.output('datauristring'));
 
     $('#docpdf').attr('src', doc.output('datauristring'));
+    return doc.output('datauristring');
 }
 
 function textSpeak(message) {

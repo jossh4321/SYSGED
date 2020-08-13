@@ -65,6 +65,7 @@ namespace SISGED.Shared.Entities
         public DateTime fechaentrega { get; set; }
         public string url { get; set; }
         public string firma { get; set; }
+        public string urlGenerado{ get; set; }
     }
 
     
@@ -90,6 +91,7 @@ namespace SISGED.Shared.Entities
         public DateTime fecharealizacion { get; set; }
         public string url { get; set; }
         public string firma { get; set; }
+        public string urlGenerado { get; set; }
 
     }
     public class OficioBPN : Documento
@@ -111,6 +113,7 @@ namespace SISGED.Shared.Entities
         //public List<Otorgantelista> otorganteslista { get; set; } 
         public DateTime fecharealizacion { get; set; }
         public string firma { get; set; }
+        public string urlGenerado { get; set; }
 
     }
 
@@ -127,6 +130,7 @@ namespace SISGED.Shared.Entities
         public string estado { get; set; }
         public string idescriturapublica { get; set; }
         public string firma { get; set; }
+        public string urlGenerado { get; set; }
 
     }
 
@@ -145,6 +149,7 @@ namespace SISGED.Shared.Entities
         public DateTime fecharealizacion { get; set; }
         public string url { get; set; }
         public string firma { get; set; }
+        public string urlGenerado { get; set; }
 
     }
 
@@ -163,7 +168,7 @@ namespace SISGED.Shared.Entities
         public Int32 cantidadfoja { get; set; }
         public double precio { get; set; }
         public string firma { get; set; }
-
+        public string urlGenerado { get; set; }
 
     }
     public class ConclusionFirma : Documento
@@ -188,7 +193,7 @@ namespace SISGED.Shared.Entities
         public string idusuario { get; set; }
         public string idnotario { get; set; }
         public string firma { get; set; }
-
+        public string urlGenerado { get; set; }
     }
 
     public class ContenidoAperturamientoDisciplinario
@@ -207,7 +212,7 @@ namespace SISGED.Shared.Entities
         //public string estado { get; set; }
         public string url { get; set; }
         public string firma { get; set; }
-
+        public string urlGenerado { get; set; }
     }
     public class AperturamientoDisciplinario : Documento
     {
@@ -222,7 +227,7 @@ namespace SISGED.Shared.Entities
         public string idnotario { get; set; }
         public DateTime fechaemision { get; set; }
         public string firma { get; set; }
-
+        public string urlGenerado { get; set; }
     }
     public class SolicitudExpedienteNotario : Documento
     {
@@ -239,7 +244,7 @@ namespace SISGED.Shared.Entities
         public string conclusion { get; set; }
         public List<string> recomendaciones { get; set; }
         public string firma { get; set; }
-
+        public string urlGenerado { get; set; }
     }
 
     public class Dictamen : Documento
@@ -258,7 +263,7 @@ namespace SISGED.Shared.Entities
         public string sancion { get; set; }
         public string url { get; set; }
         public string firma { get; set; }
-
+        public string urlGenerado { get; set; }
     }
     public class Resolucion : Documento
     {
@@ -274,7 +279,7 @@ namespace SISGED.Shared.Entities
         public DateTime fechaapelacion { get; set; }
         public string url { get; set; }
         public string firma { get; set; }
-        
+        public string urlGenerado { get; set; }
 
     }
     public class Apelacion : Documento
@@ -303,7 +308,7 @@ namespace SISGED.Shared.Entities
         public string titulo { get; set; }
         public string idnotario { get; set; }
         public string firma { get; set; }
-
+        public string urlGenerado { get; set; }
     }
 
     public class EntregaExpedienteNotario : Documento

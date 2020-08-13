@@ -4,20 +4,20 @@
 @inject IFileReaderService fileReaderService
 <style>
     .img {
-        max-width: 340px;
+        width: 300px;
+        height: 300px;
+        border-radius: 150px;
+       
     }
 
-    .img-container {
-        width: 350px;
-        max-width: 350px;
-        border: 2px dashed #ccc;
-    }
+    
 </style>
 <div>
     
-    <h4><i><b>@Label</b></i></h4>
+    <h4 Style="margin-left: 10px"><i><b>@Label</b></i></h4>
     <div>
         <input type="file" @ref="inputElement" @onchange="ImageFileSelected"
+               Style="margin-left: 38    0px"
                accept=".jpg,.jpeg,.png" />
     </div>
 </div>
@@ -25,27 +25,26 @@
     <!--Cuando el usuario seleccione la imagen-->
     @if (imagenBase64 != null)
     {
-        <div class="img-container">
+        <div class="img">
             <div>
                 <img src="data:image/jpeg;base64, @imagenBase64"
-                     width="300px" height="300px"
+                     Style="        margin-left: 380px
+"
                      class="img" />
             </div>
         </div>
 
 
     }
-    @if(imagenBase64 == null && ImagenTemporal == null)
-    {
-
-        <img class src="https://www.softzone.es/app/uploads-softzone.es/2018/04/guest.png" width="300px" height="300px" alt="imgf" />
-    }
+    
     <!--modo de edicion, imagen proviene del servidor de imagenes-->
     @if (ImagenTemporal != null)
     {
-        <div class="img-container">
+        <div class="img">
             <div>
                 <img src="@ImagenTemporal"
+                     Style="        margin-left: 380px
+"
                      class="img" />
             </div>
         </div>
@@ -54,7 +53,7 @@
 @code {
 
  
-    [Parameter] public string Label { get; set; } = "Cambiar Foto de Perfil";
+    [Parameter] public string Label { get; set; } = "Foto";
     [Parameter] public string ImagenTemporal { get; set; }
     [Parameter] public EventCallback<string> ImagenSeleccionada { get; set; }
     private string imagenBase64;

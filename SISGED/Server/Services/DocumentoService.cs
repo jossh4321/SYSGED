@@ -469,6 +469,7 @@ namespace SISGED.Server.Services
             var UpdateFilter = Builders<Documento>.Update
                                                        .Set("contenido.codigo", documento.codigo)
                                                        .Set("contenido.firma", documento.firma)
+                                                       .Set("contenido.urlGenerado", documento.urlDeGenerado)
                                                        .Push("historialcontenido", contenidoVersion);
 
             var UpdateQuery = Builders<Documento>.Filter.Eq("id", documento.iddocumento);
