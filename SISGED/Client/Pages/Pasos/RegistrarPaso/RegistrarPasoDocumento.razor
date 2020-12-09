@@ -82,7 +82,7 @@
     <MatCard>
         <MatCardContent Class="card-content-padding">
             <MatHeadline6 Style="text-align:center">
-                Registro de Lista de pasos para un Documento
+                Registro de Lista de acciones para un Documento
 
             </MatHeadline6>
             <EditForm EditContext="@_editContext" Context="CurrentEditContext"
@@ -91,7 +91,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documentopaso.tipo)">
                     <MatTextField @bind-Value="@documentopaso.tipo" Class="text-field-style"
-                                  Label="Nombre del Expediente" @oninput='@(e => KeyUp(e,"tipo",documentopaso))'></MatTextField>
+                                  Label="Nombre del Documento" @oninput='@(e => KeyUp(e,"tipo",documentopaso))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                         <ValidationMessage For="@(() => documentopaso.tipo)" />
@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="head-flex">
-                    <h4 style="color:black">Agregue Pasos al documento</h4>
+                    <h4 style="color:black">Agregue Acciones al documento</h4>
                     <MatFAB Icon="@MatIconNames.Add" type="button" @onclick="@abrirDialogoRegistroSubPaso"></MatFAB>
                 </div>
 

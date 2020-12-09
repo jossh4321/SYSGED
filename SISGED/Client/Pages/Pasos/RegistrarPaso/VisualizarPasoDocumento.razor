@@ -72,7 +72,7 @@
     <MatCard>
         <MatCardContent Class="card-content-padding">
             <MatHeadline6 Style="text-align:center">
-                Visualizacion de Lista de pasos para un Documento
+                Visualizacion de Lista de acciones para el documento
 
             </MatHeadline6>
             <EditForm EditContext="@_editContext" Context="CurrentEditContext"
@@ -81,7 +81,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => documentopaso.tipo)">
                     <MatTextField @bind-Value="@documentopaso.tipo" Class="text-field-style"
-                                  Label="Nombre del Expediente" ReadOnly="true" @oninput='@(e => KeyUp(e,"tipo",documentopaso))'></MatTextField>
+                                  Label="Nombre del documento" ReadOnly="true" @oninput='@(e => KeyUp(e,"tipo",documentopaso))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                         <ValidationMessage For="@(() => documentopaso.tipo)" />

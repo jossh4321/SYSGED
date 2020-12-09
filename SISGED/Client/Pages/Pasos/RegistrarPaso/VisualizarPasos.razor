@@ -94,7 +94,7 @@
             else
             {
                 <MatHeadline6 Style="text-align:center">
-                    Visualizacion de Lista de pasos para un Expediente
+                    Visualizacion de Lista de documentos para un servicio
 
                 </MatHeadline6>
 
@@ -105,7 +105,7 @@
 
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => pasos.nombreexpediente)">
                         <MatTextField @bind-Value="@pasos.nombreexpediente" Class="text-field-style"
-                                      Label="Nombre del Expediente" ReadOnly="true" @oninput='@(e => KeyUp(e,"nombreexpediente",pasos))'></MatTextField>
+                                      Label="Nombre del Servicio" ReadOnly="true" @oninput='@(e => KeyUp(e,"nombreexpediente",pasos))'></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                             <ValidationMessage For="@(() => pasos.nombreexpediente)" />
@@ -119,10 +119,10 @@
                     <MatTable Items="@pasos.documentos" class="mat-elevation-z5" Style="width:auto">
                         <MatTableHeader>
                             <th>
-                                <span class="table-header">Tipo de Solicitud</span>
+                                <span class="table-header">Nombre del documento</span>
                             </th>
                             <th>
-                                <span class="table-header">Pasos Registrados</span>
+                                <span class="table-header">Acciones Registradas</span>
                             </th>
                             <th>
                                 <span class="table-header">Funciones</span>
@@ -133,7 +133,7 @@
                                 <span class="table-row">@context.tipo</span>
                             </td>
                             <td>
-                                <span class="table-row">@context.pasos.Count() Pasos Registrados</span>
+                                <span class="table-row">@context.pasos.Count() acciones registradas</span>
                             </td>
                             <td>
                                 <div class="button-container-lvl">

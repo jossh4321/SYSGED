@@ -134,7 +134,7 @@
     <MatCard>
         <MatCardContent Class="card-content-padding">
             <div>
-                <h4>Registro de Sub Pasos para un documento</h4>
+                <h4>Modificación de pasos para una acción</h4>
             </div>
             <EditForm EditContext="@_editContext" Context="CurrentEditContext"
                       OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
@@ -142,7 +142,7 @@
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => subPasoDocumento.nombre)">
                     <MatTextField @bind-Value="@subPasoDocumento.nombre" Class="text-field-style"
-                                  Label="Nombre del Sub Paso" @oninput='@(e => KeyUp(e,"nombre",subPasoDocumento))'></MatTextField>
+                                  Label="Nombre de la acción" @oninput='@(e => KeyUp(e,"nombre",subPasoDocumento))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                         <ValidationMessage For="@(() =>  subPasoDocumento.nombre)" />
@@ -154,7 +154,7 @@
                 </div>
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => subPasoDocumento.descripcion)">
                     <MatTextField @bind-Value="@subPasoDocumento.descripcion" Class="text-field-style"
-                                  Label="Nombre del Sub Paso" @oninput='@(e => KeyUp(e,"descripcion",subPasoDocumento))'></MatTextField>
+                                  Label="Descripción de la acción" @oninput='@(e => KeyUp(e,"descripcion",subPasoDocumento))'></MatTextField>
                     <div class="incorrecto">
                         <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                         <ValidationMessage For="@(() =>  subPasoDocumento.descripcion)" />
@@ -166,7 +166,7 @@
                 </div>
 
                 <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass( () => subPasoDocumento.dias)">
-                    <MatNumericUpDownField Label="Cantidad de Fojas" Class="text-field-style"
+                    <MatNumericUpDownField Label="Número de días" Class="text-field-style"
                                            @bind-Value=subPasoDocumento.dias
                                            FieldType="MatNumericUpDownFieldType.Numeric"
                                            DecimalPlaces=0
@@ -187,7 +187,7 @@
                 <!----------------------------------------------------------------------------->
                 <div class="contenedor-participantes">
                     <div class="titulo-paticipantes">
-                        <div><span class="titulo">Sub Pasos</span></div>
+                        <div><span class="titulo">Pasos</span></div>
                         <div class="icono" @onclick="@(addSubpaso)">
                             <MatIcon Icon="add_circle_outline"></MatIcon>
                         </div>
@@ -198,7 +198,7 @@
                         <div class="single-textfield-container">
                             <div class="field-container base-field input-group-2 @CurrentEditContext.FieldCssClass(() => subPasoDocumento.subpaso[index].descripcion)">
                                 <MatTextField @bind-Value="@subPasoDocumento.subpaso[index].descripcion" Class="text-field-style"
-                                              Label="Nombre del participante"
+                                              Label="Descripción del paso"
                                               @oninput='@(e => KeyUp(e, "descripcion", subPasoDocumento.subpaso[index]))'></MatTextField>
                                 <div class="incorrecto">
                                     <MatIcon Icon="@MatIconNames.Error" Class="val-icon bad-icon"></MatIcon>

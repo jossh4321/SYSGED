@@ -102,7 +102,7 @@
             else
             {
                 <MatHeadline6 Style="text-align:center">
-                    Registro de Lista de pasos para un Expediente
+                    Registro de Lista de documentos para un Servicio
 
                 </MatHeadline6>
 
@@ -110,10 +110,10 @@
                           OnValidSubmit="handleValidSubmit" OnInvalidSubmit="handleInvalidSubmit">
                     <FluentValidator></FluentValidator>
 
-
+                    
                     <div class="field-container input-group-2 @CurrentEditContext.FieldCssClass(() => pasos.nombreexpediente)">
                         <MatTextField @bind-Value="@pasos.nombreexpediente" Class="text-field-style"
-                                      Label="Nombre del Expediente" @oninput='@(e => KeyUp(e,"nombreexpediente",pasos))'></MatTextField>
+                                      Label="Nombre del Servicio" @oninput='@(e => KeyUp(e,"nombreexpediente",pasos))'></MatTextField>
                         <div class="incorrecto">
                             <MatIcon Icon="@MatIconNames.Error" Class="val-icon"></MatIcon>
                             <ValidationMessage For="@(() => pasos.nombreexpediente)" />
@@ -125,7 +125,7 @@
                     </div>
 
                     <div class="head-flex">
-                        <h3 style="color:black">Gestion de Documento de Paso</h3>
+                        <h3 style="color:black">Gestión de Documentos</h3>
                         <MatTooltip Tooltip="Registrar una Documento!" Wrap="true" Position="@MatTooltipPosition.Left">
                             <MatFAB Icon="@MatIconNames.Add" type="button" @onclick="@abrirDialogoRegistroPasosDocumento"></MatFAB>
                         </MatTooltip>
@@ -134,10 +134,10 @@
                     <MatTable Items="@pasos.documentos" class="mat-elevation-z5" Style="width:auto">
                         <MatTableHeader>
                             <th>
-                                <span class="table-header">Tipo de Solicitud</span>
+                                <span class="table-header">Nombre del Documento</span>
                             </th>
                             <th>
-                                <span class="table-header">Pasos Registrados</span>
+                                <span class="table-header">Acciones registradas</span>
                             </th>
                             <th>
                                 <span class="table-header">Funciones</span>
@@ -148,7 +148,7 @@
                                 <span class="table-row">@context.tipo</span>
                             </td>
                             <td>
-                                <span class="table-row">@context.pasos.Count() Pasos Registrados</span>
+                                <span class="table-row">@context.pasos.Count() acciones registradas</span>
                             </td>
                             <td>
                                 <div class="button-container-lvl">
